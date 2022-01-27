@@ -15,14 +15,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-compileJava {
-    options.compilerArgs += ['--enable-preview']
-}
-
-compileTestJava {
-    options.compilerArgs += ['--enable-preview']
-}
-
 test {
     useJUnitPlatform()
     testLogging {
