@@ -29,7 +29,6 @@ integrationTest {
     testLogging {
         events "passed", "skipped", "failed"
     }
-    finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
 jacocoTestReport {
