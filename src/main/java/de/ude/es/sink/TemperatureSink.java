@@ -20,6 +20,8 @@ public class TemperatureSink {
         @Override
         public void deliver(Posting posting) {
             temperature = Double.parseDouble(posting.data());
+            newTemperatureAvailable=true;
+
         }
     }
 
@@ -29,13 +31,16 @@ public class TemperatureSink {
     private double temperature = 0.0;
     private Protocol protocol;
     private DataSubscriber subscriber;
-
+    private boolean newTemperatureAvailable=false;
 
     public TemperatureSink(String localTwinId) {
         this.dataId = "/temperature";
         this.localId = localTwinId;
     }
 
+    public boolean isNewTemperatureAvailable(){
+        return newTemperatureAvailable;
+    }
     public void bind(CommunicationEndpoint endpoint) {
         bind(new Protocol(endpoint));
     }
@@ -53,6 +58,7 @@ public class TemperatureSink {
     }
 
     public Double getCurrent() {
+        newTemperatureAvailable=false;
         return temperature;
     }
 
