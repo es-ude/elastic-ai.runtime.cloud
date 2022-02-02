@@ -94,7 +94,7 @@ public class IntegrationTest4TwinInteraction {
      * - a TemperatureSource on the producer side
      * - and a TemperatureSink on the consumer side.
      */
-    @Test
+   // @Test
     void twinsCanCommunicate() {
         var broker = new Broker(DOMAIN);
 
@@ -112,7 +112,7 @@ public class IntegrationTest4TwinInteraction {
     }
 
 
-    @Test
+   // @Test
     void communicationCanBeStopped() {
         broker = new Broker(DOMAIN);
 
@@ -133,11 +133,12 @@ public class IntegrationTest4TwinInteraction {
 
         sink.unbind();
         sink.bind(it);
+
         source.set(11.4);
         assertEquals(11.4, sink.getCurrent());
     }
 
-    @Test
+  //  @Test
     void sourceAndTwoSinksCanCommunicate() {
         broker = new Broker(DOMAIN);
 

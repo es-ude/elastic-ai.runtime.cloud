@@ -42,7 +42,12 @@ public class IntegrationTest4ExternalBroker {
             }
 
             public void setNewTemperatureMeasured(double temperature) {
+                System.out.println("set temperature");
                 temperatureSource.set(temperature);
+            }
+
+            public boolean hasClients(){
+                return temperatureSource.hasClients();
             }
 
         }
@@ -101,31 +106,36 @@ public class IntegrationTest4ExternalBroker {
 
         @Test
         void twinsCanCommunicate() throws InterruptedException {
-            var broker = new HivemqBroker(DOMAIN);
+             broker = new HivemqBroker(DOMAIN);
             var sensingDevice = new TwinThatOffersTemperature(
                     broker, PRODUCER);
 
             var consumingDevice = new TwinThatConsumesTemperature(
                     broker, CONSUMER, PRODUCER);
 
-            Thread.sleep(600);
+           // Thread.sleep(3000);
+            while(!sensingDevice.hasClients()){
+
+            }
             sensingDevice.setNewTemperatureMeasured(11.6);
             while(!consumingDevice.isNewTemperatureAvailable()) {
              //   sensingDevice.setNewTemperatureMeasured(11.6);
             }
+           // Thread.sleep(600);
             consumingDevice.checkTemperatureIs(11.6);
             // ...
             sensingDevice.setNewTemperatureMeasured(1.7);
             while(!consumingDevice.isNewTemperatureAvailable()) {
 
             }
+           // Thread.sleep(600);
             consumingDevice.checkTemperatureIs(1.7);
 
             broker.closeConnection();
         }
 
 
-       // @Test
+      //  @Test
         void communicationCanBeStopped() {
             broker = new HivemqBroker(DOMAIN);
 
@@ -138,34 +148,49 @@ public class IntegrationTest4ExternalBroker {
             broker.closeConnection();
         }
 
-       // @Test
-        void communicationCanBeResumed() {
+        @Test
+        void communicationCanBeResumed() throws InterruptedException {
             broker = new HivemqBroker(DOMAIN);
 
             TemperatureSource source = createTemperatureSource();
             TemperatureSink sink = createTemperatureSink(CONSUMER);
+            while(!source.hasClients()){
 
+            }
+         //   Thread.sleep(500);
             sink.unbind();
+            Thread.sleep(1000);
+            assertEquals(false,source.hasClients());
             sink.bind(it);
+            Thread.sleep(1000);
+            assertEquals(true,source.hasClients());
             source.set(11.4);
-            while (!sink.isNewTemperatureAvailable()){
-                source.set(11.4);;}
+            System.out.println("hey");
+            System.out.println(sink.isNewTemperatureAvailable());
+//            while (sink.isNewTemperatureAvailable()==false){
+//
+//            }
+           Thread.sleep(600);
+            System.out.println(sink.isNewTemperatureAvailable());
+
             assertEquals(11.4, sink.getCurrent());
             broker.closeConnection();
         }
 
-    //    @Test
-        void sourceAndTwoSinksCanCommunicate() {
+        @Test
+        void sourceAndTwoSinksCanCommunicate() throws InterruptedException {
             broker = new HivemqBroker(DOMAIN);
 
             TemperatureSource temperatureSource = createTemperatureSource();
             TemperatureSink sink1 = createTemperatureSink(CONSUMER+"1");
             TemperatureSink sink2 = createTemperatureSink(CONSUMER+"2");
+            while(!temperatureSource.hasClients()){
 
-            temperatureSource.set(11.4);
-            while(!sink1.isNewTemperatureAvailable()|| !sink2.isNewTemperatureAvailable()){
-                temperatureSource.set(11.4);
             }
+            temperatureSource.set(11.4);
+         //   while(!sink1.isNewTemperatureAvailable()|| !sink2.isNewTemperatureAvailable()){
+         //   }
+            Thread.sleep(600);
             assertEquals(11.4, sink1.getCurrent());
             assertEquals(11.4, sink2.getCurrent());
             broker.closeConnection();
