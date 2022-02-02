@@ -7,6 +7,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
+import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscription;
 
 import java.nio.ByteBuffer;
 
@@ -65,9 +66,14 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
+//        client.subscribeWith()
+//                .topicFilter(topic)
+//                .callback(publish -> onPublishReceived(publish, topic, subscriber))
+//                .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
+
         client.subscribeWith()
                 .topicFilter(topic)
-                .callback(publish -> onPublishReceived(publish, topic, subscriber))
+                .callback(publish -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
                 .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
     }
 
@@ -78,7 +84,7 @@ public class HivemqBroker implements CommunicationEndpoint {
             System.out.println("Subscribed to: " + topic);
         }
     }
-   private void onPublishReceived(Mqtt5Publish publish, String topic, Subscriber subscriber){
+   private static void onPublishReceived(Mqtt5Publish publish, String topic, Subscriber subscriber){
        System.out.println("received messaged published to: " + publish.getTopic().toString() + " ");
        if (publish.getPayload().isPresent()) {
 
@@ -87,7 +93,7 @@ public class HivemqBroker implements CommunicationEndpoint {
            subscriber.deliver(new Posting(topic, ""));
        }
     }
-    private String unwrapPayload(ByteBuffer payload) {
+    private static String unwrapPayload(ByteBuffer payload) {
         byte[] realpayload = new byte[payload.remaining()];
         payload.get(realpayload);
         return new String(realpayload);
@@ -95,9 +101,15 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        client.unsubscribeWith().topicFilter(topic).send();
+        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable) -> onUnsubscribeComplete(throwable, topic)));
     }
-
+    public void onUnsubscribeComplete(Throwable throwable, String topic){
+        if(throwable!=null){
+            System.out.println("unsub failed for: "+topic);
+        }else {
+            System.out.println("unsubscribe from: "+topic);
+        }
+    }
     @Override
     public String ID() {
         return identifier;

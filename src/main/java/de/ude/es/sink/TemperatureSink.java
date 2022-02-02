@@ -19,8 +19,11 @@ public class TemperatureSink {
 
         @Override
         public void deliver(Posting posting) {
+
             temperature = Double.parseDouble(posting.data());
-            newTemperatureAvailable=true;
+            System.out.println("deliver temperature"+temperature);
+            setTemperatureAvailable(true);
+            System.out.println(isNewTemperatureAvailable());
 
         }
     }
@@ -38,6 +41,9 @@ public class TemperatureSink {
         this.localId = localTwinId;
     }
 
+    public synchronized void setTemperatureAvailable(boolean availability){
+        newTemperatureAvailable=availability;
+    }
     public boolean isNewTemperatureAvailable(){
         return newTemperatureAvailable;
     }
@@ -58,7 +64,7 @@ public class TemperatureSink {
     }
 
     public Double getCurrent() {
-        newTemperatureAvailable=false;
+        setTemperatureAvailable(false);
         return temperature;
     }
 

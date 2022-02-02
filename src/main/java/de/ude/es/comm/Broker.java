@@ -107,6 +107,7 @@ public class Broker implements CommunicationEndpoint {
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
         var s = new Subscription(topic, subscriber);
+        System.out.println("Subscribe raw to: "+ topic);
         subscriptions.add(s);
     }
 
@@ -118,12 +119,14 @@ public class Broker implements CommunicationEndpoint {
     @Override
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
         var s = new Subscription(topic, subscriber);
+        System.out.println("unsubscribe from: "+ topic);
         subscriptions.remove(s);
     }
 
     @Override
     public void publish(Posting posting) {
         Posting toPublish = rewriteTopicToIncludeMe(posting);
+        System.out.println("Published to: "+ toPublish.topic());
         executePublish(toPublish);
     }
 
@@ -149,6 +152,7 @@ public class Broker implements CommunicationEndpoint {
     {
         if(subscription.matches(msg.topic()))
             subscription.subscriber().deliver(msg);
+            System.out.println("delivered publish"+ msg.topic()+ " to subscriber "+subscription.subscriber.getClass().getSimpleName());
     }
 
 }

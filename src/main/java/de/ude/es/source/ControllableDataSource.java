@@ -108,6 +108,7 @@ public class ControllableDataSource<T> {
 
     public void set(T data) {
         if(hasClients())
+            System.out.println("publish temperature");
             protocol.publishData(dataId,""+data);
     }
 
