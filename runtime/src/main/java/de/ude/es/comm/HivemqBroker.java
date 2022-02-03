@@ -7,7 +7,6 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
-import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscription;
 
 import java.nio.ByteBuffer;
 
@@ -18,7 +17,6 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     public HivemqBroker(String identifier) {
         this.identifier = identifier;
-       // connectWithBroker();
 
         Mqtt5BlockingClient blockingClient =
                 MqttClient.builder()
@@ -26,16 +24,27 @@ public class HivemqBroker implements CommunicationEndpoint {
                         .identifier(identifier)
                         .serverHost("localhost")
                         .serverPort(1883)
-                      //  .automaticReconnectWithDefaultConfig()
+                        //  .automaticReconnectWithDefaultConfig()
                         .buildBlocking();
-        Mqtt5ConnAck connAck=blockingClient.connect();
+        Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
-
     }
 
-    private void connectWithBroker(){
+    public HivemqBroker(String identifier, int port) {
+        this.identifier = identifier;
 
+        Mqtt5BlockingClient blockingClient =
+                MqttClient.builder()
+                        .useMqttVersion5()
+                        .identifier(identifier)
+                        .serverHost("localhost")
+                        .serverPort(port)
+                        //  .automaticReconnectWithDefaultConfig()
+                        .buildBlocking();
+        Mqtt5ConnAck connAck = blockingClient.connect();
+        client = blockingClient.toAsync();
     }
+
     @Override
     public void publish(Posting posting) {
         client.publishWith()
@@ -55,7 +64,7 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public  void subscribe(String topic, Subscriber subscriber) {
+    public void subscribe(String topic, Subscriber subscriber) {
         subscribeRaw(identifier + topic, subscriber);
     }
 
@@ -77,22 +86,24 @@ public class HivemqBroker implements CommunicationEndpoint {
                 .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
     }
 
-    private void onSubscribeComplete(Throwable subFailed, String topic){
-        if (subFailed!= null) {
-            System.out.println("sub failed: "+ topic);
+    private void onSubscribeComplete(Throwable subFailed, String topic) {
+        if (subFailed != null) {
+            System.out.println("sub failed: " + topic);
         } else {
             System.out.println("Subscribed to: " + topic);
         }
     }
-   private static void onPublishReceived(Mqtt5Publish publish, String topic, Subscriber subscriber){
-       System.out.println("received messaged published to: " + publish.getTopic().toString() + " ");
-       if (publish.getPayload().isPresent()) {
 
-           subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get())));
-       } else {
-           subscriber.deliver(new Posting(topic, ""));
-       }
+    private static void onPublishReceived(Mqtt5Publish publish, String topic, Subscriber subscriber) {
+        System.out.println("received messaged published to: " + publish.getTopic().toString() + " ");
+        if (publish.getPayload().isPresent()) {
+
+            subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get())));
+        } else {
+            subscriber.deliver(new Posting(topic, ""));
+        }
     }
+
     private static String unwrapPayload(ByteBuffer payload) {
         byte[] realpayload = new byte[payload.remaining()];
         payload.get(realpayload);
@@ -103,19 +114,21 @@ public class HivemqBroker implements CommunicationEndpoint {
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
         client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable) -> onUnsubscribeComplete(throwable, topic)));
     }
-    public void onUnsubscribeComplete(Throwable throwable, String topic){
-        if(throwable!=null){
-            System.out.println("unsub failed for: "+topic);
-        }else {
-            System.out.println("unsubscribe from: "+topic);
+
+    public void onUnsubscribeComplete(Throwable throwable, String topic) {
+        if (throwable != null) {
+            System.out.println("unsub failed for: " + topic);
+        } else {
+            System.out.println("unsubscribe from: " + topic);
         }
     }
+
     @Override
     public String ID() {
         return identifier;
     }
 
-    public void closeConnection(){
+    public void closeConnection() {
         client.disconnect();
     }
 }

@@ -1,10 +1,9 @@
 package de.ude.es;
 
-import de.ude.es.TimerMock;
-import de.ude.es.comm.*;
+import de.ude.es.comm.Broker;
+import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.DigitalTwin;
-import de.ude.es.sink.TemperatureSink;
 import de.ude.es.twin.TwinWithHeartbeat;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class IntegrationTest4TwinInteraction {
 
-    private static final String DOMAIN   = "eip://uni-due.de/es";
+    private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
@@ -145,8 +144,8 @@ public class IntegrationTest4TwinInteraction {
         broker = new Broker(DOMAIN);
 
         TemperatureSource temperatureSource = createTemperatureSource();
-        TemperatureSink sink1 = createTemperatureSink(CONSUMER+"1");
-        TemperatureSink sink2 = createTemperatureSink(CONSUMER+"2");
+        TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
+        TemperatureSink sink2 = createTemperatureSink(CONSUMER + "2");
 
         temperatureSource.set(11.4);
 
