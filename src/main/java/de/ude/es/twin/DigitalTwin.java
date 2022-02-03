@@ -77,7 +77,7 @@ public class DigitalTwin implements CommunicationEndpoint {
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(topic, subscriber);
+        endpoint.unsubscribe(identifier+topic, subscriber);
     }
 
     @Override
