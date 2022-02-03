@@ -34,7 +34,7 @@ public class TemperatureSink {
     private double temperature = 0.0;
     private Protocol protocol;
     private DataSubscriber subscriber;
-    private volatile boolean newTemperatureAvailable=false;
+    private volatile boolean newTemperatureAvailable = false;
 
     public TemperatureSink(String localTwinId) {
         this.dataId = "/temperature";
