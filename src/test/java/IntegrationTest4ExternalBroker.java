@@ -113,37 +113,39 @@ public class IntegrationTest4ExternalBroker {
             var consumingDevice = new TwinThatConsumesTemperature(
                     broker, CONSUMER, PRODUCER);
 
-           // Thread.sleep(3000);
-            while(!sensingDevice.hasClients()){
-
-            }
+            Thread.sleep(3000);
+//            while(!sensingDevice.hasClients()){
+//
+//            }
             sensingDevice.setNewTemperatureMeasured(11.6);
-            while(!consumingDevice.isNewTemperatureAvailable()) {
-             //   sensingDevice.setNewTemperatureMeasured(11.6);
-            }
-           // Thread.sleep(600);
+//            while(!consumingDevice.isNewTemperatureAvailable()) {
+//             //   sensingDevice.setNewTemperatureMeasured(11.6);
+//            }
+            Thread.sleep(600);
             consumingDevice.checkTemperatureIs(11.6);
             // ...
             sensingDevice.setNewTemperatureMeasured(1.7);
-            while(!consumingDevice.isNewTemperatureAvailable()) {
-
-            }
-           // Thread.sleep(600);
+//            while(!consumingDevice.isNewTemperatureAvailable()) {
+//
+//            }
+            Thread.sleep(600);
             consumingDevice.checkTemperatureIs(1.7);
 
             broker.closeConnection();
         }
 
 
-      //  @Test
-        void communicationCanBeStopped() {
+        @Test
+        void communicationCanBeStopped() throws InterruptedException {
             broker = new HivemqBroker(DOMAIN);
 
             TemperatureSource source = createTemperatureSource();
             TemperatureSink sink = createTemperatureSink(CONSUMER);
-
+            Thread.sleep(1000);
             sink.unbind();
+            Thread.sleep(1000);
             source.set(9.9);
+            Thread.sleep(1000);
             assertEquals(0.0, sink.getCurrent());
             broker.closeConnection();
         }
@@ -154,10 +156,10 @@ public class IntegrationTest4ExternalBroker {
 
             TemperatureSource source = createTemperatureSource();
             TemperatureSink sink = createTemperatureSink(CONSUMER);
-            while(!source.hasClients()){
-
-            }
-         //   Thread.sleep(500);
+//            while(!source.hasClients()){
+//
+//            }
+            Thread.sleep(500);
             sink.unbind();
             Thread.sleep(1000);
             assertEquals(false,source.hasClients());
