@@ -5,10 +5,6 @@ public class TwinData {
     public String name;
     public final String ID;
 
-    public String getID() {
-        return ID;
-    }
-
     public TwinData(String name, String ID) {
         this.ID = ID;
         this.name = name;
@@ -20,6 +16,10 @@ public class TwinData {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getID() {
+        return ID;
     }
 
     public String toString() {

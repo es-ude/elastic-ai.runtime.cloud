@@ -39,10 +39,10 @@ public class MonitoringServiceApplication {
             String side = new String(Files.readAllBytes(file.toPath()));
 
             StringBuilder twinTable = new StringBuilder();
-            for (TwinData tw : Main.twin.getDigitalTwinListReference().twins) {
+            for (TwinData tw : Main.twinList.getTwins()) {
                 twinTable.append(getTwinTableElement(tw));
             }
-            if (Main.twin.getDigitalTwinListReference().twins.size() == 0) {
+            if (Main.twinList.getTwins().size() == 0) {
                 String start = Pattern.quote("<table id=\"twinTable\">");
                 String end = Pattern.quote("<!--twinTable-->");
                 side = side.replaceAll("(" + start + ")" + "[\\d\\D]*" + "(" + end + ")", "<div id=\"twinTable\">No Twins</div>");
@@ -74,7 +74,7 @@ public class MonitoringServiceApplication {
     @PostMapping("/changeName")
     public ResponseEntity<?> handleChangeName(@RequestParam("name") String name, @RequestParam("ID") String ID) {
         try {
-            Main.twin.getDigitalTwinListReference().changeTwinName(ID, name);
+            Main.twinList.changeTwinName(ID, name);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
