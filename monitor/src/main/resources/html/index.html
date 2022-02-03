@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<html style="font-size: 16px;">
+<head>
+<!--    <meta content="width=deviceTwin-width, initial-scale=1.0" name="viewport">-->
+    <meta charset="utf-8">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="np-template-header-footer-from-plugin" name="page_type">
+    <title>Elastic AI Monitor</title>
+    <link href="nicepage.css" media="screen" rel="stylesheet">
+    <link href="index.css" media="screen" rel="stylesheet">
+    <script class="u-script" defer="" src="jquery.js" type="text/javascript"></script>
+    <script class="u-script" defer="" src="nicepage.js" type="text/javascript"></script>
+    <meta content="Nicepage 3.15.3, nicepage.com" name="generator">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i"
+          id="u-theme-google-font" rel="stylesheet">
+
+    <!--    <script type="application/ld+json">{-->
+    <!--        "@context": "http://schema.org",-->
+    <!--        "@type": "Organization",-->
+    <!--        "name": "list",-->
+    <!--        "url": "index.html"-->
+    <!--    }</script>-->
+
+    <meta content="Device Overview" property="og:title">
+    <meta content="website" property="og:type">
+    <meta content="#478ac9" name="theme-color">
+    <link href="index.html" rel="canonical">
+    <meta content="index.html" property="og:url">
+    <!--    <meta content="30" http-equiv="refresh">-->
+</head>
+<body class="u-body">
+
+<h1 align="center"> Elastic AI Monitor </h1>
+
+<div align="center">
+    <h4> <a href="http://192.168.203.46:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default" target="_blank">Kubernetes Dashboard</a></h4>
+</div>
+
+<section class="u-align-center u-clearfix u-section-1" id="sec-deff">
+
+    <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+
+        <div class="u-expanded-width u-table u-table-responsive u-table-1">
+
+            <table id="twinTable">
+
+                <thead class="u-palette-4-base u-table-header u-table-header-1">
+                <tr style="height: 21px;">
+                    <th class="u-border-1 u-border-palette-4-base u-table-cell">Name</th>
+                    <th class="u-border-1 u-border-palette-4-base u-table-cell">ID</th>
+                </tr>
+                </thead>
+
+                <tbody class="u-table-body">
+
+                TWIN_TABLE_PLACE_HOLDER
+
+                </tbody>
+
+            </table> <!--twinTable-->
+
+        </div>
+    </div>
+
+    <button onClick="window.location.reload();">Refresh</button>
+
+</section>
+
+<script>
+    async function uploadFile(button) {
+        let formData = new FormData();
+        let twinURI = button.id.replace("-upload-button", "")
+
+        let file = document.getElementById(twinURI + "-select-file")
+        console.log(file)
+        formData.append("file", file.files[0]);
+        formData.append("twinURI", twinURI);
+
+        let response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+        });
+
+        let actionText = document.getElementById(twinURI + "-action-text");
+        switch (response.status) {
+            case 200:
+                let fileName = file.value.split("\\")
+                actionText.innerText = "Send file \"" + fileName[fileName.length - 1] + "\"";
+                updateLastAction(twinURI);
+                // alert("File send successfully to deviceTwin: " + deviceURI + ".");
+                break;
+            case 400:
+                alert("No file selected.");
+                break;
+            default:
+                alert("Unknown response status: " + response.status);
+        }
+    }
+
+    async function changeName(button) {
+        let URI = button.id.replace("-name-button", "");
+        let nameText = document.getElementById(URI + "-name");
+
+        let newText = prompt("Please Device Name:", nameText.innerText);
+        if (newText == null || newText === "") {
+
+        } else {
+            let formData = new FormData();
+
+            formData.append("URI", URI);
+            formData.append("name", newText);
+
+            let response = await fetch("/changeName", {
+                method: "POST",
+                body: formData,
+            });
+
+            switch (response.status) {
+                case 200:
+                    nameText.innerText = newText;
+                    break;
+                default:
+                    alert("Unknown response status: " + response.status);
+            }
+        }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function updateLastAction(URI) {
+        let statusText = document.getElementById(URI + "-action-text");
+        let flashing = true
+        while (flashing) {
+            let formData = new FormData();
+            formData.append("URI", URI);
+            let response = await fetch("/getStatus", {
+                method: "POST",
+                body: formData,
+            });
+            response.text().then(function (text) {
+                console.log(text)
+                statusText.innerText = text;
+                if (text.indexOf("Successfully flashed") === 0) {
+                    flashing = false;
+                }
+            });
+
+            await sleep(1000);
+        }
+    }
+
+</script>
+
+</body>
+</html>
