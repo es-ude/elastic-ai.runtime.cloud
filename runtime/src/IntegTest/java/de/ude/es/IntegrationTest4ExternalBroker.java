@@ -1,3 +1,5 @@
+package de.ude.es;
+
 import de.ude.es.TimerMock;
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.sink.TemperatureSink;
