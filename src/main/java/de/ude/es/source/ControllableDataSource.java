@@ -102,7 +102,7 @@ public class ControllableDataSource<T> {
         }
     }
 
-    public boolean hasClients() {
+    public synchronized boolean hasClients() {
         return !clients.isEmpty();
     }
 
