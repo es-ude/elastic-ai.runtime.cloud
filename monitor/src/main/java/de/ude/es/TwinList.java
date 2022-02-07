@@ -1,13 +1,10 @@
 package de.ude.es;
 
-import de.ude.es.comm.Posting;
-import de.ude.es.comm.Subscriber;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TwinList implements Subscriber {
+public class TwinList {
 
     private List<TwinData> twins = new ArrayList<>();
 
@@ -37,8 +34,4 @@ public class TwinList implements Subscriber {
         return twins;
     }
 
-    @Override
-    public void deliver(Posting posting) {
-
-    }
 }

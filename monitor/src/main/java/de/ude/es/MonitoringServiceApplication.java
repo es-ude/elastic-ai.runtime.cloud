@@ -101,8 +101,6 @@ public class MonitoringServiceApplication {
         newTableElement = newTableElement.replace("NAME_ID", (ID + "-name"));
         newTableElement = newTableElement.replace("NAME_BUTTON_ID", (ID + "-name-button"));
         newTableElement = newTableElement.replace("NAME", name);
-
-
         newTableElement = newTableElement.replace("TWIN_ID", ID);
 
         return newTableElement;
