@@ -3,7 +3,7 @@ package de.ude.es.comm;
 
 public record Posting(String topic, String data) {
 
-    private final static String ON  = "1";
+    private final static String ON = "1";
     private final static String OFF = "0";
 
 
@@ -39,8 +39,8 @@ public record Posting(String topic, String data) {
 
     public static Posting createHeartbeat(String heartbeatSource) {
         return new Posting(
-                heartbeatSource+PostingType.HEARTBEAT.topic(""),
-                ""
+                heartbeatSource + PostingType.HEARTBEAT.topic(""),
+                heartbeatSource
         );
     }
 

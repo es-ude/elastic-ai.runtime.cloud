@@ -18,7 +18,7 @@ public class TwinWithHeartbeat extends DigitalTwin {
     }
 
     public void startHeartbeats(Timer timer, int timePeriodInMs) {
-        heartbeater = new Heartbeater(protocol, timer, timePeriodInMs);
+        heartbeater = new Heartbeater(protocol, identifier, timer, timePeriodInMs);
         heartbeater.start();
     }
 
