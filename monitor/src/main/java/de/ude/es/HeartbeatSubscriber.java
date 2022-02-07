@@ -16,19 +16,23 @@ public class HeartbeatSubscriber {
 
         @Override
         public void deliver(Posting posting) {
-            String topic = posting.topic();
-            System.out.println("POSTING: " + topic);
-            String[] topicSplit = topic.split("/");
-            twinList.addTwin(topicSplit[topicSplit.length - 2]);
+            twinList.addTwin(posting.data());
         }
     }
 
     private Protocol protocol;
     private DataSubscriber subscriber;
 
-    public HeartbeatSubscriber(CommunicationEndpoint endpoint, TwinList twinList) {
-        this.protocol = new Protocol(endpoint);
+    public HeartbeatSubscriber(TwinList twinList) {
         this.subscriber = new DataSubscriber(twinList);
+    }
+
+    public void bind(CommunicationEndpoint endpoint) {
+        bind(new Protocol(endpoint));
+    }
+
+    public void bind(Protocol protocol) {
+        this.protocol = protocol;
         this.protocol.subscribeForHeartbeat("eip://uni-due.de/es/+", subscriber);
     }
 
