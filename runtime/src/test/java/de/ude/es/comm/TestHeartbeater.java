@@ -19,7 +19,7 @@ public class TestHeartbeater {
 
         public void givenHeartbeater() {
             timer = new TimerMock();
-            heartbeater = new Heartbeater(protocol, timer, 1000);
+            heartbeater = new Heartbeater(protocol, "", timer, 1000);
         }
 
         public void whenStartingPeriodicHeartbeats() {
