@@ -5,8 +5,6 @@ import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
-import de.ude.es.util.Timeout;
-import de.ude.es.util.Timer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -93,11 +91,16 @@ public class IntegrationTest4ExternalBroker {
     }
 
     public static class HeartbeatSubscriber {
+
         private static class DataSubscriber implements Subscriber {
+
+            public static int heartbeatCount = 0;
+            public static String lastData = "";
 
             @Override
             public void deliver(Posting posting) {
-                System.out.println(posting.data());
+                lastData = posting.data();
+                heartbeatCount++;
             }
         }
 
@@ -113,12 +116,25 @@ public class IntegrationTest4ExternalBroker {
             this.subscriber = new DataSubscriber();
             this.protocol.subscribeForHeartbeat(DOMAIN + "/+", subscriber);
         }
+
+        public int getHeartbeatCount() {
+            return DataSubscriber.heartbeatCount;
+        }
+
+        public String getLastData() {
+            return DataSubscriber.lastData;
+        }
+
+        public void reset() {
+            DataSubscriber.heartbeatCount = 0;
+            DataSubscriber.lastData = "";
+        }
     }
 
 
     private HivemqBroker broker;
     private DigitalTwin it;
-
+    private TimerMock timer;
 
     /**
      * This is an integration test that shows the basic interaction
@@ -208,42 +224,61 @@ public class IntegrationTest4ExternalBroker {
         broker.closeConnection();
     }
 
-    //TODO
+    @Test
+    void heartbeatIsSendBySourceByStart() throws InterruptedException {
+        broker = new HivemqBroker(DOMAIN);
+
+        Runnable myRunnable = this::createTemperatureSource;
+        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
+
+        myRunnable.run();
+
+        Thread.sleep(100);
+        assertEquals(1, heartbeatSubscriber.getHeartbeatCount());
+
+        heartbeatSubscriber.reset();
+        broker.closeConnection();
+    }
+
     @Test
     void heartbeatsAreSendBySource() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN);
 
-        Runnable myRunnable =
-                () -> {
-                    System.out.println("Runnable running");
-                    TemperatureSource temperatureSource = createTemperatureSourceWithTimer();
-                    temperatureSource.set(2.0);
-                };
-        HeartbeatSubscriber rev = createHeartbeatSubscriber();
+        Runnable myRunnable = this::createTemperatureSource;
+        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
 
         myRunnable.run();
-        Thread.sleep(1000);
+
+        timer.fire();
+        Thread.sleep(100);
+        assertEquals(2, heartbeatSubscriber.getHeartbeatCount());
+
+        timer.fire();
+        Thread.sleep(100);
+        assertEquals(3, heartbeatSubscriber.getHeartbeatCount());
+
+        heartbeatSubscriber.reset();
+        broker.closeConnection();
     }
 
-    private TemperatureSource createTemperatureSourceWithTimer() {
-        Timer timer = (timeoutMillis, client) -> new Timeout() {
-            @Override
-            public void restart() {
-            }
+    @Test
+    void heartbeatIncludesSender() throws InterruptedException {
+        broker = new HivemqBroker(DOMAIN);
 
-            @Override
-            public void stop() {
-            }
-        };
+        Runnable myRunnable = this::createTemperatureSource;
+        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
 
-        var source = new TwinWithHeartbeat(PRODUCER);
-        source.bind(broker);
-        source.startHeartbeats(timer, HEARTBEAT_INTERVAL);
+        myRunnable.run();
 
-        var temperatureSource = new TemperatureSource(timer);
-        temperatureSource.bind(source);
+        Thread.sleep(1000);
+        assertEquals("/producer", heartbeatSubscriber.getLastData());
 
-        return temperatureSource;
+        timer.fire();
+        Thread.sleep(1000);
+        assertEquals("/producer", heartbeatSubscriber.getLastData());
+
+        heartbeatSubscriber.reset();
+        broker.closeConnection();
     }
 
     private HeartbeatSubscriber createHeartbeatSubscriber() {
@@ -257,11 +292,13 @@ public class IntegrationTest4ExternalBroker {
     }
 
     private TemperatureSource createTemperatureSource() {
+        timer = new TimerMock();
+
         var source = new TwinWithHeartbeat(PRODUCER);
         source.bind(broker);
-        source.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+        source.startHeartbeats(timer, HEARTBEAT_INTERVAL);
 
-        var temperatureSource = new TemperatureSource(new TimerMock());
+        var temperatureSource = new TemperatureSource(timer);
         temperatureSource.bind(source);
 
         return temperatureSource;
