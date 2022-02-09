@@ -23,7 +23,7 @@ public class TwinData {
     }
 
     public String toString() {
-        return "DigitalTwin{" +
+        return "TwinData{" +
                 "name='" + name + '\'' +
                 ", ID='" + ID + '\'' +
                 '}';
