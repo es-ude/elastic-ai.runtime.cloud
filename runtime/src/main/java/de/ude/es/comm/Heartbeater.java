@@ -13,7 +13,7 @@ public class Heartbeater {
 
     /**
      * @param protocol       The protocol with which to send heartbeats.
-     * @param identifier
+     * @param identifier     Identifier of the Twin the Heartbeats are sent for.
      * @param timer          The Timer used to implement periodic behaviour.
      * @param timePeriodInMs How long to wait between heartbeats.
      */
