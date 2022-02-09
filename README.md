@@ -14,8 +14,9 @@ It proposes a new / different communication protocol and API for digital twins.
 
 ## Tests
 
-Unit tests and integration tests can be executed independently. Both use _jacoco_ to finalize the tests with a report that shows the test results, as well as the code coverage.
-The reports can be found in the location `build/reports/` relative to the corresponding build file.
+Unit tests and integration tests can be executed independently. Both use _jacoco_ to finalize the tests with a report
+that shows the test results, as well as the code coverage. The reports can be found in the location `build/reports/`
+relative to the corresponding build file.
 
 ### Test execution
 
@@ -24,3 +25,9 @@ The reports can be found in the location `build/reports/` relative to the corres
   - i.e. `gradle :runtime:test`
 - Integration test from specific subproject `gradle :subproject:integrationTest`
   - i.e. `gradle :runtime:integrationTest`
+
+## Monitor
+
+To start the monitor: `gradle :monitor:run`.
+
+The monitor can then be accessed locally at [localhost.com:8081](localhost.com:8081).
