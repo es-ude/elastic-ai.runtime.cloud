@@ -41,7 +41,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation project(':runtime')
+    testImplementation "org.testcontainers:testcontainers:1.16.2"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.2"
+
+    implementation project(":runtime")
 }
 
 test {

@@ -5,21 +5,32 @@ import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//@Testcontainers
+@Testcontainers
 public class IntegrationTest4ExternalBroker {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
+    private int PORT;
 
-//    @Container
-//    public GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
-//            .withExposedPorts(1883);
+    @Container
+    public GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
+            .withExposedPorts(1883);
+
+    @BeforeEach
+    void setUp() {
+        PORT = brokerCont.getFirstMappedPort();
+    }
 
     private static class TwinThatOffersTemperature {
 
@@ -131,7 +142,6 @@ public class IntegrationTest4ExternalBroker {
         }
     }
 
-
     private HivemqBroker broker;
     private DigitalTwin it;
     private TimerMock timer;
@@ -148,12 +158,10 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void twinsCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN);
-        var sensingDevice = new TwinThatOffersTemperature(
-                broker, PRODUCER);
+        broker = new HivemqBroker(DOMAIN, PORT);
+        var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
-        var consumingDevice = new TwinThatConsumesTemperature(
-                broker, CONSUMER, PRODUCER);
+        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
 
         while (!sensingDevice.hasClients()) ;
         sensingDevice.setNewTemperatureMeasured(11.6);
@@ -166,10 +174,9 @@ public class IntegrationTest4ExternalBroker {
         broker.closeConnection();
     }
 
-
     @Test
     void communicationCanBeStopped() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
@@ -184,7 +191,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void communicationCanBeResumed() {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
@@ -208,7 +215,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void sourceAndTwoSinksCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         TemperatureSource temperatureSource = createTemperatureSource();
         TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");

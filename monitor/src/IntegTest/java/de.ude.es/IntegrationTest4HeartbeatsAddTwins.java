@@ -3,14 +3,30 @@ package de.ude.es;
 import de.ude.es.comm.*;
 import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Testcontainers
 public class IntegrationTest4HeartbeatsAddTwins {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
-    HivemqBroker broker;
+    private HivemqBroker broker;
+    private int PORT;
+
+    @Container
+    public GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
+            .withExposedPorts(1883);
+
+    @BeforeEach
+    void setUp() {
+        PORT = brokerCont.getFirstMappedPort();
+    }
 
     public static class TwinWithHeartbeats {
 
@@ -36,7 +52,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void SameIDisNoDuplicate() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
         TwinList twinList = new TwinList(0);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -58,7 +74,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void TwinWhoSendHeartbeatGetAdded() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
         TwinList twinList = new TwinList(0);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -84,7 +100,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void twinGetsKicked() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
         TwinList twinList = new TwinList(300);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -101,11 +117,14 @@ public class IntegrationTest4HeartbeatsAddTwins {
         Thread.sleep(500);
 
         assertEquals(0, twinList.getActiveTwins().size());
+        broker.closeConnection();
     }
+
+    private TimerMock timer;
 
     @Test
     void twinGetsReactivated() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
         TwinList twinList = new TwinList(300);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -127,9 +146,8 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
         assertEquals(1, twinList.getActiveTwins().size());
         assertEquals(twinData0.toString(), twinList.getActiveTwins().get(0).toString());
+        broker.closeConnection();
     }
-
-    private TimerMock timer;
 
     private void createTwinWithHeartbeats(String identifier) {
         timer = new TimerMock();
