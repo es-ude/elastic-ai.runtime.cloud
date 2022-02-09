@@ -39,10 +39,10 @@ public class MonitoringServiceApplication {
             String side = new String(Files.readAllBytes(file.toPath()));
 
             StringBuilder twinTable = new StringBuilder();
-            for (TwinData tw : Main.twinList.getTwins()) {
+            for (TwinData tw : Main.twinList.getActiveTwins()) {
                 twinTable.append(getTwinTableElement(tw));
             }
-            if (Main.twinList.getTwins().size() == 0) {
+            if (Main.twinList.getActiveTwins().size() == 0) {
                 String start = Pattern.quote("<table id=\"twinTable\">");
                 String end = Pattern.quote("<!--twinTable-->");
                 side = side.replaceAll("(" + start + ")" + "[\\d\\D]*" + "(" + end + ")", "<div id=\"twinTable\">No Twins</div>");

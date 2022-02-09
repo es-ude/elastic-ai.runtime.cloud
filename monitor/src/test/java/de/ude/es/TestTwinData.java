@@ -3,7 +3,7 @@ package de.ude.es;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTwinData {
 
@@ -11,7 +11,7 @@ public class TestTwinData {
 
     @BeforeEach
     void setUp() {
-        twinData = new TwinData("Name", "ID");
+        twinData = new TwinData("Name", "ID", new MonitorTimerMock(), 0);
     }
 
     @Test
@@ -20,8 +20,19 @@ public class TestTwinData {
     }
 
     @Test
+    void testActive() {
+        assertTrue(twinData.isActive());
+
+        twinData.setNotActive();
+        assertFalse(twinData.isActive());
+
+        twinData.resetKickTimer();
+        assertTrue(twinData.isActive());
+    }
+
+    @Test
     void testSetName() {
-        TwinData twinDataCompare = new TwinData("NewName", "ID");
+        TwinData twinDataCompare = new TwinData("NewName", "ID", new MonitorTimer(), 10000);
         twinData.setName("NewName");
         assertEquals(twinDataCompare.toString(), twinData.toString());
     }

@@ -8,6 +8,12 @@ public class TwinList {
 
     private List<TwinData> twins = new ArrayList<>();
 
+    private final int kikTime;
+
+    public TwinList(int kikTime) {
+        this.kikTime = kikTime;
+    }
+
     public void changeTwinName(String ID, String newName) {
         TwinData twin = getTwin(ID);
         if (twin != null) {
@@ -26,8 +32,20 @@ public class TwinList {
 
     public void addTwin(String ID) {
         if (getTwin(ID) == null) {
-            twins.add(new TwinData("Twin " + twins.size(), ID));
+            twins.add(new TwinData("Twin " + twins.size(), ID, new MonitorTimer(), kikTime));
+        } else {
+            getTwin(ID).resetKickTimer();
         }
+    }
+
+    public List<TwinData> getActiveTwins() {
+        List<TwinData> activeTwins = new ArrayList<>();
+        for (TwinData twin : twins) {
+            if (twin.isActive()) {
+                activeTwins.add(twin);
+            }
+        }
+        return activeTwins;
     }
 
     public List<TwinData> getTwins() {
