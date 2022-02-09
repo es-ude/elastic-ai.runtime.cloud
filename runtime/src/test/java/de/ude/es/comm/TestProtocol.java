@@ -43,7 +43,7 @@ public class TestProtocol {
 
         public void whenPublishingHeartbeat(String who) {
             String topic = protocol.ID()+who+PostingType.HEARTBEAT.topic("");
-            expected = new Posting(topic, "");
+            expected = new Posting(topic, who);
             protocol.publishHeartbeat(who);
         }
 
