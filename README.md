@@ -23,6 +23,7 @@ relative to the corresponding build file.
 - All unit tests: `gradle test`
 - Unit test from specific subproject `gradle :subproject:test`
   - i.e. `gradle :runtime:test`
+- All Integration test `gradle integrationTest`
 - Integration test from specific subproject `gradle :subproject:integrationTest`
   - i.e. `gradle :runtime:integrationTest`
 
