@@ -1,0 +1,42 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.0.0'
+    id 'nebula.integtest' version '9.3.0'
+}
+
+group = 'de.ude.es'
+version = '0.0.2'
+sourceCompatibility = '17'
+
+mainClassName = 'de.ude.es.Main'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    implementation 'org.springframework.session:spring-session-core'
+    implementation project(':runtime')
+
+    compileOnly 'org.projectlombok:lombok'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:testcontainers:1.16.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+}
+
+integrationTest {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+task wrapper {}
+
+task prepareKotlinBuildScriptModel {}

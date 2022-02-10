@@ -1,0 +1,5 @@
+rootProject.name = 'elastic-ai.runtime'
+
+include 'runtime'
+include 'monitor'
+
