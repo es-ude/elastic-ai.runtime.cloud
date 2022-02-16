@@ -16,12 +16,16 @@ import java.util.regex.Pattern;
 @RestController
 public class MonitoringServiceApplication {
 
-    String twinTableElement = "<tr>" +
-            "<td class=\"u-border-1 u-border-grey-30 u-first-column u-grey-5 u-table-cell u-table-cell-7\">" +
-            "<div id=NAME_ID>NAME</div>" +
-            "<button id=\"NAME_BUTTON_ID\" onclick=\"changeName(this)\">Rename</button>" +
-            "</td>" +
-            "<td class=\"u-border-1 u-border-grey-30 u-table-cell\">TWIN_ID</td>";
+    String twinTableElement = """
+            <tr>
+                <th>NUMBER</th>
+                <td>
+                    <div id=NAME_ID>NAME</div>
+                </td>
+                <td>TWIN_ID</td>
+                <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
+            </tr>
+            """;
 
     public void startServer(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);
@@ -39,15 +43,18 @@ public class MonitoringServiceApplication {
             String side = new String(Files.readAllBytes(file.toPath()));
 
             StringBuilder twinTable = new StringBuilder();
+            int i = 0;
             for (TwinData tw : Main.twinList.getActiveTwins()) {
-                twinTable.append(getTwinTableElement(tw));
+                twinTable.append(getTwinTableElement(tw, i));
+                i++;
             }
             if (Main.twinList.getActiveTwins().size() == 0) {
-                String start = Pattern.quote("<table id=\"twinTable\">");
+                String start = Pattern.quote("<table id=\"twinTable\"");
                 String end = Pattern.quote("<!--twinTable-->");
-                side = side.replaceAll("(" + start + ")" + "[\\d\\D]*" + "(" + end + ")", "<div id=\"twinTable\">No Twins</div>");
+                side = side.replaceAll("(" + start + ")" + "[\\d\\D]*" + "(" + end + ")",
+                        "<p id=\"twinTable\" class=\"text-center\">No Twins</p>");
             } else {
-                side = side.replace("TWIN_TABLE_PLACE_HOLDER", twinTable.toString());
+                side = side.replace("TABLE_PLACE_HOLDER", twinTable.toString());
             }
 
             return side;
@@ -92,12 +99,13 @@ public class MonitoringServiceApplication {
         return "404";
     }
 
-    private String getTwinTableElement(TwinData tw) {
+    private String getTwinTableElement(TwinData tw, int number) {
         String name = tw.getName();
         String ID = tw.getID();
 
         String newTableElement = twinTableElement;
 
+        newTableElement = newTableElement.replace("NUMBER", "" + number);
         newTableElement = newTableElement.replace("NAME_ID", (ID + "-name"));
         newTableElement = newTableElement.replace("NAME_BUTTON_ID", (ID + "-name-button"));
         newTableElement = newTableElement.replace("NAME", name);
