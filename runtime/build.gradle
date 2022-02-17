@@ -23,12 +23,20 @@ integrationTest {
     }
 }
 
-sourceSets {
-    main(({
-        java {
-            srcDir 'src'
-            srcDir 'test'
-            srcDir 'IntegTest'
-        }
-    } as String))
-}
+//sourceSets {
+//    main {
+//        java {
+//            srcDir 'src/main'
+//        }
+//    }
+//    test {
+//        java {
+//            srcDir 'src/test'
+//        }
+//    }
+//    IntegTest {
+//        java {
+//            srcDir 'src/IntegTest'
+//        }
+//    }
+//}
