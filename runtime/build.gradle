@@ -2,8 +2,6 @@ plugins {
     id 'nebula.integtest' version '9.4.0'
 }
 
-apply plugin: 'nebula.integtest'
-
 group 'org.ude.es'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '17'
