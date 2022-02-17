@@ -23,6 +23,13 @@ integrationTest {
     }
 }
 
+facets {
+    integTest {
+        parentSourceSet = 'integTest'
+        testTaskName = 'integrationTest'
+    }
+}
+
 //sourceSets.test.java.srcDirs = ["src/IntegTest", "src/test"]
 
 //sourceSets {
