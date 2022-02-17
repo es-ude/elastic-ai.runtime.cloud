@@ -32,7 +32,7 @@ dependencies {
 }
 
 facets {
-    IntegTest {
+    integrationTest {
         parentSourceSet = 'test'
         testTaskName = 'integrationTest'
     }
