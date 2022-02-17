@@ -50,6 +50,7 @@ public class TestHeartbeater {
 
     @Test
     void weCanPublishHeartbeatPeriodically() {
+
         checker.givenBroker();
         checker.givenProtocol();
         checker.givenHeartbeater();

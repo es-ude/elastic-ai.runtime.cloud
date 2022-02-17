@@ -46,7 +46,6 @@ public class TestTwinWithHeartbeat {
 
     @Test
     void weCanPublishHeartbeatPeriodically() {
-        checker.givenBroker();
         checker.givenTwinWithHeartbeat("");
         checker.givenSubscriptionAtBrokerFor("/HEART");
 

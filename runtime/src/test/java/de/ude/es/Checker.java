@@ -120,6 +120,12 @@ public class Checker {
         whenPostingIsPublishedAt(twin, topic);
     }
 
+    public void givenUnsubscriptionAtDigitalTwinFor(String topic){this.givenUnsubscribeAtFor(twin, topic);}
+
+    public void givenRawUnsubscriptionAtDigitalTwinFor(String topic){this.givenRawUnsubscribeFor(twin, topic);}
+
+
+
 
     //-- for child classes :
 
@@ -129,6 +135,10 @@ public class Checker {
 
     protected void givenUnsubscribeAtFor(CommunicationEndpoint channel, String topic) {
         channel.unsubscribe(topic, subscriber);
+    }
+
+    protected void givenRawUnsubscribeFor(CommunicationEndpoint channel, String topic){
+        channel.unsubscribeRaw(topic, subscriber);
     }
 
     protected void givenRawSubscriptionAtFor(CommunicationEndpoint channel, String topic) {

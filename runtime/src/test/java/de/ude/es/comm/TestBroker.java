@@ -42,6 +42,13 @@ public class TestBroker {
     }
 
     @Test
+    void subscriptionDoesNotUnsubscribeWrongTopic(){
+        checker.givenSubscriptionAtBrokerFor("/twin1234/DATA/a");
+        checker.givenUnsubscribeAtBrokerFor("/DATA/a");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/a");
+        checker.thenPostingIsDelivered();
+    }
+    @Test
     void subscriberCanReceivePostingFromBroker() {
         checker.givenSubscriptionAtBrokerFor("/twin1234/DATA/a");
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/a");
