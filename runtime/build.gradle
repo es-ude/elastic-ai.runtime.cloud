@@ -24,11 +24,11 @@ integrationTest {
 }
 
 sourceSets {
-    main {
+    main(({
         java {
             srcDir 'src'
             srcDir 'test'
             srcDir 'IntegTest'
         }
-    }
+    } as String))
 }
