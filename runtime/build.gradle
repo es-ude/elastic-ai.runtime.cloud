@@ -1,5 +1,6 @@
 plugins {
     id 'nebula.facet' version '9.4.0'
+    id 'com.adarshr.test-logger' version '3.1.0'
 }
 
 group 'org.ude.es'

@@ -3,6 +3,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'nebula.facet' version '9.4.0'
+    id 'com.adarshr.test-logger' version '3.1.0'
 }
 
 group = 'de.ude.es'
