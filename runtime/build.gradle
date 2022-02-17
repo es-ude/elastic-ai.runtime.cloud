@@ -22,13 +22,3 @@ integrationTest {
         events 'passed', 'skipped', 'failed'
     }
 }
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
-            srcDir 'test'
-            srcDir 'IntegTest'
-        }
-    }
-}
