@@ -25,5 +25,5 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Run Integration Tests
-        run: gradle IntegTest
+        run: gradle clean integrationTest
 

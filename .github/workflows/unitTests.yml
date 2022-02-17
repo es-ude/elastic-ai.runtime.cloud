@@ -20,4 +20,4 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Run Unit Tests
-        run: gradle test
+        run: gradle clean test

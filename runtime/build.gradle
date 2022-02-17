@@ -2,17 +2,6 @@ plugins {
     id 'nebula.facet' version '9.3.0'
 }
 
-sourceSets {
-    main
-    test
-}
-
-facets {
-    IntegTest {
-        parentSourceSet = 'test'
-    }
-}
-
 group 'org.ude.es'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '17'
@@ -27,7 +16,14 @@ dependencies {
     implementation 'com.hivemq:hivemq-mqtt-client:1.3.0'
 }
 
-IntegTest {
+facets {
+    IntegTest {
+        parentSourceSet = 'test'
+        testTaskName = 'integrationTest'
+    }
+}
+
+integrationTest {
     useJUnitPlatform()
     testLogging {
         events 'passed', 'skipped', 'failed'
