@@ -23,7 +23,7 @@ integrationTest {
     }
 }
 
-sourceSets.test.java.srcDirs = ["src/IntegTest", "src/test"]
+//sourceSets.test.java.srcDirs = ["src/IntegTest", "src/test"]
 
 //sourceSets {
 //    main {
