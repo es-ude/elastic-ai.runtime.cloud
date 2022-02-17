@@ -23,7 +23,7 @@ integrationTest {
     }
 }
 
-//sourceSets {
+sourceSets {
 //    main {
 //        java {
 //            srcDir 'src/main'
@@ -34,9 +34,10 @@ integrationTest {
 //            srcDir 'src/test'
 //        }
 //    }
-//    IntegTest {
-//        java {
-//            srcDir 'src/IntegTest'
-//        }
-//    }
-//}
+    IntegTest {
+        java {
+            srcDir 'src/IntegTest'
+        }
+    }
+}
+
