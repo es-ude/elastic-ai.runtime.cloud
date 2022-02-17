@@ -1,5 +1,5 @@
 plugins {
-    id 'nebula.integtest' version '9.4.0'
+    id 'nebula.integtest' version '9.3.0'
 }
 
 apply plugin: 'nebula.integtest'
