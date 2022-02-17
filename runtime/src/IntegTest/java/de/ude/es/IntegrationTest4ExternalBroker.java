@@ -207,7 +207,7 @@ public class IntegrationTest4ExternalBroker {
         while (!source.hasClients()) ;
         assertTrue(source.hasClients());
 
-        source.set(1234.4);
+        source.set(11.4);
         while (!sink.isNewTemperatureAvailable()) ;
         assertEquals(11.4, sink.getCurrent());
 
