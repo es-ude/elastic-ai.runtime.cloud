@@ -6,6 +6,7 @@ import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -24,12 +25,12 @@ public class IntegrationTest4ExternalBroker {
     private int PORT;
 
     @Container
-    public GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
-            .withExposedPorts(1883);
+    public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
 
     @BeforeEach
     void setUp() {
         PORT = brokerCont.getFirstMappedPort();
+        System.out.println("### PORT: " + PORT);
     }
 
     private static class TwinThatOffersTemperature {
@@ -233,7 +234,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatIsSendBySourceByStart() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
@@ -249,7 +250,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatsAreSendBySource() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
@@ -270,7 +271,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatIncludesSender() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
