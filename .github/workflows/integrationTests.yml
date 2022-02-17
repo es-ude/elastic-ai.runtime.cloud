@@ -25,5 +25,5 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Run Integration Tests Runtime
-        run: gradle :runtime:integrationTest --no-build-cache
+        run: gradle check
 
