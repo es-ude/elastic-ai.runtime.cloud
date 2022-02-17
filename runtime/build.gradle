@@ -1,5 +1,5 @@
 plugins {
-    id 'nebula.integtest' version '9.3.0'
+    id 'nebula.integtest' version '9.4.0'
 }
 
 group 'org.ude.es'
@@ -20,6 +20,13 @@ integrationTest {
     useJUnitPlatform()
     testLogging {
         events 'passed', 'skipped', 'failed'
+    }
+}
+
+facets {
+    integTest {
+        parentSourceSet = 'integTest'
+        testTaskName = 'integrationTest'
     }
 }
 
