@@ -65,4 +65,25 @@ public class TestDigitalTwin {
         checker.thenPostingIsDelivered();
     }
 
+
+    @Test
+    void NoUnsubscribeIfWrongTopic(){
+        checker.givenDigitalTwin("/twin1234");
+        checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");
+        checker.givenRawUnsubscriptionAtDigitalTwinFor("eip://uni-due.de/es/DATA/temperature");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void subscriberCanUnsubscribe(){
+        checker.givenDigitalTwin("/twin1234");
+
+        checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");
+        checker.givenUnsubscriptionAtDigitalTwinFor("/DATA/temperature");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
+        checker.thenPostingIsNotDelivered();
+    }
+
+
 }

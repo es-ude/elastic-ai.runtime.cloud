@@ -30,7 +30,6 @@ public class IntegrationTest4ExternalBroker {
     @BeforeEach
     void setUp() {
         PORT = brokerCont.getFirstMappedPort();
-        System.out.println("### PORT: " + PORT);
     }
 
     private static class TwinThatOffersTemperature {
@@ -55,7 +54,6 @@ public class IntegrationTest4ExternalBroker {
         }
 
         public void setNewTemperatureMeasured(double temperature) {
-            System.out.println("set temperature");
             temperatureSource.set(temperature);
         }
 

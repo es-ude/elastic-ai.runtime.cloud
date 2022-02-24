@@ -75,11 +75,6 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-//        client.subscribeWith()
-//                .topicFilter(topic)
-//                .callback(publish -> onPublishReceived(publish, topic, subscriber))
-//                .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
-
         client.subscribeWith()
                 .topicFilter(topic)
                 .callback(publish -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
@@ -91,16 +86,6 @@ public class HivemqBroker implements CommunicationEndpoint {
             System.out.println("sub failed: " + topic);
         } else {
             System.out.println("Subscribed to: " + topic);
-        }
-    }
-
-    private static void onPublishReceived(Mqtt5Publish publish, String topic, Subscriber subscriber) {
-        System.out.println("received messaged published to: " + publish.getTopic().toString() + " ");
-        if (publish.getPayload().isPresent()) {
-
-            subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get())));
-        } else {
-            subscriber.deliver(new Posting(topic, ""));
         }
     }
 

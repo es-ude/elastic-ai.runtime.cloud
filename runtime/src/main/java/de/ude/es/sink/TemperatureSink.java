@@ -21,9 +21,7 @@ public class TemperatureSink {
         public void deliver(Posting posting) {
 
             temperature = Double.parseDouble(posting.data());
-            System.out.println("deliver temperature"+temperature);
             setTemperatureAvailable(true);
-            System.out.println(isNewTemperatureAvailable());
 
         }
     }
