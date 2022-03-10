@@ -19,7 +19,7 @@ public class TestHeartbeater {
 
         public void givenHeartbeater() {
             timer = new TimerMock();
-            heartbeater = new Heartbeater(protocol, "", timer, 1000);
+            heartbeater = new Heartbeater(protocol, "/test123", timer, 1000);
         }
 
         public void whenStartingPeriodicHeartbeats() {
@@ -53,7 +53,7 @@ public class TestHeartbeater {
         checker.givenBroker();
         checker.givenProtocol();
         checker.givenHeartbeater();
-        checker.givenSubscriptionAtBrokerFor("/HEART");
+        checker.givenSubscriptionAtBrokerFor("/test123/HEART");
 
         checker.whenStartingPeriodicHeartbeats();
         checker.thenMultiplePostingsAreDelivered(1);
@@ -67,7 +67,7 @@ public class TestHeartbeater {
     void weCanStopPublishingHeartbeatsPeriodically() {
         checker.givenBroker();
         checker.givenProtocol();
-        checker.givenSubscriptionAtBrokerFor("/HEART");
+        checker.givenSubscriptionAtBrokerFor("/test123/HEART");
         checker.givenHeartbeater();
         checker.whenStartingPeriodicHeartbeats();
         checker.whenTimerTicked();
