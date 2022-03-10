@@ -47,8 +47,8 @@ public class TestTwinWithHeartbeat {
     @Test
     void weCanPublishHeartbeatPeriodically() {
         checker.givenBroker();
-        checker.givenTwinWithHeartbeat("");
-        checker.givenSubscriptionAtBrokerFor("/HEART");
+        checker.givenTwinWithHeartbeat("/test123");
+        checker.givenSubscriptionAtBrokerFor("/test123/HEART");
 
         checker.whenStartingPeriodicHeartbeats();
         checker.thenMultiplePostingsAreDelivered(1);
@@ -61,8 +61,8 @@ public class TestTwinWithHeartbeat {
     @Test
     void weCanStopPublishingHeartbeatsPeriodically() {
         checker.givenBroker();
-        checker.givenTwinWithHeartbeat("");
-        checker.givenSubscriptionAtBrokerFor("/HEART");
+        checker.givenTwinWithHeartbeat("/test123");
+        checker.givenSubscriptionAtBrokerFor("/test123/HEART");
         checker.whenStartingPeriodicHeartbeats();
         checker.whenTimerTicked();
 

@@ -98,7 +98,35 @@ public class TestBroker {
     }
 
     @Test
-    void subscriptionDoesNotUnsubscribeWrongTopic(){
+    void singleLevelWildcardDoesNotMatchMultilevels() {
+        checker.givenSubscriptionAtBrokerFor("/+/twin1234/DATA/a");
+        checker.whenPostingIsPublishedAtBroker("/XXX/yyy/twin1234/DATA/a");
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void subscriberCanUseMultiLevelWildcardAtBeginning() {
+        checker.givenSubscriptionAtBrokerFor("/#/twin1234/DATA/a");
+        checker.whenPostingIsPublishedAtBroker("/xxx/yyyy/y/twin1234/DATA/a");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void subscriberCanUseMultiLevelWildcardInMiddle() {
+        checker.givenSubscriptionAtBrokerFor("/twin1234/#/DATA/a");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/xxx/yyyy/y/DATA/a");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void subscriberCanUseMultiLevelWildcardAtEnd() {
+        checker.givenSubscriptionAtBrokerFor("/twin1234/DATA/#");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/a/b/c");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void subscriptionDoesNotUnsubscribeWrongTopic() {
         checker.givenSubscriptionAtBrokerFor("/twin1234/DATA/a");
         checker.givenUnsubscribeAtBrokerFor("/DATA/a");
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/a");
