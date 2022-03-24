@@ -1,6 +1,7 @@
 package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
+import de.ude.es.comm.Posting;
 
 /*
  * Note: In order to establish a connection between the ElasticNodeV5 and mosquitto, you need to edit
@@ -13,18 +14,21 @@ import de.ude.es.comm.HivemqBroker;
  */
 
 /**
- * This test corresponds to the ENv5 integration test `hardware-test_MQTTPublish.c` and should receive the String "testData"
- * followed by an increasing number.
+ * This test corresponds to the ENv5 integration test `hardware-test_MQTTSubscribe.c` and publishes the String
+ * "testData" followed by an increasing number.
  */
 
-public class IntegrationTestWhereENv5IsPublishing {
+public class IntegrationTestWhereENv5Subscribes {
 
     private final static String DOMAIN = "eip://uni-due.de/es";
     private final static int PORT = 1883;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
         String TOPIC = "/test";
-        broker.subscribe(TOPIC, posting -> System.out.println(posting.data()));
+        for (int i = 0; i < 10000; i++) {
+            broker.publish(new Posting(TOPIC, "testData" + i));
+            Thread.sleep(1000);
+        }
     }
 }
