@@ -25,7 +25,7 @@ public class IntegrationTestWhereENv5Subscribes {
 
     public static void main(String[] args) throws InterruptedException {
         HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        String TOPIC = "/test";
+        String TOPIC = "/testENv5Sub";
         for (int i = 0; i < 10000; i++) {
             broker.publish(new Posting(TOPIC, "testData" + i));
             Thread.sleep(1000);

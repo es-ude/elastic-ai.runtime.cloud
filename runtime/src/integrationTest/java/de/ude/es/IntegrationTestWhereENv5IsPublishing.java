@@ -24,7 +24,7 @@ public class IntegrationTestWhereENv5IsPublishing {
 
     public static void main(String[] args) {
         HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        String TOPIC = "/test";
+        String TOPIC = "/testENv5Pub";
         broker.subscribe(TOPIC, posting -> System.out.println(posting.data()));
     }
 }
