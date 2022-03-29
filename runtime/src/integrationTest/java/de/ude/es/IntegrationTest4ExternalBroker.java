@@ -6,7 +6,6 @@ import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
