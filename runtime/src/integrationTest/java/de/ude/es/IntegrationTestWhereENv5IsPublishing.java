@@ -7,7 +7,7 @@ import de.ude.es.comm.HivemqBroker;
  * your local mosquitto.conf file and add the following  2 lines:
  *
  * listener 1883 0.0.0.0
- * allow_anonymus true
+ * allow_anonymous true
  *
  * See all broker traffic (ONLY FOR TESTING): mosquitto_sub -t '#'
  */
