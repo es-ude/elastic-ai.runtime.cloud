@@ -10,6 +10,8 @@ This repository uses gradles multi-project feature and currently contains the fo
 
 ## Prerequisites
 
+- Java Version 17
+
 ## Experimental
 
 This is meant as an RFC from my side for the team. 
