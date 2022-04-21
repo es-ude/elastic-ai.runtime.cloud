@@ -11,6 +11,8 @@ This repository uses the gradle multi-project feature and currently contains the
 
 ## Prerequisites
 
+- Java Version 17
+
 ### Docker
 
 The project needs the [Docker](https://www.docker.com/)-CLI to run the integration tests.
