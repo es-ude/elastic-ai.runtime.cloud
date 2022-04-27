@@ -1,6 +1,10 @@
 package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
+import de.ude.es.comm.Posting;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Stresstest {
 
@@ -17,9 +21,18 @@ public class Stresstest {
      * See all broker traffic (ONLY FOR TESTING): mosquitto_sub -t '#'
      */
 
-    public static void main(String[] args) {
-        System.out.println("==== STARTING STRESSTEST =====");
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("===== \tSTARTING STRESSTEST \t=====");
+        System.out.println("===== \tSENDING MESSAGES \t=====");
         HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        broker.subscribe("/stresstest", posting -> System.out.println(posting.data()));
+        String TOPIC = "/stresstest";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss");
+        Date date;
+        while(true) {
+            date = new Date(System.currentTimeMillis());
+            broker.publish(new Posting(TOPIC, "stress on: " + formatter.format(date)));
+            System.out.println("stress " + formatter.format(date));
+            Thread.sleep(100);
+        }
     }
 }
