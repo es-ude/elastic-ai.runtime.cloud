@@ -53,7 +53,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void SameIDisNoDuplicate() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
