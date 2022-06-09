@@ -5,7 +5,8 @@ import de.ude.es.twin.DigitalTwin;
 import de.ude.es.twin.ENv5Twin;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 class TestTemperatureSink {
@@ -24,7 +25,7 @@ class TestTemperatureSink {
         public void registrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    "eip://uni-due.de/es"+id+"/START/temperature",
+                    "eip://uni-due.de/es" + id + "/START/temperature",
                     deliveredPosting.topic(),
                     "should have received command to " +
                             "start sending temperature updates");
@@ -44,7 +45,7 @@ class TestTemperatureSink {
 
         public void sendUpdate(double data) {
             String topic = "/DATA/temperature";
-            Posting response = new Posting(topic, ""+data);
+            Posting response = new Posting(topic, "" + data);
             this.publish(response);
         }
 
@@ -65,7 +66,7 @@ class TestTemperatureSink {
 
         @Override
         public String ID() {
-            return endpoint.ID()+identifier;
+            return endpoint.ID() + identifier;
         }
 
         private void deliver(Posting posting) {
@@ -75,7 +76,7 @@ class TestTemperatureSink {
         public void deregistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    "eip://uni-due.de/es"+id+"/STOP/temperature",
+                    "eip://uni-due.de/es" + id + "/STOP/temperature",
                     deliveredPosting.topic(),
                     "should have received command to " +
                             "stop sending temperature updates");
@@ -204,7 +205,7 @@ class TestTemperatureSink {
 
     private Posting createRemoteTemperaturePosting(double value) {
         var topic = "/sensor/DATA/temperature";
-        post = new Posting(topic, ""+value);
+        post = new Posting(topic, "" + value);
         return post;
     }
 

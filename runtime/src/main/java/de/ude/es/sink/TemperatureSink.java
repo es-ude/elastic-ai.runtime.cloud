@@ -39,12 +39,14 @@ public class TemperatureSink {
         this.localId = localTwinId;
     }
 
-    public synchronized void setTemperatureAvailable(boolean availability){
-        newTemperatureAvailable=availability;
+    public synchronized void setTemperatureAvailable(boolean availability) {
+        newTemperatureAvailable = availability;
     }
-    public boolean isNewTemperatureAvailable(){
+
+    public boolean isNewTemperatureAvailable() {
         return newTemperatureAvailable;
     }
+
     public void bind(CommunicationEndpoint endpoint) {
         bind(new Protocol(endpoint));
     }

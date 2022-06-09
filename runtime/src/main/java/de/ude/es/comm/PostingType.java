@@ -19,6 +19,6 @@ enum PostingType {
     }
 
     public String topic(String next) {
-        return value+next;
+        return value + next;
     }
 }
