@@ -1,7 +1,7 @@
 package de.ude.es.source;
 
-import de.ude.es.comm.Posting;
 import de.ude.es.Checker;
+import de.ude.es.comm.Posting;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class TestSimpleDataSource {
         }
 
         public void whenDataIsSetTo(int value) {
-            expected = new Posting(twin.ID()+"/DATA/data", ""+value);
+            expected = new Posting(twin.ID() + "/DATA/data", "" + value);
             dataSource.set(value);
         }
     }

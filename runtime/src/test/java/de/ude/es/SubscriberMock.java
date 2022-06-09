@@ -21,21 +21,21 @@ public class SubscriberMock implements Subscriber {
     public void checkPostingDelivered(Posting expected) {
 
         StringBuilder topics = new StringBuilder();
-        for(Posting actual : deliveredPostings) {
+        for (Posting actual : deliveredPostings) {
             topics.append(actual).append(", ");
-            if(expected.equals(actual))
+            if (expected.equals(actual))
                 return;
         }
-        fail("posting "+expected+" should have delivered (delivered topics: "+topics+")");
+        fail("posting " + expected + " should have delivered (delivered topics: " + topics + ")");
     }
 
     public void checkTopicDelivered(String expected) {
 
-        for(Posting actual : deliveredPostings) {
-            if(expected.equals(actual.topic()))
+        for (Posting actual : deliveredPostings) {
+            if (expected.equals(actual.topic()))
                 return;
         }
-        fail("posting with topic "+expected+" should have delivered");
+        fail("posting with topic " + expected + " should have delivered");
     }
 
     public void checkNoPostingDelivered() {
@@ -44,7 +44,7 @@ public class SubscriberMock implements Subscriber {
 
     public void checkNumberOfPostingsDelivered(int amount) {
         StringBuilder topics = new StringBuilder();
-        for(Posting p : deliveredPostings)
+        for (Posting p : deliveredPostings)
             topics.append(p.topic()).append(", ");
         assertEquals(amount, deliveredPostings.size(), topics.toString());
     }

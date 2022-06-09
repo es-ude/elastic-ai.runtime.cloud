@@ -18,16 +18,15 @@ public class DigitalTwin implements CommunicationEndpoint {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
-
     public DigitalTwin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
 
     private String fixIdentifierIfNecessary(String identifier) {
-        if(!identifier.startsWith("/"))
-            identifier = "/"+identifier;
-        if(identifier.endsWith("/"))
-            identifier = identifier.substring(0, identifier.length()-1);
+        if (!identifier.startsWith("/"))
+            identifier = "/" + identifier;
+        if (identifier.endsWith("/"))
+            identifier = identifier.substring(0, identifier.length() - 1);
         return identifier;
     }
 
@@ -37,6 +36,7 @@ public class DigitalTwin implements CommunicationEndpoint {
      * Note: this method cannot be overwritten! If you
      * want your DigitalTwin subclass to perform its own
      * actions when binding, please override @executeOnBind.
+     *
      * @param channel Where you post messages or subscribe for them
      */
     public final void bind(CommunicationEndpoint channel) {
@@ -77,13 +77,12 @@ public class DigitalTwin implements CommunicationEndpoint {
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(identifier+topic, subscriber);
+        endpoint.unsubscribe(identifier + topic, subscriber);
     }
 
     @Override
     public String ID() {
-        return endpoint.ID()+identifier;
+        return endpoint.ID() + identifier;
     }
-
 
 }

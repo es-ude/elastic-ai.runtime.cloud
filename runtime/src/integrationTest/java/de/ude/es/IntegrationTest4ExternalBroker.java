@@ -18,10 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class IntegrationTest4ExternalBroker {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String IP = "localhost";
+    private int PORT;
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
-    private int PORT;
+
 
     @Container
     public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
@@ -156,7 +158,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void twinsCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
         var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
@@ -174,7 +176,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void communicationCanBeStopped() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
@@ -189,7 +191,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void communicationCanBeResumed() {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
@@ -213,7 +215,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void sourceAndTwoSinksCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         TemperatureSource temperatureSource = createTemperatureSource();
         TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
@@ -231,7 +233,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatIsSendBySourceByStart() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
@@ -247,7 +249,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatsAreSendBySource() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
@@ -268,7 +270,7 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void heartbeatIncludesSender() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
 
         Runnable myRunnable = this::createTemperatureSource;
         HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();

@@ -20,15 +20,19 @@ import de.ude.es.comm.Posting;
 
 public class IntegrationTestWhereENv5Subscribes {
 
-    private final static String DOMAIN = "eip://uni-due.de/es";
-    private final static int PORT = 1883;
+    private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String IP = "localhost";
+    private static final int PORT = 1883;
 
     public static void main(String[] args) throws InterruptedException {
-        HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        String TOPIC = "/testENv5Sub";
-        for (int i = 0; i < 10000; i++) {
+        HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
+        String TOPIC = "/enV5/DATA/testSub";
+        int i = 0;
+        while (true) {
             broker.publish(new Posting(TOPIC, "testData" + i));
+            System.out.println("testData" + i);
             Thread.sleep(1000);
+            i++;
         }
     }
 }

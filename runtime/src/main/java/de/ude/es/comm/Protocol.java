@@ -34,12 +34,12 @@ public class Protocol {
     }
 
     public void subscribeForHeartbeat(String heartbeatSource, Subscriber subscriber) {
-        var topic = heartbeatSource+PostingType.HEARTBEAT.topic("");
+        var topic = heartbeatSource + PostingType.HEARTBEAT.topic("");
         channel.subscribeRaw(topic, subscriber);
     }
 
     public void unsubscribeFromHeartbeat(String heartbeatSource, Subscriber subscriber) {
-        var topic = heartbeatSource+PostingType.HEARTBEAT.topic("");
+        var topic = heartbeatSource + PostingType.HEARTBEAT.topic("");
         channel.unsubscribeRaw(topic, subscriber);
     }
 
@@ -90,12 +90,12 @@ public class Protocol {
     }
 
     public void subscribeForLost(String client, Subscriber subscriber) {
-        var topic = client+PostingType.LOST.topic("");
+        var topic = client + PostingType.LOST.topic("");
         channel.subscribe(topic, subscriber);
     }
 
     public void unsubscribeFromLost(String client, Subscriber subscriber) {
-        var topic = client+PostingType.LOST.topic("");
+        var topic = client + PostingType.LOST.topic("");
         channel.unsubscribeRaw(topic, subscriber);
     }
 }
