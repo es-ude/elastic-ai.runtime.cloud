@@ -5,7 +5,6 @@ import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
-import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 
 import java.nio.ByteBuffer;
@@ -15,34 +14,29 @@ public class HivemqBroker implements CommunicationEndpoint {
     private Mqtt5AsyncClient client;
     private final String identifier;
 
-    public HivemqBroker(String identifier) {
-        this.identifier = identifier;
+    private void connectToClient(String identifier, String ip, int port) {
 
         Mqtt5BlockingClient blockingClient =
                 MqttClient.builder()
                         .useMqttVersion5()
                         .identifier(identifier)
-                        .serverHost("localhost")
-                        .serverPort(1883)
+                        .serverHost(ip)
+                        .serverPort(port)
                         //  .automaticReconnectWithDefaultConfig()
                         .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
     }
 
-    public HivemqBroker(String identifier, int port) {
+    public HivemqBroker(String identifier) {
+        this.identifier = identifier;
+        connectToClient(identifier, "localhost", 1883);
+    }
+
+    public HivemqBroker(String identifier, String ip, int port) {
         this.identifier = identifier;
 
-        Mqtt5BlockingClient blockingClient =
-                MqttClient.builder()
-                        .useMqttVersion5()
-                        .identifier(identifier)
-                        .serverHost("localhost")
-                        .serverPort(port)
-                        //  .automaticReconnectWithDefaultConfig()
-                        .buildBlocking();
-        Mqtt5ConnAck connAck = blockingClient.connect();
-        client = blockingClient.toAsync();
+        connectToClient(identifier, ip, port);
     }
 
     @Override

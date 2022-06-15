@@ -17,6 +17,7 @@ import java.util.List;
  * messages and will subscribe for the heartbeats of all its
  * clients to detect if none of them is available anymore and
  * stop sending updates in that case.
+ *
  * @param <T> the type of the measured data
  */
 public class ControllableDataSource<T> {
@@ -46,17 +47,17 @@ public class ControllableDataSource<T> {
         }
 
         private void handleHeartbeatReceived() {
-            if(isActive)
+            if (isActive)
                 timeout.restart();
         }
 
         private void handleNoHeartbeatReceived(Timeout timeout) {
-            if(isActive)
+            if (isActive)
                 deactivate();
         }
 
         public void stopAndRemoveAndUnsubscribe() {
-            if(isActive)
+            if (isActive)
                 deactivate();
         }
 
@@ -94,8 +95,8 @@ public class ControllableDataSource<T> {
 
     private void handleLeavingClient(Posting posting) {
         String leavingClientID = posting.data();
-        for(Client client : clients) {
-            if(client.hasIdentifier(leavingClientID)) {
+        for (Client client : clients) {
+            if (client.hasIdentifier(leavingClientID)) {
                 client.stopAndRemoveAndUnsubscribe();
                 return;
             }
@@ -107,8 +108,8 @@ public class ControllableDataSource<T> {
     }
 
     public void set(T data) {
-        if(hasClients())
-            protocol.publishData(dataId,""+data);
+        if (hasClients())
+            protocol.publishData(dataId, "" + data);
     }
 
 }

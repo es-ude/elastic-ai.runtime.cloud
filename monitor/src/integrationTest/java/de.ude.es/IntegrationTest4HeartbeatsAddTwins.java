@@ -16,8 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class IntegrationTest4HeartbeatsAddTwins {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
-    private HivemqBroker broker;
+    private static final String IP = "localhost";
     private static int PORT;
+    private HivemqBroker broker;
 
     @Container
     public static GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
@@ -52,7 +53,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void SameIDisNoDuplicate() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -74,7 +75,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void TwinWhoSendHeartbeatGetAdded() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -100,7 +101,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void twinGetsKicked() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(300);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);
@@ -124,7 +125,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
 
     @Test
     void twinGetsReactivated() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, PORT);
+        broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(300);
         DigitalTwin sink = new DigitalTwin("monitor");
         sink.bind(broker);

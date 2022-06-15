@@ -19,12 +19,13 @@ import de.ude.es.comm.HivemqBroker;
 
 public class IntegrationTestWhereENv5IsPublishing {
 
-    private final static String DOMAIN = "eip://uni-due.de/es";
-    private final static int PORT = 1883;
+    private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String IP = "localhost";
+    private static final int PORT = 1883;
 
     public static void main(String[] args) {
-        HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        String TOPIC = "/testENv5Pub";
+        HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
+        String TOPIC = "/enV5/DATA/testPub";
         broker.subscribe(TOPIC, posting -> System.out.println(posting.data()));
     }
 }

@@ -9,7 +9,6 @@ public class ENv5Twin extends DigitalTwin {
 
     private Protocol protocol;
 
-
     // --- Own public API --------------------------------------
 
     public ENv5Twin(String identifier) {
@@ -27,7 +26,7 @@ public class ENv5Twin extends DigitalTwin {
     }
 
     private String LED(int number) {
-        return "/led"+number;
+        return "/led" + number;
     }
 
 

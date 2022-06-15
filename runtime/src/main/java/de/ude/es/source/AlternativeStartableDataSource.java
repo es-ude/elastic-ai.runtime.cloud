@@ -31,7 +31,7 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
             }
 
             public void stopAndRemove() {
-                if(isActive) {
+                if (isActive) {
                     isActive = false;
                     clients.remove(this);
                     protocol.unsubscribeFromLost(id, this);
@@ -51,8 +51,8 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
         }
 
         public void remove(String id) {
-            for(Client client : clients) {
-                if(client.hasIdentifier(id)) {
+            for (Client client : clients) {
+                if (client.hasIdentifier(id)) {
                     client.stopAndRemove();
                     return;
                 }

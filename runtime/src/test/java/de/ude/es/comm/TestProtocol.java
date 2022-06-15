@@ -24,7 +24,7 @@ public class TestProtocol {
         }
 
         public void whenPublishingData(String dataId, String value) {
-            String topic = protocol.ID()+PostingType.DATA.topic(dataId);
+            String topic = protocol.ID() + PostingType.DATA.topic(dataId);
             expected = new Posting(topic, value);
             protocol.publishData(dataId, value);
         }
@@ -42,37 +42,37 @@ public class TestProtocol {
         }
 
         public void whenPublishingHeartbeat(String who) {
-            String topic = protocol.ID()+who+PostingType.HEARTBEAT.topic("");
+            String topic = protocol.ID() + who + PostingType.HEARTBEAT.topic("");
             expected = new Posting(topic, who);
             protocol.publishHeartbeat(who);
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic = protocol.ID()+PostingType.START.topic(data);
+            String topic = protocol.ID() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
             protocol.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic = protocol.ID()+PostingType.STOP.topic(data);
+            String topic = protocol.ID() + PostingType.STOP.topic(data);
             expected = new Posting(topic, receiver);
             protocol.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = protocol.ID()+PostingType.SET.topic(service);
+            String topic = protocol.ID() + PostingType.SET.topic(service);
             expected = new Posting(topic, cmd);
             protocol.publishCommand(service, cmd);
         }
 
         public void whenSendingOnCommand(String service) {
-            String topic = protocol.ID()+PostingType.SET.topic(service);
+            String topic = protocol.ID() + PostingType.SET.topic(service);
             expected = new Posting(topic, "1");
             protocol.publishOnCommand(service);
         }
 
         public void whenSendingOffCommand(String service) {
-            String topic = protocol.ID()+PostingType.SET.topic(service);
+            String topic = protocol.ID() + PostingType.SET.topic(service);
             expected = new Posting(topic, "0");
             protocol.publishOffCommand(service);
         }
@@ -130,7 +130,7 @@ public class TestProtocol {
     void weCanSubscribeForHeartbeat() {
         checker.givenBroker();
         checker.givenProtocol();
-        checker.whenSubscribingForHeartbeat(checker.broker.ID()+"/twin1234");
+        checker.whenSubscribingForHeartbeat(checker.broker.ID() + "/twin1234");
         checker.whenPostingIsPublishedAtBroker("/twin1234/HEART", "");
         checker.thenPostingIsDelivered();
     }

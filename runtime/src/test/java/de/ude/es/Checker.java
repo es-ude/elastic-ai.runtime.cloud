@@ -1,8 +1,8 @@
 package de.ude.es;
 
 import de.ude.es.comm.Broker;
-import de.ude.es.comm.Posting;
 import de.ude.es.comm.CommunicationEndpoint;
+import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 import de.ude.es.twin.DigitalTwin;
 
@@ -40,27 +40,26 @@ public class Checker {
         assertTrue(
                 subscriptions.contains(topic),
                 "should have received subscription " +
-                        "for topic "+topic+", topics received:" +
+                        "for topic " + topic + ", topics received:" +
                         getTopics(subscriptions));
     }
 
     public void thenUnsubscribeIsDoneFor(String topic) {
         assertTrue(unsubscribes.contains(topic),
                 "should have received unsubscribe " +
-                        "for topic "+topic+", topics received:" +
+                        "for topic " + topic + ", topics received:" +
                         getTopics(unsubscribes));
     }
 
     private String getTopics(List<String> list) {
         StringBuilder topics = new StringBuilder();
-        for(String t : list)
+        for (String t : list)
             topics.append(t).append(", ");
         return topics.toString();
     }
 
 
     //-- for testing with broker :
-
 
 
     public void givenBroker() {
@@ -87,7 +86,7 @@ public class Checker {
     //-- for testing with digital twin :
 
     public void givenDigitalTwin(String id) {
-        twin = new DigitalTwin(id){
+        twin = new DigitalTwin(id) {
             @Override
             public void subscribe(String topic, Subscriber subscriber) {
                 subscriptions.add(topic);
@@ -122,20 +121,25 @@ public class Checker {
         whenPostingIsPublishedAt(twin, topic);
     }
 
-    public void givenUnsubscriptionAtDigitalTwinFor(String topic){this.givenUnsubscribeAtFor(twin, topic);}
+    public void givenUnsubscriptionAtDigitalTwinFor(String topic) {
+        this.givenUnsubscribeAtFor(twin, topic);
+    }
 
-    public void givenRawUnsubscriptionAtDigitalTwinFor(String topic){this.givenRawUnsubscribeFor(twin, topic);}
+    public void givenRawUnsubscriptionAtDigitalTwinFor(String topic) {
+        this.givenRawUnsubscribeFor(twin, topic);
+    }
 
 
     //-- for child classes :
 
-    protected void givenRawUnsubscribeFor(CommunicationEndpoint channel, String topic){
+    protected void givenRawUnsubscribeFor(CommunicationEndpoint channel, String topic) {
         channel.unsubscribeRaw(topic, subscriber);
     }
 
     protected void givenRawSubscriptionAtFor(CommunicationEndpoint channel, String topic) {
         channel.subscribeRaw(topic, subscriber);
     }
+
     protected void givenSubscriptionAtFor(CommunicationEndpoint channel, String topic) {
         channel.subscribe(topic, subscriber);
     }
@@ -145,7 +149,7 @@ public class Checker {
     }
 
     protected void whenPostingIsPublishedAt(CommunicationEndpoint channel, String topic, String data) {
-        String fullTopic = channel.ID()+topic;
+        String fullTopic = channel.ID() + topic;
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);

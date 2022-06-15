@@ -15,7 +15,6 @@ public class TestDigitalTwin {
 
     @Test
     void canReportItsId() {
-
         var broker = new Broker("eip://uni-due.de/es");
         var device = new DigitalTwin("/twin1234");
         device.bind(broker);
@@ -67,7 +66,7 @@ public class TestDigitalTwin {
 
 
     @Test
-    void NoUnsubscribeIfWrongTopic(){
+    void NoUnsubscribeIfWrongTopic() {
         checker.givenDigitalTwin("/twin1234");
         checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");
         checker.givenRawUnsubscriptionAtDigitalTwinFor("eip://uni-due.de/es/DATA/temperature");
@@ -76,7 +75,7 @@ public class TestDigitalTwin {
     }
 
     @Test
-    void subscriberCanUnsubscribe(){
+    void subscriberCanUnsubscribe() {
         checker.givenDigitalTwin("/twin1234");
 
         checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");

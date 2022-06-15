@@ -42,14 +42,14 @@ public class Broker implements CommunicationEndpoint {
         private boolean isMatching;
 
         public Matcher(List<String> msgTokenList, List<String> filterTokenList) {
-            msgTokens    = msgTokenList.iterator();
+            msgTokens = msgTokenList.iterator();
             filterTokens = filterTokenList.iterator();
         }
 
         public boolean check() {
-            while(hasMoreTokensToCheck()) {
+            while (hasMoreTokensToCheck()) {
                 boolean isDone = checkToken(msgTokens.next(), filterTokens.next());
-                if(isDone)
+                if (isDone)
                     return isMatching;
             }
             return allTokensConsumed();
@@ -68,7 +68,7 @@ public class Broker implements CommunicationEndpoint {
         }
 
         private boolean noWildcard(String msgToken, String filterToken) {
-            if(!msgToken.equals(filterToken)) {
+            if (!msgToken.equals(filterToken)) {
                 isMatching = false;
                 return true;
             }
@@ -101,7 +101,7 @@ public class Broker implements CommunicationEndpoint {
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        subscribeRaw(identifier+topic, subscriber);
+        subscribeRaw(identifier + topic, subscriber);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class Broker implements CommunicationEndpoint {
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier+topic, subscriber);
+        unsubscribeRaw(identifier + topic, subscriber);
     }
 
     @Override
@@ -138,16 +138,15 @@ public class Broker implements CommunicationEndpoint {
 
     private void executePublish(Posting toPublish) {
         var subs = new LinkedList<>(subscriptions);
-        for(Subscription subscription : subs) {
+        for (Subscription subscription : subs) {
             deliverIfTopicMatches(toPublish, subscription);
         }
     }
 
     private void deliverIfTopicMatches(
             Posting msg,
-            Subscription subscription)
-    {
-        if(subscription.matches(msg.topic()))
+            Subscription subscription) {
+        if (subscription.matches(msg.topic()))
             subscription.subscriber().deliver(msg);
     }
 
