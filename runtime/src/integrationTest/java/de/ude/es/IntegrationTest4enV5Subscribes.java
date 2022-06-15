@@ -18,7 +18,7 @@ import de.ude.es.comm.Posting;
  * "testData" followed by an increasing number.
  */
 
-public class IntegrationTestWhereENv5Subscribes {
+public class IntegrationTest4enV5Subscribes {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";

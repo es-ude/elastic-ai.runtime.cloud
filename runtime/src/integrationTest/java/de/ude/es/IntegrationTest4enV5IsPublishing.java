@@ -7,7 +7,7 @@ import de.ude.es.comm.HivemqBroker;
  * your local mosquitto.conf file and add the following  2 lines:
  *
  * listener 1883 0.0.0.0
- * allow_anonymus true
+ * allow_anonymous true
  *
  * See all broker traffic (ONLY FOR TESTING): mosquitto_sub -t '#'
  */
@@ -17,7 +17,7 @@ import de.ude.es.comm.HivemqBroker;
  * followed by an increasing number.
  */
 
-public class IntegrationTestWhereENv5IsPublishing {
+public class IntegrationTest4enV5IsPublishing {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
