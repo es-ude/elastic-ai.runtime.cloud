@@ -21,15 +21,16 @@ The integration tests need a MQTT Broker to run successful.
 The runtime uses MQTT as the main communication protocol, therefore an MQTT Broker is needed to run the code locally.
 You can either install a broker on your machine or run it via docker.
 The default for the project is [Mosquitto](https://mosquitto.org/) by Eclipse.
+The elastic-AI.runtime communicates with the broker on port 1883.
 If you want the broker to communicate with the elasticNode over the network, you may need to open the port 1883 on
 your local machine's firewall.
 
 #### Run Mosquitto (via Docker)
 
-Run mosquitto via docker and use the provided `mosquitto.conf` file:
+Run mosquitto via docker and use a `mosquitto.conf` file:
 
 ```bash
-docker run -it -p 1883:1883 -p 9001:9001 -v $PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto
+docker run -p 1883:1883 -p 9001:9001 -v $PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto
 ```
 
 The command will
@@ -37,6 +38,13 @@ The command will
 1. Pull the latest `eclipse-mosquitto` image from [dockerhub](https://hub.docker.com/)
 2. Start the container with the passed mosquitto.conf
 3. Expose access to the container via Port 1883 (MQTT) and 9001
+
+The `mosquitto.conf` file should at least embed the following settings:
+
+```text
+listener 1883 0.0.0.0
+allow_anonymous true
+```
 
 ## Experimental
 
