@@ -6,10 +6,11 @@ import de.ude.es.comm.Posting;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Stresstest {
+public class Stresstest4enV5IsSubscribing {
 
-    private final static String DOMAIN = "eip://uni-due.de/es";
-    private final static int PORT = 1883;
+    private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String IP = "localhost";
+    private static final int PORT = 1883;
 
     /*
      * Note: In order to establish a connection between the ElasticNodeV5 and mosquitto, you need to edit
@@ -23,15 +24,14 @@ public class Stresstest {
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("===== \tSTARTING STRESSTEST \t=====");
-        System.out.println("===== \tSENDING MESSAGES \t=====");
-        HivemqBroker broker = new HivemqBroker(DOMAIN, PORT);
-        String TOPIC = "/stresstest";
+        HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
+        String TOPIC = "/enV5/DATA/stresstestSub";
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss");
         Date date;
-        while(true) {
+
+        while (true) {
             date = new Date(System.currentTimeMillis());
             broker.publish(new Posting(TOPIC, "stress on: " + formatter.format(date)));
-            System.out.println("stress " + formatter.format(date));
             Thread.sleep(100);
         }
     }

@@ -17,7 +17,7 @@ import de.ude.es.comm.HivemqBroker;
  * followed by an increasing number.
  */
 
-public class IntegrationTestWhereENv5IsPublishing {
+public class IntegrationTest4enV5IsPublishing {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
