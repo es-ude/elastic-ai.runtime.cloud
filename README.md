@@ -11,7 +11,9 @@ This repository uses the gradle multi-project feature and currently contains the
 
 ## Prerequisites
 
-- Java Version 17
+## Java
+
+Requires Java Version **17**
 
 ### Docker
 
