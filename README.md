@@ -25,19 +25,23 @@ The elastic-AI.runtime communicates with the broker on port 1883.
 If you want the broker to communicate with the elasticNode over the network, you may need to open the port 1883 on
 your local machine's firewall.
 
+#### Run Mosquitto (native)
+
+Check your local package manager.
+
 #### Run Mosquitto (via Docker)
 
 Run mosquitto via docker and use a `mosquitto.conf` file:
 
 ```bash
-docker run -p 1883:1883 -p 9001:9001 -v $PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto
+docker run -p 1883:1883 -v $PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto:1.6.14
 ```
 
 The command will
 
-1. Pull the latest `eclipse-mosquitto` image from [dockerhub](https://hub.docker.com/)
+1. Pull the 1.6.14 `eclipse-mosquitto` image from [dockerhub](https://hub.docker.com/)
 2. Start the container with the passed mosquitto.conf
-3. Expose access to the container via Port 1883 (MQTT) and 9001
+3. Expose access to the container via Port 1883 (MQTT)
 
 The `mosquitto.conf` file should at least embed the following settings:
 
