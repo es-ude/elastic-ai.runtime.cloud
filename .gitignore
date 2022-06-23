@@ -160,3 +160,7 @@ gradle-app.setting
 **/build/
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,gradle
+
+
+# Ignore specified tool version
+.tool-versions
