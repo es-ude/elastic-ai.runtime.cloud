@@ -162,8 +162,5 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/macos,intellij,gradle
 
 
-# Ignore mosquitto conffiguration files
-mosquitto.conf
-
 # Ignore specified tool version
 .tool-versions
