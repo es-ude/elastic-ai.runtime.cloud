@@ -5,7 +5,7 @@ import de.ude.es.comm.Protocol;
 /**
  * A digital twin representing a remote Elastic Node v5.
  */
-public class ENv5Twin extends DigitalTwin {
+public class ENv5Twin extends StubTwin {
 
     private Protocol protocol;
 
@@ -34,7 +34,7 @@ public class ENv5Twin extends DigitalTwin {
 
     @Override
     protected void executeOnBind() {
-        protocol = new Protocol(this);
+        protocol = new Protocol(endpoint);
     }
 
 

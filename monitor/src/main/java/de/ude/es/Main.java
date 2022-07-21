@@ -16,7 +16,7 @@ public class Main {
         var sink = new DigitalTwin("monitor");
         sink.bind(broker);
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
-        heartbeatSubscriber.bind(sink);
+        heartbeatSubscriber.bind(broker);
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);

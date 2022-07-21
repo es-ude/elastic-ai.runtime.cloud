@@ -4,7 +4,7 @@ import de.ude.es.comm.Heartbeater;
 import de.ude.es.comm.Protocol;
 import de.ude.es.util.Timer;
 
-public class TwinWithHeartbeat extends DigitalTwin {
+public class TwinWithHeartbeat extends StubTwin {
 
     private Heartbeater heartbeater;
     private Protocol protocol;
@@ -25,6 +25,5 @@ public class TwinWithHeartbeat extends DigitalTwin {
     public void stopHeartbeats() {
         heartbeater.stop();
     }
-
 
 }
