@@ -7,8 +7,6 @@ import de.ude.es.comm.Protocol;
  */
 public class ENv5Twin extends StubTwin {
 
-    private Protocol protocol;
-
     // --- Own public API --------------------------------------
 
     public ENv5Twin(String identifier) {
@@ -17,25 +15,16 @@ public class ENv5Twin extends StubTwin {
 
     public void activateLED(int ledNumber) {
         String led = LED(ledNumber);
-        protocol.publishOnCommand(led);
+        publishOnCommand(led);
     }
 
     public void deactivateLED(int ledNumber) {
         String led = LED(ledNumber);
-        protocol.publishOffCommand(led);
+        publishOffCommand(led);
     }
 
     private String LED(int number) {
         return "/led" + number;
     }
-
-
-    // --- Methods for DigitalTwin -----------------------------
-
-    @Override
-    protected void executeOnBind() {
-        protocol = new Protocol(endpoint);
-    }
-
 
 }

@@ -1,7 +1,7 @@
 package de.ude.es;
 
 import de.ude.es.comm.*;
-import de.ude.es.twin.DigitalTwin;
+import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinWithHeartbeat;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void SameIDisNoDuplicate() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
-        DigitalTwin sink = new DigitalTwin("monitor");
+        JavaTwin sink = new JavaTwin("monitor");
         sink.bind(broker);
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
         heartbeatSubscriber.bind(sink);
@@ -77,7 +77,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void TwinWhoSendHeartbeatGetAdded() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
-        DigitalTwin sink = new DigitalTwin("monitor");
+        JavaTwin sink = new JavaTwin("monitor");
         sink.bind(broker);
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
         heartbeatSubscriber.bind(sink);
@@ -103,7 +103,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void twinGetsKicked() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(300);
-        DigitalTwin sink = new DigitalTwin("monitor");
+        JavaTwin sink = new JavaTwin("monitor");
         sink.bind(broker);
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
         heartbeatSubscriber.bind(sink);
@@ -127,7 +127,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void twinGetsReactivated() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(300);
-        DigitalTwin sink = new DigitalTwin("monitor");
+        JavaTwin sink = new JavaTwin("monitor");
         sink.bind(broker);
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
         heartbeatSubscriber.bind(sink);

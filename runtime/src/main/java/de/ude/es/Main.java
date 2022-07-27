@@ -3,7 +3,6 @@ package de.ude.es;
 import de.ude.es.comm.HivemqBroker;
 
 public class Main {
-
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
     private static final int PORT = 1883;

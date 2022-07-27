@@ -1,24 +1,26 @@
 package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
-import de.ude.es.comm.Posting;
+import de.ude.es.twin.JavaTwin;
 
-/*
- * Note: In order to establish a connection between the ElasticNodeV5 and mosquitto, you need to edit
- * your local mosquitto.conf file and add the following  2 lines:
- *
- * listener 1883 0.0.0.0
- * allow_anonymus true
- *
- * See all broker traffic (ONLY FOR TESTING): mosquitto_sub -t '#'
- */
-
-/**
- * This test corresponds to the ENv5 integration test `hardware-test_MQTTSubscribe.c` and publishes the String
- * "testData" followed by an increasing number.
- */
+import static java.lang.Thread.sleep;
 
 public class IntegrationTest4enV5Subscribes {
+
+    private static class TestTwin extends JavaTwin {
+        public TestTwin(String identifier) {
+            super(identifier);
+        }
+
+        public void startPublishing() throws InterruptedException {
+            int i = 0;
+            while (true) {
+                this.publishData("testSub", "testData" + i);
+                i++;
+                sleep(1000);
+            }
+        }
+    }
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
@@ -26,13 +28,8 @@ public class IntegrationTest4enV5Subscribes {
 
     public static void main(String[] args) throws InterruptedException {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
-        String TOPIC = "/enV5/DATA/testSub";
-        int i = 0;
-        while (true) {
-            broker.publish(new Posting(TOPIC, "testData" + i));
-            System.out.println("testData" + i);
-            Thread.sleep(1000);
-            i++;
-        }
+        TestTwin twin = new TestTwin("integTestTwin");
+        twin.bind(broker);
+        twin.startPublishing();
     }
 }
