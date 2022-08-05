@@ -2,30 +2,59 @@ package de.ude.es.twin;
 
 
 import de.ude.es.comm.Posting;
+import de.ude.es.comm.PostingType;
+import de.ude.es.comm.Subscriber;
 
 public class JavaTwin extends Twin {
+
+    private final static String ON = "1";
+    private final static String OFF = "0";
 
     public JavaTwin(String identifier) {
         super(identifier);
     }
 
-    public void publish(Posting posting) {
-        Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend);
-    }
-
     public void publishData(String dataId, String value) {
-        Posting post = Posting.createData(dataId, value);
-        this.publish(post);
+        this.publish(Posting.createData(dataId, value));
     }
 
     public void publishHeartbeat(String who) {
-        Posting post = Posting.createHeartbeat(who);
-        this.publish(post);
+        this.publish(Posting.createHeartbeat(who));
     }
 
-    public String ID() {
-        return endpoint.ID() + identifier;
+    public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
+        this.subscribe(
+                PostingType.START.topic(dataId),
+                subscriber);
     }
 
+    public void unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) {
+        this.unsubscribe(
+                PostingType.START.topic(dataId),
+                subscriber);
+    }
+
+    public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
+        this.subscribe(
+                PostingType.STOP.topic(dataId),
+                subscriber);
+    }
+
+    public void unsubscribeFromDataStopRequest(String dataId, Subscriber subscriber) {
+        this.unsubscribe(
+                PostingType.STOP.topic(dataId),
+                subscriber);
+    }
+
+    public void subscribeForCommand(String dataId, Subscriber subscriber) {
+        this.subscribe(
+                PostingType.SET.topic(dataId),
+                subscriber);
+    }
+
+    public void unsubscribeFromCommand(String dataId, Subscriber subscriber) {
+        this.unsubscribe(
+                PostingType.SET.topic(dataId),
+                subscriber);
+    }
 }

@@ -1,6 +1,9 @@
 package de.ude.es.twin;
 
 import de.ude.es.comm.CommunicationEndpoint;
+import de.ude.es.comm.Posting;
+import de.ude.es.comm.Subscriber;
+
 
 public class Twin {
 
@@ -17,6 +20,19 @@ public class Twin {
         if (identifier.endsWith("/"))
             identifier = identifier.substring(0, identifier.length() - 1);
         return identifier;
+    }
+
+    protected void subscribe(String topic, Subscriber subscriber) {
+        endpoint.subscribe(identifier + topic, subscriber);
+    }
+
+    protected void unsubscribe(String topic, Subscriber subscriber) {
+        endpoint.unsubscribe(identifier + topic, subscriber);
+    }
+
+    protected void publish(Posting posting) {
+        Posting toSend = posting.cloneWithTopicAffix(identifier);
+        endpoint.publish(toSend);
     }
 
     /**
@@ -40,6 +56,14 @@ public class Twin {
      * for certain topics or notify someone that
      * you are interested in some data.
      */
-    protected void executeOnBind() {}
+    protected void executeOnBind() {
+    }
 
+    public String ID() {
+        return endpoint.ID() + identifier;
+    }
+
+    public CommunicationEndpoint getEndpoint() {
+        return endpoint;
+    }
 }

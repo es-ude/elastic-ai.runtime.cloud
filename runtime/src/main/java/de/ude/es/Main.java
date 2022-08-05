@@ -14,6 +14,7 @@ public class Main {
     //
     // See all broker traffic (ONLY FOR TESTING): mosquitto_sub -t '#'
     public static void main(String[] args) {
+
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         broker.subscribe("/test", posting -> System.out.println(posting.data()));
     }

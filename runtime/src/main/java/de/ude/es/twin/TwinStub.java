@@ -4,22 +4,10 @@ import de.ude.es.comm.Posting;
 import de.ude.es.comm.PostingType;
 import de.ude.es.comm.Subscriber;
 
-public class StubTwin extends Twin {
+public class TwinStub extends Twin {
 
-    public StubTwin(String identifier) {
+    public TwinStub(String identifier) {
         super(identifier);
-    }
-
-    private void subscribe(String topic, Subscriber subscriber) {
-        endpoint.subscribe(identifier + topic, subscriber);
-    }
-
-    private void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(identifier + topic, subscriber);
-    }
-
-    private void publish(Posting post) {
-        endpoint.publish(post);
     }
 
     public void subscribeForData(String dataId, Subscriber subscriber) {
@@ -34,25 +22,25 @@ public class StubTwin extends Twin {
                 subscriber);
     }
 
-    public void subscribeForHeartbeat(String heartbeatSource, Subscriber subscriber) {
+    public void subscribeForHeartbeat(Subscriber subscriber) {
         var topic = PostingType.HEARTBEAT.topic("");
         this.subscribe(topic, subscriber);
     }
 
-    public void unsubscribeFromHeartbeat(String heartbeatSource, Subscriber subscriber) {
+    public void unsubscribeFromHeartbeat(Subscriber subscriber) {
         var topic = PostingType.HEARTBEAT.topic("");
         this.unsubscribe(topic, subscriber);
     }
 
-    public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
+    public void subscribeForLost(Subscriber subscriber) {
         this.subscribe(
-                PostingType.START.topic(dataId),
+                PostingType.LOST.topic(""),
                 subscriber);
     }
 
-    public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
-        this.subscribe(
-                PostingType.STOP.topic(dataId),
+    public void unsubscribeFromLost(Subscriber subscriber) {
+        this.unsubscribe(
+                PostingType.LOST.topic(""),
                 subscriber);
     }
 
@@ -79,20 +67,6 @@ public class StubTwin extends Twin {
     public void publishOffCommand(String service) {
         Posting post = Posting.createTurnOff(service);
         this.publish(post);
-    }
-
-    public String ID() {
-        return this.ID();
-    }
-
-    public void subscribeForLost(Subscriber subscriber) {
-        var topic = PostingType.LOST.topic("");
-        this.subscribe(topic, subscriber);
-    }
-
-    public void unsubscribeFromLost(Subscriber subscriber) {
-        var topic = PostingType.LOST.topic("");
-        this.unsubscribe(topic, subscriber);
     }
 
 }

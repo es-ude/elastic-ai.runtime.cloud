@@ -3,6 +3,7 @@ package de.ude.es.twin;
 import de.ude.es.SubscriberMock;
 import de.ude.es.comm.Broker;
 import de.ude.es.comm.Posting;
+import de.ude.es.exampleTwins.ENv5TwinStub;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestENv5Twin {
 
     private Broker broker;
-    private ENv5Twin env5;
+    private ENv5TwinStub env5;
     private SubscriberMock subscriber;
 
     @Test
     void canReportItsId() {
 
         broker = new Broker("eip://uni-due.de/es");
-        env5 = new ENv5Twin("/twin1234");
+        env5 = new ENv5TwinStub("/twin1234");
         env5.bind(broker);
         assertEquals(
                 "eip://uni-due.de/es/twin1234",
@@ -27,7 +28,6 @@ public class TestENv5Twin {
 
     @Test
     void canSendMessageToActivateLED() {
-
         createBroker();
         env5 = createEnv5Twin("/twin1234");
         subscriber = createSubscriberFor("/twin1234/SET/led1");
@@ -61,8 +61,8 @@ public class TestENv5Twin {
         return broker;
     }
 
-    private ENv5Twin createEnv5Twin(String id) {
-        env5 = new ENv5Twin(id);
+    private ENv5TwinStub createEnv5Twin(String id) {
+        env5 = new ENv5TwinStub(id);
         env5.bind(broker);
         return env5;
     }

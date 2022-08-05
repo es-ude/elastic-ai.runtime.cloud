@@ -2,6 +2,7 @@ package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.twin.JavaTwin;
+import de.ude.es.twin.TwinStub;
 
 public class Main {
 
@@ -15,6 +16,7 @@ public class Main {
 
         var sink = new JavaTwin("monitor");
         sink.bind(broker);
+
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
         heartbeatSubscriber.bind(broker);
 

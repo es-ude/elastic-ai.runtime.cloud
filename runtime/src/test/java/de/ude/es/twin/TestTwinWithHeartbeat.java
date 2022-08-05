@@ -2,6 +2,7 @@ package de.ude.es.twin;
 
 import de.ude.es.Checker;
 import de.ude.es.TimerMock;
+import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

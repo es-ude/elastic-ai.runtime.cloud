@@ -15,7 +15,6 @@ public class HivemqBroker implements CommunicationEndpoint {
     private final String identifier;
 
     private void connectToClient(String identifier, String ip, int port) {
-
         Mqtt5BlockingClient blockingClient =
                 MqttClient.builder()
                         .useMqttVersion5()
@@ -45,15 +44,15 @@ public class HivemqBroker implements CommunicationEndpoint {
                 .topic(posting.cloneWithTopicAffix(identifier).topic())
                 .payload(posting.data().getBytes())
                 .qos(MqttQos.EXACTLY_ONCE).send()
-                .whenComplete((pubAck, throwable) -> onPublishComplete(pubAck, throwable));
+                .whenComplete(this::onPublishComplete);
 
     }
 
     private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
         if (throwable != null) {
-            System.out.println("publish failed");
+            System.out.println("Publishing failed for\t" + pubAck.getPublish().getTopic());
         } else {
-            System.out.println("Successfully published to: " + pubAck.getPublish().getTopic());
+            System.out.println("Published to:\t" + pubAck.getPublish().getTopic());
         }
     }
 
@@ -77,9 +76,9 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
         if (subFailed != null) {
-            System.out.println("sub failed: " + topic);
+            System.out.println("Subscription failed:\t" + topic);
         } else {
-            System.out.println("Subscribed to: " + topic);
+            System.out.println("Subscribed to:\t" + topic);
         }
     }
 
@@ -96,9 +95,9 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
         if (throwable != null) {
-            System.out.println("unsub failed for: " + topic);
+            System.out.println("Unsubscription failed for:\t" + topic);
         } else {
-            System.out.println("unsubscribe from: " + topic);
+            System.out.println("Unsubscribe from:\t" + topic);
         }
     }
 

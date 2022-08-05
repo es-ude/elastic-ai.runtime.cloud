@@ -1,5 +1,7 @@
 package de.ude.es.comm;
 
+import java.util.Objects;
+
 /**
  * A helper class that encapsulates knowledge about how to
  * format the different posting types as strings in a topic.
@@ -19,6 +21,8 @@ public enum PostingType {
     }
 
     public String topic(String topicID) {
+        if (Objects.equals(topicID, ""))
+            return value;
         return value + "/" + topicID;
     }
 }

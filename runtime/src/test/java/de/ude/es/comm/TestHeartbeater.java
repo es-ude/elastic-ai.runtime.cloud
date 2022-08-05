@@ -2,24 +2,28 @@ package de.ude.es.comm;
 
 import de.ude.es.Checker;
 import de.ude.es.TimerMock;
+import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.beans.JavaBean;
 
 
 public class TestHeartbeater {
 
     private static class HeartbeaterChecker extends Checker {
-        public Protocol protocol;
+        public JavaTwin javaTwin;
         public TimerMock timer;
         public Heartbeater heartbeater;
 
         public void givenProtocol() {
-            protocol = new Protocol(broker);
+            javaTwin = new JavaTwin("test123");
+            javaTwin.bind(broker);
         }
 
         public void givenHeartbeater() {
             timer = new TimerMock();
-            heartbeater = new Heartbeater(protocol, "/test123", timer, 1000);
+            heartbeater = new Heartbeater(javaTwin, "/test123", timer, 1000);
         }
 
         public void whenStartingPeriodicHeartbeats() {

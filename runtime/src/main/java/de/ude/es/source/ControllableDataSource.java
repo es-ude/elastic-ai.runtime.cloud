@@ -1,9 +1,9 @@
 package de.ude.es.source;
 
-import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.Posting;
-import de.ude.es.comm.Protocol;
 import de.ude.es.comm.Subscriber;
+import de.ude.es.twin.JavaTwin;
+import de.ude.es.twin.TwinStub;
 import de.ude.es.util.Timeout;
 import de.ude.es.util.Timer;
 
@@ -24,8 +24,7 @@ public class ControllableDataSource<T> {
 
     protected final List<Client> clients = new ArrayList<>();
     protected final Timer timer;
-    protected Protocol protocol;
-
+    protected JavaTwin javaTwin;
     protected final String dataId;
     protected static final int TIMEOUT_LENGTH = 1000;
 
@@ -34,10 +33,15 @@ public class ControllableDataSource<T> {
         private final String heartbeatSource;
         private boolean isActive = true;
         private final Timeout timeout;
+        private TwinStub twinStub;
 
         public Client(String heartbeatSource) {
+            double p = 2;
+            int a = (int) p;
             this.heartbeatSource = heartbeatSource;
-            protocol.subscribeForHeartbeat(heartbeatSource, this);
+            twinStub = new TwinStub(heartbeatSource);
+            twinStub.bind(javaTwin.getEndpoint());
+            twinStub.subscribeForHeartbeat(this);
             timeout = timer.register(TIMEOUT_LENGTH, this::handleNoHeartbeatReceived);
         }
 
@@ -64,7 +68,7 @@ public class ControllableDataSource<T> {
         private void deactivate() {
             isActive = false;
             clients.remove(this);
-            protocol.unsubscribeFromHeartbeat(heartbeatSource, this);
+            twinStub.unsubscribeFromHeartbeat(this);
         }
 
         public boolean hasIdentifier(String identifier) {
@@ -78,14 +82,10 @@ public class ControllableDataSource<T> {
         this.dataId = dataId;
     }
 
-    public void bind(Protocol protocol) {
-        this.protocol = protocol;
-        protocol.subscribeForDataStartRequest(dataId, this::handleNewClient);
-        protocol.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
-    }
-
-    public void bind(CommunicationEndpoint endpoint) {
-        bind(new Protocol(endpoint));
+    public void bind(JavaTwin javaTwin) {
+        this.javaTwin = javaTwin;
+        javaTwin.subscribeForDataStartRequest(dataId, this::handleNewClient);
+        javaTwin.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
     }
 
     private void handleNewClient(Posting posting) {
@@ -109,7 +109,7 @@ public class ControllableDataSource<T> {
 
     public void set(T data) {
         if (hasClients())
-            protocol.publishData(dataId, "" + data);
+            javaTwin.publishData(dataId, "" + data);
     }
 
 }

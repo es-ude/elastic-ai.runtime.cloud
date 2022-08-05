@@ -15,8 +15,8 @@ class TestAlternativeStartableDataSource {
         public AlternativeStartableDataSource<?> dataSource;
 
         public void givenDataSource() {
-            dataSource = new AlternativeStartableDataSource<>("/data");
-            dataSource.bind(twin);
+            dataSource = new AlternativeStartableDataSource<>("data");
+            dataSource.bind(javaTwin);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
@@ -24,8 +24,8 @@ class TestAlternativeStartableDataSource {
             whenPostingIsPublishedAtBroker(topic, sink);
         }
 
-        public void givenDigitalTwin() {
-            givenDigitalTwin("/twin1234");
+        public void givenJavaTwin() {
+            givenJavaTwin("/twin1234");
         }
 
         public void thenDataSourceHasClients() {
@@ -51,7 +51,7 @@ class TestAlternativeStartableDataSource {
     void whenTemperatureSourceIsBoundItSubscribesForStartAndStop() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
 
         checker.thenSubscriptionIsDoneFor("/START/data");
@@ -62,7 +62,7 @@ class TestAlternativeStartableDataSource {
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
 
         checker.whenPostingIsPublishedAtBroker(
@@ -77,7 +77,7 @@ class TestAlternativeStartableDataSource {
     void whenStopRequestIsSentThenTemperatureSourceReceivesIt() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();
@@ -94,7 +94,7 @@ class TestAlternativeStartableDataSource {
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForLost() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
 
         checker.whenPostingIsPublishedAtBroker(
@@ -106,9 +106,8 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromLost() {
-
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 
@@ -124,7 +123,7 @@ class TestAlternativeStartableDataSource {
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesForCorrectLost() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.givenDataStartPostPublishedBy("/m_e");
@@ -138,9 +137,8 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
-
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 

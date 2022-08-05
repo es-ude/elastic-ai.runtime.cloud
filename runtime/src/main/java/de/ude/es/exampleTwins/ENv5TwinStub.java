@@ -1,15 +1,15 @@
-package de.ude.es.twin;
+package de.ude.es.exampleTwins;
 
-import de.ude.es.comm.Protocol;
+import de.ude.es.twin.TwinStub;
 
 /**
  * A digital twin representing a remote Elastic Node v5.
  */
-public class ENv5Twin extends StubTwin {
+public class ENv5TwinStub extends TwinStub {
 
     // --- Own public API --------------------------------------
 
-    public ENv5Twin(String identifier) {
+    public ENv5TwinStub(String identifier) {
         super(identifier);
     }
 
@@ -24,7 +24,7 @@ public class ENv5Twin extends StubTwin {
     }
 
     private String LED(int number) {
-        return "/led" + number;
+        return "led" + number;
     }
 
 }

@@ -2,7 +2,6 @@ package de.ude.es.source;
 
 import de.ude.es.Checker;
 import de.ude.es.TimerMock;
-import de.ude.es.comm.Protocol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +18,8 @@ class TestStartableDataSource {
 
         public void givenDataSource() {
             timer = new TimerMock();
-            Protocol protocol = new Protocol(twin);
-            dataSource = new ControllableDataSource<>("/data", timer);
-            dataSource.bind(protocol);
+            dataSource = new ControllableDataSource<>("data", timer);
+            dataSource.bind(javaTwin);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
@@ -29,8 +27,8 @@ class TestStartableDataSource {
             whenPostingIsPublishedAtBroker(topic, sink);
         }
 
-        public void givenDigitalTwin() {
-            givenDigitalTwin("/twin1234");
+        public void givenJavaTwin() {
+            givenJavaTwin("/twin1234");
         }
 
         public void whenTimeoutOccurs() {
@@ -60,7 +58,7 @@ class TestStartableDataSource {
     void whenTemperatureSourceIsBoundItSubscribesForStartAndStop() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
 
         checker.thenSubscriptionIsDoneFor("/START/data");
@@ -71,7 +69,7 @@ class TestStartableDataSource {
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
 
         checker.whenPostingIsPublishedAtBroker(
@@ -86,7 +84,7 @@ class TestStartableDataSource {
     void whenStopRequestIsSentThenTemperatureSourceReceivesIt() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin();
+        checker.givenJavaTwin();
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();
@@ -103,7 +101,7 @@ class TestStartableDataSource {
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForHeartbeats() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
 
         checker.whenPostingIsPublishedAtBroker(
@@ -117,7 +115,8 @@ class TestStartableDataSource {
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromHeartbeats() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
+        checker.givenTwinStub("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 
@@ -133,7 +132,7 @@ class TestStartableDataSource {
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 
@@ -155,7 +154,7 @@ class TestStartableDataSource {
     void whenRequesterHeartbeatsTimeOutThenTemperatureSourceRemovesItAsClient() {
 
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();

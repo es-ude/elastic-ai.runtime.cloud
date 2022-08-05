@@ -38,8 +38,7 @@ public record Posting(String topic, String data) {
     }
 
     public static Posting createHeartbeat(String heartbeatSource) {
-        return new Posting(
-                heartbeatSource + PostingType.HEARTBEAT.topic(""),
+        return new Posting(PostingType.HEARTBEAT.topic(""),
                 heartbeatSource
         );
     }

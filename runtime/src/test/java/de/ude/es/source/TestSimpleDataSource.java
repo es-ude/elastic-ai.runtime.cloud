@@ -5,7 +5,6 @@ import de.ude.es.comm.Posting;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
 class TestSimpleDataSource {
 
     private static class SimpleDataSourceChecker extends Checker {
@@ -13,12 +12,12 @@ class TestSimpleDataSource {
         public DataSource<Integer> dataSource;
 
         public void givenDataSource() {
-            dataSource = new DataSource<>("/data");
-            dataSource.bind(twin);
+            dataSource = new DataSource<>("data");
+            dataSource.bind(javaTwin);
         }
 
         public void whenDataIsSetTo(int value) {
-            expected = new Posting(twin.ID() + "/DATA/data", "" + value);
+            expected = new Posting(javaTwin.ID() + "/DATA/data", "" + value);
             dataSource.set(value);
         }
     }
@@ -34,11 +33,10 @@ class TestSimpleDataSource {
 
     @Test
     void whenDataIsSetThenPostingIsSent() {
-
         checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
-        checker.givenRawSubscriptionAtDigitalTwinFor("/#");
+        checker.givenSubscriptionAtJavaTwinFor("/#");
         checker.whenDataIsSetTo(3);
         checker.thenPostingIsDelivered();
     }
