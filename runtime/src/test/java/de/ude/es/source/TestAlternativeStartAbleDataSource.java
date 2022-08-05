@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-class TestAlternativeStartableDataSource {
+class TestAlternativeStartAbleDataSource {
 
     private static class DataSourceChecker extends Checker {
 
-        public AlternativeStartableDataSource<?> dataSource;
+        public AlternativeStartAbleDataSource<?> dataSource;
 
         public void givenDataSource() {
-            dataSource = new AlternativeStartableDataSource<>("data");
+            dataSource = new AlternativeStartAbleDataSource<>("data");
             dataSource.bind(javaTwin);
         }
 
@@ -38,9 +37,7 @@ class TestAlternativeStartableDataSource {
 
     }
 
-
     private DataSourceChecker checker;
-
 
     @BeforeEach
     void init() {
@@ -49,7 +46,6 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenTemperatureSourceIsBoundItSubscribesForStartAndStop() {
-
         checker.givenBroker();
         checker.givenJavaTwin();
         checker.givenDataSource();
@@ -60,7 +56,6 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
-
         checker.givenBroker();
         checker.givenJavaTwin();
         checker.givenDataSource();
@@ -75,7 +70,6 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenStopRequestIsSentThenTemperatureSourceReceivesIt() {
-
         checker.givenBroker();
         checker.givenJavaTwin();
         checker.givenDataSource();
@@ -92,7 +86,6 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForLost() {
-
         checker.givenBroker();
         checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
@@ -121,7 +114,6 @@ class TestAlternativeStartableDataSource {
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesForCorrectLost() {
-
         checker.givenBroker();
         checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();

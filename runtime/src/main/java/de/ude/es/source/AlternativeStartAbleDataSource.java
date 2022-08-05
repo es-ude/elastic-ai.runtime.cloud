@@ -8,8 +8,7 @@ import de.ude.es.twin.TwinStub;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class AlternativeStartableDataSource<T> extends DataSource<T> {
+public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
     protected ClientList clients = new ClientList();
 
@@ -67,9 +66,10 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
         public boolean hasEntries() {
             return !clients.isEmpty();
         }
+
     }
 
-    public AlternativeStartableDataSource(String dataId) {
+    public AlternativeStartAbleDataSource(String dataId) {
         super(dataId);
     }
 

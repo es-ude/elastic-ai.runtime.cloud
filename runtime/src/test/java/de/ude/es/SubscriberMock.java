@@ -9,9 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SubscriberMock implements Subscriber {
 
-    private final ArrayList<Posting> deliveredPostings
-            = new ArrayList<>();
-
+    private final ArrayList<Posting> deliveredPostings = new ArrayList<>();
 
     @Override
     public void deliver(Posting posting) {
@@ -48,4 +46,5 @@ public class SubscriberMock implements Subscriber {
             topics.append(p.topic()).append(", ");
         assertEquals(amount, deliveredPostings.size(), topics.toString());
     }
+
 }

@@ -25,4 +25,5 @@ public enum PostingType {
             return value;
         return value + "/" + topicID;
     }
+
 }

@@ -1,28 +1,11 @@
 package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
+import de.ude.es.exampleTwins.IntegrationTestTwinForEnV5;
 import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinStub;
 
 public class Stresstest4enV5IsPublishing {
-
-    private static class TestTwin extends JavaTwin {
-        private final TwinStub enV5;
-
-        public TestTwin(String identifier) {
-            super(identifier);
-            enV5 = new TwinStub("enV5");
-        }
-
-        @Override
-        protected void executeOnBind() {
-            enV5.bind(endpoint);
-        }
-
-        public void startTest(String topic) {
-            enV5.subscribeForData(topic, posting -> System.out.println(posting.data()));
-        }
-    }
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
@@ -30,8 +13,9 @@ public class Stresstest4enV5IsPublishing {
 
     public static void main(String[] args) {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
-        TestTwin twin = new TestTwin("integTestTwin");
+        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5("integTestTwin");
         twin.bind(broker);
-        twin.startTest("stresstestPub");
+        twin.startSubscribing("stresstestPub");
     }
+
 }

@@ -22,7 +22,7 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
         enV5.subscribeForData(topic, posting -> System.out.println(posting.data()));
     }
 
-    public void startPublishing() throws InterruptedException {
+    public void startPublishing(int sleep) throws InterruptedException {
         int i = 0;
         while (true) {
             this.publishData("testSub", "testData" + i);
@@ -30,4 +30,5 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
             sleep(1000);
         }
     }
+
 }

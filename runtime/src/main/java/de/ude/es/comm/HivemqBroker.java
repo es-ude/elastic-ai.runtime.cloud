@@ -16,11 +16,7 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     private void connectToClient(String identifier, String ip, int port) {
         Mqtt5BlockingClient blockingClient =
-                MqttClient.builder()
-                        .useMqttVersion5()
-                        .identifier(identifier)
-                        .serverHost(ip)
-                        .serverPort(port)
+                MqttClient.builder().useMqttVersion5().identifier(identifier).serverHost(ip).serverPort(port)
                         //  .automaticReconnectWithDefaultConfig()
                         .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
@@ -40,12 +36,8 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void publish(Posting posting) {
-        client.publishWith()
-                .topic(posting.cloneWithTopicAffix(identifier).topic())
-                .payload(posting.data().getBytes())
-                .qos(MqttQos.EXACTLY_ONCE).send()
-                .whenComplete(this::onPublishComplete);
-
+        client.publishWith().topic(posting.cloneWithTopicAffix(identifier).topic()).payload(
+                posting.data().getBytes()).qos(MqttQos.EXACTLY_ONCE).send().whenComplete(this::onPublishComplete);
     }
 
     private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
@@ -68,9 +60,8 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        client.subscribeWith()
-                .topicFilter(topic)
-                .callback(publish -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
+        client.subscribeWith().topicFilter(topic).callback(publish
+                        -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
                 .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
     }
 
@@ -90,7 +81,8 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable) -> onUnsubscribeComplete(throwable, topic)));
+        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable)
+                -> onUnsubscribeComplete(throwable, topic)));
     }
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
@@ -109,4 +101,5 @@ public class HivemqBroker implements CommunicationEndpoint {
     public void closeConnection() {
         client.disconnect();
     }
+
 }

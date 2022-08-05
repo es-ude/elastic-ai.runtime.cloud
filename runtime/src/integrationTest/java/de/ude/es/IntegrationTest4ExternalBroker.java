@@ -1,10 +1,12 @@
 package de.ude.es;
 
-import de.ude.es.comm.*;
+import de.ude.es.comm.CommunicationEndpoint;
+import de.ude.es.comm.HivemqBroker;
+import de.ude.es.comm.Posting;
+import de.ude.es.comm.Subscriber;
+import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
-import de.ude.es.exampleTwins.TwinWithHeartbeat;
-import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +26,6 @@ public class IntegrationTest4ExternalBroker {
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
-
 
     @Container
     public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
@@ -321,4 +322,5 @@ public class IntegrationTest4ExternalBroker {
 
         return tempSink;
     }
+
 }

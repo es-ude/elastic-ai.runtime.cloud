@@ -1,11 +1,9 @@
 package de.ude.es.comm;
 
-
 public record Posting(String topic, String data) {
 
     private final static String ON = "1";
     private final static String OFF = "0";
-
 
     public static Posting createTurnOn(String topic) {
         return createCommand(topic, ON);
@@ -50,4 +48,5 @@ public record Posting(String topic, String data) {
     public boolean isStartSending(String phenomena) {
         return this.topic.contains(PostingType.START.topic(phenomena));
     }
+
 }

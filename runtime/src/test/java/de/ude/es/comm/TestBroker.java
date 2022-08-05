@@ -6,11 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class TestBroker {
 
     private Checker checker;
-
 
     @Test
     void brokerCanPublishPosting() {
@@ -25,7 +23,6 @@ public class TestBroker {
         var broker = new Broker("eip://uni-due.de/es");
         assertEquals("eip://uni-due.de/es", broker.ID());
     }
-
 
     @BeforeEach
     void init() {

@@ -4,7 +4,6 @@ import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 
-
 public class Twin {
 
     protected final String identifier;
@@ -66,4 +65,5 @@ public class Twin {
     public CommunicationEndpoint getEndpoint() {
         return endpoint;
     }
+
 }

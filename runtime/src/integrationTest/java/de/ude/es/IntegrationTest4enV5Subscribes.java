@@ -13,6 +13,7 @@ public class IntegrationTest4enV5Subscribes {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
         IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5("integTestTwin");
         twin.bind(broker);
-        twin.startPublishing();
+        twin.startPublishing(250);
     }
+
 }

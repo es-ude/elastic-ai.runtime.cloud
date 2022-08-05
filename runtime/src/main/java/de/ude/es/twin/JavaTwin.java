@@ -1,14 +1,10 @@
 package de.ude.es.twin;
 
-
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.PostingType;
 import de.ude.es.comm.Subscriber;
 
 public class JavaTwin extends Twin {
-
-    private final static String ON = "1";
-    private final static String OFF = "0";
 
     public JavaTwin(String identifier) {
         super(identifier);
@@ -57,4 +53,5 @@ public class JavaTwin extends Twin {
                 PostingType.SET.topic(dataId),
                 subscriber);
     }
+
 }

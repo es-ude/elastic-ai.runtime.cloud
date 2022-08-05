@@ -1,13 +1,11 @@
-package de.ude.es.twin;
+package de.ude.es.exampleTwins;
 
 import de.ude.es.SubscriberMock;
 import de.ude.es.comm.Broker;
 import de.ude.es.comm.Posting;
-import de.ude.es.exampleTwins.ENv5TwinStub;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 public class TestENv5Twin {
 

@@ -2,7 +2,6 @@ package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.twin.JavaTwin;
-import de.ude.es.twin.TwinStub;
 
 public class Main {
 
@@ -23,4 +22,5 @@ public class Main {
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);
     }
+
 }

@@ -1,13 +1,14 @@
 package de.ude.es.sink;
 
-import de.ude.es.comm.*;
+import de.ude.es.comm.Broker;
+import de.ude.es.comm.Posting;
+import de.ude.es.comm.Subscriber;
 import de.ude.es.exampleTwins.ENv5TwinStub;
 import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 
 class TestTemperatureSink {
 
@@ -81,17 +82,14 @@ class TestTemperatureSink {
         }
     }
 
-
     private Broker aBroker;
     private ENv5TwinStub device;
     private TwinForDeviceWithTemperatureSensor remoteTwin;
     private TemperatureSink temperature;
     private Posting post;
 
-
     @Test
     void temperatureSinkGetsUpdate() {
-
         aBroker = createBroker();
         device = createDeviceTwin();
         temperature = createTemperatureTwin(device);
@@ -104,7 +102,6 @@ class TestTemperatureSink {
 
     @Test
     void multipleTemperatureSinksGetUpdate() {
-
         aBroker = createBroker();
         device = createDeviceTwin();
         var tempTwin1 = createTemperatureTwin(device);
@@ -119,7 +116,6 @@ class TestTemperatureSink {
 
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
-
         aBroker = createBroker();
         var device1 = createDeviceTwin("/sensor");
         var device2 = createDeviceTwin("/twin4321");
@@ -135,7 +131,6 @@ class TestTemperatureSink {
 
     @Test
     void temperatureSinkCanReceiveMultipleUpdates() {
-
         createBroker();
         remoteTwin = createRemoteTwin();
         device = createDeviceTwin();

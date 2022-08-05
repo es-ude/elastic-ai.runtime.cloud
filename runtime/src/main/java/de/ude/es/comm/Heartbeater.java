@@ -45,4 +45,5 @@ public class Heartbeater {
             twin.publishHeartbeat(identifier);
         }
     }
+
 }

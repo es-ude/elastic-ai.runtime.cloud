@@ -22,9 +22,7 @@ class TestSimpleDataSource {
         }
     }
 
-
     private SimpleDataSourceChecker checker;
-
 
     @BeforeEach
     void init() {

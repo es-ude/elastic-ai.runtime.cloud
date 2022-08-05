@@ -1,11 +1,9 @@
-package de.ude.es.twin;
+package de.ude.es.exampleTwins;
 
 import de.ude.es.Checker;
 import de.ude.es.TimerMock;
-import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 public class TestTwinWithHeartbeat {
 
@@ -38,7 +36,6 @@ public class TestTwinWithHeartbeat {
     }
 
     private TwinWithHeartbeatChecker checker;
-
 
     @BeforeEach
     void init() {

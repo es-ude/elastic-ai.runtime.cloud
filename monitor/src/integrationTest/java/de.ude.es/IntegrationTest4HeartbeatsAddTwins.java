@@ -1,10 +1,8 @@
 package de.ude.es;
 
-import de.ude.es.comm.*;
-import de.ude.es.twin.JavaTwin;
+import de.ude.es.comm.HivemqBroker;
 import de.ude.es.exampleTwins.TwinWithHeartbeat;
-import de.ude.es.twin.Twin;
-import de.ude.es.twin.TwinStub;
+import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;

@@ -33,11 +33,9 @@ public class ControllableDataSource<T> {
         private final String heartbeatSource;
         private boolean isActive = true;
         private final Timeout timeout;
-        private TwinStub twinStub;
+        private final TwinStub twinStub;
 
         public Client(String heartbeatSource) {
-            double p = 2;
-            int a = (int) p;
             this.heartbeatSource = heartbeatSource;
             twinStub = new TwinStub(heartbeatSource);
             twinStub.bind(javaTwin.getEndpoint());
@@ -51,18 +49,15 @@ public class ControllableDataSource<T> {
         }
 
         private void handleHeartbeatReceived() {
-            if (isActive)
-                timeout.restart();
+            if (isActive) timeout.restart();
         }
 
         private void handleNoHeartbeatReceived(Timeout timeout) {
-            if (isActive)
-                deactivate();
+            if (isActive) deactivate();
         }
 
         public void stopAndRemoveAndUnsubscribe() {
-            if (isActive)
-                deactivate();
+            if (isActive) deactivate();
         }
 
         private void deactivate() {
@@ -75,7 +70,6 @@ public class ControllableDataSource<T> {
             return heartbeatSource.equals(identifier);
         }
     }
-
 
     public ControllableDataSource(String dataId, Timer timer) {
         this.timer = timer;
@@ -108,8 +102,7 @@ public class ControllableDataSource<T> {
     }
 
     public void set(T data) {
-        if (hasClients())
-            javaTwin.publishData(dataId, "" + data);
+        if (hasClients()) javaTwin.publishData(dataId, "" + data);
     }
 
 }

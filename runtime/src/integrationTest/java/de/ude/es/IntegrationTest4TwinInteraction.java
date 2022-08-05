@@ -1,10 +1,9 @@
 package de.ude.es;
 
 import de.ude.es.comm.Broker;
+import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
-import de.ude.es.exampleTwins.TwinWithHeartbeat;
-import de.ude.es.twin.Twin;
 import de.ude.es.twin.TwinStub;
 import org.junit.jupiter.api.Test;
 
@@ -86,7 +85,6 @@ public class IntegrationTest4TwinInteraction {
     private Broker broker;
     private TwinStub it;
 
-
     /**
      * This is an integration test that shows the basic interaction
      * between twins by exchanging a temperature that is measured by
@@ -100,11 +98,9 @@ public class IntegrationTest4TwinInteraction {
     void twinsCanCommunicate() {
         var broker = new Broker(DOMAIN);
 
-        var sensingDevice = new TwinThatOffersTemperature(
-                broker, PRODUCER);
+        var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
-        var consumingDevice = new TwinThatConsumesTemperature(
-                broker, CONSUMER, PRODUCER);
+        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
 
         sensingDevice.setNewTemperatureMeasured(11.6);
         consumingDevice.checkTemperatureIs(11.6);
@@ -112,7 +108,6 @@ public class IntegrationTest4TwinInteraction {
         sensingDevice.setNewTemperatureMeasured(1.7);
         consumingDevice.checkTemperatureIs(1.7);
     }
-
 
     @Test
     void communicationCanBeStopped() {
@@ -153,7 +148,6 @@ public class IntegrationTest4TwinInteraction {
         assertEquals(11.4, sink1.getCurrent());
         assertEquals(11.4, sink2.getCurrent());
     }
-
 
     private TemperatureSource createTemperatureSource() {
         var source = new TwinWithHeartbeat(PRODUCER);

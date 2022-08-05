@@ -6,8 +6,6 @@ package de.ude.es.comm;
  */
 public interface CommunicationEndpoint {
 
-    int x = 10;
-
     void publish(Posting posting);
 
     /**

@@ -1,8 +1,6 @@
 package de.ude.es.source;
 
-import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.twin.JavaTwin;
-import de.ude.es.twin.Twin;
 
 /**
  * A simple template class for data sources. Can be used by

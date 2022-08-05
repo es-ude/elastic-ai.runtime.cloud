@@ -6,9 +6,6 @@ import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.beans.JavaBean;
-
-
 public class TestHeartbeater {
 
     private static class HeartbeaterChecker extends Checker {
@@ -45,7 +42,6 @@ public class TestHeartbeater {
     }
 
     private HeartbeaterChecker checker;
-
 
     @BeforeEach
     void init() {

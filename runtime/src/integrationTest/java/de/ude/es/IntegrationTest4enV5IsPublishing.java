@@ -15,4 +15,5 @@ public class IntegrationTest4enV5IsPublishing {
         twin.bind(broker);
         twin.startSubscribing("testPub");
     }
+
 }

@@ -23,7 +23,6 @@ public class TimerMock implements Timer {
         public void fire() {
             this.client.timeout(this);
         }
-
         @Override
         public void restart() {
         }
@@ -31,5 +30,7 @@ public class TimerMock implements Timer {
         @Override
         public void stop() {
         }
+
     }
+
 }

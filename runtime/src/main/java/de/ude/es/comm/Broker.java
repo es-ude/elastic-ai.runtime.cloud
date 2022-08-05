@@ -3,7 +3,6 @@ package de.ude.es.comm;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
  * A broker is the central communication center for a deployment.
  * It is responsible for managing subscriptions and forwarding
@@ -15,10 +14,7 @@ import java.util.stream.Collectors;
  */
 public class Broker implements CommunicationEndpoint {
 
-    private static record Subscription(
-            List<String> topicFilter,
-            Subscriber subscriber
-    ) {
+    private static record Subscription(List<String> topicFilter, Subscriber subscriber) {
 
         public Subscription(String topicFilter, Subscriber subscriber) {
             this(getTokensWithCollection(topicFilter), subscriber);
@@ -29,9 +25,7 @@ public class Broker implements CommunicationEndpoint {
         }
 
         private static List<String> getTokensWithCollection(String str) {
-            return Collections.list(new StringTokenizer(str, "/")).stream()
-                    .map(token -> (String) token)
-                    .collect(Collectors.toList());
+            return Collections.list(new StringTokenizer(str, "/")).stream().map(token -> (String) token).collect(Collectors.toList());
         }
 
     }
@@ -49,8 +43,7 @@ public class Broker implements CommunicationEndpoint {
         public boolean check() {
             while (hasMoreTokensToCheck()) {
                 boolean isDone = checkToken(msgTokens.next(), filterTokens.next());
-                if (isDone)
-                    return isMatching;
+                if (isDone) return isMatching;
             }
             return allTokensConsumed();
         }
@@ -90,10 +83,8 @@ public class Broker implements CommunicationEndpoint {
 
     }
 
-
     private final List<Subscription> subscriptions = new LinkedList<>();
     private final String identifier;
-
 
     public Broker(String identifier) {
         this.identifier = identifier;
@@ -146,11 +137,8 @@ public class Broker implements CommunicationEndpoint {
         }
     }
 
-    private void deliverIfTopicMatches(
-            Posting msg,
-            Subscription subscription) {
-        if (subscription.matches(msg.topic()))
-            subscription.subscriber().deliver(msg);
+    private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
+        if (subscription.matches(msg.topic())) subscription.subscriber().deliver(msg);
     }
 
 }
