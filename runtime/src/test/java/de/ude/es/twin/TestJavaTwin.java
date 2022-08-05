@@ -34,6 +34,26 @@ public class TestJavaTwin {
             device.subscribeForDataStartRequest(dataId, subscriber);
         }
 
+        public void whenUnsubscribingFromDataStart(String dataId) {
+            device.unsubscribeFromDataStartRequest(dataId, subscriber);
+        }
+
+        public void whenSubscribingForDataStop(String dataId) {
+            device.subscribeForDataStopRequest(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromDataStop(String dataId) {
+            device.unsubscribeFromDataStopRequest(dataId, subscriber);
+        }
+
+        public void whenSubscribingForCommand(String dataId) {
+            device.subscribeForCommand(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromCommand(String dataId) {
+            device.unsubscribeFromCommand(dataId, subscriber);
+        }
+
     }
 
     private JavaTwinChecker checker;
@@ -64,6 +84,44 @@ public class TestJavaTwin {
         checker.whenSubscribingForDataStart("data");
         checker.whenPostingIsPublishedAtBroker("/" + twinID + "/START/data", twinID);
         checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromDataStartRequest() {
+        checker.whenSubscribingForDataStart("data");
+        checker.whenUnsubscribingFromDataStart("data");
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/START/data", twinID);
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void weCanSubscribeForDataStopRequest() {
+        checker.whenSubscribingForDataStop("data");
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STOP/data", twinID);
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromDataStopRequest() {
+        checker.whenSubscribingForDataStop("data");
+        checker.whenUnsubscribingFromDataStop("data");
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STOP/data", twinID);
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void weCanSubscribeForCommand() {
+        checker.whenSubscribingForCommand("data");
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/SET/data", twinID);
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromCommand() {
+        checker.whenSubscribingForCommand("data");
+        checker.whenUnsubscribingFromCommand("data");
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/SET/data", twinID);
+        checker.thenPostingIsNotDelivered();
     }
 
 }

@@ -29,6 +29,18 @@ public class TestTwinStub {
             device.subscribeForHeartbeat(subscriber);
         }
 
+        public void whenUnsubscribingFromHeartbeat() {
+            device.unsubscribeFromHeartbeat(subscriber);
+        }
+
+        public void whenSubscribingForLost() {
+            device.subscribeForLost(subscriber);
+        }
+
+        public void whenUnsubscribingFromLost() {
+            device.unsubscribeFromLost(subscriber);
+        }
+
         public void whenAskingForDataStart(String data, String receiver) {
             String topic = device.ID() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
@@ -77,7 +89,7 @@ public class TestTwinStub {
     }
 
     @Test
-    void weCanUnsubscribeForData() {
+    void weCanUnsubscribeFromData() {
         checker.whenSubscribingForData("/light");
         checker.whenUnsubscribingFromData("/light");
         checker.whenPostingIsPublishedAtBroker("/" + twinID + "/DATA/light", "33");
@@ -89,6 +101,29 @@ public class TestTwinStub {
         checker.whenSubscribingForHeartbeat();
         checker.whenPostingIsPublishedAtBroker("/" + twinID + "/HEART", "");
         checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromHeartbeat() {
+        checker.whenSubscribingForHeartbeat();
+        checker.whenUnsubscribingFromHeartbeat();
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/HEART/light", "33");
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void weCanSubscribeForLost() {
+        checker.whenSubscribingForLost();
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromLost() {
+        checker.whenSubscribingForLost();
+        checker.whenUnsubscribingFromLost();
+        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
+        checker.thenPostingIsNotDelivered();
     }
 
     @Test
