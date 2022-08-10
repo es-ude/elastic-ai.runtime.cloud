@@ -2,13 +2,11 @@ package de.ude.es.source;
 
 import de.ude.es.Checker;
 import de.ude.es.TimerMock;
-import de.ude.es.comm.Protocol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 class TestStartableDataSource {
 
@@ -19,9 +17,8 @@ class TestStartableDataSource {
 
         public void givenDataSource() {
             timer = new TimerMock();
-            Protocol protocol = new Protocol(twin);
-            dataSource = new ControllableDataSource<>("/data", timer);
-            dataSource.bind(protocol);
+            dataSource = new ControllableDataSource<>("data", timer);
+            dataSource.bind(javaTwin);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
@@ -29,8 +26,8 @@ class TestStartableDataSource {
             whenPostingIsPublishedAtBroker(topic, sink);
         }
 
-        public void givenDigitalTwin() {
-            givenDigitalTwin("/twin1234");
+        public void givenJavaTwin() {
+            givenJavaTwin("/twin1234");
         }
 
         public void whenTimeoutOccurs() {
@@ -47,33 +44,24 @@ class TestStartableDataSource {
 
     }
 
-
     private DataSourceChecker checker;
 
-
     @BeforeEach
-    void init() {
+    public void SetUp() {
         checker = new DataSourceChecker();
+        checker.givenBroker();
+        checker.givenJavaTwin("/twin1234");
+        checker.givenDataSource();
     }
 
     @Test
     void whenTemperatureSourceIsBoundItSubscribesForStartAndStop() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin();
-        checker.givenDataSource();
-
         checker.thenSubscriptionIsDoneFor("/START/data");
         checker.thenSubscriptionIsDoneFor("/STOP/data");
     }
 
     @Test
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin();
-        checker.givenDataSource();
-
         checker.whenPostingIsPublishedAtBroker(
                 "/twin1234/START/data",
                 "/me"
@@ -84,10 +72,6 @@ class TestStartableDataSource {
 
     @Test
     void whenStopRequestIsSentThenTemperatureSourceReceivesIt() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin();
-        checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();
 
@@ -101,11 +85,6 @@ class TestStartableDataSource {
 
     @Test
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForHeartbeats() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
-        checker.givenDataSource();
-
         checker.whenPostingIsPublishedAtBroker(
                 "/twin1234/START/data",
                 "/me"
@@ -115,12 +94,7 @@ class TestStartableDataSource {
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromHeartbeats() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
-        checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
-
         checker.whenPostingIsPublishedAtBroker(
                 "/twin1234/STOP/data",
                 "/me"
@@ -131,12 +105,7 @@ class TestStartableDataSource {
 
     @Test
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
-        checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
-
         checker.whenPostingIsPublishedAtBroker(
                 "/twin1234/STOP/data",
                 "/me"
@@ -153,10 +122,6 @@ class TestStartableDataSource {
 
     @Test
     void whenRequesterHeartbeatsTimeOutThenTemperatureSourceRemovesItAsClient() {
-
-        checker.givenBroker();
-        checker.givenDigitalTwin("/twin1234");
-        checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();
 

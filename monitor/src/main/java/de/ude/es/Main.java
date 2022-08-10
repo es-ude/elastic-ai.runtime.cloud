@@ -1,7 +1,7 @@
 package de.ude.es;
 
 import de.ude.es.comm.HivemqBroker;
-import de.ude.es.twin.DigitalTwin;
+import de.ude.es.twin.JavaTwin;
 
 public class Main {
 
@@ -13,12 +13,14 @@ public class Main {
         twinList = new TwinList(kikTime);
         HivemqBroker broker = new HivemqBroker(DOMAIN);
 
-        var sink = new DigitalTwin("monitor");
+        var sink = new JavaTwin("monitor");
         sink.bind(broker);
+
         HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
-        heartbeatSubscriber.bind(sink);
+        heartbeatSubscriber.bind(broker);
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);
     }
+
 }

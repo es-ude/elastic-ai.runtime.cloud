@@ -1,24 +1,15 @@
 package de.ude.es.twin;
 
-
 import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 
-/**
- * This is the base class for all digital twins, i.e., local
- * entities that represent some remote object, device, room
- * or measured phenomenon like temperature or sound.
- * It provides the ability to bind your twin to a data source
- * via a CommunicationEndpoint! Everything else has to be
- * added by subclasses.
- */
-public class DigitalTwin implements CommunicationEndpoint {
+public class Twin {
 
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
-    public DigitalTwin(String identifier) {
+    public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
 
@@ -28,6 +19,19 @@ public class DigitalTwin implements CommunicationEndpoint {
         if (identifier.endsWith("/"))
             identifier = identifier.substring(0, identifier.length() - 1);
         return identifier;
+    }
+
+    protected void subscribe(String topic, Subscriber subscriber) {
+        endpoint.subscribe(identifier + topic, subscriber);
+    }
+
+    protected void unsubscribe(String topic, Subscriber subscriber) {
+        endpoint.unsubscribe(identifier + topic, subscriber);
+    }
+
+    protected void publish(Posting posting) {
+        Posting toSend = posting.cloneWithTopicAffix(identifier);
+        endpoint.publish(toSend);
     }
 
     /**
@@ -54,35 +58,12 @@ public class DigitalTwin implements CommunicationEndpoint {
     protected void executeOnBind() {
     }
 
-    @Override
-    public void publish(Posting posting) {
-        Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend);
-    }
-
-    @Override
-    public void subscribe(String topic, Subscriber subscriber) {
-        endpoint.subscribe(identifier + topic, subscriber);
-    }
-
-    @Override
-    public void subscribeRaw(String topic, Subscriber subscriber) {
-        endpoint.subscribeRaw(topic, subscriber);
-    }
-
-    @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        endpoint.unsubscribeRaw(topic, subscriber);
-    }
-
-    @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(identifier + topic, subscriber);
-    }
-
-    @Override
     public String ID() {
         return endpoint.ID() + identifier;
+    }
+
+    public CommunicationEndpoint getEndpoint() {
+        return endpoint;
     }
 
 }

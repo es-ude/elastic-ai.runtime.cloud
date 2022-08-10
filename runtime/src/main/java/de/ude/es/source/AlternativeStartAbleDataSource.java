@@ -1,14 +1,14 @@
 package de.ude.es.source;
 
 import de.ude.es.comm.Posting;
-import de.ude.es.comm.Protocol;
 import de.ude.es.comm.Subscriber;
+import de.ude.es.twin.JavaTwin;
+import de.ude.es.twin.TwinStub;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class AlternativeStartableDataSource<T> extends DataSource<T> {
+public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
     protected ClientList clients = new ClientList();
 
@@ -19,9 +19,13 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
             private final String id;
             private boolean isActive;
 
+            private final TwinStub twinStub;
+
             public Client(String id) {
                 this.id = id;
-                protocol.subscribeForLost(id, this);
+                twinStub = new TwinStub(id);
+                twinStub.bind(javaTwin.getEndpoint());
+                twinStub.subscribeForLost(this);
                 isActive = true;
             }
 
@@ -34,7 +38,7 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
                 if (isActive) {
                     isActive = false;
                     clients.remove(this);
-                    protocol.unsubscribeFromLost(id, this);
+                    twinStub.unsubscribeFromLost(this);
                 }
             }
 
@@ -65,14 +69,13 @@ public class AlternativeStartableDataSource<T> extends DataSource<T> {
 
     }
 
-
-    public AlternativeStartableDataSource(String dataId) {
+    public AlternativeStartAbleDataSource(String dataId) {
         super(dataId);
     }
 
     @Override
-    public void bind(Protocol protocol) {
-        this.protocol = protocol;
+    public void bind(JavaTwin protocol) {
+        this.javaTwin = protocol;
         protocol.subscribeForDataStartRequest(dataId, this::handleNewClient);
         protocol.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
     }

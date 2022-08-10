@@ -1,27 +1,24 @@
 package de.ude.es;
 
 import de.ude.es.comm.Broker;
-import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
-import de.ude.es.twin.DigitalTwin;
+import de.ude.es.twin.JavaTwin;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class Checker {
 
-    public Broker broker;
-    public DigitalTwin twin;
+    public TestBroker broker;
+    public JavaTestTwin javaTwin;
     public SubscriberMock subscriber = new SubscriberMock();
-
     public Posting expected;
     public List<String> subscriptions = new ArrayList<>();
     public List<String> unsubscribes = new ArrayList<>();
-
+    public final String DOMAIN = "eip://uni-due.de/es";
 
     //-- for testing (non)reception of a posting :
 
@@ -32,7 +29,6 @@ public class Checker {
     public void thenPostingIsNotDelivered() {
         subscriber.checkNoPostingDelivered();
     }
-
 
     //-- for testing (un)subscription of a topic :
 
@@ -58,107 +54,103 @@ public class Checker {
         return topics.toString();
     }
 
-
     //-- for testing with broker :
 
+    public class TestBroker extends Broker {
+
+        public TestBroker(String identifier) {
+            super(identifier);
+        }
+
+        @Override
+        public void subscribe(String topic, Subscriber subscriber) {
+            subscriptions.add(topic);
+            super.subscribe(topic, subscriber);
+        }
+
+        @Override
+        public void unsubscribe(String topic, Subscriber subscriber) {
+            unsubscribes.add(topic);
+            super.unsubscribe(topic, subscriber);
+        }
+
+        @Override
+        public void publish(Posting topic) {
+            super.publish(topic);
+        }
+    }
 
     public void givenBroker() {
-        broker = new Broker("eip://uni-due.de/es");
+        broker = new TestBroker(DOMAIN);
     }
 
     public void givenSubscriptionAtBrokerFor(String topic) {
-        givenSubscriptionAtFor(broker, topic);
+        broker.subscribe(topic, subscriber);
     }
 
     public void givenUnsubscribeAtBrokerFor(String topic) {
-        givenUnsubscribeAtFor(broker, topic);
-    }
-
-    public void whenPostingIsPublishedAtBroker(String topic, String data) {
-        whenPostingIsPublishedAt(broker, topic, data);
+        broker.unsubscribe(topic, subscriber);
     }
 
     public void whenPostingIsPublishedAtBroker(String topic) {
-        this.whenPostingIsPublishedAt(broker, topic);
+        whenPostingIsPublishedAtBroker(topic, "");
     }
 
-
-    //-- for testing with digital twin :
-
-    public void givenDigitalTwin(String id) {
-        twin = new DigitalTwin(id) {
-            @Override
-            public void subscribe(String topic, Subscriber subscriber) {
-                subscriptions.add(topic);
-                super.subscribe(topic, subscriber);
-            }
-
-            @Override
-            public void subscribeRaw(String topic, Subscriber subscriber) {
-                subscriptions.add(topic);
-                super.subscribeRaw(topic, subscriber);
-            }
-
-            @Override
-            public void unsubscribeRaw(String topic, Subscriber subscriber) {
-                unsubscribes.add(topic);
-                super.unsubscribeRaw(topic, subscriber);
-            }
-
-        };
-        twin.bind(broker);
+    public void whenPostingIsPublishedAtBroker(String topic, String data) {
+        String fullTopic = broker.ID() + topic;
+        expected = new Posting(fullTopic, data);
+        broker.publish(new Posting(topic, data));
     }
 
-    public void givenSubscriptionAtDigitalTwinFor(String topic) {
-        this.givenSubscriptionAtFor(twin, topic);
+    //-- for testing with JavaTwin :
+
+    public class JavaTestTwin extends JavaTwin {
+
+        public JavaTestTwin(String identifier) {
+            super(identifier);
+        }
+
+        @Override
+        public void subscribe(String topic, Subscriber subscriber) {
+            subscriptions.add(topic);
+            super.subscribe(topic, subscriber);
+        }
+
+        @Override
+        public void unsubscribe(String topic, Subscriber subscriber) {
+            unsubscribes.add(topic);
+            super.unsubscribe(topic, subscriber);
+        }
+
+        @Override
+        public void publish(Posting topic) {
+            super.publish(topic);
+        }
     }
 
-    public void givenRawSubscriptionAtDigitalTwinFor(String topic) {
-        this.givenRawSubscriptionAtFor(twin, topic);
+    public void givenJavaTwin(String id) {
+        javaTwin = new JavaTestTwin(id);
+        javaTwin.bind(broker);
     }
 
-    public void whenPostingIsPublishedAtDigitalTwin(String topic) {
-        whenPostingIsPublishedAt(twin, topic);
+    public void givenSubscriptionAtJavaTwinFor(String topic) {
+        javaTwin.subscribe(topic, subscriber);
     }
 
-    public void givenUnsubscriptionAtDigitalTwinFor(String topic) {
-        this.givenUnsubscribeAtFor(twin, topic);
+    public void givenUnsubscriptionAtJavaTwinFor(String topic) {
+        javaTwin.unsubscribe(topic, subscriber);
     }
 
-    public void givenRawUnsubscriptionAtDigitalTwinFor(String topic) {
-        this.givenRawUnsubscribeFor(twin, topic);
+    public void whenPostingIsPublishedAtJavaTwin(String topic) {
+        this.whenPostingIsPublishedAtJavaTwin(topic, "");
     }
 
-
-    //-- for child classes :
-
-    protected void givenRawUnsubscribeFor(CommunicationEndpoint channel, String topic) {
-        channel.unsubscribeRaw(topic, subscriber);
-    }
-
-    protected void givenRawSubscriptionAtFor(CommunicationEndpoint channel, String topic) {
-        channel.subscribeRaw(topic, subscriber);
-    }
-
-    protected void givenSubscriptionAtFor(CommunicationEndpoint channel, String topic) {
-        channel.subscribe(topic, subscriber);
-    }
-
-    protected void givenUnsubscribeAtFor(CommunicationEndpoint channel, String topic) {
-        channel.unsubscribe(topic, subscriber);
-    }
-
-    protected void whenPostingIsPublishedAt(CommunicationEndpoint channel, String topic, String data) {
-        String fullTopic = channel.ID() + topic;
+    public void whenPostingIsPublishedAtJavaTwin(String topic, String data) {
+        String fullTopic = javaTwin.ID() + topic;
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);
-        channel.publish(posting);
+        javaTwin.publish(posting);
     }
-
-    protected void whenPostingIsPublishedAt(CommunicationEndpoint channel, String topic) {
-        this.whenPostingIsPublishedAt(channel, topic, "");
-    }
-
 
 }

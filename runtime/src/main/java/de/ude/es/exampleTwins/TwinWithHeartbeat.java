@@ -1,30 +1,23 @@
-package de.ude.es.twin;
+package de.ude.es.exampleTwins;
 
 import de.ude.es.comm.Heartbeater;
-import de.ude.es.comm.Protocol;
+import de.ude.es.twin.JavaTwin;
 import de.ude.es.util.Timer;
 
-public class TwinWithHeartbeat extends DigitalTwin {
+public class TwinWithHeartbeat extends JavaTwin {
 
     private Heartbeater heartbeater;
-    private Protocol protocol;
 
     public TwinWithHeartbeat(String identifier) {
         super(identifier);
     }
 
-    protected void executeOnBind() {
-        protocol = new Protocol(endpoint);
-    }
-
     public void startHeartbeats(Timer timer, int timePeriodInMs) {
-        heartbeater = new Heartbeater(protocol, identifier, timer, timePeriodInMs);
+        heartbeater = new Heartbeater(this, identifier, timer, timePeriodInMs);
         heartbeater.start();
     }
-
     public void stopHeartbeats() {
         heartbeater.stop();
     }
-
 
 }

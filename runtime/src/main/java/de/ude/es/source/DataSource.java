@@ -1,7 +1,6 @@
 package de.ude.es.source;
 
-import de.ude.es.comm.CommunicationEndpoint;
-import de.ude.es.comm.Protocol;
+import de.ude.es.twin.JavaTwin;
 
 /**
  * A simple template class for data sources. Can be used by
@@ -12,25 +11,20 @@ import de.ude.es.comm.Protocol;
  */
 public class DataSource<T> {
 
-    protected Protocol protocol;
+    protected JavaTwin javaTwin;
 
     protected final String dataId;
-
 
     public DataSource(String dataId) {
         this.dataId = dataId;
     }
 
-    public void bind(Protocol protocol) {
-        this.protocol = protocol;
-    }
-
-    public void bind(CommunicationEndpoint endpoint) {
-        bind(new Protocol(endpoint));
+    public void bind(JavaTwin javaTwin) {
+        this.javaTwin = javaTwin;
     }
 
     public void set(T data) {
-        protocol.publishData(dataId, "" + data);
+        javaTwin.publishData(dataId, "" + data);
     }
 
 }

@@ -1,10 +1,13 @@
 package de.ude.es;
 
-import de.ude.es.comm.*;
+import de.ude.es.comm.CommunicationEndpoint;
+import de.ude.es.comm.HivemqBroker;
+import de.ude.es.comm.Posting;
+import de.ude.es.comm.Subscriber;
+import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
-import de.ude.es.twin.DigitalTwin;
-import de.ude.es.twin.TwinWithHeartbeat;
+import de.ude.es.twin.TwinStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -23,7 +26,6 @@ public class IntegrationTest4ExternalBroker {
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
-
 
     @Container
     public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
@@ -66,7 +68,7 @@ public class IntegrationTest4ExternalBroker {
 
     private static class TwinThatConsumesTemperature {
 
-        private DigitalTwin remoteDeviceTwin;
+        private TwinStub remoteDeviceTwin;
         private TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(HivemqBroker broker, String local, String remote) {
@@ -82,7 +84,7 @@ public class IntegrationTest4ExternalBroker {
         }
 
         private void createTwinForRemoteDevice(HivemqBroker broker, String id) {
-            remoteDeviceTwin = new DigitalTwin(id);
+            remoteDeviceTwin = new TwinStub(id);
             remoteDeviceTwin.bind(broker);
         }
 
@@ -115,17 +117,14 @@ public class IntegrationTest4ExternalBroker {
             }
         }
 
-        private Protocol protocol;
+        private TwinStub twinStub;
         private DataSubscriber subscriber;
 
-        public void bind(CommunicationEndpoint endpoint) {
-            bind(new Protocol(endpoint));
-        }
-
-        public void bind(Protocol protocol) {
-            this.protocol = protocol;
+        public void bind(CommunicationEndpoint broker) {
+            this.twinStub = new TwinStub("+");
+            twinStub.bind(broker);
             this.subscriber = new DataSubscriber();
-            this.protocol.subscribeForHeartbeat(DOMAIN + "/+", subscriber);
+            this.twinStub.subscribeForHeartbeat(subscriber);
         }
 
         public int getHeartbeatCount() {
@@ -143,7 +142,7 @@ public class IntegrationTest4ExternalBroker {
     }
 
     private HivemqBroker broker;
-    private DigitalTwin it;
+    private TwinStub it;
     private TimerMock timer;
 
     /**
@@ -293,7 +292,7 @@ public class IntegrationTest4ExternalBroker {
         sink.bind(broker);
 
         var heartbeatSubscriber = new HeartbeatSubscriber();
-        heartbeatSubscriber.bind(sink);
+        heartbeatSubscriber.bind(broker);
 
         return heartbeatSubscriber;
     }
@@ -316,11 +315,12 @@ public class IntegrationTest4ExternalBroker {
         sink.bind(broker);
         sink.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
 
-        it = new DigitalTwin(PRODUCER);
+        it = new TwinStub(PRODUCER);
         it.bind(broker);
         var tempSink = new TemperatureSink(sink.ID());
         tempSink.bind(it);
 
         return tempSink;
     }
+
 }

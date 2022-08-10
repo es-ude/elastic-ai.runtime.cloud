@@ -1,10 +1,10 @@
 package de.ude.es;
 
 import de.ude.es.comm.Broker;
+import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
-import de.ude.es.twin.DigitalTwin;
-import de.ude.es.twin.TwinWithHeartbeat;
+import de.ude.es.twin.TwinStub;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,7 +51,7 @@ public class IntegrationTest4TwinInteraction {
 
     private static class TwinThatConsumesTemperature {
 
-        private DigitalTwin remoteDeviceTwin;
+        private TwinStub remoteDeviceTwin;
         private TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(Broker broker, String local, String remote) {
@@ -67,7 +67,7 @@ public class IntegrationTest4TwinInteraction {
         }
 
         private void createTwinForRemoteDevice(Broker broker, String id) {
-            remoteDeviceTwin = new DigitalTwin(id);
+            remoteDeviceTwin = new TwinStub(id);
             remoteDeviceTwin.bind(broker);
         }
 
@@ -83,8 +83,7 @@ public class IntegrationTest4TwinInteraction {
     }
 
     private Broker broker;
-    private DigitalTwin it;
-
+    private TwinStub it;
 
     /**
      * This is an integration test that shows the basic interaction
@@ -99,11 +98,9 @@ public class IntegrationTest4TwinInteraction {
     void twinsCanCommunicate() {
         var broker = new Broker(DOMAIN);
 
-        var sensingDevice = new TwinThatOffersTemperature(
-                broker, PRODUCER);
+        var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
-        var consumingDevice = new TwinThatConsumesTemperature(
-                broker, CONSUMER, PRODUCER);
+        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
 
         sensingDevice.setNewTemperatureMeasured(11.6);
         consumingDevice.checkTemperatureIs(11.6);
@@ -111,7 +108,6 @@ public class IntegrationTest4TwinInteraction {
         sensingDevice.setNewTemperatureMeasured(1.7);
         consumingDevice.checkTemperatureIs(1.7);
     }
-
 
     @Test
     void communicationCanBeStopped() {
@@ -153,7 +149,6 @@ public class IntegrationTest4TwinInteraction {
         assertEquals(11.4, sink2.getCurrent());
     }
 
-
     private TemperatureSource createTemperatureSource() {
         var source = new TwinWithHeartbeat(PRODUCER);
         source.bind(broker);
@@ -170,13 +165,12 @@ public class IntegrationTest4TwinInteraction {
         sink.bind(broker);
         sink.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
 
-        it = new DigitalTwin(PRODUCER);
+        it = new TwinStub(PRODUCER);
         it.bind(broker);
         var tempSink = new TemperatureSink(sink.ID());
         tempSink.bind(it);
 
         return tempSink;
     }
-
 
 }

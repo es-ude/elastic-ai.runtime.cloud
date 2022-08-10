@@ -1,6 +1,5 @@
 package de.ude.es;
 
-
 import de.ude.es.util.MonitorTimer;
 
 public class TwinData {

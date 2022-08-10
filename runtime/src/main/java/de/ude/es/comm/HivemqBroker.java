@@ -15,13 +15,8 @@ public class HivemqBroker implements CommunicationEndpoint {
     private final String identifier;
 
     private void connectToClient(String identifier, String ip, int port) {
-
         Mqtt5BlockingClient blockingClient =
-                MqttClient.builder()
-                        .useMqttVersion5()
-                        .identifier(identifier)
-                        .serverHost(ip)
-                        .serverPort(port)
+                MqttClient.builder().useMqttVersion5().identifier(identifier).serverHost(ip).serverPort(port)
                         //  .automaticReconnectWithDefaultConfig()
                         .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
@@ -41,19 +36,15 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void publish(Posting posting) {
-        client.publishWith()
-                .topic(posting.cloneWithTopicAffix(identifier).topic())
-                .payload(posting.data().getBytes())
-                .qos(MqttQos.EXACTLY_ONCE).send()
-                .whenComplete((pubAck, throwable) -> onPublishComplete(pubAck, throwable));
-
+        client.publishWith().topic(posting.cloneWithTopicAffix(identifier).topic()).payload(
+                posting.data().getBytes()).qos(MqttQos.EXACTLY_ONCE).send().whenComplete(this::onPublishComplete);
     }
 
     private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
         if (throwable != null) {
-            System.out.println("publish failed");
+            System.out.println("Publishing failed for\t" + pubAck.getPublish().getTopic());
         } else {
-            System.out.println("Successfully published to: " + pubAck.getPublish().getTopic());
+            System.out.println("Published to:\t" + pubAck.getPublish().getTopic());
         }
     }
 
@@ -69,17 +60,16 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        client.subscribeWith()
-                .topicFilter(topic)
-                .callback(publish -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
+        client.subscribeWith().topicFilter(topic).callback(publish
+                        -> subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get()))))
                 .send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
     }
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
         if (subFailed != null) {
-            System.out.println("sub failed: " + topic);
+            System.out.println("Subscription failed:\t" + topic);
         } else {
-            System.out.println("Subscribed to: " + topic);
+            System.out.println("Subscribed to:\t" + topic);
         }
     }
 
@@ -91,14 +81,15 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable) -> onUnsubscribeComplete(throwable, topic)));
+        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable)
+                -> onUnsubscribeComplete(throwable, topic)));
     }
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
         if (throwable != null) {
-            System.out.println("unsub failed for: " + topic);
+            System.out.println("Unsubscription failed for:\t" + topic);
         } else {
-            System.out.println("unsubscribe from: " + topic);
+            System.out.println("Unsubscribe from:\t" + topic);
         }
     }
 
@@ -110,4 +101,5 @@ public class HivemqBroker implements CommunicationEndpoint {
     public void closeConnection() {
         client.disconnect();
     }
+
 }

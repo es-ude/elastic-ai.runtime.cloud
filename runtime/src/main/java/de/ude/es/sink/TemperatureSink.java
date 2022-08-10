@@ -1,9 +1,8 @@
 package de.ude.es.sink;
 
-import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.Posting;
-import de.ude.es.comm.Protocol;
 import de.ude.es.comm.Subscriber;
+import de.ude.es.twin.TwinStub;
 
 
 /**
@@ -14,6 +13,8 @@ import de.ude.es.comm.Subscriber;
  * the temperature.
  */
 public class TemperatureSink {
+
+    private TwinStub twin;
 
     private class DataSubscriber implements Subscriber {
 
@@ -26,16 +27,14 @@ public class TemperatureSink {
         }
     }
 
-
     private final String dataId;
     private final String localId;
     private double temperature = 0.0;
-    private Protocol protocol;
     private DataSubscriber subscriber;
     private volatile boolean newTemperatureAvailable = false;
 
     public TemperatureSink(String localTwinId) {
-        this.dataId = "/temperature";
+        this.dataId = "temperature";
         this.localId = localTwinId;
     }
 
@@ -47,20 +46,16 @@ public class TemperatureSink {
         return newTemperatureAvailable;
     }
 
-    public void bind(CommunicationEndpoint endpoint) {
-        bind(new Protocol(endpoint));
-    }
-
-    public void bind(Protocol protocol) {
-        this.protocol = protocol;
+    public void bind(TwinStub twin) {
+        this.twin = twin;
         this.subscriber = new DataSubscriber();
-        this.protocol.subscribeForData(dataId, subscriber);
-        this.protocol.publishDataStartRequest(dataId, localId);
+        this.twin.subscribeForData(dataId, subscriber);
+        this.twin.publishDataStartRequest(dataId, localId);
     }
 
     public void unbind() {
-        protocol.unsubscribeFromData(dataId, subscriber);
-        protocol.publishDataStopRequest(dataId, localId);
+        twin.unsubscribeFromData(dataId, subscriber);
+        twin.publishDataStopRequest(dataId, localId);
     }
 
     public Double getCurrent() {

@@ -22,7 +22,6 @@ public class TestTwinList {
         twinList.addTwin("ID2");
     }
 
-
     @Test
     void testChangeTwinName() {
         twinList.changeTwinName("ID0", "Twin_0_new_name");

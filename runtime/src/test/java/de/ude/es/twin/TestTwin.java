@@ -7,21 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-public class TestDigitalTwin {
+public class TestTwin {
 
     private Checker checker;
-
-
-    @Test
-    void canReportItsId() {
-        var broker = new Broker("eip://uni-due.de/es");
-        var device = new DigitalTwin("/twin1234");
-        device.bind(broker);
-        assertEquals(
-                "eip://uni-due.de/es/twin1234",
-                device.ID());
-    }
 
     @BeforeEach
     void init() {
@@ -45,8 +33,8 @@ public class TestDigitalTwin {
     }
 
     private void checkUpdateDelivered(String id) {
-        checker.givenDigitalTwin(id);
-        checker.givenSubscriptionAtDigitalTwinFor(
+        checker.givenJavaTwin(id);
+        checker.givenSubscriptionAtJavaTwinFor(
                 "/DATA/temperature");
         checker.whenPostingIsPublishedAtBroker(
                 "/twin1234/DATA/temperature");
@@ -54,35 +42,30 @@ public class TestDigitalTwin {
     }
 
     @Test
-    void subscribingRawDoesNotModifyTopic() {
-        checker.givenDigitalTwin("/aTwin");
-        checker.givenRawSubscriptionAtDigitalTwinFor("/data");
-        checker.whenPostingIsPublishedAtDigitalTwin("/data");
-        checker.thenPostingIsNotDelivered();
-        checker.givenRawSubscriptionAtDigitalTwinFor("eip://uni-due.de/es/aTwin/data");
-        checker.whenPostingIsPublishedAtDigitalTwin("/data");
-        checker.thenPostingIsDelivered();
-    }
-
-
-    @Test
     void NoUnsubscribeIfWrongTopic() {
-        checker.givenDigitalTwin("/twin1234");
-        checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");
-        checker.givenRawUnsubscriptionAtDigitalTwinFor("eip://uni-due.de/es/DATA/temperature");
+        checker.givenJavaTwin("/twin1234");
+        checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
+        checker.givenUnsubscriptionAtJavaTwinFor("eip://uni-due.de/es/DATA/temperature");
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void subscriberCanUnsubscribe() {
-        checker.givenDigitalTwin("/twin1234");
+        checker.givenJavaTwin("/twin1234");
 
-        checker.givenSubscriptionAtDigitalTwinFor("/DATA/temperature");
-        checker.givenUnsubscriptionAtDigitalTwinFor("/DATA/temperature");
+        checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
+        checker.givenUnsubscriptionAtJavaTwinFor("/DATA/temperature");
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
         checker.thenPostingIsNotDelivered();
     }
 
+    @Test
+    void weCanReportId() {
+        var broker = new Broker("broker");
+        var twin = new Twin("twin");
+        twin.bind(broker);
+        assertEquals("broker/twin", twin.ID());
+    }
 
 }

@@ -1,20 +1,20 @@
 package de.ude.es.sink;
 
-import de.ude.es.comm.*;
-import de.ude.es.twin.DigitalTwin;
-import de.ude.es.twin.ENv5Twin;
+import de.ude.es.comm.Broker;
+import de.ude.es.comm.Posting;
+import de.ude.es.comm.Subscriber;
+import de.ude.es.exampleTwins.ENv5TwinStub;
+import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 class TestTemperatureSink {
 
-    private static class TwinForDeviceWithTemperatureSensor extends DigitalTwin implements CommunicationEndpoint {
+    private static class TwinForDeviceWithTemperatureSensor extends JavaTwin {
 
         private Posting deliveredPosting = null;
-        private Protocol protocol;
         private final String id;
 
         public TwinForDeviceWithTemperatureSensor(String id) {
@@ -38,9 +38,8 @@ class TestTemperatureSink {
 
         @Override
         protected void executeOnBind() {
-            protocol = new Protocol(this);
-            protocol.subscribeForDataStartRequest("/temperature", this::deliver);
-            protocol.subscribeForDataStopRequest("/temperature", this::deliver);
+            this.subscribeForDataStartRequest("temperature", this::deliver);
+            this.subscribeForDataStopRequest("temperature", this::deliver);
         }
 
         public void sendUpdate(double data) {
@@ -57,11 +56,6 @@ class TestTemperatureSink {
         @Override
         public void subscribe(String topic, Subscriber subscriber) {
             endpoint.subscribe(identifier + topic, subscriber);
-        }
-
-        @Override
-        public void subscribeRaw(String topic, Subscriber subscriber) {
-            endpoint.subscribeRaw(topic, subscriber);
         }
 
         @Override
@@ -88,17 +82,14 @@ class TestTemperatureSink {
         }
     }
 
-
     private Broker aBroker;
-    private ENv5Twin device;
+    private ENv5TwinStub device;
     private TwinForDeviceWithTemperatureSensor remoteTwin;
     private TemperatureSink temperature;
     private Posting post;
 
-
     @Test
     void temperatureSinkGetsUpdate() {
-
         aBroker = createBroker();
         device = createDeviceTwin();
         temperature = createTemperatureTwin(device);
@@ -111,7 +102,6 @@ class TestTemperatureSink {
 
     @Test
     void multipleTemperatureSinksGetUpdate() {
-
         aBroker = createBroker();
         device = createDeviceTwin();
         var tempTwin1 = createTemperatureTwin(device);
@@ -126,7 +116,6 @@ class TestTemperatureSink {
 
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
-
         aBroker = createBroker();
         var device1 = createDeviceTwin("/sensor");
         var device2 = createDeviceTwin("/twin4321");
@@ -142,7 +131,6 @@ class TestTemperatureSink {
 
     @Test
     void temperatureSinkCanReceiveMultipleUpdates() {
-
         createBroker();
         remoteTwin = createRemoteTwin();
         device = createDeviceTwin();
@@ -181,9 +169,9 @@ class TestTemperatureSink {
         return aBroker;
     }
 
-    private TemperatureSink createTemperatureTwin(ENv5Twin eNv5Twin) {
+    private TemperatureSink createTemperatureTwin(ENv5TwinStub eNv5Twin) {
         temperature = new TemperatureSink("/local");
-        temperature.bind(new Protocol(eNv5Twin));
+        temperature.bind(eNv5Twin);
         return temperature;
     }
 
@@ -193,12 +181,12 @@ class TestTemperatureSink {
         return remoteTwin;
     }
 
-    private ENv5Twin createDeviceTwin() {
+    private ENv5TwinStub createDeviceTwin() {
         return createDeviceTwin("/sensor");
     }
 
-    private ENv5Twin createDeviceTwin(String id) {
-        device = new ENv5Twin(id);
+    private ENv5TwinStub createDeviceTwin(String id) {
+        device = new ENv5TwinStub(id);
         device.bind(aBroker);
         return device;
     }

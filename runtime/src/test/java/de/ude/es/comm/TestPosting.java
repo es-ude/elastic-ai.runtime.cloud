@@ -11,4 +11,5 @@ public class TestPosting {
         Posting p = Posting.createStartSending("/temp", "receiver");
         assertTrue(p.isStartSending("/temp"));
     }
+
 }

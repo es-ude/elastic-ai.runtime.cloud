@@ -11,4 +11,5 @@ public interface Timeout {
     void restart();
 
     void stop();
+
 }
