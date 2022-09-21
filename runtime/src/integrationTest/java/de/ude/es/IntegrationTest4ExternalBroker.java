@@ -1,5 +1,7 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.comm.Posting;
@@ -15,312 +17,320 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Testcontainers
 public class IntegrationTest4ExternalBroker {
 
-    private static final String DOMAIN = "eip://uni-due.de/es";
-    private static final String IP = "localhost";
-    private int PORT;
-    private static final String PRODUCER = "/producer";
-    private static final String CONSUMER = "/consumer";
-    private static final int HEARTBEAT_INTERVAL = 1000; //in ms
+  private static final String DOMAIN = "eip://uni-due.de/es";
+  private static final String IP = "localhost";
+  private int PORT;
+  private static final String PRODUCER = "/producer";
+  private static final String CONSUMER = "/consumer";
+  private static final int HEARTBEAT_INTERVAL = 1000; //in ms
 
-    @Container
-    public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
+  @Container
+  public GenericContainer<?> brokerCont = new GenericContainer<>(
+    DockerImageName.parse("eclipse-mosquitto:1.6.14")
+  )
+    .withExposedPorts(1883);
 
-    @BeforeEach
-    void setUp() {
-        PORT = brokerCont.getFirstMappedPort();
+  @BeforeEach
+  void setUp() {
+    PORT = brokerCont.getFirstMappedPort();
+  }
+
+  private static class TwinThatOffersTemperature {
+
+    private TwinWithHeartbeat localDeviceTwin;
+    private TemperatureSource temperatureSource;
+
+    public TwinThatOffersTemperature(HivemqBroker broker, String id) {
+      createTwinForLocalDevice(broker, id);
+      createTemperatureSource();
     }
 
-    private static class TwinThatOffersTemperature {
-
-        private TwinWithHeartbeat localDeviceTwin;
-        private TemperatureSource temperatureSource;
-
-        public TwinThatOffersTemperature(HivemqBroker broker, String id) {
-            createTwinForLocalDevice(broker, id);
-            createTemperatureSource();
-        }
-
-        private void createTwinForLocalDevice(HivemqBroker broker, String id) {
-            localDeviceTwin = new TwinWithHeartbeat(id);
-            localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
-        }
-
-        private void createTemperatureSource() {
-            temperatureSource = new TemperatureSource(new TimerMock());
-            temperatureSource.bind(localDeviceTwin);
-        }
-
-        public void setNewTemperatureMeasured(double temperature) {
-            temperatureSource.set(temperature);
-        }
-
-        public boolean hasClients() {
-            return temperatureSource.hasClients();
-        }
-
+    private void createTwinForLocalDevice(HivemqBroker broker, String id) {
+      localDeviceTwin = new TwinWithHeartbeat(id);
+      localDeviceTwin.bind(broker);
+      localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
     }
 
-    private static class TwinThatConsumesTemperature {
-
-        private TwinStub remoteDeviceTwin;
-        private TemperatureSink temperatureSink;
-
-        public TwinThatConsumesTemperature(HivemqBroker broker, String local, String remote) {
-            createTwinForLocalDevice(broker, local);
-            createTwinForRemoteDevice(broker, remote);
-            createTemperatureSink();
-        }
-
-        private void createTwinForLocalDevice(HivemqBroker broker, String id) {
-            var localDeviceTwin = new TwinWithHeartbeat(id);
-            localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
-        }
-
-        private void createTwinForRemoteDevice(HivemqBroker broker, String id) {
-            remoteDeviceTwin = new TwinStub(id);
-            remoteDeviceTwin.bind(broker);
-        }
-
-        private void createTemperatureSink() {
-            temperatureSink = new TemperatureSink(remoteDeviceTwin.ID());
-            temperatureSink.bind(remoteDeviceTwin);
-        }
-
-        public void checkTemperatureIs(double expected) {
-            assertEquals(expected, temperatureSink.getCurrent());
-        }
-
-        public boolean isNewTemperatureAvailable() {
-            return temperatureSink.isNewTemperatureAvailable();
-        }
-
+    private void createTemperatureSource() {
+      temperatureSource = new TemperatureSource(new TimerMock());
+      temperatureSource.bind(localDeviceTwin);
     }
 
-    public static class HeartbeatSubscriber {
-
-        private static class DataSubscriber implements Subscriber {
-
-            public static int heartbeatCount = 0;
-            public static String lastData = "";
-
-            @Override
-            public void deliver(Posting posting) {
-                lastData = posting.data();
-                heartbeatCount++;
-            }
-        }
-
-        private TwinStub twinStub;
-        private DataSubscriber subscriber;
-
-        public void bind(CommunicationEndpoint broker) {
-            this.twinStub = new TwinStub("+");
-            twinStub.bind(broker);
-            this.subscriber = new DataSubscriber();
-            this.twinStub.subscribeForHeartbeat(subscriber);
-        }
-
-        public int getHeartbeatCount() {
-            return DataSubscriber.heartbeatCount;
-        }
-
-        public String getLastData() {
-            return DataSubscriber.lastData;
-        }
-
-        public void reset() {
-            DataSubscriber.heartbeatCount = 0;
-            DataSubscriber.lastData = "";
-        }
+    public void setNewTemperatureMeasured(double temperature) {
+      temperatureSource.set(temperature);
     }
 
-    private HivemqBroker broker;
-    private TwinStub it;
-    private TimerMock timer;
+    public boolean hasClients() {
+      return temperatureSource.hasClients();
+    }
+  }
 
-    /**
-     * This is an integration test that shows the basic interaction
-     * between twins by exchanging a temperature that is measured by
-     * one device ("producer") with another device ("consumer") that
-     * wants to access it.
-     * The example shows how to achieve this with
-     * - a TemperatureSource on the producer side
-     * - and a TemperatureSink on the consumer side.
-     */
+  private static class TwinThatConsumesTemperature {
 
-    @Test
-    void twinsCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
-        var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
+    private TwinStub remoteDeviceTwin;
+    private TemperatureSink temperatureSink;
 
-        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
-
-        while (!sensingDevice.hasClients()) ;
-        sensingDevice.setNewTemperatureMeasured(11.6);
-        while (!consumingDevice.isNewTemperatureAvailable()) ;
-        consumingDevice.checkTemperatureIs(11.6);
-        sensingDevice.setNewTemperatureMeasured(1.7);
-        while (!consumingDevice.isNewTemperatureAvailable()) ;
-        consumingDevice.checkTemperatureIs(1.7);
-
-        broker.closeConnection();
+    public TwinThatConsumesTemperature(
+      HivemqBroker broker,
+      String local,
+      String remote
+    ) {
+      createTwinForLocalDevice(broker, local);
+      createTwinForRemoteDevice(broker, remote);
+      createTemperatureSink();
     }
 
-    @Test
-    void communicationCanBeStopped() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
-
-        TemperatureSource source = createTemperatureSource();
-        TemperatureSink sink = createTemperatureSink(CONSUMER);
-        while (!source.hasClients()) ;
-        sink.unbind();
-        while (source.hasClients()) ;
-        source.set(9.9);
-        Thread.sleep(1000);
-        assertEquals(0.0, sink.getCurrent());
-        broker.closeConnection();
+    private void createTwinForLocalDevice(HivemqBroker broker, String id) {
+      var localDeviceTwin = new TwinWithHeartbeat(id);
+      localDeviceTwin.bind(broker);
+      localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
     }
 
-    @Test
-    void communicationCanBeResumed() {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
-
-        TemperatureSource source = createTemperatureSource();
-        TemperatureSink sink = createTemperatureSink(CONSUMER);
-
-        while (!source.hasClients()) ;
-        sink.unbind();
-
-        while (source.hasClients()) ;
-        assertFalse(source.hasClients());
-
-        sink.bind(it);
-        while (!source.hasClients()) ;
-        assertTrue(source.hasClients());
-
-        source.set(11.4);
-        while (!sink.isNewTemperatureAvailable()) ;
-        assertEquals(11.4, sink.getCurrent());
-
-        broker.closeConnection();
+    private void createTwinForRemoteDevice(HivemqBroker broker, String id) {
+      remoteDeviceTwin = new TwinStub(id);
+      remoteDeviceTwin.bind(broker);
     }
 
-    @Test
-    void sourceAndTwoSinksCanCommunicate() {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
-
-        TemperatureSource temperatureSource = createTemperatureSource();
-        TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
-        TemperatureSink sink2 = createTemperatureSink(CONSUMER + "2");
-
-        while (!temperatureSource.hasClients()) ;
-        temperatureSource.set(11.4);
-        while (!sink1.isNewTemperatureAvailable() || !sink2.isNewTemperatureAvailable()) ;
-
-        assertEquals(11.4, sink1.getCurrent());
-        assertEquals(11.4, sink2.getCurrent());
-
-        broker.closeConnection();
+    private void createTemperatureSink() {
+      temperatureSink = new TemperatureSink(remoteDeviceTwin.ID());
+      temperatureSink.bind(remoteDeviceTwin);
     }
 
-    @Test
-    void heartbeatIsSendBySourceByStart() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
-
-        Runnable myRunnable = this::createTemperatureSource;
-        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
-
-        myRunnable.run();
-
-        Thread.sleep(100);
-        assertEquals(1, heartbeatSubscriber.getHeartbeatCount());
-
-        heartbeatSubscriber.reset();
-        broker.closeConnection();
+    public void checkTemperatureIs(double expected) {
+      assertEquals(expected, temperatureSink.getCurrent());
     }
 
-    @Test
-    void heartbeatsAreSendBySource() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
+    public boolean isNewTemperatureAvailable() {
+      return temperatureSink.isNewTemperatureAvailable();
+    }
+  }
 
-        Runnable myRunnable = this::createTemperatureSource;
-        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
+  public static class HeartbeatSubscriber {
 
-        myRunnable.run();
+    private static class DataSubscriber implements Subscriber {
 
-        timer.fire();
-        Thread.sleep(100);
-        assertEquals(2, heartbeatSubscriber.getHeartbeatCount());
+      public static int heartbeatCount = 0;
+      public static String lastData = "";
 
-        timer.fire();
-        Thread.sleep(100);
-        assertEquals(3, heartbeatSubscriber.getHeartbeatCount());
-
-        heartbeatSubscriber.reset();
-        broker.closeConnection();
+      @Override
+      public void deliver(Posting posting) {
+        lastData = posting.data();
+        heartbeatCount++;
+      }
     }
 
-    @Test
-    void heartbeatIncludesSender() throws InterruptedException {
-        broker = new HivemqBroker(DOMAIN, IP, PORT);
+    private TwinStub twinStub;
+    private DataSubscriber subscriber;
 
-        Runnable myRunnable = this::createTemperatureSource;
-        HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
-
-        myRunnable.run();
-
-        Thread.sleep(1000);
-        assertEquals("/producer", heartbeatSubscriber.getLastData());
-
-        timer.fire();
-        Thread.sleep(1000);
-        assertEquals("/producer", heartbeatSubscriber.getLastData());
-
-        heartbeatSubscriber.reset();
-        broker.closeConnection();
+    public void bind(CommunicationEndpoint broker) {
+      this.twinStub = new TwinStub("+");
+      twinStub.bind(broker);
+      this.subscriber = new DataSubscriber();
+      this.twinStub.subscribeForHeartbeat(subscriber);
     }
 
-    private HeartbeatSubscriber createHeartbeatSubscriber() {
-        var sink = new TwinWithHeartbeat(PRODUCER);
-        sink.bind(broker);
-
-        var heartbeatSubscriber = new HeartbeatSubscriber();
-        heartbeatSubscriber.bind(broker);
-
-        return heartbeatSubscriber;
+    public int getHeartbeatCount() {
+      return DataSubscriber.heartbeatCount;
     }
 
-    private TemperatureSource createTemperatureSource() {
-        timer = new TimerMock();
-
-        var source = new TwinWithHeartbeat(PRODUCER);
-        source.bind(broker);
-        source.startHeartbeats(timer, HEARTBEAT_INTERVAL);
-
-        var temperatureSource = new TemperatureSource(timer);
-        temperatureSource.bind(source);
-
-        return temperatureSource;
+    public String getLastData() {
+      return DataSubscriber.lastData;
     }
 
-    private TemperatureSink createTemperatureSink(String local) {
-        var sink = new TwinWithHeartbeat(local);
-        sink.bind(broker);
-        sink.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
-
-        it = new TwinStub(PRODUCER);
-        it.bind(broker);
-        var tempSink = new TemperatureSink(sink.ID());
-        tempSink.bind(it);
-
-        return tempSink;
+    public void reset() {
+      DataSubscriber.heartbeatCount = 0;
+      DataSubscriber.lastData = "";
     }
+  }
 
+  private HivemqBroker broker;
+  private TwinStub it;
+  private TimerMock timer;
+
+  /**
+   * This is an integration test that shows the basic interaction
+   * between twins by exchanging a temperature that is measured by
+   * one device ("producer") with another device ("consumer") that
+   * wants to access it.
+   * The example shows how to achieve this with
+   * - a TemperatureSource on the producer side
+   * - and a TemperatureSink on the consumer side.
+   */
+
+  @Test
+  void twinsCanCommunicate() {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+    var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
+
+    var consumingDevice = new TwinThatConsumesTemperature(
+      broker,
+      CONSUMER,
+      PRODUCER
+    );
+
+    while (!sensingDevice.hasClients());
+    sensingDevice.setNewTemperatureMeasured(11.6);
+    while (!consumingDevice.isNewTemperatureAvailable());
+    consumingDevice.checkTemperatureIs(11.6);
+    sensingDevice.setNewTemperatureMeasured(1.7);
+    while (!consumingDevice.isNewTemperatureAvailable());
+    consumingDevice.checkTemperatureIs(1.7);
+
+    broker.closeConnection();
+  }
+
+  @Test
+  void communicationCanBeStopped() throws InterruptedException {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    TemperatureSource source = createTemperatureSource();
+    TemperatureSink sink = createTemperatureSink(CONSUMER);
+    while (!source.hasClients());
+    sink.unbind();
+    while (source.hasClients());
+    source.set(9.9);
+    Thread.sleep(1000);
+    assertEquals(0.0, sink.getCurrent());
+    broker.closeConnection();
+  }
+
+  @Test
+  void communicationCanBeResumed() {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    TemperatureSource source = createTemperatureSource();
+    TemperatureSink sink = createTemperatureSink(CONSUMER);
+
+    while (!source.hasClients());
+    sink.unbind();
+
+    while (source.hasClients());
+    assertFalse(source.hasClients());
+
+    sink.bind(it);
+    while (!source.hasClients());
+    assertTrue(source.hasClients());
+
+    source.set(11.4);
+    while (!sink.isNewTemperatureAvailable());
+    assertEquals(11.4, sink.getCurrent());
+
+    broker.closeConnection();
+  }
+
+  @Test
+  void sourceAndTwoSinksCanCommunicate() {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    TemperatureSource temperatureSource = createTemperatureSource();
+    TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
+    TemperatureSink sink2 = createTemperatureSink(CONSUMER + "2");
+
+    while (!temperatureSource.hasClients());
+    temperatureSource.set(11.4);
+    while (
+      !sink1.isNewTemperatureAvailable() || !sink2.isNewTemperatureAvailable()
+    );
+
+    assertEquals(11.4, sink1.getCurrent());
+    assertEquals(11.4, sink2.getCurrent());
+
+    broker.closeConnection();
+  }
+
+  @Test
+  void heartbeatIsSendBySourceByStart() throws InterruptedException {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    Runnable myRunnable = this::createTemperatureSource;
+    HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
+
+    myRunnable.run();
+
+    Thread.sleep(100);
+    assertEquals(1, heartbeatSubscriber.getHeartbeatCount());
+
+    heartbeatSubscriber.reset();
+    broker.closeConnection();
+  }
+
+  @Test
+  void heartbeatsAreSendBySource() throws InterruptedException {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    Runnable myRunnable = this::createTemperatureSource;
+    HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
+
+    myRunnable.run();
+
+    timer.fire();
+    Thread.sleep(100);
+    assertEquals(2, heartbeatSubscriber.getHeartbeatCount());
+
+    timer.fire();
+    Thread.sleep(100);
+    assertEquals(3, heartbeatSubscriber.getHeartbeatCount());
+
+    heartbeatSubscriber.reset();
+    broker.closeConnection();
+  }
+
+  @Test
+  void heartbeatIncludesSender() throws InterruptedException {
+    broker = new HivemqBroker(DOMAIN, IP, PORT);
+
+    Runnable myRunnable = this::createTemperatureSource;
+    HeartbeatSubscriber heartbeatSubscriber = createHeartbeatSubscriber();
+
+    myRunnable.run();
+
+    Thread.sleep(1000);
+    assertEquals("/producer", heartbeatSubscriber.getLastData());
+
+    timer.fire();
+    Thread.sleep(1000);
+    assertEquals("/producer", heartbeatSubscriber.getLastData());
+
+    heartbeatSubscriber.reset();
+    broker.closeConnection();
+  }
+
+  private HeartbeatSubscriber createHeartbeatSubscriber() {
+    var sink = new TwinWithHeartbeat(PRODUCER);
+    sink.bind(broker);
+
+    var heartbeatSubscriber = new HeartbeatSubscriber();
+    heartbeatSubscriber.bind(broker);
+
+    return heartbeatSubscriber;
+  }
+
+  private TemperatureSource createTemperatureSource() {
+    timer = new TimerMock();
+
+    var source = new TwinWithHeartbeat(PRODUCER);
+    source.bind(broker);
+    source.startHeartbeats(timer, HEARTBEAT_INTERVAL);
+
+    var temperatureSource = new TemperatureSource(timer);
+    temperatureSource.bind(source);
+
+    return temperatureSource;
+  }
+
+  private TemperatureSink createTemperatureSink(String local) {
+    var sink = new TwinWithHeartbeat(local);
+    sink.bind(broker);
+    sink.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+
+    it = new TwinStub(PRODUCER);
+    it.bind(broker);
+    var tempSink = new TemperatureSink(sink.ID());
+    tempSink.bind(it);
+
+    return tempSink;
+  }
 }

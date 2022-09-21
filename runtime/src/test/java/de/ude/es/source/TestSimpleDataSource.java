@@ -7,36 +7,35 @@ import org.junit.jupiter.api.Test;
 
 class TestSimpleDataSource {
 
-    private static class SimpleDataSourceChecker extends Checker {
+  private static class SimpleDataSourceChecker extends Checker {
 
-        public DataSource<Integer> dataSource;
+    public DataSource<Integer> dataSource;
 
-        public void givenDataSource() {
-            dataSource = new DataSource<>("data");
-            dataSource.bind(javaTwin);
-        }
-
-        public void whenDataIsSetTo(int value) {
-            expected = new Posting(javaTwin.ID() + "/DATA/data", "" + value);
-            dataSource.set(value);
-        }
+    public void givenDataSource() {
+      dataSource = new DataSource<>("data");
+      dataSource.bind(javaTwin);
     }
 
-    private SimpleDataSourceChecker checker;
-
-    @BeforeEach
-    void init() {
-        checker = new SimpleDataSourceChecker();
+    public void whenDataIsSetTo(int value) {
+      expected = new Posting(javaTwin.ID() + "/DATA/data", "" + value);
+      dataSource.set(value);
     }
+  }
 
-    @Test
-    void whenDataIsSetThenPostingIsSent() {
-        checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
-        checker.givenDataSource();
-        checker.givenSubscriptionAtJavaTwinFor("/#");
-        checker.whenDataIsSetTo(3);
-        checker.thenPostingIsDelivered();
-    }
+  private SimpleDataSourceChecker checker;
 
+  @BeforeEach
+  void init() {
+    checker = new SimpleDataSourceChecker();
+  }
+
+  @Test
+  void whenDataIsSetThenPostingIsSent() {
+    checker.givenBroker();
+    checker.givenJavaTwin("/twin1234");
+    checker.givenDataSource();
+    checker.givenSubscriptionAtJavaTwinFor("/#");
+    checker.whenDataIsSetTo(3);
+    checker.thenPostingIsDelivered();
+  }
 }
