@@ -21,6 +21,6 @@ jobs:
         uses: creyD/prettier_action@v4.2
         with:
           # Install java plugin for Prettier
-          prettier_plugins: @prettier/plugin-java
+          prettier_plugins: prettier-plugin-java
           # Apply prettier to java and markdown files
           prettier_options: "--write **/*.{java,md}"
