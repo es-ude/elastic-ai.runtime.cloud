@@ -11,19 +11,19 @@ import de.ude.es.twin.JavaTwin;
  */
 public class DataSource<T> {
 
-  protected JavaTwin javaTwin;
+    protected JavaTwin javaTwin;
 
-  protected final String dataId;
+    protected final String dataId;
 
-  public DataSource(String dataId) {
-    this.dataId = dataId;
-  }
+    public DataSource(String dataId) {
+        this.dataId = dataId;
+    }
 
-  public void bind(JavaTwin javaTwin) {
-    this.javaTwin = javaTwin;
-  }
+    public void bind(JavaTwin javaTwin) {
+        this.javaTwin = javaTwin;
+    }
 
-  public void set(T data) {
-    javaTwin.publishData(dataId, "" + data);
-  }
+    public void set(T data) {
+        javaTwin.publishData(dataId, "" + data);
+    }
 }

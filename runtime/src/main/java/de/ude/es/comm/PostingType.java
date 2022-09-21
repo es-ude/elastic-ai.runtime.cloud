@@ -7,21 +7,21 @@ import java.util.Objects;
  * format the different posting types as strings in a topic.
  */
 public enum PostingType {
-  DATA("/DATA"),
-  START("/START"),
-  STOP("/STOP"),
-  SET("/SET"),
-  LOST("/LOST"),
-  HEARTBEAT("/HEART");
+    DATA("/DATA"),
+    START("/START"),
+    STOP("/STOP"),
+    SET("/SET"),
+    LOST("/LOST"),
+    HEARTBEAT("/HEART");
 
-  private final String value;
+    private final String value;
 
-  PostingType(String s) {
-    value = s;
-  }
+    PostingType(String s) {
+        value = s;
+    }
 
-  public String topic(String topicID) {
-    if (Objects.equals(topicID, "")) return value;
-    return value + "/" + topicID;
-  }
+    public String topic(String topicID) {
+        if (Objects.equals(topicID, "")) return value;
+        return value + "/" + topicID;
+    }
 }

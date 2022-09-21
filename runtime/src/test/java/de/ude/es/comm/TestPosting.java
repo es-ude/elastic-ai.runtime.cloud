@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 public class TestPosting {
 
-  @Test
-  void startPostingCanBeDetected() {
-    Posting p = Posting.createStartSending("/temp", "receiver");
-    assertTrue(p.isStartSending("/temp"));
-  }
+    @Test
+    void startPostingCanBeDetected() {
+        Posting p = Posting.createStartSending("/temp", "receiver");
+        assertTrue(p.isStartSending("/temp"));
+    }
 }

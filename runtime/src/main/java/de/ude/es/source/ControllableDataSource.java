@@ -21,86 +21,87 @@ import java.util.List;
  */
 public class ControllableDataSource<T> {
 
-  protected final List<Client> clients = new ArrayList<>();
-  protected final Timer timer;
-  protected JavaTwin javaTwin;
-  protected final String dataId;
-  protected static final int TIMEOUT_LENGTH = 1000;
+    protected final List<Client> clients = new ArrayList<>();
+    protected final Timer timer;
+    protected JavaTwin javaTwin;
+    protected final String dataId;
+    protected static final int TIMEOUT_LENGTH = 1000;
 
-  protected class Client implements Subscriber {
+    protected class Client implements Subscriber {
 
-    private final String heartbeatSource;
-    private boolean isActive = true;
-    private final Timeout timeout;
-    private final TwinStub twinStub;
+        private final String heartbeatSource;
+        private boolean isActive = true;
+        private final Timeout timeout;
+        private final TwinStub twinStub;
 
-    public Client(String heartbeatSource) {
-      this.heartbeatSource = heartbeatSource;
-      twinStub = new TwinStub(heartbeatSource);
-      twinStub.bind(javaTwin.getEndpoint());
-      twinStub.subscribeForHeartbeat(this);
-      timeout = timer.register(TIMEOUT_LENGTH, this::handleNoHeartbeatReceived);
+        public Client(String heartbeatSource) {
+            this.heartbeatSource = heartbeatSource;
+            twinStub = new TwinStub(heartbeatSource);
+            twinStub.bind(javaTwin.getEndpoint());
+            twinStub.subscribeForHeartbeat(this);
+            timeout =
+                timer.register(TIMEOUT_LENGTH, this::handleNoHeartbeatReceived);
+        }
+
+        @Override
+        public void deliver(Posting posting) {
+            handleHeartbeatReceived();
+        }
+
+        private void handleHeartbeatReceived() {
+            if (isActive) timeout.restart();
+        }
+
+        private void handleNoHeartbeatReceived(Timeout timeout) {
+            if (isActive) deactivate();
+        }
+
+        public void stopAndRemoveAndUnsubscribe() {
+            if (isActive) deactivate();
+        }
+
+        private void deactivate() {
+            isActive = false;
+            clients.remove(this);
+            twinStub.unsubscribeFromHeartbeat(this);
+        }
+
+        public boolean hasIdentifier(String identifier) {
+            return heartbeatSource.equals(identifier);
+        }
     }
 
-    @Override
-    public void deliver(Posting posting) {
-      handleHeartbeatReceived();
+    public ControllableDataSource(String dataId, Timer timer) {
+        this.timer = timer;
+        this.dataId = dataId;
     }
 
-    private void handleHeartbeatReceived() {
-      if (isActive) timeout.restart();
+    public void bind(JavaTwin javaTwin) {
+        this.javaTwin = javaTwin;
+        javaTwin.subscribeForDataStartRequest(dataId, this::handleNewClient);
+        javaTwin.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
     }
 
-    private void handleNoHeartbeatReceived(Timeout timeout) {
-      if (isActive) deactivate();
+    private void handleNewClient(Posting posting) {
+        var client = new Client(posting.data());
+        clients.add(client);
     }
 
-    public void stopAndRemoveAndUnsubscribe() {
-      if (isActive) deactivate();
+    private void handleLeavingClient(Posting posting) {
+        String leavingClientID = posting.data();
+        for (Client client : clients) {
+            if (client.hasIdentifier(leavingClientID)) {
+                client.stopAndRemoveAndUnsubscribe();
+                return;
+            }
+        }
     }
 
-    private void deactivate() {
-      isActive = false;
-      clients.remove(this);
-      twinStub.unsubscribeFromHeartbeat(this);
+    public synchronized boolean hasClients() {
+        return !clients.isEmpty();
     }
 
-    public boolean hasIdentifier(String identifier) {
-      return heartbeatSource.equals(identifier);
+    public void set(T data) {
+        if (hasClients()) javaTwin.publishData(dataId, "" + data);
     }
-  }
-
-  public ControllableDataSource(String dataId, Timer timer) {
-    this.timer = timer;
-    this.dataId = dataId;
-  }
-
-  public void bind(JavaTwin javaTwin) {
-    this.javaTwin = javaTwin;
-    javaTwin.subscribeForDataStartRequest(dataId, this::handleNewClient);
-    javaTwin.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
-  }
-
-  private void handleNewClient(Posting posting) {
-    var client = new Client(posting.data());
-    clients.add(client);
-  }
-
-  private void handleLeavingClient(Posting posting) {
-    String leavingClientID = posting.data();
-    for (Client client : clients) {
-      if (client.hasIdentifier(leavingClientID)) {
-        client.stopAndRemoveAndUnsubscribe();
-        return;
-      }
-    }
-  }
-
-  public synchronized boolean hasClients() {
-    return !clients.isEmpty();
-  }
-
-  public void set(T data) {
-    if (hasClients()) javaTwin.publishData(dataId, "" + data);
-  }
 }
