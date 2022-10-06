@@ -7,7 +7,7 @@ plugins {
 group 'org.ude.es'
 version '1.0-SNAPSHOT'
 sourceCompatibility = '17'
-mainClassName = "de.ude.es.Stresstest"
+mainClassName = "de.ude.es.Main"
 
 dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
