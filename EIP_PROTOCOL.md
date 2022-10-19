@@ -1,42 +1,42 @@
 # EIP Protocol (v0.2)
 
-The eip protocol is a specification of a publish/subscribe bases start topology with a broker at the center.
-Typically this will be implemented via MQTT bit this is **not** fixed.
-The basic functionality provided are _subscribing_, _unsubscribing_ and _publishing_ from topics and topic filters.
+The eip protocol is a specification of a publish/subscribe based star topology with a broker at the center.
+Typically, this will be implemented via MQTT, but this is **not** fixed.
+The basic functionality provided are _subscribing_, _unsubscribing_ and _publishing_ to and from topics and topic filters.
 
 ## Message
 
-A message consists of a topic combined with payload/data that should be published to the given topic.
+A message consists of a topic combined with a payload/data that should be published to the given topic.
 
 ### Topic
 
 A topic is constructed as followed:
 
 ```
-eip://<domain>/<object>/<message_type>/<type_dependent>
+eip://<broker_domain>/<object_id>/<message_type>/<type_dependent>
 ```
 
-where the `<object>` is the individual identifier of the target device and the `<message_type>` is defined as in the part [Message Types](#message-types).
+where the `<object_id>` is the individual identifier of the target device and the `<message_type>/<type_dependant>` is defined as in the part [Message Types](#message-types).
 
 ### Message Types
 
 |   Type | Description                                                       |
 |-------:|:------------------------------------------------------------------|
 | STATUS | a message containing the online(1)/offline(0) status of an object |
-|  HEART | a heartbeat message **(replaced by STATUS!)**                     |
 |  START | a message requesting an object to start sending a stream of data  |
 |   STOP | a message requesting an object to stop sending a stream of data   |
 |   DATA | a message containing data                                         |
 |     DO | a message containing a command                                    |
-|   DONE | a message containing the response to a command                    | 
+|   DONE | a message containing the response to a DO message                 | 
 
 #### STATUS
 
-* Topic: `eip://<domain>/<object>/STATUS`
+* Topic: `eip://<broker_domain>/<object_id>/STATUS`
 * Data: 0 (offline) OR 1 (online)
-* INFO:
-    * The retain-flag of this message should be set!
-    * The offline message should be automatically send by the broker after connection loss
+* Information:
+  * The retain-flag of this message should be set to assure status discovery for new entered participants!
+  * The offline message should be automatically send by the broker after connection loss (LWT message).
+  * The online message should only be send by a new hardware device.
 
 Example message:
 
@@ -50,37 +50,27 @@ Communication Specification:
 ```mermaid
 sequenceDiagram
   participant m as Monitor
-  participant t as Twin
+  participant t as Twin for Device
   participant b as Broker
   participant d as Device
-  m ->> b: sub("eip://<domain>/+/STATUS")
-  Note over m,d: ...
-  d ->> b: pub("eip://<domain>/env5_1/STATUS","1")
-  b ->> m: ("eip://<domain>/env5_1/STATUS","1")
-  m -> t: start twin
+  
+  m ->> b: sub("eip://<broker_domain>/+/STATUS")
+  Note over b,d: ESTABLISH CONNECTION
+  d ->> b: pub("eip://<broker_domain>/env5_1/STATUS","1")
+  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","1")
+  m -) t: start twin
   activate t
   Note over m,d: ...
-  Note over d: DISCONNECTED
-  b ->> m: ("eip://<domain>/env5_1/STATUS","0")
-  m -> t: stop twin
+  Note over d: LOST CONNECTION
+  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","0")
+  m -) t: stop twin
   deactivate t
-```
-
-#### HEART
-
-* Topic: `eip://<domain>/<object>/HEART`
-* Data: empty **OR** ID of the twin in case of physical object
-
-Example message:
-
-```text
-("eip://uni-due.de/es/twin1/HEART","")
 ```
 
 #### START
 
-* Topic: `eip://<domain>/<object>/START/<data_id>`
-* Data: topic specifying object that is interested in data
+* Topic: `eip://<broker_domain>/<object_id>/START/<data_id>`
+* Data: topic specifying `eip://<broker_domain>/<object_id>` that is interested in data
 
 Example message:
 
@@ -90,8 +80,8 @@ Example message:
 
 #### STOP
 
-* Topic: `eip://<domain>/<object>/STOP/<data_id>`
-* Data: topic specifying object that is interested in data
+* Topic: `eip://<broker_domain>/<object_id>/STOP/<data_id>`
+* Data: topic specifying `eip://<broker_domain>/<object_id>` that was interested in data
 
 Example message:
 
@@ -101,10 +91,10 @@ Example message:
 
 #### DATA
 
-* Topic: `eip://<domain>/<object>/DATA/<data_id>`
+* Topic: `eip://<broker_domain>/<object_id>/DATA/<data_id>`
 * Data: value encoded as a string
 * INFO:
-    * Interested nodes can subscribe to this topic to receive new data
+  * Interested nodes can subscribe to this topic to receive new data
 
 Example message:
 
@@ -112,7 +102,7 @@ Example message:
 ("eip://uni-due.de/es/twin1/DATA/light","30.7")
 ```
 
-Communication specification for data that is published continuously:
+Communication specification for data that is published **continuously**:
 
 ```mermaid
 sequenceDiagram
@@ -120,16 +110,16 @@ sequenceDiagram
   participant t2 as Twin 2
   participant b as Broker
   participant d as Device
-  t2 ->> b: pub("eip://<domain>/twin2/DATA/d1", "<val>")
-  t1 ->> b: sub("eip://<domain>/twin2/DATA/d1")
-  t2 ->> b: pub("eip://<domain>/twin2/DATA/d1", "<val>")
-  b ->> t1: ("eip://<domain>/twin2/DATA/d1", "<val>")
-  t2 ->> b: pub("eip://<domain>/twin2/DATA/d1", "<val>")
-  b ->> t1: ("eip://<domain>/twin2/DATA/d1", "<val>")
+  
+  t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
+  t1 ->> b: sub("eip://<broker_domain>/twin2/DATA/d1")
+  t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
+  b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1", "<val>")
+  t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
+  b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1", "<val>")
 ```
 
-Communication for data that has to be requested:
-<!-- TODO: needs to be redone considering STATUS instead of HEART -->
+Communication for data that has to be **requested**:
 
 ```mermaid
 sequenceDiagram
@@ -137,22 +127,30 @@ sequenceDiagram
   participant t2 as Twin 2
   participant b as Broker
   participant d as Device
-  t1 ->> b: sub("eip://<domain>/twin2/DATA/d1")
-  t1 ->> b: pub("eip://<domain>/twin2/START/d1","eip://<domain>/twin1")
-  b ->> t2: ("eip://<domain>/twin2/START/d1","eip://<domain>/twin1")
-  t2 ->> b: sub("eip://<domain>/twin1/HEART")
+  
+  t1 ->> b: sub("eip://<broker_domain>/twin2/DATA/d1")
+  t1 ->> b: pub("eip://<broker_domain>/twin2/START/d1","eip://<broker_domain>/twin1")
+  b ->> t2: ("eip://<broker_domain>/twin2/START/d1","eip://<broker_domain>/twin1")
+  t2 ->> b: sub("eip://<broker_domain>/twin1/STATUS")
+  Note over t2,d: REQUEST DATA FROM DEVICE
   Note over t2: START SENDING DATA
-  t2 ->> b: pub("eip://<domain>/twin2/DATA/d1","<val>")
-  b ->> t1: ("eip://<domain>/twin2/DATA/d1","<val>")
-  t1 ->> b: pub("eip://<domain>/twin2/STOP/d1","eip://<domain>/twin1")
-  b ->> t2: ("eip://<domain>/twin2/STOP/d1","eip://<domain>/twin1")
-  t2 ->> b: unsub("eip://<domain>/twin1/HEART")
+  t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1","<val>")
+  b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1","<val>")
+  Note over t1,b: ...
+  alt Twin 1 send STOP
+  t1 ->> b: pub("eip://<broker_domain>/twin2/STOP/d1","eip://<broker_domain>/twin1")
+  b ->> t2: ("eip://<broker_domain>/twin2/STOP/d1","eip://<broker_domain>/twin1")
+  else Twin 1 lost connection
+  Note over t1: LOST CONNECTION
+  b ->> t2: ("eip://<broker_domain>/twin1/STATUS","0")
+  end
   Note over t2: STOP SENDING DATA
+  t2 ->> b: unsub("eip://<broker_domain>/twin1/STATUS")
 ```
 
 #### DO
 
-* Topic: `eip://<domain>/<object>/DO/<command>`
+* Topic: `eip://<broker_domain>/<object_id>/DO/<command>`
 * Data: command specific
 
 Example message:
@@ -161,13 +159,51 @@ Example message:
 ("eip://uni-due.de/es/twin1/DO/SET/led/1","1")
 ```
 
+Communication specification for a command **without** response:
+
+```mermaid
+sequenceDiagram
+  participant t1 as Twin 1
+  participant t2 as Twin 2
+  participant b as Broker
+  participant d as Device
+  
+  t2 ->> b: sub("eip://<broker_domain>/twin2/DO/<cmd1>")
+  t1 ->> b: pub("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+  b ->> t2: ("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+  Note over t2,d: EXECUTE COMMAND
+```
+
 #### DONE
 
-* Topic: `eip://<domain>/<object>/DONE/<command>`
+* Topic: `eip://<broker_domain>/<object_id>/DONE/<command>`
 * Data: command specific
 
 Example message:
 
 ```text
 ("eip://uni-due.de/es/twin1/DONE/SET/led/1","1")
+```
+
+Communication specification for a command **with** response:
+
+```mermaid
+sequenceDiagram
+  participant t1 as Twin 1
+  participant t2 as Twin 2
+  participant b as Broker
+  participant d as Device
+  
+  t2 ->> b: sub("eip://<broker_domain>/twin2/DO/<cmd1>")
+  t1 ->> b: sub("eip://<broker_domain>/twin2/DONE/<cmd1>")
+  t1 ->> b: pub("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+  b ->> t2: ("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+  Note over t2,d: EXECUTE COMMAND
+  alt successful
+    t2 ->> b: pub("eip://<broker_domain>/twin2/DONE/<cmd1>","<success>")
+    b ->> t1: ("eip://<broker_domain>/twin2/DONE/<cmd1>","<success>")
+  else unsuccessful
+    t2 ->> b: pub("eip://<broker_domain>/twin2/DONE/<cmd1>","<failed>")
+    b ->> t1: ("eip://<broker_domain>/twin2/DONE/<cmd1>","<failed>")
+  end
 ```
