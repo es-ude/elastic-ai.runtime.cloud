@@ -27,11 +27,8 @@ jobs:
       - name: Clean Build files
         run: ./gradlew clean
 
-      - name: Run Integration Tests
-        run: ./gradlew :integrationTest
-#
-#      - name: Run Integration Tests for Runtime
-#        run: ./gradlew :runtime:integrationTest
-#
-#      - name: Run Integration Tests for Monitor
-#        run: ./gradlew :monitor:integrationTest
+      - name: Run Integration Tests for Runtime
+        run: ./gradlew :runtime:integrationTest
+
+      - name: Run Integration Tests for Monitor
+        run: ./gradlew :monitor:integrationTest
