@@ -24,6 +24,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Run Integration Tests
-        run: gradle clean integrationTest
+      - name: Clean Build files
+        run: ./gradlew clean
 
+      - name: Run Integration Tests for Runtime
+        run: ./gradlew :runtime:integrationTest
+
+      - name: Run Integration Tests for Monitor
+        run: ./gradlew :monitor:integrationTest

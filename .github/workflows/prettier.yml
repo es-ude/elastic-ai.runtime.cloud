@@ -1,8 +1,11 @@
 name: Apply Code Formatter
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   prettier:
