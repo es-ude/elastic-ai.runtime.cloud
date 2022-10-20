@@ -32,7 +32,14 @@ public class TwinList {
 
     public void addTwin(String ID) {
         if (getTwin(ID) == null) {
-            twins.add(new TwinData("Twin " + twins.size(), ID, new MonitorTimer(), kikTime));
+            twins.add(
+                new TwinData(
+                    "Twin " + twins.size(),
+                    ID,
+                    new MonitorTimer(),
+                    kikTime
+                )
+            );
         } else {
             getTwin(ID).resetKickTimer();
         }
@@ -51,5 +58,4 @@ public class TwinList {
     public List<TwinData> getTwins() {
         return twins;
     }
-
 }

@@ -1,9 +1,8 @@
 package de.ude.es.comm;
 
 public record Posting(String topic, String data) {
-
-    private final static String ON = "1";
-    private final static String OFF = "0";
+    private static final String ON = "1";
+    private static final String OFF = "0";
 
     public static Posting createTurnOn(String topic) {
         return createCommand(topic, ON);
@@ -18,27 +17,19 @@ public record Posting(String topic, String data) {
     }
 
     public static Posting createStartSending(String dataId, String receiver) {
-        return new Posting(
-                PostingType.START.topic(dataId),
-                receiver);
+        return new Posting(PostingType.START.topic(dataId), receiver);
     }
 
     public static Posting createStopSending(String dataId, String receiver) {
-        return new Posting(
-                PostingType.STOP.topic(dataId),
-                receiver);
+        return new Posting(PostingType.STOP.topic(dataId), receiver);
     }
 
     public static Posting createData(String phenomena, String value) {
-        return new Posting(
-                PostingType.DATA.topic(phenomena),
-                value);
+        return new Posting(PostingType.DATA.topic(phenomena), value);
     }
 
     public static Posting createHeartbeat(String heartbeatSource) {
-        return new Posting(PostingType.HEARTBEAT.topic(""),
-                heartbeatSource
-        );
+        return new Posting(PostingType.HEARTBEAT.topic(""), heartbeatSource);
     }
 
     public Posting cloneWithTopicAffix(String affix) {
@@ -48,5 +39,4 @@ public record Posting(String topic, String data) {
     public boolean isStartSending(String phenomena) {
         return this.topic.contains(PostingType.START.topic(phenomena));
     }
-
 }

@@ -1,11 +1,12 @@
 package de.ude.es.exampleTwins;
 
+import static java.lang.Thread.sleep;
+
 import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinStub;
 
-import static java.lang.Thread.sleep;
-
 public class IntegrationTestTwinForEnV5 extends JavaTwin {
+
     private final TwinStub enV5;
 
     public IntegrationTestTwinForEnV5(String identifier) {
@@ -19,7 +20,10 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
     }
 
     public void startSubscribing(String topic) {
-        enV5.subscribeForData(topic, posting -> System.out.println(posting.data()));
+        enV5.subscribeForData(
+            topic,
+            posting -> System.out.println(posting.data())
+        );
     }
 
     public void startPublishing(int sleep) throws InterruptedException {
@@ -30,5 +34,4 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
             sleep(1000);
         }
     }
-
 }

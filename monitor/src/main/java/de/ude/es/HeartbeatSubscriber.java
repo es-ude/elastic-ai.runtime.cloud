@@ -8,6 +8,7 @@ import de.ude.es.twin.TwinStub;
 public class HeartbeatSubscriber {
 
     private static class DataSubscriber implements Subscriber {
+
         TwinList twinList;
 
         DataSubscriber(TwinList twinList) {
@@ -34,5 +35,4 @@ public class HeartbeatSubscriber {
         twinStub.bind(broker);
         this.twinStub.subscribeForHeartbeat(subscriber);
     }
-
 }

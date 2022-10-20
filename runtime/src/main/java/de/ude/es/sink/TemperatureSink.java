@@ -4,7 +4,6 @@ import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 import de.ude.es.twin.TwinStub;
 
-
 /**
  * A sink representing a temperature that is measured somewhere,
  * e.g., by a remote device.
@@ -20,10 +19,8 @@ public class TemperatureSink {
 
         @Override
         public void deliver(Posting posting) {
-
             temperature = Double.parseDouble(posting.data());
             setTemperatureAvailable(true);
-
         }
     }
 
@@ -62,5 +59,4 @@ public class TemperatureSink {
         setTemperatureAvailable(false);
         return temperature;
     }
-
 }

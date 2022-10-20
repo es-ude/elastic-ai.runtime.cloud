@@ -17,7 +17,12 @@ public class Heartbeater {
      * @param timer          The Timer used to implement periodic behaviour.
      * @param timePeriodInMs How long to wait between heartbeats.
      */
-    public Heartbeater(JavaTwin twin, String identifier, Timer timer, int timePeriodInMs) {
+    public Heartbeater(
+        JavaTwin twin,
+        String identifier,
+        Timer timer,
+        int timePeriodInMs
+    ) {
         this.twin = twin;
         this.identifier = identifier;
         this.timer = timer;
@@ -29,9 +34,7 @@ public class Heartbeater {
      */
     public void start() {
         isSendingHeartbeats = true;
-        timer.register(
-                this.timePeriodInMs,
-                this::timeout);
+        timer.register(this.timePeriodInMs, this::timeout);
         twin.publishHeartbeat(identifier);
     }
 
@@ -45,5 +48,4 @@ public class Heartbeater {
             twin.publishHeartbeat(identifier);
         }
     }
-
 }

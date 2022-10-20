@@ -8,7 +8,5 @@ package de.ude.es.util;
  * different clients.
  */
 public interface Timer {
-
     Timeout register(int timeoutMillis, TimerClient client);
-
 }

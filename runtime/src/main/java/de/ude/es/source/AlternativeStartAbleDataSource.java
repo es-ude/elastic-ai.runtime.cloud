@@ -4,7 +4,6 @@ import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinStub;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +65,6 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
         public boolean hasEntries() {
             return !clients.isEmpty();
         }
-
     }
 
     public AlternativeStartAbleDataSource(String dataId) {
@@ -91,5 +89,4 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
     public boolean hasClients() {
         return clients.hasEntries();
     }
-
 }

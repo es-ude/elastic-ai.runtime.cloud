@@ -1,13 +1,13 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.ude.es.comm.Broker;
 import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.sink.TemperatureSink;
 import de.ude.es.source.TemperatureSource;
 import de.ude.es.twin.TwinStub;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This is an integration test class that is also meant to provide
@@ -20,7 +20,6 @@ public class IntegrationTest4TwinInteraction {
     private static final String PRODUCER = "/producer";
     private static final String CONSUMER = "/consumer";
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
-
 
     private static class TwinThatOffersTemperature {
 
@@ -35,7 +34,10 @@ public class IntegrationTest4TwinInteraction {
         private void createTwinForLocalDevice(Broker broker, String id) {
             localDeviceTwin = new TwinWithHeartbeat(id);
             localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+            localDeviceTwin.startHeartbeats(
+                new TimerMock(),
+                HEARTBEAT_INTERVAL
+            );
         }
 
         private void createTemperatureSource() {
@@ -46,7 +48,6 @@ public class IntegrationTest4TwinInteraction {
         public void setNewTemperatureMeasured(double temperature) {
             temperatureSource.set(temperature);
         }
-
     }
 
     private static class TwinThatConsumesTemperature {
@@ -54,7 +55,11 @@ public class IntegrationTest4TwinInteraction {
         private TwinStub remoteDeviceTwin;
         private TemperatureSink temperatureSink;
 
-        public TwinThatConsumesTemperature(Broker broker, String local, String remote) {
+        public TwinThatConsumesTemperature(
+            Broker broker,
+            String local,
+            String remote
+        ) {
             createTwinForLocalDevice(broker, local);
             createTwinForRemoteDevice(broker, remote);
             createTemperatureSink();
@@ -63,7 +68,10 @@ public class IntegrationTest4TwinInteraction {
         private void createTwinForLocalDevice(Broker broker, String id) {
             var localDeviceTwin = new TwinWithHeartbeat(id);
             localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+            localDeviceTwin.startHeartbeats(
+                new TimerMock(),
+                HEARTBEAT_INTERVAL
+            );
         }
 
         private void createTwinForRemoteDevice(Broker broker, String id) {
@@ -79,7 +87,6 @@ public class IntegrationTest4TwinInteraction {
         public void checkTemperatureIs(double expected) {
             assertEquals(expected, temperatureSink.getCurrent());
         }
-
     }
 
     private Broker broker;
@@ -100,7 +107,11 @@ public class IntegrationTest4TwinInteraction {
 
         var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
-        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
+        var consumingDevice = new TwinThatConsumesTemperature(
+            broker,
+            CONSUMER,
+            PRODUCER
+        );
 
         sensingDevice.setNewTemperatureMeasured(11.6);
         consumingDevice.checkTemperatureIs(11.6);
@@ -172,5 +183,4 @@ public class IntegrationTest4TwinInteraction {
 
         return tempSink;
     }
-
 }

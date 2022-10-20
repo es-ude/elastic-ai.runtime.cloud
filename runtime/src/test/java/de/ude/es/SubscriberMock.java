@@ -1,11 +1,10 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
-
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SubscriberMock implements Subscriber {
 
@@ -17,21 +16,23 @@ public class SubscriberMock implements Subscriber {
     }
 
     public void checkPostingDelivered(Posting expected) {
-
         StringBuilder topics = new StringBuilder();
         for (Posting actual : deliveredPostings) {
             topics.append(actual).append(", ");
-            if (expected.equals(actual))
-                return;
+            if (expected.equals(actual)) return;
         }
-        fail("posting " + expected + " should have delivered (delivered topics: " + topics + ")");
+        fail(
+            "posting " +
+            expected +
+            " should have delivered (delivered topics: " +
+            topics +
+            ")"
+        );
     }
 
     public void checkTopicDelivered(String expected) {
-
         for (Posting actual : deliveredPostings) {
-            if (expected.equals(actual.topic()))
-                return;
+            if (expected.equals(actual.topic())) return;
         }
         fail("posting with topic " + expected + " should have delivered");
     }
@@ -42,9 +43,9 @@ public class SubscriberMock implements Subscriber {
 
     public void checkNumberOfPostingsDelivered(int amount) {
         StringBuilder topics = new StringBuilder();
-        for (Posting p : deliveredPostings)
-            topics.append(p.topic()).append(", ");
+        for (Posting p : deliveredPostings) topics
+            .append(p.topic())
+            .append(", ");
         assertEquals(amount, deliveredPostings.size(), topics.toString());
     }
-
 }

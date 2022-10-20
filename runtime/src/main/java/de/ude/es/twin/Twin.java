@@ -14,10 +14,9 @@ public class Twin {
     }
 
     private String fixIdentifierIfNecessary(String identifier) {
-        if (!identifier.startsWith("/"))
-            identifier = "/" + identifier;
-        if (identifier.endsWith("/"))
-            identifier = identifier.substring(0, identifier.length() - 1);
+        if (!identifier.startsWith("/")) identifier = "/" + identifier;
+        if (identifier.endsWith("/")) identifier =
+            identifier.substring(0, identifier.length() - 1);
         return identifier;
     }
 
@@ -55,8 +54,7 @@ public class Twin {
      * for certain topics or notify someone that
      * you are interested in some data.
      */
-    protected void executeOnBind() {
-    }
+    protected void executeOnBind() {}
 
     public String ID() {
         return endpoint.ID() + identifier;
@@ -65,5 +63,4 @@ public class Twin {
     public CommunicationEndpoint getEndpoint() {
         return endpoint;
     }
-
 }

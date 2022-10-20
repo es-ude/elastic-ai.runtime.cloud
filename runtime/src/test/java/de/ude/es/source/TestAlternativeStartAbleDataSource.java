@@ -1,11 +1,11 @@
 package de.ude.es.source;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.ude.es.Checker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestAlternativeStartAbleDataSource {
 
@@ -34,7 +34,6 @@ class TestAlternativeStartAbleDataSource {
         public void thenDataSourceHasNoClients() {
             assertFalse(dataSource.hasClients());
         }
-
     }
 
     private DataSourceChecker checker;
@@ -60,10 +59,7 @@ class TestAlternativeStartAbleDataSource {
         checker.givenJavaTwin();
         checker.givenDataSource();
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/START/data",
-                "/me"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
 
         checker.thenDataSourceHasClients();
     }
@@ -76,10 +72,7 @@ class TestAlternativeStartAbleDataSource {
         checker.givenDataStartPostPublishedBy("/me");
         checker.thenDataSourceHasClients();
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/STOP/data",
-                "/me"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
 
         checker.thenDataSourceHasNoClients();
     }
@@ -90,10 +83,7 @@ class TestAlternativeStartAbleDataSource {
         checker.givenJavaTwin("/twin1234");
         checker.givenDataSource();
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/START/data",
-                "/me"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
         checker.thenSubscriptionIsDoneFor("/me/LOST");
     }
 
@@ -104,10 +94,7 @@ class TestAlternativeStartAbleDataSource {
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/STOP/data",
-                "/me"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
         checker.thenUnsubscribeIsDoneFor("/me/LOST");
         checker.thenDataSourceHasNoClients();
     }
@@ -120,10 +107,7 @@ class TestAlternativeStartAbleDataSource {
         checker.givenDataStartPostPublishedBy("/me");
         checker.givenDataStartPostPublishedBy("/m_e");
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/STOP/data",
-                "/me"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
         checker.thenUnsubscribeIsDoneFor("/me/LOST");
     }
 
@@ -134,16 +118,9 @@ class TestAlternativeStartAbleDataSource {
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy("/me");
 
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/STOP/data",
-                "/me"
-        );
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/START/data",
-                "/m_e"
-        );
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/m_e");
         checker.thenSubscriptionIsDoneFor("/m_e/LOST");
         checker.thenDataSourceHasClients();
     }
-
 }

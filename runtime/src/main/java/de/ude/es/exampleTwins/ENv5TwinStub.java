@@ -26,5 +26,4 @@ public class ENv5TwinStub extends TwinStub {
     private String LED(int number) {
         return "led" + number;
     }
-
 }

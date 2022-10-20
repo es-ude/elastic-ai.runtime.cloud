@@ -1,7 +1,6 @@
 package de.ude.es;
 
 import de.ude.es.util.MonitorTimerClient;
-
 import java.util.TimerTask;
 
 public class MonitorTimer implements de.ude.es.util.MonitorTimer {
@@ -20,13 +19,16 @@ public class MonitorTimer implements de.ude.es.util.MonitorTimer {
     }
 
     private void start() {
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                client.timeout();
-                isTimedOut = true;
-            }
-        }, timeoutMillis);
+        timer.schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    client.timeout();
+                    isTimedOut = true;
+                }
+            },
+            timeoutMillis
+        );
     }
 
     @Override
@@ -36,5 +38,4 @@ public class MonitorTimer implements de.ude.es.util.MonitorTimer {
         }
         start();
     }
-
 }

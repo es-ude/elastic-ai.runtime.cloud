@@ -11,15 +11,11 @@ public class TwinStub extends Twin {
     }
 
     public void subscribeForData(String dataId, Subscriber subscriber) {
-        this.subscribe(
-                PostingType.DATA.topic(dataId),
-                subscriber);
+        this.subscribe(PostingType.DATA.topic(dataId), subscriber);
     }
 
     public void unsubscribeFromData(String dataId, Subscriber subscriber) {
-        this.unsubscribe(
-                PostingType.DATA.topic(dataId),
-                subscriber);
+        this.unsubscribe(PostingType.DATA.topic(dataId), subscriber);
     }
 
     public void subscribeForHeartbeat(Subscriber subscriber) {
@@ -33,15 +29,11 @@ public class TwinStub extends Twin {
     }
 
     public void subscribeForLost(Subscriber subscriber) {
-        this.subscribe(
-                PostingType.LOST.topic(""),
-                subscriber);
+        this.subscribe(PostingType.LOST.topic(""), subscriber);
     }
 
     public void unsubscribeFromLost(Subscriber subscriber) {
-        this.unsubscribe(
-                PostingType.LOST.topic(""),
-                subscriber);
+        this.unsubscribe(PostingType.LOST.topic(""), subscriber);
     }
 
     public void publishDataStartRequest(String dataId, String receiver) {
@@ -68,5 +60,4 @@ public class TwinStub extends Twin {
         Posting post = Posting.createTurnOff(service);
         this.publish(post);
     }
-
 }

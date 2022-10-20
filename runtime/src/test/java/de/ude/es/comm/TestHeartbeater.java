@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 public class TestHeartbeater {
 
     private static class HeartbeaterChecker extends Checker {
+
         public JavaTwin javaTwin;
         public TimerMock timer;
         public Heartbeater heartbeater;
@@ -38,7 +39,6 @@ public class TestHeartbeater {
         public void whenStoppingPeriodicHeartbeats() {
             heartbeater.stop();
         }
-
     }
 
     private HeartbeaterChecker checker;
@@ -76,5 +76,4 @@ public class TestHeartbeater {
         checker.whenTimerTicked();
         checker.thenMultiplePostingsAreDelivered(2);
     }
-
 }

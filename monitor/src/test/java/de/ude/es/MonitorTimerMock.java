@@ -17,7 +17,5 @@ public class MonitorTimerMock implements MonitorTimer {
     }
 
     @Override
-    public void reset() {
-    }
-
+    public void reset() {}
 }

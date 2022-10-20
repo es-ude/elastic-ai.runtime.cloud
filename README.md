@@ -7,7 +7,7 @@ The elastic-AI.runtime provides a backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused on the use with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
-- runtime: elastic-AI.runtime
+-   runtime: elastic-AI.runtime
 
 ## Prerequisites
 
@@ -67,12 +67,11 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ### Test execution
 
-
 | **Command**                          | **Task**                                                                                          |
-|------------------------------------- | ------------------------------------------------------------------------------------------------- |
-|                        `gradle test` | Run ** all** unit tests |
-|            `gradle: subproject:test` | Run unit test from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
-|             `gradle integrationTest` | Run ** all** Integration test |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `gradle test`                        | Run ** all** unit tests                                                                           |
+| `gradle: subproject:test`            | Run unit test from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
+| `gradle integrationTest`             | Run ** all** Integration test                                                                     |
 | `gradle :subproject:integrationTest` | Run integration test from ** specific** subproject <br/> (i.g. `gradle: runtime:integrationTest`) |
 
 ## Monitor
