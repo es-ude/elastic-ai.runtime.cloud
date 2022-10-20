@@ -73,7 +73,7 @@ public class IntegrationTest4HeartbeatsAddTwins {
         assertEquals(0, twinList.getTwins().size());
 
         createTwinWithHeartbeats("testTwin0");
-        Thread.sleep(50);
+        Thread.sleep(100);
 
         assertEquals(1, twinList.getTwins().size());
         TwinData twinData0 = new TwinData(
