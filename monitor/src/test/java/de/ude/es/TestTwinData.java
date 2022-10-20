@@ -1,9 +1,9 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTwinData {
 
@@ -32,7 +32,12 @@ public class TestTwinData {
 
     @Test
     void testSetName() {
-        TwinData twinDataCompare = new TwinData("NewName", "ID", new MonitorTimer(), 10000);
+        TwinData twinDataCompare = new TwinData(
+            "NewName",
+            "ID",
+            new MonitorTimer(),
+            10000
+        );
         twinData.setName("NewName");
         assertEquals(twinDataCompare.toString(), twinData.toString());
     }
@@ -41,5 +46,4 @@ public class TestTwinData {
     void testGetID() {
         assertEquals("ID", twinData.getID());
     }
-
 }

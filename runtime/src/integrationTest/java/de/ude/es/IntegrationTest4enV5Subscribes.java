@@ -11,9 +11,10 @@ public class IntegrationTest4enV5Subscribes {
 
     public static void main(String[] args) throws InterruptedException {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
-        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5("integTestTwin");
+        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
+            "integTestTwin"
+        );
         twin.bind(broker);
         twin.startPublishing(250);
     }
-
 }

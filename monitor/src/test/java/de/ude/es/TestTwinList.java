@@ -1,13 +1,12 @@
 package de.ude.es;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTwinList {
 
@@ -29,9 +28,9 @@ public class TestTwinList {
         twinList.changeTwinName("ID", "new_name");
 
         List<TwinData> expected = List.of(
-                new TwinData("Twin_0_new_name", "ID0", new MonitorTimerMock(), 0),
-                new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-                new TwinData("Twin_2_new_name", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin_0_new_name", "ID0", new MonitorTimerMock(), 0),
+            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
+            new TwinData("Twin_2_new_name", "ID2", new MonitorTimerMock(), 0)
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -40,28 +39,32 @@ public class TestTwinList {
 
     @Test
     void testGetTwin() {
-        assertEquals(new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0).toString(), twinList.getTwin("ID1").toString());
+        assertEquals(
+            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0).toString(),
+            twinList.getTwin("ID1").toString()
+        );
         assertNull(twinList.getTwin("ID"));
     }
 
     @Test
     void testAddTwin() {
         List<TwinData> expected = List.of(
-                new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
-                new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-                new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
+            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
+            new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
 
         twinList.addTwin("ID3");
-        expected = List.of(
+        expected =
+            List.of(
                 new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
                 new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
                 new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0),
                 new TwinData("Twin 3", "ID3", new MonitorTimerMock(), 0)
-        );
+            );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
@@ -70,9 +73,9 @@ public class TestTwinList {
     @Test
     void testAddTwinDuplicate() {
         List<TwinData> expected = List.of(
-                new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
-                new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-                new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
+            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
+            new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -89,7 +92,11 @@ public class TestTwinList {
         twins.add(new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0));
         twins.add(new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0));
         twins.add(new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0));
-        twinList.getTwins().add(new TwinData("Twin 3", "ID3", new MonitorTimerMock(), 0, false));
+        twinList
+            .getTwins()
+            .add(
+                new TwinData("Twin 3", "ID3", new MonitorTimerMock(), 0, false)
+            );
 
         assertEquals(twins.toString(), twinList.getActiveTwins().toString());
     }
@@ -103,5 +110,4 @@ public class TestTwinList {
 
         assertEquals(twins.toString(), twinList.getTwins().toString());
     }
-
 }

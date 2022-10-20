@@ -19,19 +19,14 @@ public class TimerMock implements Timer {
     }
 
     public record TimeoutMock(TimerClient client) implements Timeout {
-
         public void fire() {
             this.client.timeout(this);
         }
 
         @Override
-        public void restart() {
-        }
+        public void restart() {}
 
         @Override
-        public void stop() {
-        }
-
+        public void stop() {}
     }
-
 }

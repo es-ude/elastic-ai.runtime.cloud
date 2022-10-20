@@ -1,11 +1,9 @@
 package de.ude.es.comm;
 
-
 /**
  * Anything that can be used to send postings or subscribe for them.
  */
 public interface CommunicationEndpoint {
-
     void publish(Posting posting);
 
     /**
@@ -35,5 +33,4 @@ public interface CommunicationEndpoint {
     void unsubscribeRaw(String topic, Subscriber subscriber);
 
     String ID();
-
 }

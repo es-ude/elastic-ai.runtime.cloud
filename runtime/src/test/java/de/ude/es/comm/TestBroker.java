@@ -1,10 +1,10 @@
 package de.ude.es.comm;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.ude.es.Checker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestBroker {
 
@@ -129,5 +129,4 @@ public class TestBroker {
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/a");
         checker.thenPostingIsDelivered();
     }
-
 }

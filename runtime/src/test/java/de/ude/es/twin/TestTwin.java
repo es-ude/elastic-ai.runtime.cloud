@@ -1,11 +1,11 @@
 package de.ude.es.twin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.ude.es.Checker;
 import de.ude.es.comm.Broker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestTwin {
 
@@ -34,10 +34,8 @@ public class TestTwin {
 
     private void checkUpdateDelivered(String id) {
         checker.givenJavaTwin(id);
-        checker.givenSubscriptionAtJavaTwinFor(
-                "/DATA/temperature");
-        checker.whenPostingIsPublishedAtBroker(
-                "/twin1234/DATA/temperature");
+        checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
         checker.thenPostingIsDelivered();
     }
 
@@ -45,7 +43,9 @@ public class TestTwin {
     void NoUnsubscribeIfWrongTopic() {
         checker.givenJavaTwin("/twin1234");
         checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
-        checker.givenUnsubscriptionAtJavaTwinFor("eip://uni-due.de/es/DATA/temperature");
+        checker.givenUnsubscriptionAtJavaTwinFor(
+            "eip://uni-due.de/es/DATA/temperature"
+        );
         checker.whenPostingIsPublishedAtBroker("/twin1234/DATA/temperature");
         checker.thenPostingIsDelivered();
     }
@@ -67,5 +67,4 @@ public class TestTwin {
         twin.bind(broker);
         assertEquals("broker/twin", twin.ID());
     }
-
 }

@@ -14,35 +14,48 @@ import java.util.stream.Collectors;
  */
 public class Broker implements CommunicationEndpoint {
 
-    private static record Subscription(List<String> topicFilter, Subscriber subscriber) {
-
+    private static record Subscription(
+        List<String> topicFilter,
+        Subscriber subscriber
+    ) {
         public Subscription(String topicFilter, Subscriber subscriber) {
             this(getTokensWithCollection(topicFilter), subscriber);
         }
 
         public boolean matches(String msgTopic) {
-            return new Matcher(getTokensWithCollection(msgTopic), topicFilter).check();
+            return new Matcher(getTokensWithCollection(msgTopic), topicFilter)
+                .check();
         }
 
         private static List<String> getTokensWithCollection(String str) {
-            return Collections.list(new StringTokenizer(str, "/")).stream().map(token -> (String) token).collect(Collectors.toList());
+            return Collections
+                .list(new StringTokenizer(str, "/"))
+                .stream()
+                .map(token -> (String) token)
+                .collect(Collectors.toList());
         }
-
     }
 
     private static class Matcher {
+
         private final Iterator<String> msgTokens;
         private final Iterator<String> filterTokens;
         private boolean isMatching;
 
-        public Matcher(List<String> msgTokenList, List<String> filterTokenList) {
+        public Matcher(
+            List<String> msgTokenList,
+            List<String> filterTokenList
+        ) {
             msgTokens = msgTokenList.iterator();
             filterTokens = filterTokenList.iterator();
         }
 
         public boolean check() {
             while (hasMoreTokensToCheck()) {
-                boolean isDone = checkToken(msgTokens.next(), filterTokens.next());
+                boolean isDone = checkToken(
+                    msgTokens.next(),
+                    filterTokens.next()
+                );
                 if (isDone) return isMatching;
             }
             return allTokensConsumed();
@@ -80,7 +93,6 @@ public class Broker implements CommunicationEndpoint {
         private boolean allTokensConsumed() {
             return !msgTokens.hasNext() && !filterTokens.hasNext();
         }
-
     }
 
     private final List<Subscription> subscriptions = new LinkedList<>();
@@ -138,7 +150,8 @@ public class Broker implements CommunicationEndpoint {
     }
 
     private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
-        if (subscription.matches(msg.topic())) subscription.subscriber().deliver(msg);
+        if (subscription.matches(msg.topic())) subscription
+            .subscriber()
+            .deliver(msg);
     }
-
 }

@@ -1,5 +1,7 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.exampleTwins.TwinWithHeartbeat;
 import de.ude.es.twin.JavaTwin;
@@ -10,8 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @Testcontainers
 public class IntegrationTest4HeartbeatsAddTwins {
 
@@ -21,8 +21,10 @@ public class IntegrationTest4HeartbeatsAddTwins {
     private HivemqBroker broker;
 
     @Container
-    public static GenericContainer brokerCont = new GenericContainer(DockerImageName.parse("eclipse-mosquitto:1.6.14"))
-            .withExposedPorts(1883);
+    public static GenericContainer brokerCont = new GenericContainer(
+        DockerImageName.parse("eclipse-mosquitto:1.6.14")
+    )
+        .withExposedPorts(1883);
 
     @BeforeAll
     static void setUp() {
@@ -33,7 +35,9 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void SameIDisNoDuplicate() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
+        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
+            twinList
+        );
         heartbeatSubscriber.bind(broker);
 
         createTwinWithHeartbeats("testTwin0");
@@ -43,8 +47,16 @@ public class IntegrationTest4HeartbeatsAddTwins {
         Thread.sleep(100);
 
         assertEquals(1, twinList.getTwins().size());
-        TwinData twinData0 = new TwinData("Twin 0", "/testTwin0", new MonitorTimer(), 0);
-        assertEquals(twinData0.toString(), twinList.getTwins().get(0).toString());
+        TwinData twinData0 = new TwinData(
+            "Twin 0",
+            "/testTwin0",
+            new MonitorTimer(),
+            0
+        );
+        assertEquals(
+            twinData0.toString(),
+            twinList.getTwins().get(0).toString()
+        );
 
         broker.closeConnection();
     }
@@ -53,7 +65,9 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void TwinWhoSendHeartbeatGetsAdded() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(0);
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
+        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
+            twinList
+        );
         heartbeatSubscriber.bind(broker);
 
         assertEquals(0, twinList.getTwins().size());
@@ -62,15 +76,31 @@ public class IntegrationTest4HeartbeatsAddTwins {
         Thread.sleep(50);
 
         assertEquals(1, twinList.getTwins().size());
-        TwinData twinData0 = new TwinData("Twin 0", "/testTwin0", new MonitorTimer(), 0);
-        assertEquals(twinData0.toString(), twinList.getTwins().get(0).toString());
+        TwinData twinData0 = new TwinData(
+            "Twin 0",
+            "/testTwin0",
+            new MonitorTimer(),
+            0
+        );
+        assertEquals(
+            twinData0.toString(),
+            twinList.getTwins().get(0).toString()
+        );
 
         createTwinWithHeartbeats("testTwin1");
         Thread.sleep(50);
 
         assertEquals(2, twinList.getTwins().size());
-        TwinData twinData1 = new TwinData("Twin 1", "/testTwin1", new MonitorTimer(), 0);
-        assertEquals(twinData1.toString(), twinList.getTwins().get(1).toString());
+        TwinData twinData1 = new TwinData(
+            "Twin 1",
+            "/testTwin1",
+            new MonitorTimer(),
+            0
+        );
+        assertEquals(
+            twinData1.toString(),
+            twinList.getTwins().get(1).toString()
+        );
 
         broker.closeConnection();
     }
@@ -81,15 +111,25 @@ public class IntegrationTest4HeartbeatsAddTwins {
         TwinList twinList = new TwinList(300);
         JavaTwin sink = new JavaTwin("monitor");
         sink.bind(broker);
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
+        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
+            twinList
+        );
         heartbeatSubscriber.bind(broker);
 
         createTwinWithHeartbeats("testTwin0");
         Thread.sleep(100);
 
         assertEquals(1, twinList.getActiveTwins().size());
-        TwinData twinData0 = new TwinData("Twin 0", "/testTwin0", new MonitorTimer(), 0);
-        assertEquals(twinData0.toString(), twinList.getActiveTwins().get(0).toString());
+        TwinData twinData0 = new TwinData(
+            "Twin 0",
+            "/testTwin0",
+            new MonitorTimer(),
+            0
+        );
+        assertEquals(
+            twinData0.toString(),
+            twinList.getActiveTwins().get(0).toString()
+        );
 
         Thread.sleep(500);
 
@@ -103,15 +143,25 @@ public class IntegrationTest4HeartbeatsAddTwins {
     void twinGetsReactivated() throws InterruptedException {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         TwinList twinList = new TwinList(100);
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
+        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
+            twinList
+        );
         heartbeatSubscriber.bind(broker);
 
         createTwinWithHeartbeats("testTwin0");
         Thread.sleep(50);
 
         assertEquals(1, twinList.getActiveTwins().size());
-        TwinData twinData0 = new TwinData("Twin 0", "/testTwin0", new MonitorTimer(), 0);
-        assertEquals(twinData0.toString(), twinList.getActiveTwins().get(0).toString());
+        TwinData twinData0 = new TwinData(
+            "Twin 0",
+            "/testTwin0",
+            new MonitorTimer(),
+            0
+        );
+        assertEquals(
+            twinData0.toString(),
+            twinList.getActiveTwins().get(0).toString()
+        );
 
         Thread.sleep(200);
         assertEquals(0, twinList.getActiveTwins().size());
@@ -120,7 +170,10 @@ public class IntegrationTest4HeartbeatsAddTwins {
         Thread.sleep(50);
 
         assertEquals(1, twinList.getActiveTwins().size());
-        assertEquals(twinData0.toString(), twinList.getActiveTwins().get(0).toString());
+        assertEquals(
+            twinData0.toString(),
+            twinList.getActiveTwins().get(0).toString()
+        );
         broker.closeConnection();
     }
 
@@ -131,5 +184,4 @@ public class IntegrationTest4HeartbeatsAddTwins {
         sink.bind(broker);
         sink.startHeartbeats(timer, 0);
     }
-
 }

@@ -1,14 +1,14 @@
 package de.ude.es.sink;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import de.ude.es.comm.Broker;
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 import de.ude.es.exampleTwins.ENv5TwinStub;
 import de.ude.es.twin.JavaTwin;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TestTemperatureSink {
 
@@ -25,15 +25,17 @@ class TestTemperatureSink {
         public void registrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    "eip://uni-due.de/es" + id + "/START/temperature",
-                    deliveredPosting.topic(),
-                    "should have received command to " +
-                            "start sending temperature updates");
+                "eip://uni-due.de/es" + id + "/START/temperature",
+                deliveredPosting.topic(),
+                "should have received command to " +
+                "start sending temperature updates"
+            );
             assertEquals(
-                    "/local",
-                    deliveredPosting.data(),
-                    "should have received twin identifier " +
-                            "to check for its aliveness");
+                "/local",
+                deliveredPosting.data(),
+                "should have received twin identifier " +
+                "to check for its aliveness"
+            );
         }
 
         @Override
@@ -70,15 +72,17 @@ class TestTemperatureSink {
         public void deregistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    "eip://uni-due.de/es" + id + "/STOP/temperature",
-                    deliveredPosting.topic(),
-                    "should have received command to " +
-                            "stop sending temperature updates");
+                "eip://uni-due.de/es" + id + "/STOP/temperature",
+                deliveredPosting.topic(),
+                "should have received command to " +
+                "stop sending temperature updates"
+            );
             assertEquals(
-                    "/local",
-                    deliveredPosting.data(),
-                    "should have received twin identifier " +
-                            "to deregister it as a client");
+                "/local",
+                deliveredPosting.data(),
+                "should have received twin identifier " +
+                "to deregister it as a client"
+            );
         }
     }
 
@@ -136,7 +140,7 @@ class TestTemperatureSink {
         device = createDeviceTwin();
         temperature = createTemperatureTwin(device);
 
-        double[] measuredValues = {13.5, 11.7};
+        double[] measuredValues = { 13.5, 11.7 };
         for (double value : measuredValues) {
             remoteTwin.sendUpdate(value);
             assertEquals(value, temperature.getCurrent());
@@ -196,5 +200,4 @@ class TestTemperatureSink {
         post = new Posting(topic, "" + value);
         return post;
     }
-
 }

@@ -10,7 +10,12 @@ public class TwinData {
     private boolean active;
     private final MonitorTimer monitorTimer;
 
-    public TwinData(String name, String ID, MonitorTimer monitorTimer, int kikTime) {
+    public TwinData(
+        String name,
+        String ID,
+        MonitorTimer monitorTimer,
+        int kikTime
+    ) {
         this.ID = ID;
         this.name = name;
         this.kikTime = kikTime;
@@ -20,7 +25,13 @@ public class TwinData {
     }
 
     /* FOR TESTING */
-    public TwinData(String name, String ID, MonitorTimer monitorTimer, int kikTime, boolean active) {
+    public TwinData(
+        String name,
+        String ID,
+        MonitorTimer monitorTimer,
+        int kikTime,
+        boolean active
+    ) {
         this.ID = ID;
         this.name = name;
         this.kikTime = kikTime;
@@ -59,10 +70,8 @@ public class TwinData {
     }
 
     public String toString() {
-        return "TwinData{" +
-                "name='" + name + '\'' +
-                ", ID='" + ID + '\'' +
-                '}';
+        return (
+            "TwinData{" + "name='" + name + '\'' + ", ID='" + ID + '\'' + '}'
+        );
     }
-
 }

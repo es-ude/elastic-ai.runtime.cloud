@@ -26,5 +26,4 @@ public class DataSource<T> {
     public void set(T data) {
         javaTwin.publishData(dataId, "" + data);
     }
-
 }

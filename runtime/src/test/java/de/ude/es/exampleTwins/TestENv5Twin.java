@@ -1,11 +1,11 @@
 package de.ude.es.exampleTwins;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.ude.es.SubscriberMock;
 import de.ude.es.comm.Broker;
 import de.ude.es.comm.Posting;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestENv5Twin {
 
@@ -15,13 +15,10 @@ public class TestENv5Twin {
 
     @Test
     void canReportItsId() {
-
         broker = new Broker("eip://uni-due.de/es");
         env5 = new ENv5TwinStub("/twin1234");
         env5.bind(broker);
-        assertEquals(
-                "eip://uni-due.de/es/twin1234",
-                env5.ID());
+        assertEquals("eip://uni-due.de/es/twin1234", env5.ID());
     }
 
     @Test
@@ -33,14 +30,14 @@ public class TestENv5Twin {
         env5.activateLED(1);
 
         var expected = new Posting(
-                "eip://uni-due.de/es/twin1234/SET/led1",
-                "1");
+            "eip://uni-due.de/es/twin1234/SET/led1",
+            "1"
+        );
         subscriber.checkPostingDelivered(expected);
     }
 
     @Test
     void canSendMessageToDeactivateLED() {
-
         createBroker();
         env5 = createEnv5Twin("/twin1234");
         subscriber = createSubscriberFor("/twin1234/SET/led1");
@@ -48,11 +45,11 @@ public class TestENv5Twin {
         env5.deactivateLED(1);
 
         var expected = new Posting(
-                "eip://uni-due.de/es/twin1234/SET/led1",
-                "0");
+            "eip://uni-due.de/es/twin1234/SET/led1",
+            "0"
+        );
         subscriber.checkPostingDelivered(expected);
     }
-
 
     private Broker createBroker() {
         broker = new Broker("eip://uni-due.de/es");
@@ -70,5 +67,4 @@ public class TestENv5Twin {
         broker.subscribe(topic, subscriber);
         return subscriber;
     }
-
 }

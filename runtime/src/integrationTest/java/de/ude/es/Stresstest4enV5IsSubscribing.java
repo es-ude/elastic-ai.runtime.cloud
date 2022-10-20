@@ -1,9 +1,9 @@
 package de.ude.es;
 
+import static java.lang.Thread.sleep;
+
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.exampleTwins.IntegrationTestTwinForEnV5;
-
-import static java.lang.Thread.sleep;
 
 public class Stresstest4enV5IsSubscribing {
 
@@ -13,9 +13,10 @@ public class Stresstest4enV5IsSubscribing {
 
     public static void main(String[] args) throws InterruptedException {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
-        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5("integTestTwin");
+        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
+            "integTestTwin"
+        );
         twin.bind(broker);
         twin.startPublishing(1000);
     }
-
 }

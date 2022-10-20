@@ -38,5 +38,4 @@ class TestSimpleDataSource {
         checker.whenDataIsSetTo(3);
         checker.thenPostingIsDelivered();
     }
-
 }

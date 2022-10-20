@@ -21,9 +21,7 @@ public enum PostingType {
     }
 
     public String topic(String topicID) {
-        if (Objects.equals(topicID, ""))
-            return value;
+        if (Objects.equals(topicID, "")) return value;
         return value + "/" + topicID;
     }
-
 }

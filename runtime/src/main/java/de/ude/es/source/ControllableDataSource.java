@@ -6,7 +6,6 @@ import de.ude.es.twin.JavaTwin;
 import de.ude.es.twin.TwinStub;
 import de.ude.es.util.Timeout;
 import de.ude.es.util.Timer;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,8 @@ public class ControllableDataSource<T> {
             twinStub = new TwinStub(heartbeatSource);
             twinStub.bind(javaTwin.getEndpoint());
             twinStub.subscribeForHeartbeat(this);
-            timeout = timer.register(TIMEOUT_LENGTH, this::handleNoHeartbeatReceived);
+            timeout =
+                timer.register(TIMEOUT_LENGTH, this::handleNoHeartbeatReceived);
         }
 
         @Override
@@ -104,5 +104,4 @@ public class ControllableDataSource<T> {
     public void set(T data) {
         if (hasClients()) javaTwin.publishData(dataId, "" + data);
     }
-
 }

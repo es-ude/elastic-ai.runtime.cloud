@@ -16,11 +16,12 @@ public class Main {
         var sink = new JavaTwin("monitor");
         sink.bind(broker);
 
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(twinList);
+        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
+            twinList
+        );
         heartbeatSubscriber.bind(broker);
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);
     }
-
 }

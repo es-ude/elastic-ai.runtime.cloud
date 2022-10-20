@@ -1,14 +1,13 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.ude.es.comm.Broker;
 import de.ude.es.comm.Posting;
 import de.ude.es.comm.Subscriber;
 import de.ude.es.twin.JavaTwin;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Checker {
 
@@ -34,23 +33,29 @@ public class Checker {
 
     public void thenSubscriptionIsDoneFor(String topic) {
         assertTrue(
-                subscriptions.contains(topic),
-                "should have received subscription " +
-                        "for topic " + topic + ", topics received:" +
-                        getTopics(subscriptions));
+            subscriptions.contains(topic),
+            "should have received subscription " +
+            "for topic " +
+            topic +
+            ", topics received:" +
+            getTopics(subscriptions)
+        );
     }
 
     public void thenUnsubscribeIsDoneFor(String topic) {
-        assertTrue(unsubscribes.contains(topic),
-                "should have received unsubscribe " +
-                        "for topic " + topic + ", topics received:" +
-                        getTopics(unsubscribes));
+        assertTrue(
+            unsubscribes.contains(topic),
+            "should have received unsubscribe " +
+            "for topic " +
+            topic +
+            ", topics received:" +
+            getTopics(unsubscribes)
+        );
     }
 
     private String getTopics(List<String> list) {
         StringBuilder topics = new StringBuilder();
-        for (String t : list)
-            topics.append(t).append(", ");
+        for (String t : list) topics.append(t).append(", ");
         return topics.toString();
     }
 
@@ -152,5 +157,4 @@ public class Checker {
         Posting posting = new Posting(topic, data);
         javaTwin.publish(posting);
     }
-
 }

@@ -1,5 +1,7 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.es.comm.CommunicationEndpoint;
 import de.ude.es.comm.HivemqBroker;
 import de.ude.es.comm.Posting;
@@ -15,8 +17,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Testcontainers
 public class IntegrationTest4ExternalBroker {
 
@@ -28,7 +28,10 @@ public class IntegrationTest4ExternalBroker {
     private static final int HEARTBEAT_INTERVAL = 1000; //in ms
 
     @Container
-    public GenericContainer<?> brokerCont = new GenericContainer<>(DockerImageName.parse("eclipse-mosquitto:1.6.14")).withExposedPorts(1883);
+    public GenericContainer<?> brokerCont = new GenericContainer<>(
+        DockerImageName.parse("eclipse-mosquitto:1.6.14")
+    )
+        .withExposedPorts(1883);
 
     @BeforeEach
     void setUp() {
@@ -48,7 +51,10 @@ public class IntegrationTest4ExternalBroker {
         private void createTwinForLocalDevice(HivemqBroker broker, String id) {
             localDeviceTwin = new TwinWithHeartbeat(id);
             localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+            localDeviceTwin.startHeartbeats(
+                new TimerMock(),
+                HEARTBEAT_INTERVAL
+            );
         }
 
         private void createTemperatureSource() {
@@ -63,7 +69,6 @@ public class IntegrationTest4ExternalBroker {
         public boolean hasClients() {
             return temperatureSource.hasClients();
         }
-
     }
 
     private static class TwinThatConsumesTemperature {
@@ -71,7 +76,11 @@ public class IntegrationTest4ExternalBroker {
         private TwinStub remoteDeviceTwin;
         private TemperatureSink temperatureSink;
 
-        public TwinThatConsumesTemperature(HivemqBroker broker, String local, String remote) {
+        public TwinThatConsumesTemperature(
+            HivemqBroker broker,
+            String local,
+            String remote
+        ) {
             createTwinForLocalDevice(broker, local);
             createTwinForRemoteDevice(broker, remote);
             createTemperatureSink();
@@ -80,7 +89,10 @@ public class IntegrationTest4ExternalBroker {
         private void createTwinForLocalDevice(HivemqBroker broker, String id) {
             var localDeviceTwin = new TwinWithHeartbeat(id);
             localDeviceTwin.bind(broker);
-            localDeviceTwin.startHeartbeats(new TimerMock(), HEARTBEAT_INTERVAL);
+            localDeviceTwin.startHeartbeats(
+                new TimerMock(),
+                HEARTBEAT_INTERVAL
+            );
         }
 
         private void createTwinForRemoteDevice(HivemqBroker broker, String id) {
@@ -100,7 +112,6 @@ public class IntegrationTest4ExternalBroker {
         public boolean isNewTemperatureAvailable() {
             return temperatureSink.isNewTemperatureAvailable();
         }
-
     }
 
     public static class HeartbeatSubscriber {
@@ -160,14 +171,18 @@ public class IntegrationTest4ExternalBroker {
         broker = new HivemqBroker(DOMAIN, IP, PORT);
         var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
 
-        var consumingDevice = new TwinThatConsumesTemperature(broker, CONSUMER, PRODUCER);
+        var consumingDevice = new TwinThatConsumesTemperature(
+            broker,
+            CONSUMER,
+            PRODUCER
+        );
 
-        while (!sensingDevice.hasClients()) ;
+        while (!sensingDevice.hasClients());
         sensingDevice.setNewTemperatureMeasured(11.6);
-        while (!consumingDevice.isNewTemperatureAvailable()) ;
+        while (!consumingDevice.isNewTemperatureAvailable());
         consumingDevice.checkTemperatureIs(11.6);
         sensingDevice.setNewTemperatureMeasured(1.7);
-        while (!consumingDevice.isNewTemperatureAvailable()) ;
+        while (!consumingDevice.isNewTemperatureAvailable());
         consumingDevice.checkTemperatureIs(1.7);
 
         broker.closeConnection();
@@ -179,9 +194,9 @@ public class IntegrationTest4ExternalBroker {
 
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
-        while (!source.hasClients()) ;
+        while (!source.hasClients());
         sink.unbind();
-        while (source.hasClients()) ;
+        while (source.hasClients());
         source.set(9.9);
         Thread.sleep(1000);
         assertEquals(0.0, sink.getCurrent());
@@ -195,18 +210,18 @@ public class IntegrationTest4ExternalBroker {
         TemperatureSource source = createTemperatureSource();
         TemperatureSink sink = createTemperatureSink(CONSUMER);
 
-        while (!source.hasClients()) ;
+        while (!source.hasClients());
         sink.unbind();
 
-        while (source.hasClients()) ;
+        while (source.hasClients());
         assertFalse(source.hasClients());
 
         sink.bind(it);
-        while (!source.hasClients()) ;
+        while (!source.hasClients());
         assertTrue(source.hasClients());
 
         source.set(11.4);
-        while (!sink.isNewTemperatureAvailable()) ;
+        while (!sink.isNewTemperatureAvailable());
         assertEquals(11.4, sink.getCurrent());
 
         broker.closeConnection();
@@ -220,9 +235,12 @@ public class IntegrationTest4ExternalBroker {
         TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
         TemperatureSink sink2 = createTemperatureSink(CONSUMER + "2");
 
-        while (!temperatureSource.hasClients()) ;
+        while (!temperatureSource.hasClients());
         temperatureSource.set(11.4);
-        while (!sink1.isNewTemperatureAvailable() || !sink2.isNewTemperatureAvailable()) ;
+        while (
+            !sink1.isNewTemperatureAvailable() ||
+            !sink2.isNewTemperatureAvailable()
+        );
 
         assertEquals(11.4, sink1.getCurrent());
         assertEquals(11.4, sink2.getCurrent());
@@ -322,5 +340,4 @@ public class IntegrationTest4ExternalBroker {
 
         return tempSink;
     }
-
 }

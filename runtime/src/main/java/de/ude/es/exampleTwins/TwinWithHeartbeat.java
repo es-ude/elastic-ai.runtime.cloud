@@ -16,8 +16,8 @@ public class TwinWithHeartbeat extends JavaTwin {
         heartbeater = new Heartbeater(this, identifier, timer, timePeriodInMs);
         heartbeater.start();
     }
+
     public void stopHeartbeats() {
         heartbeater.stop();
     }
-
 }
