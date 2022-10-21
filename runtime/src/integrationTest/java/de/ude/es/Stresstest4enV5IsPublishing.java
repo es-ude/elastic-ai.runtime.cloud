@@ -13,9 +13,10 @@ public class Stresstest4enV5IsPublishing {
 
     public static void main(String[] args) {
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
-        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5("integTestTwin");
+        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
+            "integTestTwin"
+        );
         twin.bind(broker);
         twin.startSubscribing("stresstestPub");
     }
-
 }

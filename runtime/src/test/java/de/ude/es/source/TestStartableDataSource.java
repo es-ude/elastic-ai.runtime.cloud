@@ -1,14 +1,22 @@
 package de.ude.es.source;
 
+<<<<<<< HEAD
+=======
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+>>>>>>> main
 
 import de.ude.es.Checker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+=======
+>>>>>>> main
 class TestStartableDataSource {
 
     private static class DataSourceChecker extends Checker {
@@ -36,7 +44,6 @@ class TestStartableDataSource {
         public void thenDataSourceHasNoClients () {
             assertFalse( dataSource.hasClients( ) );
         }
-
     }
 
     private DataSourceChecker checker;
@@ -56,8 +63,13 @@ class TestStartableDataSource {
     }
 
     @Test
+<<<<<<< HEAD
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt () {
         checker.whenPostingIsPublishedAtBroker( "/twin1234/START/data", "/me" );
+=======
+    void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
+>>>>>>> main
 
         checker.thenDataSourceHasClients( );
     }
@@ -67,12 +79,17 @@ class TestStartableDataSource {
         checker.givenDataStartPostPublishedBy( "/me" );
         checker.thenDataSourceHasClients( );
 
+<<<<<<< HEAD
         checker.whenPostingIsPublishedAtBroker( "/twin1234/STOP/data", "/me" );
+=======
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
+>>>>>>> main
 
         checker.thenDataSourceHasNoClients( );
     }
 
     @Test
+<<<<<<< HEAD
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForStatus () {
         checker.whenPostingIsPublishedAtBroker( "/twin1234/START/data", "/me" );
         checker.thenSubscriptionIsDoneFor( "/me/STATUS" );
@@ -96,6 +113,39 @@ class TestStartableDataSource {
                                                 "/m_e" );
         checker.thenSubscriptionIsDoneFor( "/m_e/STATUS" );
         checker.thenDataSourceHasClients( );
+=======
+    void whenReceivingStartRequestThenTemperatureSourceSubscribesForHeartbeats() {
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
+        checker.thenSubscriptionIsDoneFor("/me/HEART");
     }
 
+    @Test
+    void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromHeartbeats() {
+        checker.givenDataStartPostPublishedBy("/me");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
+        checker.thenUnsubscribeIsDoneFor("/me/HEART");
+        checker.thenDataSourceHasNoClients();
+    }
+
+    @Test
+    void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
+        checker.givenDataStartPostPublishedBy("/me");
+        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
+        checker.thenUnsubscribeIsDoneFor("/me/HEART");
+        checker.thenDataSourceHasNoClients();
+        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/m_e");
+        checker.thenSubscriptionIsDoneFor("/m_e/HEART");
+        checker.thenDataSourceHasClients();
+    }
+
+    @Test
+    void whenRequesterHeartbeatsTimeOutThenTemperatureSourceRemovesItAsClient() {
+        checker.givenDataStartPostPublishedBy("/me");
+        checker.thenDataSourceHasClients();
+
+        checker.whenTimeoutOccurs();
+        checker.thenDataSourceHasNoClients();
+        checker.thenUnsubscribeIsDoneFor("/me/HEART");
+>>>>>>> main
+    }
 }

@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
 
 
 public class TestTwinStub {
+
     private static final String twinID = "test";
 
     private static class TwinStubChecker extends Checker {
+
         public TwinStub device;
 
         public void givenDevice () {
@@ -84,6 +86,7 @@ public class TestTwinStub {
     }
 
     @Test
+<<<<<<< HEAD
     void weCanSubscribeForData () {
         checker.whenSubscribingForData( "/light" );
         checker.whenPostingIsPublishedAtBroker( "/" + twinID + "/DATA/light",
@@ -98,6 +101,26 @@ public class TestTwinStub {
         checker.whenPostingIsPublishedAtBroker( "/" + twinID + "/DATA/light",
                                                 "33" );
         checker.thenPostingIsNotDelivered( );
+=======
+    void weCanSubscribeForData() {
+        checker.whenSubscribingForData("/light");
+        checker.whenPostingIsPublishedAtBroker(
+            "/" + twinID + "/DATA/light",
+            "33"
+        );
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromData() {
+        checker.whenSubscribingForData("/light");
+        checker.whenUnsubscribingFromData("/light");
+        checker.whenPostingIsPublishedAtBroker(
+            "/" + twinID + "/DATA/light",
+            "33"
+        );
+        checker.thenPostingIsNotDelivered();
+>>>>>>> main
     }
 
     @Test
@@ -108,12 +131,23 @@ public class TestTwinStub {
     }
 
     @Test
+<<<<<<< HEAD
     void weCanUnsubscribeFromStatus () {
         checker.whenSubscribingForStatus( );
         checker.whenUnsubscribingFromStatus( );
         checker.whenPostingIsPublishedAtBroker( "/" + twinID + "/STATUS",
                                                 "33" );
         checker.thenPostingIsNotDelivered( );
+=======
+    void weCanUnsubscribeFromHeartbeat() {
+        checker.whenSubscribingForHeartbeat();
+        checker.whenUnsubscribingFromHeartbeat();
+        checker.whenPostingIsPublishedAtBroker(
+            "/" + twinID + "/HEART/light",
+            "33"
+        );
+        checker.thenPostingIsNotDelivered();
+>>>>>>> main
     }
 
     @Test
@@ -165,5 +199,4 @@ public class TestTwinStub {
         checker.whenSendingOffCommand( "led" );
         checker.thenPostingIsDelivered( );
     }
-
 }
