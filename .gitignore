@@ -1,3 +1,6 @@
+## Custom ignores
+**/jacocoReport/
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,intellij,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,intellij,gradle

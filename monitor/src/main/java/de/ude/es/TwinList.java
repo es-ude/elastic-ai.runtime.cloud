@@ -20,14 +20,18 @@ public class TwinList {
     }
 
     public TwinData getTwin(String ID) {
-        for (TwinData tw : twins) {
-            if (Objects.equals(tw.getID(), ID)) {
-                return tw;
+        for (TwinData twin : twins) {
+            if (Objects.equals(twin.getID(), ID)) {
+                return twin;
             }
         }
         return null;
     }
 
+    /**
+     * if twin already exists -> sets twin.active=true,
+     * else -> adds new twin.
+     */
     public void addTwin(String ID) {
         if (getTwin(ID) == null) {
             twins.add(new TwinData("Twin " + twins.size(), ID));

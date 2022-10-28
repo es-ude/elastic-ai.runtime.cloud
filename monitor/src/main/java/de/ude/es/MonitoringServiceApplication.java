@@ -17,15 +17,15 @@ public class MonitoringServiceApplication {
 
     String twinTableElement =
         """
-            <tr>
-                <th>NUMBER</th>
-                <td>
-                    <div id=NAME_ID>NAME</div>
-                </td>
-                <td>TWIN_ID</td>
-                <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
-            </tr>
-            """;
+                              <tr>
+                                  <th>NUMBER</th>
+                                  <td>
+                                      <div id=NAME_ID>NAME</div>
+                                  </td>
+                                  <td>TWIN_ID</td>
+                                  <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
+                              </tr>
+                              """;
 
     public void startServer(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);

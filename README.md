@@ -7,12 +7,12 @@ The elastic-AI.runtime provides a backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused on the use with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
-- elastic-AI.runtime:runtime
-- elastic-AI.runtime:monitor
+- elastic-ai.runtime:runtime
+- elastic-ai.runtime:monitor
 
 ## Prerequisites
 
-## Java
+### Java
 
 Requires Java Version **17**
 
@@ -68,12 +68,194 @@ The reports can be found in the location `build/reports/` relative to the corres
 | `gradle integrationTest`             | Run ** all** Integration test                                                                     |
 | `gradle :subproject:integrationTest` | Run integration test from ** specific** subproject <br/> (i.g. `gradle: runtime:integrationTest`) |
 
-## Monitor
+## Project Structure
 
+```mermaid 
+%%{init: {"theme": "forest", "fonFamily" : "monospace", "flowchart" : { "curve" : "linear"}} }%%
+classDiagram
+  class Twin {
+    #String identifier
+    #CommunicationEndpoint endpoint
+    
+    +Twin(String identifier)
+    
+    +bind(CommunicationEndpoint endpoint) void
+    #subscribe(String topic, Subscriber subscriber) void
+    #unsubscribe(String topic, Subscriber subscriber) void
+    #publish(Posting posting) void
+    #executeOnBind( ) void
+    +ID( ) String
+    +getEndpoint( ) CommunicationEndpoint
+  }
+  Twin "*" --o "1" CommunicationEndpoint
+  Twin ..> Subscriber
+  Twin ..> Posting
+  
+  class JavaTwin {
+    +JavaTwin(String identifier)
+    
+    +publishData(String dataId, String value) void
+    +publishStatus(boolean online) void
+    +subscribeForStatus(String deviceId, Subscriber subscriber) void
+    +unsubscribeFromStatus(String deviceId, Subscriber subscriber) void
+    +subscribeForDataStartRequest(String dataId, Subscriber subscriber) void
+    +void unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) void
+    +subscribeForDataStopRequest(String dataId, Subscriber subscriber) void
+    +unsubscribeFromDataStopRequest(String dataId, Subscriber subscriber) void
+    +subscribeForCommand(String commandId, Subscriber subscriber) void
+    +unsubscribeFromCommand(String commandId, Subscriber subscriber) void
+  }
+  JavaTwin --|> Twin
+  JavaTwin ..> Subscriber
+  JavaTwin ..> Posting
+  
+  class TwinStub {
+    +TwinStub(String identifier)
+    
+    +subscribeForData(String dataId, Subscriber subsciber) void
+    +unsubscribeFromData(String dataId, Scubscriber subscriber) void
+    +subscribeForStatus(Subscriber subscriber) void
+    +unsubscribeFromStatus(Subscriber subscriber) void
+    +publishDataStartRequest(String dataId, String : receiver) void
+    +publishDataStopRequest(String dataId, String receiver ) void
+    +publishCommand(String service, String command) void
+  }
+  TwinStub --|> Twin
+  TwinStub ..> Subscriber
+  TwinStub ..> Posting
+
+  class CommunicationEndpoint {
+    <<interface>>
+    publish(Posting posting)
+    subscribe(String topic, Subscriber subscriber) void
+    subscribeRaw(String topic, Subscriber subscriber) void
+    unsubscribe(String topic, Subscriber subscriber) void
+    unsubscribeRaw(String topic, Subscriber subscriber) void
+    ID() String
+  }
+  CommunicationEndpoint ..> Subscriber
+  CommunicationEndpoint ..> Posting
+  
+  class HivemqBroker {
+    -String identifier
+    -Mqtt5AsyncClient client
+    
+    +HivemqBroker(String identifier)
+    +HivemqBroker(String identifier, String ip, String port)
+    
+    -connectToClient(String identifierString, String ip, int port) void
+    +closeConnection() void
+    +publish(Posting posting) void
+    -onPublishComplete(Mqtt5Publishresult pubAck, Throwable throwable) void
+    +subscribe(String topic, Subscriber subscriber) void
+    +subscribeRaw(String topic, Subscriber subscriber) void
+    -onSubscribeComplete(Throwable subFailed, String topic) void
+    +unsubscribe(String topic, Subscriber subscriber) void
+    +unsubscribeRaw(String topic, Subscriber subscriber) void
+    -onUnsubscribeComplete(Throwable unsubFailed, String topic) void
+    +ID() String
+  }
+  HivemqBroker ..|> CommunicationEndpoint
+  HivemqBroker ..> Subscriber
+  HivemqBroker ..> Posting
+  
+  class PostingType {
+    <<enumeration>>
+    DATA
+    START
+    STOP
+    SET
+    LOST
+    STATUS
+    
+    +topic(String topicID) String
+  }
+  
+  class Posting {
+    <<record>>
+    +Posting(String topic, String data)
+    
+    +createCommand(String topic, String command) Posting
+    +createStartSending(String dataId, String receiver) Posting
+    +createStopSending(String dataId, String receiver) Posting
+    +createData(String dataId, String value) Posting
+    +createStatus(String deviceId, boolean online) Posting
+    +cloneWithTopicAffix(String affix) Posting
+    +isStartSending(String topic) : boolean
+  }
+  Posting ..> PostingType
+  
+  class Subscriber {
+    <<interface>>
+    +deliver (Posting posting) void
+  }
+  Subscriber ..> Posting
+  
+  class TwinData {
+    -String name
+    -String ID
+    -boolean active
+    
+    +TwinData(String name, String ID)
+    
+    +setActive() void
+    +setInactive() void
+    +getName() String
+    +setName(String name) void
+    +ID() String
+    +isActive() boolean
+    +toString() String
+  }
+  
+  class TwinList {
+    -List<TwinData> twins
+    
+    +TwinList()
+    
+    +changeTwinName(String ID, String newName) void
+    +getTwin(Strind ID) TwinData
+    +addTwin(String ID) void
+    +getActiveTwins() List<TwinData>
+    +getTwins() List<TwinData>
+  }
+  TwinList *-- "*" TwinData
+  
+  class TwinStatusMonitor {
+    -Subscriber statusSubscriber
+    -TwinStub twin
+    
+    +TwinStatusMonitor(TwinList twinList) void
+    
+    +bind(CommunicationEndpoint endpoint) void
+  }
+  TwinStatusMonitor *-- "1" Subscriber
+  TwinStatusMonitor *-- "1" TwinList
+  TwinStatusMonitor --o "1" CommunicationEndpoint
+  
+  ENv5TwinStub --|> TwinStub
+  IntegrationTestTwin --|> JavaTwin
+```
+
+### Monitor
+
+The monitor is used to provide an external interface for user to interact with the elastic-ai ecosystem.
+This interface is provided via a java web application, which can be accessed via every common browser (e.g. Chrome, Firefox, Safari, ...).
 To start the monitor run
 
 ```bash
-gradle :monitor:run
+./gradlew :monitor:run
 ```
 
 The monitor can then be accessed locally at [http://localhost.com:8081](localhost.com:8081).
+
+#### Exit Codes
+
+| Exit Code | Description            |
+|----------:|:-----------------------|
+|         0 | No error               |
+|        10 | Argument Parser failed |
+
+### Runtime
+
+The runtime is meant to provide the necessary functions to implement a backend for the elastic-ai ecosystem.
+It provides the necessary function to operate the ecosystem, like the implementation of the Twin concept or the HiveMQBroker implementation together with the necessary functions to handle the MQTT Broker interactions.
