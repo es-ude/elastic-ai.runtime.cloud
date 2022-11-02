@@ -1,14 +1,12 @@
 package de.ude.es;
 
-import de.ude.es.comm.HivemqBroker;
-import de.ude.es.twin.JavaTwin;
-import java.sql.SQLOutput;
-import java.util.Objects;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.ude.es.comm.HivemqBroker;
+import org.ude.es.twinBase.JavaTwin;
 
 public class Main {
 
@@ -16,7 +14,6 @@ public class Main {
     private static Integer PORT = null;
     public static TwinList twinList;
     private static final String DOMAIN = "eip://uni-due.de/es";
-    private static final int kikTime = 60000;
 
     public static void main(String[] args) {
         try {
@@ -28,16 +25,14 @@ public class Main {
             System.exit(10);
         }
 
-        twinList = new TwinList(kikTime);
+        twinList = new TwinList();
         HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER, PORT);
 
         var sink = new JavaTwin("monitor");
         sink.bind(broker);
 
-        HeartbeatSubscriber heartbeatSubscriber = new HeartbeatSubscriber(
-            twinList
-        );
-        heartbeatSubscriber.bind(broker);
+        TwinStatusMonitor twinStatusMonitor = new TwinStatusMonitor(twinList);
+        twinStatusMonitor.bind(broker);
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);

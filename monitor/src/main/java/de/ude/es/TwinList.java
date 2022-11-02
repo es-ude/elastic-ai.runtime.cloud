@@ -6,12 +6,10 @@ import java.util.Objects;
 
 public class TwinList {
 
-    private List<TwinData> twins = new ArrayList<>();
+    private List<TwinData> twins;
 
-    private final int kikTime;
-
-    public TwinList(int kikTime) {
-        this.kikTime = kikTime;
+    public TwinList() {
+        twins = new ArrayList<>();
     }
 
     public void changeTwinName(String ID, String newName) {
@@ -22,26 +20,23 @@ public class TwinList {
     }
 
     public TwinData getTwin(String ID) {
-        for (TwinData tw : twins) {
-            if (Objects.equals(tw.getID(), ID)) {
-                return tw;
+        for (TwinData twin : twins) {
+            if (Objects.equals(twin.getID(), ID)) {
+                return twin;
             }
         }
         return null;
     }
 
+    /**
+     * if twin already exists -> sets twin.active=true,
+     * else -> adds new twin.
+     */
     public void addTwin(String ID) {
         if (getTwin(ID) == null) {
-            twins.add(
-                new TwinData(
-                    "Twin " + twins.size(),
-                    ID,
-                    new MonitorTimer(),
-                    kikTime
-                )
-            );
+            twins.add(new TwinData("Twin " + twins.size(), ID));
         } else {
-            getTwin(ID).resetKickTimer();
+            getTwin(ID).setActive();
         }
     }
 

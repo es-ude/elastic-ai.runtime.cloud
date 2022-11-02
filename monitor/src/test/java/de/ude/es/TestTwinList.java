@@ -14,7 +14,7 @@ public class TestTwinList {
 
     @BeforeEach
     void setUp() {
-        twinList = new TwinList(10000);
+        twinList = new TwinList();
 
         twinList.addTwin("ID0");
         twinList.addTwin("ID1");
@@ -28,9 +28,9 @@ public class TestTwinList {
         twinList.changeTwinName("ID", "new_name");
 
         List<TwinData> expected = List.of(
-            new TwinData("Twin_0_new_name", "ID0", new MonitorTimerMock(), 0),
-            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-            new TwinData("Twin_2_new_name", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin_0_new_name", "ID0"),
+            new TwinData("Twin 1", "ID1"),
+            new TwinData("Twin_2_new_name", "ID2")
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -40,7 +40,7 @@ public class TestTwinList {
     @Test
     void testGetTwin() {
         assertEquals(
-            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0).toString(),
+            new TwinData("Twin 1", "ID1").toString(),
             twinList.getTwin("ID1").toString()
         );
         assertNull(twinList.getTwin("ID"));
@@ -49,9 +49,9 @@ public class TestTwinList {
     @Test
     void testAddTwin() {
         List<TwinData> expected = List.of(
-            new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
-            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-            new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin 0", "ID0"),
+            new TwinData("Twin 1", "ID1"),
+            new TwinData("Twin 2", "ID2")
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -60,10 +60,10 @@ public class TestTwinList {
         twinList.addTwin("ID3");
         expected =
             List.of(
-                new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
-                new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-                new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0),
-                new TwinData("Twin 3", "ID3", new MonitorTimerMock(), 0)
+                new TwinData("Twin 0", "ID0"),
+                new TwinData("Twin 1", "ID1"),
+                new TwinData("Twin 2", "ID2"),
+                new TwinData("Twin 3", "ID3")
             );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -73,9 +73,9 @@ public class TestTwinList {
     @Test
     void testAddTwinDuplicate() {
         List<TwinData> expected = List.of(
-            new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0),
-            new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0),
-            new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0)
+            new TwinData("Twin 0", "ID0"),
+            new TwinData("Twin 1", "ID1"),
+            new TwinData("Twin 2", "ID2")
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -89,14 +89,10 @@ public class TestTwinList {
     @Test
     void testGetActiveTwins() {
         List<TwinData> twins = new ArrayList<>();
-        twins.add(new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0));
-        twins.add(new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0));
-        twins.add(new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0));
-        twinList
-            .getTwins()
-            .add(
-                new TwinData("Twin 3", "ID3", new MonitorTimerMock(), 0, false)
-            );
+        twins.add(new TwinData("Twin 0", "ID0"));
+        twins.add(new TwinData("Twin 1", "ID1"));
+        twins.add(new TwinData("Twin 2", "ID2"));
+        twinList.getTwins().add(new TwinData("Twin 3", "ID3", false));
 
         assertEquals(twins.toString(), twinList.getActiveTwins().toString());
     }
@@ -104,9 +100,9 @@ public class TestTwinList {
     @Test
     void testGetTwins() {
         List<TwinData> twins = new ArrayList<>();
-        twins.add(new TwinData("Twin 0", "ID0", new MonitorTimerMock(), 0));
-        twins.add(new TwinData("Twin 1", "ID1", new MonitorTimerMock(), 0));
-        twins.add(new TwinData("Twin 2", "ID2", new MonitorTimerMock(), 0));
+        twins.add(new TwinData("Twin 0", "ID0"));
+        twins.add(new TwinData("Twin 1", "ID1"));
+        twins.add(new TwinData("Twin 2", "ID2"));
 
         assertEquals(twins.toString(), twinList.getTwins().toString());
     }

@@ -11,7 +11,7 @@ public class TestTwinData {
 
     @BeforeEach
     void setUp() {
-        twinData = new TwinData("Name", "ID", new MonitorTimerMock(), 0);
+        twinData = new TwinData("Name", "ID");
     }
 
     @Test
@@ -26,18 +26,13 @@ public class TestTwinData {
         twinData.setNotActive();
         assertFalse(twinData.isActive());
 
-        twinData.resetKickTimer();
+        twinData.setActive();
         assertTrue(twinData.isActive());
     }
 
     @Test
     void testSetName() {
-        TwinData twinDataCompare = new TwinData(
-            "NewName",
-            "ID",
-            new MonitorTimer(),
-            10000
-        );
+        TwinData twinDataCompare = new TwinData("NewName", "ID");
         twinData.setName("NewName");
         assertEquals(twinDataCompare.toString(), twinData.toString());
     }

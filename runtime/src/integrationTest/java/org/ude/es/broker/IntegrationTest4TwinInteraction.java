@@ -1,0 +1,174 @@
+package org.ude.es.broker;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
+import org.ude.es.comm.Broker;
+import org.ude.es.source.TemperatureSource;
+import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.twinBase.TwinStub;
+import org.ude.es.twinImplementations.TemperatureSink;
+
+/**
+ * This is an integration test class that is also meant to provide an example on
+ * how to use the provided API to implement twins that measure temperature and
+ * twin that access temperature as data.
+ */
+public class IntegrationTest4TwinInteraction {
+
+    private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String PRODUCER = "/producer";
+    private static final String CONSUMER = "/consumer";
+
+    private static class TwinThatOffersTemperature {
+
+        private JavaTwin localDeviceTwin;
+        private TemperatureSource temperatureSource;
+
+        public TwinThatOffersTemperature(Broker broker, String id) {
+            createTwinForLocalDevice(broker, id);
+            createTemperatureSource();
+        }
+
+        private void createTwinForLocalDevice(Broker broker, String id) {
+            localDeviceTwin = new JavaTwin(id);
+            localDeviceTwin.bind(broker);
+        }
+
+        private void createTemperatureSource() {
+            temperatureSource = new TemperatureSource();
+            temperatureSource.bind(localDeviceTwin);
+        }
+
+        public void setNewTemperatureMeasured(double temperature) {
+            temperatureSource.set(temperature);
+        }
+    }
+
+    private static class TwinThatConsumesTemperature {
+
+        private TwinStub remoteDeviceTwin;
+        private TemperatureSink temperatureSink;
+
+        public TwinThatConsumesTemperature(
+            Broker broker,
+            String local,
+            String remote
+        ) {
+            createTwinForLocalDevice(broker, local);
+            createTwinForRemoteDevice(broker, remote);
+            createTemperatureSink();
+        }
+
+        private void createTwinForLocalDevice(Broker broker, String id) {
+            var localDeviceTwin = new JavaTwin(id);
+            localDeviceTwin.bind(broker);
+        }
+
+        private void createTwinForRemoteDevice(Broker broker, String id) {
+            remoteDeviceTwin = new TwinStub(id);
+            remoteDeviceTwin.bind(broker);
+        }
+
+        private void createTemperatureSink() {
+            temperatureSink =
+                new TemperatureSink(remoteDeviceTwin.ID() + "_sink");
+            temperatureSink.connectDataSource(remoteDeviceTwin);
+        }
+
+        public void checkTemperatureIs(double expected) {
+            assertEquals(expected, temperatureSink.getCurrentTemperature());
+        }
+    }
+
+    private Broker broker;
+    private TwinStub stub;
+
+    /**
+     * This is an integration test that shows the basic interaction between
+     * twins by exchanging a temperature that is measured by one device
+     * ("producer") with another device ("consumer") that wants to access it.
+     * The example shows how to achieve this with - a TemperatureSource on the
+     * producer side - and a TemperatureSink on the consumer side.
+     */
+    @Test
+    void twinsCanCommunicate() {
+        var broker = new Broker(DOMAIN);
+
+        var sensingDevice = new TwinThatOffersTemperature(broker, PRODUCER);
+
+        var consumingDevice = new TwinThatConsumesTemperature(
+            broker,
+            CONSUMER,
+            PRODUCER
+        );
+
+        sensingDevice.setNewTemperatureMeasured(11.6);
+        consumingDevice.checkTemperatureIs(11.6);
+        // ...
+        sensingDevice.setNewTemperatureMeasured(1.7);
+        consumingDevice.checkTemperatureIs(1.7);
+    }
+
+    @Test
+    void communicationCanBeStopped() {
+        broker = new Broker(DOMAIN);
+
+        TemperatureSource source = createTemperatureSource();
+        TemperatureSink sink = createTemperatureSink(CONSUMER);
+
+        sink.disconnectDataSource();
+        source.set(9.9);
+        assertEquals(0.0, sink.getCurrentTemperature());
+    }
+
+    @Test
+    void communicationCanBeResumed() {
+        broker = new Broker(DOMAIN);
+
+        TemperatureSource source = createTemperatureSource();
+        TemperatureSink sink = createTemperatureSink(CONSUMER);
+
+        sink.disconnectDataSource();
+        sink.connectDataSource(stub);
+
+        source.set(11.4);
+        assertEquals(11.4, sink.getCurrentTemperature());
+    }
+
+    @Test
+    void sourceAndTwoSinksCanCommunicate() {
+        broker = new Broker(DOMAIN);
+
+        TemperatureSource temperatureSource = createTemperatureSource();
+        TemperatureSink sink1 = createTemperatureSink(CONSUMER + "1");
+        TemperatureSink sink2 = createTemperatureSink(CONSUMER + "2");
+
+        temperatureSource.set(11.4);
+
+        assertEquals(11.4, sink1.getCurrentTemperature());
+        assertEquals(11.4, sink2.getCurrentTemperature());
+    }
+
+    private TemperatureSource createTemperatureSource() {
+        var source = new JavaTwin(PRODUCER);
+        source.bind(broker);
+
+        var temperatureSource = new TemperatureSource();
+        temperatureSource.bind(source);
+
+        return temperatureSource;
+    }
+
+    private TemperatureSink createTemperatureSink(String local) {
+        var sink = new JavaTwin(local);
+        sink.bind(broker);
+
+        stub = new TwinStub(PRODUCER);
+        stub.bind(broker);
+        var tempSink = new TemperatureSink(sink.ID());
+        tempSink.connectDataSource(stub);
+
+        return tempSink;
+    }
+}
