@@ -7,8 +7,8 @@ The elastic-AI.runtime provides a backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused on the use with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
-- elastic-ai.runtime:runtime
-- elastic-ai.runtime:monitor
+-   elastic-ai.runtime:runtime
+-   elastic-ai.runtime:monitor
 
 ## Prerequisites
 
@@ -62,7 +62,7 @@ The reports can be found in the location `build/reports/` relative to the corres
 ### Test execution
 
 | **Command**                          | **Task**                                                                                          |
-|--------------------------------------|---------------------------------------------------------------------------------------------------|
+| ------------------------------------ | ------------------------------------------------------------------------------------------------- |
 | `gradle test`                        | Run ** all** unit tests                                                                           |
 | `gradle: subproject:test`            | Run unit test from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `gradle integrationTest`             | Run ** all** Integration test                                                                     |
@@ -70,15 +70,15 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ## Project Structure
 
-```mermaid 
+```mermaid
 %%{init: {"theme": "forest", "fonFamily" : "monospace", "flowchart" : { "curve" : "linear"}} }%%
 classDiagram
   class Twin {
     #String identifier
     #CommunicationEndpoint endpoint
-    
+
     +Twin(String identifier)
-    
+
     +bind(CommunicationEndpoint endpoint) void
     #subscribe(String topic, Subscriber subscriber) void
     #unsubscribe(String topic, Subscriber subscriber) void
@@ -90,10 +90,10 @@ classDiagram
   Twin "*" --o "1" CommunicationEndpoint
   Twin ..> Subscriber
   Twin ..> Posting
-  
+
   class JavaTwin {
     +JavaTwin(String identifier)
-    
+
     +publishData(String dataId, String value) void
     +publishStatus(boolean online) void
     +subscribeForStatus(String deviceId, Subscriber subscriber) void
@@ -108,10 +108,10 @@ classDiagram
   JavaTwin --|> Twin
   JavaTwin ..> Subscriber
   JavaTwin ..> Posting
-  
+
   class TwinStub {
     +TwinStub(String identifier)
-    
+
     +subscribeForData(String dataId, Subscriber subsciber) void
     +unsubscribeFromData(String dataId, Scubscriber subscriber) void
     +subscribeForStatus(Subscriber subscriber) void
@@ -135,14 +135,14 @@ classDiagram
   }
   CommunicationEndpoint ..> Subscriber
   CommunicationEndpoint ..> Posting
-  
+
   class HivemqBroker {
     -String identifier
     -Mqtt5AsyncClient client
-    
+
     +HivemqBroker(String identifier)
     +HivemqBroker(String identifier, String ip, String port)
-    
+
     -connectToClient(String identifierString, String ip, int port) void
     +closeConnection() void
     +publish(Posting posting) void
@@ -158,7 +158,7 @@ classDiagram
   HivemqBroker ..|> CommunicationEndpoint
   HivemqBroker ..> Subscriber
   HivemqBroker ..> Posting
-  
+
   class PostingType {
     <<enumeration>>
     DATA
@@ -167,14 +167,14 @@ classDiagram
     SET
     LOST
     STATUS
-    
+
     +topic(String topicID) String
   }
-  
+
   class Posting {
     <<record>>
     +Posting(String topic, String data)
-    
+
     +createCommand(String topic, String command) Posting
     +createStartSending(String dataId, String receiver) Posting
     +createStopSending(String dataId, String receiver) Posting
@@ -184,20 +184,20 @@ classDiagram
     +isStartSending(String topic) : boolean
   }
   Posting ..> PostingType
-  
+
   class Subscriber {
     <<interface>>
     +deliver (Posting posting) void
   }
   Subscriber ..> Posting
-  
+
   class TwinData {
     -String name
     -String ID
     -boolean active
-    
+
     +TwinData(String name, String ID)
-    
+
     +setActive() void
     +setInactive() void
     +getName() String
@@ -206,12 +206,12 @@ classDiagram
     +isActive() boolean
     +toString() String
   }
-  
+
   class TwinList {
     -List<TwinData> twins
-    
+
     +TwinList()
-    
+
     +changeTwinName(String ID, String newName) void
     +getTwin(Strind ID) TwinData
     +addTwin(String ID) void
@@ -219,19 +219,19 @@ classDiagram
     +getTwins() List<TwinData>
   }
   TwinList *-- "*" TwinData
-  
+
   class TwinStatusMonitor {
     -Subscriber statusSubscriber
     -TwinStub twin
-    
+
     +TwinStatusMonitor(TwinList twinList) void
-    
+
     +bind(CommunicationEndpoint endpoint) void
   }
   TwinStatusMonitor *-- "1" Subscriber
   TwinStatusMonitor *-- "1" TwinList
   TwinStatusMonitor --o "1" CommunicationEndpoint
-  
+
   ENv5TwinStub --|> TwinStub
   IntegrationTestTwin --|> JavaTwin
 ```
@@ -251,7 +251,7 @@ The monitor can then be accessed locally at [http://localhost.com:8081](localhos
 #### Exit Codes
 
 | Exit Code | Description            |
-|----------:|:-----------------------|
+| --------: | :--------------------- |
 |         0 | No error               |
 |        10 | Argument Parser failed |
 
