@@ -258,4 +258,4 @@ The monitor can then be accessed locally at [http://localhost.com:8081](localhos
 ### Runtime
 
 The runtime is meant to provide the necessary functions to implement a backend for the elastic-ai ecosystem.
-It provides the necessary function to operate the ecosystem, like the implementation of the Twin concept or the HiveMQBroker implementation together with the necessary functions to handle the MQTT Broker interactions.
+It provides the necessary functions to operate the ecosystem, like the implementation of the Twin concept or the HiveMQBroker implementation together with the necessary functions to handle the MQTT Broker interactions.
