@@ -16,7 +16,7 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
 
     @Override
     protected void executeOnBind() {
-        enV5.bind(endpoint);
+        enV5.bindToCommunicationEndpoint(endpoint);
     }
 
     public void startSubscribing(String topic) {

@@ -28,14 +28,6 @@ public class TwinStub extends Twin {
         this.unsubscribe(topic, subscriber);
     }
 
-    public void subscribeForLost(Subscriber subscriber) {
-        this.subscribe(PostingType.LOST.topic(""), subscriber);
-    }
-
-    public void unsubscribeFromLost(Subscriber subscriber) {
-        this.unsubscribe(PostingType.LOST.topic(""), subscriber);
-    }
-
     public void publishDataStartRequest(String dataId, String receiver) {
         Posting post = Posting.createStartSending(dataId, receiver);
         this.publish(post);

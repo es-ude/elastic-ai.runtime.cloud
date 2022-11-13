@@ -20,7 +20,7 @@ public class Twin {
         if (identifier.endsWith("/")) {
             identifier = identifier.substring(0, identifier.length() - 1);
         }
-        return identifier;
+        return identifier.strip();
     }
 
     protected void subscribe(String topic, Subscriber subscriber) {
@@ -37,15 +37,25 @@ public class Twin {
     }
 
     /**
+     * <p>
      * Call this method to bind your DigitalTwin to a CommunicationEndpoint, to
-     * send / receive postings.
-     * Note: this method cannot be overwritten! If you
-     * want your DigitalTwin subclass to perform its own
-     * actions when binding, please override @executeOnBind.
+     * send and receive postings.
+     * </p>
+     * <p>
+     * <b>Note:</b> This method cannot be overwritten! If you
+     *              want your DigitalTwin subclass to perform its own
+     *              actions when binding, please override @executeOnBind.
+     * </p>
+     * <p>
+     * <b>Important:</b> Every Twin must have its own instance of the implemented
+     *                   Communication Interface.
+     * </p>
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bind(CommunicationEndpoint channel) {
+    public final void bindToCommunicationEndpoint(
+        CommunicationEndpoint channel
+    ) {
         this.endpoint = channel;
         executeOnBind();
     }

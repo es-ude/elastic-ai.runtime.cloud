@@ -1,36 +1,36 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.sink;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.comm.Broker;
+import org.ude.es.BrokerMock;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.twinBase.TwinStub;
 
 class TestTemperatureSink {
 
     private static class TwinForDeviceWithTemperatureSensor extends JavaTwin {
 
         private Posting deliveredPosting = null;
-        private final String id;
 
         public TwinForDeviceWithTemperatureSensor(String id) {
             super(id);
-            this.id = id;
         }
 
         public void registrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                DOMAIN + id + "/START/" + DATA_ID,
+                DOMAIN + this.identifier + PostingType.START.topic(DATA_ID),
                 deliveredPosting.topic(),
                 "should have received command to start sending temperature updates"
             );
             assertEquals(
-                SINK_ID,
+                DOMAIN + CONSUMER_ID,
                 deliveredPosting.data(),
                 "should have received twin identifier to check for its aliveness"
             );
@@ -72,12 +72,12 @@ class TestTemperatureSink {
         public void deregistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                DOMAIN + id + "/STOP/" + DATA_ID,
+                DOMAIN + this.identifier + PostingType.STOP.topic(DATA_ID),
                 deliveredPosting.topic(),
                 "should have received command to stop sending temperature updates"
             );
             assertEquals(
-                SINK_ID,
+                DOMAIN + CONSUMER_ID,
                 deliveredPosting.data(),
                 "should have received twin identifier to deregister it as a client"
             );
@@ -85,121 +85,96 @@ class TestTemperatureSink {
     }
 
     private static final String SENSOR_ID = "/sensor";
-    private static final String SINK_ID = SENSOR_ID + "_tempSink";
-
+    private static final String CONSUMER_ID = "/consumer";
     private static final String DOMAIN = "eip://uni-due.de/es";
+    private static final String DATA_ID = "temp";
+    private BrokerMock broker;
+    private TwinForDeviceWithTemperatureSensor remote;
 
-    private static final String DATA_ID = "TEMP";
-    private Broker testBroker;
-    private TwinForDeviceWithTemperatureSensor remoteTwin;
+    private TwinStub device;
+
+    @BeforeEach
+    void setUp() {
+        broker = new BrokerMock(DOMAIN);
+        device = createDeviceTwin(SENSOR_ID);
+        remote = createRemoteTwin();
+    }
 
     @Test
     void temperatureSinkGetsUpdate() {
-        createBroker();
-        var device = createDeviceTwin();
-        var temperatureTwin = createTemperatureTwin(device, SINK_ID);
+        var temperatureTwin = createTemperatureSink(device, CONSUMER_ID);
 
-        testBroker.publish(createRemoteTemperaturePosting(13.5));
-
-        assertEquals(13.5, temperatureTwin.getCurrentTemperature());
+        remote.sendUpdate(13.4);
+        assertEquals(13.4, temperatureTwin.getCurrentTemperature());
     }
 
     @Test
     void multipleTemperatureSinksGetUpdate() {
-        createBroker();
-        var device = createDeviceTwin();
-        var tempTwin1 = createTemperatureTwin(device, SINK_ID + "1");
-        var tempTwin2 = createTemperatureTwin(device, SINK_ID + "2");
+        var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
+        var tempTwin2 = createTemperatureSink(device, CONSUMER_ID + "2");
 
-        testBroker.publish(createRemoteTemperaturePosting(13.5));
-
+        remote.sendUpdate(13.5);
         assertEquals(13.5, tempTwin1.getCurrentTemperature());
         assertEquals(13.5, tempTwin2.getCurrentTemperature());
     }
 
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
-        createBroker();
-        var device1 = createDeviceTwin("/sensor");
-        var tempTwin1 = createTemperatureTwin(device1, SINK_ID + "1");
+        var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
         var device2 = createDeviceTwin("/twin4321");
-        var tempTwin2 = createTemperatureTwin(device2, SINK_ID + "2");
+        var tempTwin2 = createTemperatureSink(device2, CONSUMER_ID + "2");
 
-        testBroker.publish(createRemoteTemperaturePosting(13.7));
-
+        remote.sendUpdate(13.7);
         assertEquals(13.7, tempTwin1.getCurrentTemperature());
         assertEquals(0.0, tempTwin2.getCurrentTemperature());
     }
 
     @Test
     void temperatureSinkCanReceiveMultipleUpdates() {
-        createBroker();
-        createRemoteTwin();
-        var device = createDeviceTwin();
-        var temperature = createTemperatureTwin(device, SINK_ID);
+        var temperature = createTemperatureSink(device, CONSUMER_ID);
 
         double[] measuredValues = { 13.5, 11.7 };
         for (double value : measuredValues) {
-            this.remoteTwin.sendUpdate(value);
+            remote.sendUpdate(value);
             assertEquals(value, temperature.getCurrentTemperature());
         }
     }
 
     @Test
     void temperatureSinkRequestsTemperatureUpdates() {
-        createBroker();
-        createRemoteTwin();
-        var device = createDeviceTwin();
-        createTemperatureTwin(device, SINK_ID);
+        createTemperatureSink(device, CONSUMER_ID);
 
-        remoteTwin.registrationReceived();
+        remote.registrationReceived();
     }
 
     @Test
     void temperatureSinkStopsTemperatureUpdates() {
-        createBroker();
-        createRemoteTwin();
-        var device = createDeviceTwin();
-        var temperature = createTemperatureTwin(device, SINK_ID);
+        var temperature = createTemperatureSink(device, CONSUMER_ID);
         temperature.disconnectDataSource();
 
-        remoteTwin.deregistrationReceived();
+        remote.deregistrationReceived();
     }
 
-    private void createBroker() {
-        this.testBroker = new Broker(DOMAIN);
+    private TwinStub createDeviceTwin(String id) {
+        TwinStub device = new TwinStub(id);
+        device.bindToCommunicationEndpoint(this.broker);
+        return device;
     }
 
-    private TemperatureSink createTemperatureTwin(
-        ENv5TwinStub device,
-        String sinkId
-    ) {
-        TemperatureSink temperature = new TemperatureSink(sinkId, DATA_ID);
-        temperature.bind(testBroker);
+    private TemperatureSink createTemperatureSink(TwinStub device, String id) {
+        JavaTwin tempTwin = new JavaTwin(id);
+        tempTwin.bindToCommunicationEndpoint(broker);
+
+        TemperatureSink temperature = new TemperatureSink(tempTwin, DATA_ID);
         temperature.connectDataSource(device);
         return temperature;
     }
 
-    private void createRemoteTwin() {
-        this.remoteTwin = new TwinForDeviceWithTemperatureSensor(SENSOR_ID);
-        this.remoteTwin.bind(testBroker);
-    }
-
-    private ENv5TwinStub createDeviceTwin() {
-        return createDeviceTwin(SENSOR_ID);
-    }
-
-    private ENv5TwinStub createDeviceTwin(String id) {
-        ENv5TwinStub device = new ENv5TwinStub(id);
-        device.bind(this.testBroker);
-        return device;
-    }
-
-    private Posting createRemoteTemperaturePosting(double value) {
-        return new Posting(
-            PostingType.DATA.topic(DATA_ID),
-            Double.toString(value)
-        )
-            .cloneWithTopicAffix(SENSOR_ID);
+    private TwinForDeviceWithTemperatureSensor createRemoteTwin() {
+        TwinForDeviceWithTemperatureSensor remoteTwin = new TwinForDeviceWithTemperatureSensor(
+            SENSOR_ID
+        );
+        remoteTwin.bindToCommunicationEndpoint(broker);
+        return remoteTwin;
     }
 }

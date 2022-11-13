@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.comm.Broker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
@@ -19,7 +18,7 @@ public class Checker {
     public List<String> unsubscribes = new ArrayList<>();
     public final String DOMAIN = "eip://uni-due.de/es";
 
-    //-- for testing (non)reception of a posting :
+    //region testing (non)reception of a posting
 
     public void thenPostingIsDelivered() {
         subscriber.checkPostingDelivered(expected);
@@ -29,7 +28,9 @@ public class Checker {
         subscriber.checkNoPostingDelivered();
     }
 
-    //-- for testing (un)subscription of a topic :
+    //endregion testing (non)reception of a posting
+
+    //region testing (un)subscription of a topic
 
     public void thenSubscriptionIsDoneFor(String topic) {
         assertTrue(
@@ -59,9 +60,11 @@ public class Checker {
         return topics.toString();
     }
 
-    //-- for testing with broker :
+    //endregion testing (un)subscription of a topic
 
-    public class TestBroker extends Broker {
+    //region testing with broker
+
+    private class TestBroker extends BrokerMock {
 
         public TestBroker(String identifier) {
             super(identifier);
@@ -107,7 +110,9 @@ public class Checker {
         broker.publish(new Posting(topic, data));
     }
 
-    //-- for testing with JavaTwin :
+    //endregion testing with broker
+
+    //region testing with JavaTwin
 
     public class JavaTestTwin extends JavaTwin {
 
@@ -135,7 +140,7 @@ public class Checker {
 
     public void givenJavaTwin(String id) {
         javaTwin = new JavaTestTwin(id);
-        javaTwin.bind(broker);
+        javaTwin.bindToCommunicationEndpoint(broker);
     }
 
     public void givenSubscriptionAtJavaTwinFor(String topic) {
@@ -157,4 +162,5 @@ public class Checker {
         Posting posting = new Posting(topic, data);
         javaTwin.publish(posting);
     }
+    //endregion testing with JavaTwin
 }

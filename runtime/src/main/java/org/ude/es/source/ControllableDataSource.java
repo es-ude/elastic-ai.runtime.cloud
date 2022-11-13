@@ -10,7 +10,7 @@ import org.ude.es.twinBase.TwinStub;
 /**
  * A simple template class for data sources. Can be used by twins that measure
  * some data to make it available to clients. This class handles listening for
- * START and STOP messages and will subscribe for the heartbeats of all its
+ * START and STOP messages and will subscribe for the status of all its
  * clients to detect if none of them is available anymore and stop sending
  * updates in that case.
  *
@@ -30,8 +30,9 @@ public class ControllableDataSource<T> {
 
         public Client(String clientIdentifier) {
             this.clientIdentifier = clientIdentifier;
+
             twinStub = new TwinStub(clientIdentifier);
-            twinStub.bind(javaTwin.getEndpoint());
+            twinStub.bindToCommunicationEndpoint(javaTwin.getEndpoint());
             twinStub.subscribeForStatus(this);
         }
 
@@ -49,9 +50,7 @@ public class ControllableDataSource<T> {
         }
 
         public void stopAndRemoveAndUnsubscribe() {
-            if (isActive) {
-                deactivate();
-            }
+            handleLwtReceived();
         }
 
         private void deactivate() {
@@ -65,14 +64,18 @@ public class ControllableDataSource<T> {
         }
     }
 
-    public ControllableDataSource(String dataId) {
+    public ControllableDataSource(JavaTwin twin, String dataId) {
         this.dataId = dataId;
-    }
+        this.javaTwin = twin;
 
-    public void bind(JavaTwin javaTwin) {
-        this.javaTwin = javaTwin;
-        javaTwin.subscribeForDataStartRequest(dataId, this::handleNewClient);
-        javaTwin.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
+        javaTwin.subscribeForDataStartRequest(
+            this.dataId,
+            this::handleNewClient
+        );
+        javaTwin.subscribeForDataStopRequest(
+            this.dataId,
+            this::handleLeavingClient
+        );
     }
 
     private void handleNewClient(Posting posting) {
@@ -96,7 +99,7 @@ public class ControllableDataSource<T> {
 
     public void set(T data) {
         if (hasClients()) {
-            javaTwin.publishData(dataId, "" + data);
+            javaTwin.publishData(dataId, data.toString());
         }
     }
 }

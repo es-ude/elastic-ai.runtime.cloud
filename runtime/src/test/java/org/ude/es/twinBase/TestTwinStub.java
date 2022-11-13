@@ -16,7 +16,7 @@ public class TestTwinStub {
 
         public void givenDevice() {
             device = new TwinStub("test");
-            device.bind(broker);
+            device.bindToCommunicationEndpoint(broker);
         }
 
         public void whenSubscribingForData(String dataId) {
@@ -33,14 +33,6 @@ public class TestTwinStub {
 
         public void whenUnsubscribingFromStatus() {
             device.unsubscribeFromStatus(subscriber);
-        }
-
-        public void whenSubscribingForLost() {
-            device.subscribeForLost(subscriber);
-        }
-
-        public void whenUnsubscribingFromLost() {
-            device.unsubscribeFromLost(subscriber);
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
@@ -116,21 +108,6 @@ public class TestTwinStub {
         checker.whenSubscribingForStatus();
         checker.whenUnsubscribingFromStatus();
         checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "33");
-        checker.thenPostingIsNotDelivered();
-    }
-
-    @Test
-    void weCanSubscribeForLost() {
-        checker.whenSubscribingForLost();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanUnsubscribeFromLost() {
-        checker.whenSubscribingForLost();
-        checker.whenUnsubscribingFromLost();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
         checker.thenPostingIsNotDelivered();
     }
 

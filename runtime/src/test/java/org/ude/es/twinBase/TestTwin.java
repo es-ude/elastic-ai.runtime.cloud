@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ude.es.BrokerMock;
 import org.ude.es.Checker;
-import org.ude.es.comm.Broker;
 
 public class TestTwin {
 
@@ -62,9 +62,9 @@ public class TestTwin {
 
     @Test
     void weCanReportId() {
-        var broker = new Broker("broker");
+        var broker = new BrokerMock("broker");
         var twin = new Twin("twin");
-        twin.bind(broker);
+        twin.bindToCommunicationEndpoint(broker);
         assertEquals("broker/twin", twin.ID());
     }
 }

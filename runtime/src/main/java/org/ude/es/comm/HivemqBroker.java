@@ -7,48 +7,91 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import java.nio.ByteBuffer;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class HivemqBroker implements CommunicationEndpoint {
 
+    private final String clientId;
+    private final String mqttDomain;
+    private final String brokerIp;
+    private final int brokerPort;
     private Mqtt5AsyncClient client;
-    private final String identifier;
 
-    private void connectToClient(String identifier, String ip, int port) {
+    public void connectWithoutKeepalive() {
         Mqtt5BlockingClient blockingClient = MqttClient
             .builder()
             .useMqttVersion5()
-            .identifier(identifier)
-            .serverHost(ip)
-            //region add LWT message
-            .serverPort(port)
+            .identifier(this.mqttDomain)
+            .serverHost(this.brokerIp)
+            .serverPort(this.brokerPort)
+            .buildBlocking();
+        Mqtt5ConnAck connAck = blockingClient.connect();
+        client = blockingClient.toAsync();
+    }
+
+    public void connectWithKeepaliveAndLwtMessage() {
+        Mqtt5BlockingClient blockingClient = MqttClient
+            .builder()
+            .useMqttVersion5()
+            .identifier(this.mqttDomain + this.clientId)
+            .serverHost(this.brokerIp)
+            .serverPort(this.brokerPort)
+            //region LWT message
             .willPublish()
-            .topic(identifier + PostingType.STATUS.topic(""))
-            .payload("0".getBytes())
-            .qos(MqttQos.AT_LEAST_ONCE)
+            .topic(
+                this.mqttDomain + this.clientId + PostingType.STATUS.topic("")
+            )
+            .payload((this.clientId + ";0").getBytes())
+            .qos(MqttQos.AT_MOST_ONCE)
             .retain(true)
             .applyWillPublish()
             //endregion
             .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
+
+        Posting onlineStatus = new Posting(
+            PostingType.STATUS.topic(""),
+            this.clientId + ";1"
+        );
+        publish(onlineStatus.cloneWithTopicAffix(this.clientId));
     }
 
-    public HivemqBroker(String identifier) {
-        this.identifier = identifier;
-        connectToClient(identifier, "localhost", 1883);
+    public HivemqBroker(
+        String mqttDomain,
+        String brokerIp,
+        int brokerPort,
+        String clientId
+    ) {
+        this.clientId = fixClientId(clientId);
+        this.mqttDomain = fixDomain(mqttDomain);
+        this.brokerIp = brokerIp;
+        this.brokerPort = brokerPort;
     }
 
-    public HivemqBroker(String identifier, String ip, int port) {
-        this.identifier = identifier;
+    private static String fixClientId(String id) {
+        if (!id.startsWith("/")) {
+            id = "/" + id;
+        }
+        if (id.endsWith("/")) {
+            id = id.substring(0, id.length() - 1);
+        }
+        return id.strip();
+    }
 
-        connectToClient(identifier, ip, port);
+    private static String fixDomain(String domain) {
+        if (domain.endsWith("/")) {
+            return domain.substring(0, domain.length() - 1);
+        }
+        return domain.strip();
     }
 
     @Override
     public void publish(Posting posting) {
         client
             .publishWith()
-            .topic(posting.cloneWithTopicAffix(identifier).topic())
+            .topic(posting.cloneWithTopicAffix(this.mqttDomain).topic())
             .payload(posting.data().getBytes())
             .qos(MqttQos.EXACTLY_ONCE)
             .send()
@@ -65,19 +108,22 @@ public class HivemqBroker implements CommunicationEndpoint {
             );
         } else {
             System.out.println(
-                "Published to:\t" + pubAck.getPublish().getTopic()
+                "Published: " +
+                unwrapPayload(pubAck.getPublish().getPayload().get()) +
+                " to: " +
+                pubAck.getPublish().getTopic()
             );
         }
     }
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        subscribeRaw(identifier + topic, subscriber);
+        subscribeRaw(this.mqttDomain + topic, subscriber);
     }
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + topic, subscriber);
+        unsubscribeRaw(this.mqttDomain + topic, subscriber);
     }
 
     @Override
@@ -108,9 +154,9 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     private static String unwrapPayload(ByteBuffer payload) {
-        byte[] realpayload = new byte[payload.remaining()];
-        payload.get(realpayload);
-        return new String(realpayload);
+        byte[] realPayload = new byte[payload.remaining()];
+        payload.get(realPayload);
+        return new String(realPayload);
     }
 
     @Override
@@ -137,7 +183,15 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public String ID() {
-        return identifier;
+        return this.mqttDomain + this.clientId;
+    }
+
+    public Dictionary<String, String> getConfiguration() {
+        Dictionary<String, String> config = new Hashtable<>();
+        config.put("mqttDomain", this.mqttDomain);
+        config.put("brokerIp", this.brokerIp);
+        config.put("brokerPort", Integer.toString(this.brokerPort));
+        return config;
     }
 
     public void closeConnection() {

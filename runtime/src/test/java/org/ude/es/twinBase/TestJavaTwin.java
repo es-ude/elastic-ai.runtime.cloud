@@ -16,7 +16,7 @@ public class TestJavaTwin {
 
         public void givenDevice() {
             device = new JavaTwin(twinID);
-            device.bind(broker);
+            device.bindToCommunicationEndpoint(broker);
         }
 
         public void whenPublishingData(String dataId, String value) {

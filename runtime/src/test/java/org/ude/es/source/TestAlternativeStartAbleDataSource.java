@@ -6,25 +6,30 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
+import org.ude.es.comm.PostingType;
 
 class TestAlternativeStartAbleDataSource {
+
+    private static final String DATA_ID = "/data";
+    private static final String SOURCE_ID = "/source";
+    private static final String CONSUMER_ID = "/consumer";
 
     private static class DataSourceChecker extends Checker {
 
         public AlternativeStartAbleDataSource<?> dataSource;
 
         public void givenDataSource() {
-            dataSource = new AlternativeStartAbleDataSource<>("data");
+            dataSource = new AlternativeStartAbleDataSource<>(DATA_ID);
             dataSource.bind(javaTwin);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
-            var topic = "/twin1234/START/data";
+            var topic = SOURCE_ID + PostingType.START.topic(DATA_ID);
             whenPostingIsPublishedAtBroker(topic, sink);
         }
 
         public void givenJavaTwin() {
-            givenJavaTwin("/twin1234");
+            givenJavaTwin(SOURCE_ID);
         }
 
         public void thenDataSourceHasClients() {
@@ -49,8 +54,8 @@ class TestAlternativeStartAbleDataSource {
         checker.givenJavaTwin();
         checker.givenDataSource();
 
-        checker.thenSubscriptionIsDoneFor("/START/data");
-        checker.thenSubscriptionIsDoneFor("/STOP/data");
+        checker.thenSubscriptionIsDoneFor(PostingType.START.topic(DATA_ID));
+        checker.thenSubscriptionIsDoneFor(PostingType.STOP.topic(DATA_ID));
     }
 
     @Test
@@ -59,7 +64,10 @@ class TestAlternativeStartAbleDataSource {
         checker.givenJavaTwin();
         checker.givenDataSource();
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID
+        );
 
         checker.thenDataSourceHasClients();
     }
@@ -69,10 +77,13 @@ class TestAlternativeStartAbleDataSource {
         checker.givenBroker();
         checker.givenJavaTwin();
         checker.givenDataSource();
-        checker.givenDataStartPostPublishedBy("/me");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
         checker.thenDataSourceHasClients();
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
 
         checker.thenDataSourceHasNoClients();
     }
@@ -80,47 +91,70 @@ class TestAlternativeStartAbleDataSource {
     @Test
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForLost() {
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin(SOURCE_ID);
         checker.givenDataSource();
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
-        checker.thenSubscriptionIsDoneFor("/me/LOST");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenSubscriptionIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
     }
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromLost() {
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin(SOURCE_ID);
         checker.givenDataSource();
-        checker.givenDataStartPostPublishedBy("/me");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-        checker.thenUnsubscribeIsDoneFor("/me/LOST");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenUnsubscribeIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
         checker.thenDataSourceHasNoClients();
     }
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesForCorrectLost() {
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin(SOURCE_ID);
         checker.givenDataSource();
-        checker.givenDataStartPostPublishedBy("/me");
-        checker.givenDataStartPostPublishedBy("/m_e");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID + "1");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID + "2");
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-        checker.thenUnsubscribeIsDoneFor("/me/LOST");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID + "1"
+        );
+        checker.thenUnsubscribeIsDoneFor(
+            CONSUMER_ID + "1" + PostingType.STATUS.topic("")
+        );
     }
 
     @Test
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin(SOURCE_ID);
         checker.givenDataSource();
-        checker.givenDataStartPostPublishedBy("/me");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
 
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/m_e");
-        checker.thenSubscriptionIsDoneFor("/m_e/LOST");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenSubscriptionIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
         checker.thenDataSourceHasClients();
     }
 }

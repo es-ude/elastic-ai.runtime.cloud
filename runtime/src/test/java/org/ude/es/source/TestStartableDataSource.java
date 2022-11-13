@@ -6,25 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
+import org.ude.es.comm.PostingType;
 
 class TestStartableDataSource {
+
+    private static final String DATA_ID = "/data";
+    private static final String SOURCE_ID = "/source";
+    private static final String CONSUMER_ID = "/consumer";
 
     private static class DataSourceChecker extends Checker {
 
         public ControllableDataSource<Double> dataSource;
 
         public void givenDataSource() {
-            dataSource = new ControllableDataSource<>("data");
-            dataSource.bind(javaTwin);
+            dataSource = new ControllableDataSource<>(javaTwin, DATA_ID);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
-            var topic = "/twin1234/START/data";
+            var topic = SOURCE_ID + PostingType.START.topic(DATA_ID);
             whenPostingIsPublishedAtBroker(topic, sink);
-        }
-
-        public void givenJavaTwin() {
-            givenJavaTwin("/twin1234");
         }
 
         public void thenDataSourceHasClients() {
@@ -42,55 +42,78 @@ class TestStartableDataSource {
     public void SetUp() {
         checker = new DataSourceChecker();
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin(SOURCE_ID);
         checker.givenDataSource();
     }
 
     @Test
     void whenTemperatureSourceIsBoundItSubscribesForStartAndStop() {
-        checker.thenSubscriptionIsDoneFor("/START/data");
-        checker.thenSubscriptionIsDoneFor("/STOP/data");
+        checker.thenSubscriptionIsDoneFor(PostingType.START.topic(DATA_ID));
+        checker.thenSubscriptionIsDoneFor(PostingType.STOP.topic(DATA_ID));
     }
 
     @Test
     void whenStartRequestIsSentThenTemperatureSourceReceivesIt() {
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
-
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID
+        );
         checker.thenDataSourceHasClients();
     }
 
     @Test
     void whenStopRequestIsSentThenTemperatureSourceReceivesIt() {
-        checker.givenDataStartPostPublishedBy("/me");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
         checker.thenDataSourceHasClients();
-
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
         checker.thenDataSourceHasNoClients();
     }
 
     @Test
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForStatus() {
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/me");
-        checker.thenSubscriptionIsDoneFor("/me/STATUS");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenSubscriptionIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
     }
 
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromStatus() {
-        checker.givenDataStartPostPublishedBy("/me");
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-        checker.thenUnsubscribeIsDoneFor("/me/STATUS");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenUnsubscribeIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
         checker.thenDataSourceHasNoClients();
     }
 
     @Test
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
-        checker.givenDataStartPostPublishedBy("/me");
-        checker.whenPostingIsPublishedAtBroker("/twin1234/STOP/data", "/me");
-        checker.thenUnsubscribeIsDoneFor("/me/STATUS");
+        checker.givenDataStartPostPublishedBy(CONSUMER_ID);
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.STOP.topic(DATA_ID),
+            CONSUMER_ID
+        );
+        checker.thenUnsubscribeIsDoneFor(
+            CONSUMER_ID + PostingType.STATUS.topic("")
+        );
         checker.thenDataSourceHasNoClients();
-        checker.whenPostingIsPublishedAtBroker("/twin1234/START/data", "/m_e");
-        checker.thenSubscriptionIsDoneFor("/m_e/STATUS");
+        checker.whenPostingIsPublishedAtBroker(
+            SOURCE_ID + PostingType.START.topic(DATA_ID),
+            CONSUMER_ID + "1"
+        );
+        checker.thenSubscriptionIsDoneFor(
+            CONSUMER_ID + "1" + PostingType.STATUS.topic("")
+        );
         checker.thenDataSourceHasClients();
     }
 }
