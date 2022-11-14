@@ -12,40 +12,31 @@ public class TwinData {
         this.active = true;
     }
 
-    /* FOR TESTING */
-    public TwinData(String name, String ID, boolean active) {
-        this.ID = ID;
-        this.name = name;
-        this.active = active;
+    public boolean isActive() {
+        return active;
     }
 
     public void setActive() {
         this.active = true;
     }
 
-    public void setNotActive() {
+    public void setInactive() {
         this.active = false;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getID() {
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
         return ID;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public String toString() {
-        return (
-            "TwinData{" + "name='" + name + '\'' + ", ID='" + ID + '\'' + '}'
-        );
+        return String.format("TwinData{ name='%s', ID='%s' }", name, ID);
     }
 }

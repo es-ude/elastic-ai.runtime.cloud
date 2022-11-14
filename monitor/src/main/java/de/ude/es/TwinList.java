@@ -1,27 +1,34 @@
 package de.ude.es;
 
+import static com.google.common.primitives.UnsignedInteger.ONE;
+
+import com.google.common.primitives.UnsignedInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TwinList {
 
-    private List<TwinData> twins;
+    private final List<TwinData> twins;
+    private UnsignedInteger twinIdCounter = ONE;
 
     public TwinList() {
         twins = new ArrayList<>();
     }
 
-    public void changeTwinName(String ID, String newName) {
+    public void changeTwinName(String ID, String newName)
+        throws NullPointerException {
         TwinData twin = getTwin(ID);
         if (twin != null) {
             twin.setName(newName);
+        } else {
+            throw new NullPointerException("Twin not found!");
         }
     }
 
     public TwinData getTwin(String ID) {
         for (TwinData twin : twins) {
-            if (Objects.equals(twin.getID(), ID)) {
+            if (Objects.equals(twin.getId(), ID)) {
                 return twin;
             }
         }
@@ -34,7 +41,8 @@ public class TwinList {
      */
     public void addTwin(String ID) {
         if (getTwin(ID) == null) {
-            twins.add(new TwinData("Twin " + twins.size(), ID));
+            twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID));
+            twinIdCounter = twinIdCounter.plus(ONE);
         } else {
             getTwin(ID).setActive();
         }

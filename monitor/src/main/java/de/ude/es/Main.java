@@ -6,39 +6,36 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.ude.es.comm.HivemqBroker;
-import org.ude.es.twinBase.JavaTwin;
 
 public class Main {
 
-    private static String BROKER = null;
-    private static Integer PORT = null;
-    public static TwinList twinList;
-    private static final String DOMAIN = "eip://uni-due.de/es";
+    private static String BROKER_IP = null;
+    private static Integer BROKER_PORT = null;
+    private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
+    private static MonitorTwin monitor = null;
 
     public static void main(String[] args) {
         try {
             Namespace arguments = parseArguments(args);
-            BROKER = arguments.getString("broker_address");
-            PORT = Integer.parseInt(arguments.getString("broker_port"));
+            BROKER_IP = arguments.getString("broker_address");
+            BROKER_PORT = Integer.parseInt(arguments.getString("broker_port"));
         } catch (ArgumentParserException exception) {
             System.out.println(exception.getMessage());
             System.exit(10);
         }
 
-        twinList = new TwinList();
-        HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER, PORT);
-
-        var sink = new JavaTwin("monitor");
-        sink.bind(broker);
-
-        TwinStatusMonitor twinStatusMonitor = new TwinStatusMonitor(twinList);
-        twinStatusMonitor.bind(broker);
+        monitor = new MonitorTwin("monitor");
+        monitor.bindToCommunicationEndpoint(createBrokerWithKeepalive());
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);
     }
 
-    public static Namespace parseArguments(String[] args)
+    public static TwinList getTwinList() {
+        return monitor.getTwinList();
+    }
+
+    private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
             .newFor("elastic.ai-monitor")
@@ -60,5 +57,16 @@ public class Main {
             .setDefault(1883);
 
         return parser.parseArgs(args);
+    }
+
+    private static HivemqBroker createBrokerWithKeepalive() {
+        HivemqBroker broker = new HivemqBroker(
+            MQTT_DOMAIN,
+            BROKER_IP,
+            BROKER_PORT,
+            "monitor"
+        );
+        broker.connectWithKeepaliveAndLwtMessage();
+        return broker;
     }
 }

@@ -7,23 +7,54 @@ import org.junit.jupiter.api.Test;
 
 public class TestTwinData {
 
+    private final String TWIN_NAME = "NAME";
+    private final String TWIN_ID = "ID";
     TwinData twinData;
 
     @BeforeEach
     void setUp() {
-        twinData = new TwinData("Name", "ID");
+        twinData = new TwinData(TWIN_NAME, TWIN_ID);
     }
 
     @Test
     void testGetName() {
-        assertEquals("Name", twinData.getName());
+        assertEquals(TWIN_NAME, twinData.getName());
+    }
+
+    @Test
+    void testSetName() {
+        twinData.setName("NewName");
+        assertEquals("NewName", twinData.getName());
+    }
+
+    @Test
+    void testIsActive() {
+        assertTrue(twinData.isActive());
+    }
+
+    @Test
+    void testSetInactive() {
+        twinData.setInactive();
+        assertFalse(twinData.isActive());
+    }
+
+    @Test
+    void testSetActive() {
+        twinData.setInactive();
+        twinData.setActive();
+        assertTrue(twinData.isActive());
+    }
+
+    @Test
+    void testGetId() {
+        assertEquals(TWIN_ID, twinData.getId());
     }
 
     @Test
     void testActive() {
         assertTrue(twinData.isActive());
 
-        twinData.setNotActive();
+        twinData.setInactive();
         assertFalse(twinData.isActive());
 
         twinData.setActive();
@@ -31,14 +62,14 @@ public class TestTwinData {
     }
 
     @Test
-    void testSetName() {
-        TwinData twinDataCompare = new TwinData("NewName", "ID");
-        twinData.setName("NewName");
-        assertEquals(twinDataCompare.toString(), twinData.toString());
+    void testGetID() {
+        assertEquals("ID", twinData.getId());
     }
 
     @Test
-    void testGetID() {
-        assertEquals("ID", twinData.getID());
+    void testToString() {
+        String expectedResult =
+            "TwinData{ name='" + TWIN_NAME + "', ID='" + TWIN_ID + "' }";
+        assertEquals(expectedResult, twinData.toString());
     }
 }
