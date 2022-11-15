@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class TwinList {
 
-    private volatile List<TwinData> twins;
+    private final List<TwinData> twins;
     private UnsignedInteger twinIdCounter = ONE;
 
     public TwinList() {

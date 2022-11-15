@@ -9,7 +9,7 @@ public class MonitorTwin extends JavaTwin {
 
     private static class StatusMonitor implements Subscriber {
 
-        private volatile TwinList twins;
+        private final TwinList twins;
         private final JavaTwin twin;
         private TwinStub stub;
 
@@ -47,7 +47,7 @@ public class MonitorTwin extends JavaTwin {
     }
 
     private StatusMonitor monitor;
-    private volatile TwinList twins;
+    private final TwinList twins;
 
     public MonitorTwin(String id) {
         super(id);
