@@ -31,12 +31,12 @@ where the `<object_id>` is the individual identifier of the target device and th
 
 #### STATUS
 
-- Topic: `eip://<broker_domain>/<object_id>/STATUS`
-- Data: `<object_id>` AND 0 (offline) OR 1 (online)
-- Information:
-  - The retain-flag of this message should be set to assure status discovery for newly entered participants!
-  - The offline message should be automatically send by the broker after connection loss (LWT message).
-  - The online message should only be sent by a new hardware device or Application Twin.
+-   Topic: `eip://<broker_domain>/<object_id>/STATUS`
+-   Data: `<object_id>` AND 0 (offline) OR 1 (online)
+-   Information:
+    -   The retain-flag of this message should be set to assure status discovery for newly entered participants!
+    -   The offline message should be automatically send by the broker after connection loss (LWT message).
+    -   The online message should only be sent by a new hardware device or Application Twin.
 
 Example message:
 
@@ -69,8 +69,8 @@ sequenceDiagram
 
 #### START
 
-- Topic: `eip://<broker_domain>/<object_id>/START/<data_id>`
-- Data: topic specifying `eip://<broker_domain>/<object_id>` that is interested in data
+-   Topic: `eip://<broker_domain>/<object_id>/START/<data_id>`
+-   Data: topic specifying `eip://<broker_domain>/<object_id>` that is interested in data
 
 Example message:
 
@@ -80,8 +80,8 @@ Example message:
 
 #### STOP
 
-- Topic: `eip://<broker_domain>/<object_id>/STOP/<data_id>`
-- Data: topic specifying `eip://<broker_domain>/<object_id>` that was interested in data
+-   Topic: `eip://<broker_domain>/<object_id>/STOP/<data_id>`
+-   Data: topic specifying `eip://<broker_domain>/<object_id>` that was interested in data
 
 Example message:
 
@@ -91,10 +91,10 @@ Example message:
 
 #### DATA
 
-- Topic: `eip://<broker_domain>/<object_id>/DATA/<data_id>`
-- Data: value encoded as a string
-- INFO:
-  - Interested nodes can subscribe to this topic to receive new data
+-   Topic: `eip://<broker_domain>/<object_id>/DATA/<data_id>`
+-   Data: value encoded as a string
+-   INFO:
+    -   Interested nodes can subscribe to this topic to receive new data
 
 Example message:
 
@@ -150,8 +150,8 @@ sequenceDiagram
 
 #### DO
 
-- Topic: `eip://<broker_domain>/<object_id>/DO/<command>`
-- Data: command specific
+-   Topic: `eip://<broker_domain>/<object_id>/DO/<command>`
+-   Data: command specific
 
 Example message:
 
@@ -176,8 +176,8 @@ sequenceDiagram
 
 #### DONE
 
-- Topic: `eip://<broker_domain>/<object_id>/DONE/<command>`
-- Data: command specific
+-   Topic: `eip://<broker_domain>/<object_id>/DONE/<command>`
+-   Data: command specific
 
 Example message:
 

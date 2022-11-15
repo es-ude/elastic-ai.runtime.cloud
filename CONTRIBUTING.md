@@ -3,13 +3,12 @@
 ## Naming Scheme
 
 |     Scope | Scheme               | Notes |
-|----------:|:---------------------|:------|
+| --------: | :------------------- | :---- |
 |     Files | PascalCase           |       |
 |     Class | PascalCase           |       |
 | Functions | camelCase            |       |
 | Variables | camelCase            |       |
 | Constants | SCREAMING_SNAKE_CASE |       |
-
 
 ## Publish Modifications
 
@@ -176,7 +175,7 @@ classDiagram
     -TwinList twins
 
     +MonitorTwin(String id)
-    
+
     + getTwinList
 
   }
@@ -184,15 +183,15 @@ classDiagram
   MonitorTwin o-- TwinList
   MonitorTwin o-- StatusMonitor
   MonitorTwin ..> CommunicationEndpoint
-  
+
   class StatusMonitor {
     -JavaTwin owner
     -TwinStub stub
     -TwinList twins
-  
+
     +StatusMonitor(JavaTwin owner, TwinList twins)
-  
-    -createTwinStubAndSubscribeForStatus() void  
+
+    -createTwinStubAndSubscribeForStatus() void
     +deliver(Posting posting
   }
   StatusMonitor --|> Subscriber
