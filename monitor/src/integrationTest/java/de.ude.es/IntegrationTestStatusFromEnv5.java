@@ -43,6 +43,8 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
         enV5.publishStatus(false);
+        //        while (!monitor.getTwinList().getTwins().isEmpty());
+        //        monitor.getTwinList();
         Thread.sleep(1000);
         assertEquals(0, monitor.getTwinList().getActiveTwins().size());
     }

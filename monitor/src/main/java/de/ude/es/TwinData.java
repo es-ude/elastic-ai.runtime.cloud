@@ -2,8 +2,8 @@ package de.ude.es;
 
 public class TwinData {
 
-    private String name;
     private final String ID;
+    private String name;
     private boolean active;
 
     public TwinData(String name, String ID) {
