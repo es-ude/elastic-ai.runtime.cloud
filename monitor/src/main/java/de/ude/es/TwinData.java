@@ -7,20 +7,9 @@ public class TwinData {
     private boolean active;
 
     public TwinData(String name, String ID) {
-        this.ID = fixId(ID);
+        this.ID = ID;
         this.name = name;
         this.active = true;
-    }
-
-    private String fixId(String id) {
-        id = id.strip();
-        if (id.endsWith("/")) {
-            return id.substring(0, id.length() - 1);
-        }
-        if (id.startsWith("/")) {
-            return id.substring(1);
-        }
-        return id.strip();
     }
 
     public boolean isActive() {
