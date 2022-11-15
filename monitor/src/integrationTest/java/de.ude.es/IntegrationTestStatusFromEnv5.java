@@ -37,16 +37,16 @@ public class IntegrationTestStatusFromEnv5 {
     void testOnlineCanBeReceived() throws InterruptedException {
         enV5.publishStatus(true);
         Thread.sleep(1000);
-        assertEquals(1, monitor.getTwinList().getActiveTwins().size());
+        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        assertEquals(1, activeTwins);
     }
 
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
         enV5.publishStatus(false);
-        //        while (!monitor.getTwinList().getTwins().isEmpty());
-        //        monitor.getTwinList();
         Thread.sleep(1000);
-        assertEquals(0, monitor.getTwinList().getActiveTwins().size());
+        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        assertEquals(0, activeTwins);
     }
 
     private void createEnv5Twin() {
