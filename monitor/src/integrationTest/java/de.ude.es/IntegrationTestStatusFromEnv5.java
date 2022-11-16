@@ -2,7 +2,6 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -22,23 +21,17 @@ public class IntegrationTestStatusFromEnv5 {
     private IntegrationTestTwinForEnV5 enV5;
 
     @Container
-    public GenericContainer<?> BROKER_CONTAINER = new GenericContainer<>(
+    public GenericContainer BROKER_CONTAINER = new GenericContainer(
         DockerImageName.parse("eclipse-mosquitto:1.6.14")
     )
-        .withExposedPorts(BROKER_PORT);
+        .withExposedPorts(BROKER_PORT)
+        .withReuse(false);
 
     @BeforeEach
     void setUp() {
-        BROKER_CONTAINER.withReuse(false);
-        BROKER_CONTAINER.start();
         BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
         createMonitor();
         createEnv5Twin();
-    }
-
-    @AfterEach
-    void tearDown() {
-        BROKER_CONTAINER.stop();
     }
 
     @Test
