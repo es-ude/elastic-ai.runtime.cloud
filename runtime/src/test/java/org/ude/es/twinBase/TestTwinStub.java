@@ -16,7 +16,7 @@ public class TestTwinStub {
 
         public void givenDevice() {
             device = new TwinStub("test");
-            device.bind(broker);
+            device.bindToCommunicationEndpoint(broker);
         }
 
         public void whenSubscribingForData(String dataId) {
@@ -35,40 +35,32 @@ public class TestTwinStub {
             device.unsubscribeFromStatus(subscriber);
         }
 
-        public void whenSubscribingForLost() {
-            device.subscribeForLost(subscriber);
-        }
-
-        public void whenUnsubscribingFromLost() {
-            device.unsubscribeFromLost(subscriber);
-        }
-
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic = device.ID() + PostingType.START.topic(data);
+            String topic = device.getId() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic = device.ID() + PostingType.STOP.topic(data);
+            String topic = device.getId() + PostingType.STOP.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, cmd);
             device.publishCommand(service, cmd);
         }
 
         public void whenSendingOnCommand(String service) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, "1");
             device.publishOnCommand(service);
         }
 
         public void whenSendingOffCommand(String service) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, "0");
             device.publishOffCommand(service);
         }
@@ -116,21 +108,6 @@ public class TestTwinStub {
         checker.whenSubscribingForStatus();
         checker.whenUnsubscribingFromStatus();
         checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "33");
-        checker.thenPostingIsNotDelivered();
-    }
-
-    @Test
-    void weCanSubscribeForLost() {
-        checker.whenSubscribingForLost();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanUnsubscribeFromLost() {
-        checker.whenSubscribingForLost();
-        checker.whenUnsubscribingFromLost();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/LOST", "33");
         checker.thenPostingIsNotDelivered();
     }
 

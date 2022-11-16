@@ -38,8 +38,4 @@ public record Posting(String topic, String data) {
     public Posting cloneWithTopicAffix(String affix) {
         return new Posting(affix + topic(), data());
     }
-
-    public boolean isStartSending(String phenomena) {
-        return this.topic.contains(PostingType.START.topic(phenomena));
-    }
 }

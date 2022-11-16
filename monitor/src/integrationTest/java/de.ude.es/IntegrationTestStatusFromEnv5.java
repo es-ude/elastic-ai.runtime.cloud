@@ -1,25 +1,75 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 import org.ude.es.comm.HivemqBroker;
 import org.ude.es.twinImplementations.IntegrationTestTwinForEnV5;
 
+@Testcontainers
 public class IntegrationTestStatusFromEnv5 {
 
-    private static final String DOMAIN = "eip://uni-due.de/es";
-    private static final String IP = "localhost";
-    private static final int PORT = 1883;
+    private final String MQTT_DOMAIN = "eip://uni-due.de/es";
+    private final String BROKER_IP = "localhost";
+    private int BROKER_PORT = 1883;
+    private MonitorTwin monitor;
+    private IntegrationTestTwinForEnV5 enV5;
 
-    public static void main(String[] args) {
-        HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
+    @Container
+    public GenericContainer BROKER_CONTAINER = new GenericContainer(
+        DockerImageName.parse("eclipse-mosquitto:1.6.14")
+    )
+        .withExposedPorts(BROKER_PORT)
+        .withReuse(false);
 
-        TwinList twinList = new TwinList();
+    @BeforeEach
+    void setUp() {
+        BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
+        createMonitor();
+        createEnv5Twin();
+    }
 
-        TwinStatusMonitor statusMonitor = new TwinStatusMonitor(twinList);
-        statusMonitor.bind(broker);
+    @Test
+    void testOnlineCanBeReceived() throws InterruptedException {
+        enV5.publishStatus(true);
+        Thread.sleep(1000);
+        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        assertEquals(1, activeTwins);
+    }
 
-        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
-            "integTestTwin"
+    @Test
+    void testOfflineCanBeReceived() throws InterruptedException {
+        enV5.publishStatus(false);
+        Thread.sleep(1000);
+        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        assertEquals(0, activeTwins);
+    }
+
+    private void createEnv5Twin() {
+        enV5 = new IntegrationTestTwinForEnV5("env5");
+        enV5.bindToCommunicationEndpoint(createBrokerWithKeepalive("env5"));
+    }
+
+    private void createMonitor() {
+        monitor = new MonitorTwin("monitor");
+        monitor.bindToCommunicationEndpoint(
+            createBrokerWithKeepalive("monitor")
         );
-        twin.bind(broker);
+    }
+
+    private HivemqBroker createBrokerWithKeepalive(String clientId) {
+        HivemqBroker broker = new HivemqBroker(
+            MQTT_DOMAIN,
+            BROKER_IP,
+            BROKER_PORT,
+            clientId
+        );
+        broker.connectWithKeepaliveAndLwtMessage();
+        return broker;
     }
 }

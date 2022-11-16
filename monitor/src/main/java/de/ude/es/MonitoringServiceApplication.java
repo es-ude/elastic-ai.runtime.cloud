@@ -46,11 +46,11 @@ public class MonitoringServiceApplication {
 
             StringBuilder twinTable = new StringBuilder();
             int i = 0;
-            for (TwinData tw : Main.twinList.getActiveTwins()) {
+            for (TwinData tw : Main.getTwinList().getActiveTwins()) {
                 twinTable.append(getTwinTableElement(tw, i));
                 i++;
             }
-            if (Main.twinList.getActiveTwins().size() == 0) {
+            if (Main.getTwinList().getActiveTwins().size() == 0) {
                 String start = Pattern.quote("<table id=\"twinTable\"");
                 String end = Pattern.quote("<!--twinTable-->");
                 side =
@@ -89,7 +89,7 @@ public class MonitoringServiceApplication {
         @RequestParam("ID") String ID
     ) {
         try {
-            Main.twinList.changeTwinName(ID, name);
+            Main.getTwinList().changeTwinName(ID, name);
         } catch (Exception e) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -113,7 +113,7 @@ public class MonitoringServiceApplication {
 
     private String getTwinTableElement(TwinData tw, int number) {
         String name = tw.getName();
-        String ID = tw.getID();
+        String ID = tw.getId();
 
         String newTableElement = twinTableElement;
 

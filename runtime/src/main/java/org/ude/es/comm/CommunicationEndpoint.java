@@ -1,7 +1,19 @@
 package org.ude.es.comm;
 
 /**
+ * <p>
  * Anything that can be used to send postings or subscribe for them.
+ * </p>
+ * <p>
+ * This Interface should be implemented by a Broker.
+ * A broker is the central communication backend for a deployment.
+ * It is responsible for managing subscriptions and forwarding postings to the correct clients.
+ * It is also responsible for forwarding to the correct subscribers locally on a device!
+ * </p>
+ * <p>
+ * <b>Note:</b> A broker can but doesn't need to be implemented by
+ *              an MQTT broker.
+ * </p>
  */
 public interface CommunicationEndpoint {
     void publish(Posting posting);
@@ -22,7 +34,7 @@ public interface CommunicationEndpoint {
     /**
      * Subscribe directly to the specified topic, without any
      * modification of it!
-     * Use this methof if you want to specify a full topic that is
+     * Use this method if you want to specify a full topic that is
      * not modified in any way by the communication endpoint.
      *
      * @param topic      the absolute/full topic to match postings against
@@ -32,5 +44,5 @@ public interface CommunicationEndpoint {
 
     void unsubscribeRaw(String topic, Subscriber subscriber);
 
-    String ID();
+    String getId();
 }

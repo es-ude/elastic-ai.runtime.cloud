@@ -1,8 +1,21 @@
 # How to contribute
 
-## Runtime
+## Naming Scheme
 
-Class Structure:
+|     Scope | Scheme               | Notes |
+| --------: | :------------------- | :---- |
+|     Files | PascalCase           |       |
+|     Class | PascalCase           |       |
+| Functions | camelCase            |       |
+| Variables | camelCase            |       |
+| Constants | SCREAMING_SNAKE_CASE |       |
+
+## Publish Modifications
+
+Don't push directly to the `main` branch. Push your modification to a new branch and open a pull request to `main`, so
+that the maintainer of this repository can merge your modifications.
+
+## Class Structure
 
 ```mermaid
 %%{init: {"theme": "forest"} }%%
@@ -13,7 +26,7 @@ classDiagram
 
     +Twin(String identifier)
 
-    +bind(CommunicationEndpoint endpoint) void
+    +bindToCommunicationEndpoint(CommunicationEndpoint endpoint) void
     #subscribe(String topic, Subscriber subscriber) void
     #unsubscribe(String topic, Subscriber subscriber) void
     #publish(Posting posting) void
@@ -28,11 +41,11 @@ classDiagram
   class JavaTwin {
     +JavaTwin(String identifier)
 
-    - executeOnBind() void
+    # executeOnBind() void
     +publishData(String dataId, String value) void
     +publishStatus(boolean online) void
     +subscribeForDataStartRequest(String dataId,Subscriber subscriber) void
-    +void unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) void
+    +unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) void
     +subscribeForDataStopRequest(String dataId, Subscriber subscriber) void
     +unsubscribeFromDataStopRequest(String dataId, Subscriber subscriber) void
     +subscribeForCommand(String commandId, Subscriber subscriber) void
@@ -45,7 +58,7 @@ classDiagram
   class TwinStub {
     +TwinStub(String identifier)
 
-    - executeOnBind() void
+    # executeOnBind() void
     +subscribeForData(String dataId, Subscriber subsciber) void
     +unsubscribeFromData(String dataId, Scubscriber subscriber) void
     +subscribeForStatus(Subscriber subscriber) void
@@ -71,13 +84,17 @@ classDiagram
   CommunicationEndpoint ..> Posting
 
   class HivemqBroker {
-    -String identifier
+    -String clientId
+    -String mqttDomian
+    -String brokerIp
+    -int brokerPort
     -Mqtt5AsyncClient client
 
-    +HivemqBroker(String identifier)
-    +HivemqBroker(String identifier, String ip, String port)
+    +HivemqBroker(String mqttDomain, String brokerIp, String brokerPort, String clientId)
 
     -connectToClient(String identifierString, String ip, int port) void
+    +connectWithoutKeepalive() void
+    +connectWithKeepaliveAndLwtMessage() void
     +closeConnection() void
     +publish(Posting posting) void
     -onPublishComplete(Mqtt5Publishresult pubAck, Throwable throwable) void
@@ -87,6 +104,7 @@ classDiagram
     +unsubscribe(String topic, Subscriber subscriber) void
     +unsubscribeRaw(String topic, Subscriber subscriber) void
     -onUnsubscribeComplete(Throwable unsubFailed, String topic) void
+    +getConfiguration() Dictionary<String, String>
     +ID() String
   }
   HivemqBroker ..|> CommunicationEndpoint
@@ -99,7 +117,6 @@ classDiagram
     START
     STOP
     SET
-    LOST
     STATUS
 
     +topic(String topicID) String
@@ -115,7 +132,6 @@ classDiagram
     +createData(String dataId, String value) Posting
     +createStatus(String deviceId, boolean online) Posting
     +cloneWithTopicAffix(String affix) Posting
-    +isStartSending(String topic) : boolean
   }
   Posting ..> PostingType
 
@@ -132,12 +148,12 @@ classDiagram
 
     +TwinData(String name, String ID)
 
+    +isActive() boolean
     +setActive() void
     +setInactive() void
     +getName() String
     +setName(String name) void
-    +ID() String
-    +isActive() boolean
+    +getId() String
     +toString() String
   }
 
@@ -154,18 +170,35 @@ classDiagram
   }
   TwinList *-- TwinData
 
-  class TwinStatusMonitor {
-    -Subscriber statusSubscriber
-    -TwinStub twin
+  class MonitorTwin {
+    -StatusMonitor monitor
+    -TwinList twins
 
-    +TwinStatusMonitor(TwinList twinList) void
+    +MonitorTwin(String id)
 
-    +bind(CommunicationEndpoint endpoint) void
+    + getTwinList
+
   }
-  TwinStatusMonitor *-- Subscriber
-  TwinStatusMonitor o-- TwinList
-  TwinStatusMonitor o-- CommunicationEndpoint
+  MonitorTwin --|> JavaTwin
+  MonitorTwin o-- TwinList
+  MonitorTwin o-- StatusMonitor
+  MonitorTwin ..> CommunicationEndpoint
+
+  class StatusMonitor {
+    -JavaTwin owner
+    -TwinStub stub
+    -TwinList twins
+
+    +StatusMonitor(JavaTwin owner, TwinList twins)
+
+    -createTwinStubAndSubscribeForStatus() void
+    +deliver(Posting posting
+  }
+  StatusMonitor --|> Subscriber
+  StatusMonitor o-- Posting
+  StatusMonitor o-- JavaTwin
+  StatusMonitor o-- TwinStub
 
   ENv5TwinStub --|> TwinStub
-  IntegrationTestTwin --|> JavaTwin
+  IntegrationTestTwinForENv5 --|> JavaTwin
 ```

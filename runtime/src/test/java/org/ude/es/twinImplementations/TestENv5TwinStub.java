@@ -3,31 +3,31 @@ package org.ude.es.twinImplementations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.ude.es.BrokerMock;
 import org.ude.es.SubscriberMock;
-import org.ude.es.comm.Broker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 
-public class TestENv5Twin {
+public class TestENv5TwinStub {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String TWIN_ID = "/twin1234";
     private static final String TOPIC = "led1";
-    private Broker broker;
+    private BrokerMock broker;
     private ENv5TwinStub env5;
     private SubscriberMock subscriber;
 
     @Test
     void canReportItsId() {
         createBroker();
-        createEnv5Twin(TWIN_ID);
-        assertEquals(DOMAIN + TWIN_ID, env5.ID());
+        createEnv5Twin();
+        assertEquals(DOMAIN + TWIN_ID, env5.getId());
     }
 
     @Test
     void canSendMessageToActivateLED() {
         createBroker();
-        createEnv5Twin(TWIN_ID);
+        createEnv5Twin();
         createSubscriberFor(TWIN_ID + PostingType.SET.topic(TOPIC));
 
         env5.activateLED(1);
@@ -42,7 +42,7 @@ public class TestENv5Twin {
     @Test
     void canSendMessageToDeactivateLED() {
         createBroker();
-        createEnv5Twin(TWIN_ID);
+        createEnv5Twin();
         createSubscriberFor(TWIN_ID + PostingType.SET.topic(TOPIC));
 
         env5.deactivateLED(1);
@@ -55,12 +55,12 @@ public class TestENv5Twin {
     }
 
     private void createBroker() {
-        this.broker = new Broker(DOMAIN);
+        this.broker = new BrokerMock(DOMAIN);
     }
 
-    private void createEnv5Twin(String id) {
-        this.env5 = new ENv5TwinStub(id);
-        this.env5.bind(this.broker);
+    private void createEnv5Twin() {
+        this.env5 = new ENv5TwinStub(TWIN_ID);
+        this.env5.bindToCommunicationEndpoint(this.broker);
     }
 
     private void createSubscriberFor(String topic) {

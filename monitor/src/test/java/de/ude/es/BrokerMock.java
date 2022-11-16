@@ -1,18 +1,12 @@
-package org.ude.es.comm;
+package de.ude.es;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.ude.es.comm.CommunicationEndpoint;
+import org.ude.es.comm.Posting;
+import org.ude.es.comm.Subscriber;
 
-/**
- * A broker is the central communication center for a deployment.
- * It is responsible for managing subscriptions and forwarding
- * postings to the correct clients.
- * It is also responsible for forwarding to the correct subscribers
- * locally on a device!
- * Note that a broker can but doesn't need to be implemented by
- * an MQTT broker.
- */
-public class Broker implements CommunicationEndpoint {
+public class BrokerMock implements CommunicationEndpoint {
 
     private record Subscription(
         List<String> topicFilter,
@@ -98,8 +92,18 @@ public class Broker implements CommunicationEndpoint {
     private final List<Subscription> subscriptions = new LinkedList<>();
     private final String identifier;
 
-    public Broker(String identifier) {
-        this.identifier = identifier;
+    public BrokerMock(String identifier) {
+        this.identifier = fixIdentifier(identifier);
+    }
+
+    private String fixIdentifier(String id) {
+        if (id.startsWith("/")) {
+            id = id.substring(1);
+        }
+        if (id.endsWith("/")) {
+            id = id.substring(0, id.length() - 1);
+        }
+        return id.strip();
     }
 
     @Override
@@ -111,7 +115,7 @@ public class Broker implements CommunicationEndpoint {
     public void subscribeRaw(String topic, Subscriber subscriber) {
         var s = new Subscription(topic, subscriber);
         subscriptions.add(s);
-        System.out.println("Subscribed to: \t" + topic);
+        System.out.println("Subscribed to: " + topic);
     }
 
     @Override
@@ -123,18 +127,20 @@ public class Broker implements CommunicationEndpoint {
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
         var s = new Subscription(topic, subscriber);
         subscriptions.remove(s);
-        System.out.println("Unsubscribed from:\t" + topic);
+        System.out.println("Unsubscribed from: " + topic);
     }
 
     @Override
     public void publish(Posting posting) {
         Posting toPublish = rewriteTopicToIncludeMe(posting);
         executePublish(toPublish);
-        System.out.println("Published:\t" + toPublish.topic());
+        System.out.println(
+            "Published: " + toPublish.data() + " to: " + toPublish.topic()
+        );
     }
 
     @Override
-    public String ID() {
+    public String getId() {
         return identifier;
     }
 

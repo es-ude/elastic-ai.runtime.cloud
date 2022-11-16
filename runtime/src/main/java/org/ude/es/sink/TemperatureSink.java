@@ -1,4 +1,4 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.sink;
 
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
@@ -11,7 +11,7 @@ import org.ude.es.twinBase.TwinStub;
  * to communicate with the remote device that actually measures the
  * temperature.
  */
-public class TemperatureSink extends JavaTwin {
+public class TemperatureSink {
 
     private class DataSubscriber implements Subscriber {
 
@@ -24,32 +24,27 @@ public class TemperatureSink extends JavaTwin {
 
     private double temperature = 0.0;
     private volatile boolean newTemperatureAvailable = false;
-    private String dataId = "TEMP";
+    private final String dataId;
     private DataSubscriber subscriber;
-    private TwinStub sensorTwin;
+    private TwinStub dataSource;
+    private final JavaTwin twin;
 
-    public TemperatureSink(String sinkId) {
-        super(sinkId);
-    }
-
-    public TemperatureSink(String sinkId, String dataId) {
-        super(sinkId);
+    public TemperatureSink(JavaTwin twin, String dataId) {
+        this.twin = twin;
         this.dataId = dataId;
     }
 
     public void connectDataSource(TwinStub dataSource) {
-        this.sensorTwin = dataSource;
+        this.dataSource = dataSource;
         this.subscriber = new DataSubscriber();
-        System.out.println(
-            "DATA_ID: " + dataId + ", DATA_SRC: " + dataSource.ID()
-        );
-        this.sensorTwin.subscribeForData(dataId, subscriber);
-        this.sensorTwin.publishDataStartRequest(dataId, this.identifier);
+        this.dataSource.subscribeForData(dataId, subscriber);
+        this.dataSource.publishDataStartRequest(dataId, twin.getId());
     }
 
     public void disconnectDataSource() {
-        this.sensorTwin.unsubscribeFromData(dataId, this.subscriber);
-        this.sensorTwin.publishDataStopRequest(dataId, this.identifier);
+        this.dataSource.unsubscribeFromData(dataId, this.subscriber);
+        this.dataSource.publishDataStopRequest(dataId, twin.getId());
+        this.dataSource = null;
     }
 
     public synchronized void setTemperatureAvailable(boolean availability) {
@@ -58,6 +53,10 @@ public class TemperatureSink extends JavaTwin {
 
     public boolean isNewTemperatureAvailable() {
         return newTemperatureAvailable;
+    }
+
+    public TwinStub getDataSource() {
+        return this.dataSource;
     }
 
     public Double getCurrentTemperature() {

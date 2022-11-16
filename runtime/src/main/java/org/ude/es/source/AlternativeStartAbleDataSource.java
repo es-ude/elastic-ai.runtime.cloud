@@ -23,21 +23,23 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
             public Client(String id) {
                 this.id = id;
                 twinStub = new TwinStub(id);
-                twinStub.bind(javaTwin.getEndpoint());
-                twinStub.subscribeForLost(this);
+                twinStub.bindToCommunicationEndpoint(javaTwin.getEndpoint());
+                twinStub.subscribeForStatus(this);
                 isActive = true;
             }
 
             @Override
             public void deliver(Posting posting) {
-                stopAndRemove();
+                if (posting.data().endsWith("0")) {
+                    stopAndRemove();
+                }
             }
 
             public void stopAndRemove() {
                 if (isActive) {
                     isActive = false;
                     clients.remove(this);
-                    twinStub.unsubscribeFromLost(this);
+                    twinStub.unsubscribeFromStatus(this);
                 }
             }
 

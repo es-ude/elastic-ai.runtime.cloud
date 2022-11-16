@@ -2,7 +2,7 @@
 
 The eip protocol is a specification of a publish/subscribe based star topology with a broker at the center.
 Typically, this will be implemented via MQTT, but this is **not** fixed.
-The basic functionality provided are _subscribing_, _unsubscribing_ and _publishing_ to and from topics and topic filters.
+The basic functionality provided are _subscribing_, _unsubscribing_ and _publishing_ to and from topics and topic filters, together with a keepalive mechanism with last will message.
 
 ## Message
 
@@ -32,37 +32,37 @@ where the `<object_id>` is the individual identifier of the target device and th
 #### STATUS
 
 -   Topic: `eip://<broker_domain>/<object_id>/STATUS`
--   Data: 0 (offline) OR 1 (online)
+-   Data: `<object_id>` AND 0 (offline) OR 1 (online)
 -   Information:
-    -   The retain-flag of this message should be set to assure status discovery for new entered participants!
+    -   The retain-flag of this message should be set to assure status discovery for newly entered participants!
     -   The offline message should be automatically send by the broker after connection loss (LWT message).
-    -   The online message should only be send by a new hardware device.
+    -   The online message should only be sent by a new hardware device or Application Twin.
 
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/STATUS","1")
-("eip://uni-due.de/es/twin1/STATUS","0")
+("eip://uni-due.de/es/twin1/STATUS","twin1;1")
+("eip://uni-due.de/es/twin1/STATUS","twin1;0")
 ```
 
 Communication Specification:
 
 ```mermaid
 sequenceDiagram
-  participant m as Monitor
+  participant m as MonitorTwin
   participant t as Twin for Device
   participant b as Broker
   participant d as Device
 
   m ->> b: sub("eip://<broker_domain>/+/STATUS")
   Note over b,d: ESTABLISH CONNECTION
-  d ->> b: pub("eip://<broker_domain>/env5_1/STATUS","1")
-  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","1")
+  d ->> b: pub("eip://<broker_domain>/env5_1/STATUS","env5_1#59;1")
+  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","env5_1#59;1")
   m -) t: start twin
   activate t
   Note over m,d: ...
   Note over d: LOST CONNECTION
-  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","0")
+  b ->> m: ("eip://<broker_domain>/env5_1/STATUS","env5_1#59;0")
   m -) t: stop twin
   deactivate t
 ```

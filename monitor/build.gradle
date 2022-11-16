@@ -18,6 +18,7 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web-services'
   implementation 'org.springframework.session:spring-session-core'
   implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
+  implementation 'com.google.guava:guava:31.1-jre'
   implementation project(':runtime')
 
   compileOnly 'org.projectlombok:lombok'

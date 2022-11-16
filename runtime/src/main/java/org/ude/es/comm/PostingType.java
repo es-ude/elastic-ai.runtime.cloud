@@ -11,7 +11,6 @@ public enum PostingType {
     START("/START"),
     STOP("/STOP"),
     SET("/SET"),
-    LOST("/LOST"),
     STATUS("/STATUS");
 
     private final String value;
@@ -24,6 +23,16 @@ public enum PostingType {
         if (Objects.equals(topicID, "")) {
             return value;
         }
-        return value + "/" + topicID;
+        return value + fixTopicId(topicID);
+    }
+
+    private String fixTopicId(String topicId) {
+        if (!topicId.startsWith("/")) {
+            topicId = "/" + topicId;
+        }
+        if (topicId.endsWith("/")) {
+            topicId = topicId.substring(0, topicId.length() - 1);
+        }
+        return topicId.strip();
     }
 }

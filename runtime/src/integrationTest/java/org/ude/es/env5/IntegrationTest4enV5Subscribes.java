@@ -8,13 +8,15 @@ public class IntegrationTest4enV5Subscribes {
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
     private static final int PORT = 1883;
+    private static final String TEST_TWIN_ID = "integTestTwin";
 
     public static void main(String[] args) throws InterruptedException {
-        HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
         IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
-            "integTestTwin"
+            TEST_TWIN_ID
         );
-        twin.bind(broker);
+        twin.bindToCommunicationEndpoint(
+            new HivemqBroker(DOMAIN, IP, PORT, TEST_TWIN_ID)
+        );
         twin.startPublishing(250);
     }
 }
