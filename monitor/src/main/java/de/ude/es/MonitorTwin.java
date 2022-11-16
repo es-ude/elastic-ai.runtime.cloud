@@ -32,7 +32,7 @@ public class MonitorTwin extends JavaTwin {
                 .substring(0, posting.data().length() - 2);
             boolean twinActive = posting.data().endsWith("1");
 
-            if (this.twin.ID().contains(twinID)) {
+            if (this.twin.getId().contains(twinID)) {
                 return;
             }
 

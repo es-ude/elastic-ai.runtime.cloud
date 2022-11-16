@@ -44,5 +44,5 @@ public interface CommunicationEndpoint {
 
     void unsubscribeRaw(String topic, Subscriber subscriber);
 
-    String ID();
+    String getId();
 }

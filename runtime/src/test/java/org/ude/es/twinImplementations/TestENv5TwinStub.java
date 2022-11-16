@@ -21,7 +21,7 @@ public class TestENv5TwinStub {
     void canReportItsId() {
         createBroker();
         createEnv5Twin();
-        assertEquals(DOMAIN + TWIN_ID, env5.ID());
+        assertEquals(DOMAIN + TWIN_ID, env5.getId());
     }
 
     @Test

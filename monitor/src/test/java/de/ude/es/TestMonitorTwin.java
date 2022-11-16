@@ -24,7 +24,7 @@ public class TestMonitorTwin {
 
     @Test
     void testTwinCanReportItsId() {
-        assertEquals(DOMAIN + MONITOR_ID, monitorTwin.ID());
+        assertEquals(DOMAIN + MONITOR_ID, monitorTwin.getId());
     }
 
     @Test

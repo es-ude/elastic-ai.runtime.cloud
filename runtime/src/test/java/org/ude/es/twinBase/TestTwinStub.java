@@ -36,31 +36,31 @@ public class TestTwinStub {
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic = device.ID() + PostingType.START.topic(data);
+            String topic = device.getId() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic = device.ID() + PostingType.STOP.topic(data);
+            String topic = device.getId() + PostingType.STOP.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, cmd);
             device.publishCommand(service, cmd);
         }
 
         public void whenSendingOnCommand(String service) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, "1");
             device.publishOnCommand(service);
         }
 
         public void whenSendingOffCommand(String service) {
-            String topic = device.ID() + PostingType.SET.topic(service);
+            String topic = device.getId() + PostingType.SET.topic(service);
             expected = new Posting(topic, "0");
             device.publishOffCommand(service);
         }

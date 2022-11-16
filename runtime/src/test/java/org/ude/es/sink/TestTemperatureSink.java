@@ -61,8 +61,8 @@ class TestTemperatureSink {
         }
 
         @Override
-        public String ID() {
-            return endpoint.ID() + identifier;
+        public String getId() {
+            return endpoint.getId() + identifier;
         }
 
         private void deliver(Posting posting) {

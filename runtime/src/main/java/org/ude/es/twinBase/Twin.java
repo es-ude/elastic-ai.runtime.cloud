@@ -67,8 +67,8 @@ public class Twin {
      */
     protected void executeOnBind() {}
 
-    public String ID() {
-        return endpoint.ID() + identifier;
+    public String getId() {
+        return endpoint.getId() + identifier;
     }
 
     public CommunicationEndpoint getEndpoint() {

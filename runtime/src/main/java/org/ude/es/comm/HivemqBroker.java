@@ -182,7 +182,7 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public String ID() {
+    public String getId() {
         return this.mqttDomain + this.clientId;
     }
 

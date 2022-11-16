@@ -140,7 +140,7 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     @Override
-    public String ID() {
+    public String getId() {
         return identifier;
     }
 
