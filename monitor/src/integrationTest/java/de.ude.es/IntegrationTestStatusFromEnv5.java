@@ -2,6 +2,7 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
@@ -28,9 +29,16 @@ public class IntegrationTestStatusFromEnv5 {
 
     @BeforeEach
     void setUp() {
+        BROKER_CONTAINER.withReuse(false);
+        BROKER_CONTAINER.start();
         BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
         createMonitor();
         createEnv5Twin();
+    }
+
+    @AfterEach
+    void tearDown() {
+        BROKER_CONTAINER.stop();
     }
 
     @Test

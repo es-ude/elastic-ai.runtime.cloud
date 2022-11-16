@@ -32,6 +32,10 @@ public class MonitorTwin extends JavaTwin {
                 .substring(0, posting.data().length() - 2);
             boolean twinActive = posting.data().endsWith("1");
 
+            if (this.twin.ID().contains(twinID)) {
+                return;
+            }
+
             if (twinActive) {
                 twins.addTwin(twinID);
             } else {
@@ -47,7 +51,7 @@ public class MonitorTwin extends JavaTwin {
     }
 
     private StatusMonitor monitor;
-    private final TwinList twins;
+    private volatile TwinList twins;
 
     public MonitorTwin(String id) {
         super(id);
