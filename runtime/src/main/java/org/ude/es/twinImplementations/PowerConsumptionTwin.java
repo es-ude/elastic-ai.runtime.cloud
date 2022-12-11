@@ -17,12 +17,7 @@ public class PowerConsumptionTwin extends JavaTwin {
     private final SRamValueReceiver sramValueReceiver;
     private final TwinStub enV5;
 
-    private class SRamValueReceiver implements Subscriber {
-        @Override
-        public void deliver(Posting posting) {
-            sRamPowerConsumption = Float.parseFloat(posting.data());
-        }
-    }
+    // WIFI
 
     private class WifiValueReceiver implements Subscriber {
         @Override
@@ -45,22 +40,12 @@ public class PowerConsumptionTwin extends JavaTwin {
         enV5.bindToCommunicationEndpoint(endpoint);
     }
 
-    private void startSRamData() {
-        enV5.publishDataStartRequest("sRamValue", identifier);
-        enV5.subscribeForData("sRamValue", sramValueReceiver);
-    }
-
-    private void stopSRamData() {
-        enV5.publishDataStopRequest("sRamValue", identifier);
-        enV5.unsubscribeFromData("sRamValue", sramValueReceiver);
-    }
-
-    private void startWifiData() {
+    private void requestWifiPowerConsumptionContinuously() {
         enV5.publishDataStartRequest("wifiValue", identifier);
         enV5.subscribeForData("wifiValue", wifiValueReceiver);
     }
 
-    private void stopWifiData() {
+    private void stopRequestingWifiPowerConsumptionContinuously() {
         enV5.publishDataStopRequest("wifiValue", identifier);
         enV5.unsubscribeFromData("wifiValue", wifiValueReceiver);
     }
@@ -69,21 +54,13 @@ public class PowerConsumptionTwin extends JavaTwin {
         receivedWifiPowerConsumption = false;
         long start = System.currentTimeMillis();
         long timeElapsed = 0;
-        startWifiData();
+        requestWifiPowerConsumptionContinuously();
         while (!receivedWifiPowerConsumption && timeElapsed < timeOut) {
             long finish = System.currentTimeMillis();
             timeElapsed = finish - start;
         }
-        stopWifiData();
+        stopRequestingWifiPowerConsumptionContinuously();
         return wifiPowerConsumption;
-    }
-
-    public void requestWifiPowerConsumptionContinuously() {
-        startWifiData();
-    }
-
-    public void stopRequestingWifiPowerConsumptionContinuously() {
-        stopWifiData();
     }
 
     public boolean receivedNewWifiPowerConsumptionMeasurement() {
@@ -95,25 +72,37 @@ public class PowerConsumptionTwin extends JavaTwin {
         return wifiPowerConsumption;
     }
 
+    // SRAM
+
+    private class SRamValueReceiver implements Subscriber {
+        @Override
+        public void deliver(Posting posting) {
+            sRamPowerConsumption = Float.parseFloat(posting.data());
+            receivedSRamPowerConsumption = true;
+        }
+    }
+
+    private void requestSRamPowerConsumptionContinuously() {
+        enV5.publishDataStartRequest("sRam", identifier);
+        enV5.subscribeForData("sRamValue", sramValueReceiver);
+    }
+
+    private void stopRequestingSRamPowerConsumptionContinuously() {
+        enV5.publishDataStopRequest("sRamValue", identifier);
+        enV5.unsubscribeFromData("sRamValue", sramValueReceiver);
+    }
+
     public float requestSRamPowerConsumptionOnce(float timeOut) {
         receivedSRamPowerConsumption = false;
         long start = System.currentTimeMillis();
         long timeElapsed = 0;
-        startSRamData();
+        requestSRamPowerConsumptionContinuously();
         while (!receivedSRamPowerConsumption && timeElapsed < timeOut) {
             long finish = System.currentTimeMillis();
             timeElapsed = finish - start;
         }
-        stopSRamData();
+        stopRequestingSRamPowerConsumptionContinuously();
         return sRamPowerConsumption;
-    }
-
-    public void requestSRamPowerConsumptionContinuously() {
-        startSRamData();
-    }
-
-    public void stopRequestingSRamPowerConsumptionContinuously() {
-        stopSRamData();
     }
 
     public boolean receivedNewSRamPowerConsumptionMeasurement() {
