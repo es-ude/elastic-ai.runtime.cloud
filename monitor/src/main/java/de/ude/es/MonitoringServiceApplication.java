@@ -23,8 +23,18 @@ public class MonitoringServiceApplication {
                                       <div id=NAME_ID>NAME</div>
                                   </td>
                                   <td>TWIN_ID</td>
+                                  <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
                                   <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
                               </tr>
+                              """;
+
+    String pleaseRetryLater =
+        """
+                              <div class="text-center text-danger">
+                                 Currently no data available.
+                                  </br>
+                                  Please try again later.
+                              </div>
                               """;
 
     public void startServer(String[] args) {
@@ -101,10 +111,17 @@ public class MonitoringServiceApplication {
     @GetMapping("/{name}")
     public String loadPage(@PathVariable String name) {
         try {
-            File file = ResourceUtils.getFile(
-                "src/main/resources/html/" + name
-            );
-            return new String(Files.readAllBytes(file.toPath()));
+            String pageToReturn;
+            if (name.contains("env5")) {
+                pageToReturn =
+                    getEnv5Landingpage(Main.getTwinList().getTwin(name));
+            } else {
+                File file = ResourceUtils.getFile(
+                    "src/main/resources/html/" + name + ".html"
+                );
+                pageToReturn = new String(Files.readAllBytes(file.toPath()));
+            }
+            return pageToReturn;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,5 +142,16 @@ public class MonitoringServiceApplication {
         newTableElement = newTableElement.replace("TWIN_ID", ID);
 
         return newTableElement;
+    }
+
+    private String getEnv5Landingpage(TwinData twin) throws IOException {
+        File file = ResourceUtils.getFile("src/main/resources/html/env5.html");
+        String side = new String(Files.readAllBytes(file.toPath()));
+        side = side.replace("TWIN_NAME", twin.getName());
+        side = side.replace("TWIN_ID", twin.getId());
+        side =
+            side.replace("TWIN_STATUS", twin.isActive() ? "ONLINE" : "OFFLINE");
+        side = side.replace("TWIN_MEASUREMENTS", pleaseRetryLater);
+        return side;
     }
 }

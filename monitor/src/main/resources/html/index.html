@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-<html style="font-size: 20px;">
+<html style="font-size: 20px;" lang="en">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -20,125 +19,122 @@
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="msapplication-config" content="favicons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
-
 </head>
+<body>
+<section class="d-flex flex-column align-items-center pt-1">
+    <h1>Elastic AI Monitor</h1>
+    <h3>Twins</h3>
 
-<body class="u-body">
-
-<h1 class="text-center"> Elastic AI Monitor </h1>
-
-<div class="d-flex justify-content-center">
-    <button type="button" class="btn btn-lg btn-link"><a
-            href="http://192.168.203.46:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default"
-    >Kubernetes Dashboard</a></button>
-</div>
-
-<br>
-
-<table id="twinTable" class="table table-sm align-middle text-center">
-    <thead>
-    <tr class="table-success">
-        <th style="width: 10%">#</th>
-        <th>Name</th>
-        <th>ID</th>
-        <th style="width: 10%"></th>
-    </tr>
-    </thead>
-    <tbody>
-    TABLE_PLACE_HOLDER
-    </tbody>
-</table> <!--twinTable-->
-
-<div class="d-flex justify-content-center">
     <button type="button" class="btn btn-primary" onClick="window.location.reload();">Refresh</button>
-</div>
 
+    <!-- currently not in use
+    <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-lg btn-link"><a
+                href="http://192.168.203.46:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/overview?namespace=default"
+        >Kubernetes Dashboard</a></button>
+    </div>
+    -->
 </section>
+<section class="d-flex flex-column align-items-center pt-3">
+    <table id="twinTable" class="table table-sm align-middle text-center">
+        <thead>
+        <tr class="table-success">
+            <th style="width: 10%">#</th>
+            <th>Name</th>
+            <th>ID</th>
+            <th style="width: 10%"></th>
+            <th style="width: 10%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        TABLE_PLACE_HOLDER
+        </tbody>
+    </table> <!--twinTable-->
+</section>
+<section>
+    <script>
+        // async function uploadFile(button) {
+        //     let formData = new FormData();
+        //     let twinURI = button.id.replace("-upload-button", "")
+        //
+        //     let file = document.getElementById(twinURI + "-select-file")
+        //     console.log(file)
+        //     formData.append("file", file.files[0]);
+        //     formData.append("twinURI", twinURI);
+        //
+        //     let response = await fetch("/upload", {
+        //         method: "POST",
+        //         body: formData,
+        //     });
+        //
+        //     let actionText = document.getElementById(twinURI + "-action-text");
+        //     switch (response.status) {
+        //         case 200:
+        //             let fileName = file.value.split("\\")
+        //             actionText.innerText = "Send file \"" + fileName[fileName.length - 1] + "\"";
+        //             updateLastAction(twinURI);
+        //             // alert("File send successfully to deviceTwin: " + deviceURI + ".");
+        //             break;
+        //         case 400:
+        //             alert("No file selected.");
+        //             break;
+        //         default:
+        //             alert("Unknown response status: " + response.status);
+        //     }
+        // }
 
-<script>
-    // async function uploadFile(button) {
-    //     let formData = new FormData();
-    //     let twinURI = button.id.replace("-upload-button", "")
-    //
-    //     let file = document.getElementById(twinURI + "-select-file")
-    //     console.log(file)
-    //     formData.append("file", file.files[0]);
-    //     formData.append("twinURI", twinURI);
-    //
-    //     let response = await fetch("/upload", {
-    //         method: "POST",
-    //         body: formData,
-    //     });
-    //
-    //     let actionText = document.getElementById(twinURI + "-action-text");
-    //     switch (response.status) {
-    //         case 200:
-    //             let fileName = file.value.split("\\")
-    //             actionText.innerText = "Send file \"" + fileName[fileName.length - 1] + "\"";
-    //             updateLastAction(twinURI);
-    //             // alert("File send successfully to deviceTwin: " + deviceURI + ".");
-    //             break;
-    //         case 400:
-    //             alert("No file selected.");
-    //             break;
-    //         default:
-    //             alert("Unknown response status: " + response.status);
-    //     }
-    // }
+        async function changeName(button) {
+            let ID = button.id.replace("-name-button", "");
+            let nameText = document.getElementById(ID + "-name");
+            let newText = prompt("New Name:", nameText.innerText);
+            if (newText == null || newText === "") {
 
-    async function changeName(button) {
-        let ID = button.id.replace("-name-button", "");
-        let nameText = document.getElementById(ID + "-name");
-        let newText = prompt("New Name:", nameText.innerText);
-        if (newText == null || newText === "") {
+            } else {
+                let formData = new FormData();
 
-        } else {
-            let formData = new FormData();
+                formData.append("ID", ID);
+                formData.append("name", newText);
+                let response = await fetch("/changeName", {
+                    method: "POST",
+                    body: formData
+                });
 
-            formData.append("ID", ID);
-            formData.append("name", newText);
-            let response = await fetch("/changeName", {
-                method: "POST",
-                body: formData,
-            });
-
-            switch (response.status) {
-                case 200:
-                    nameText.innerText = newText;
-                    break;
-                default:
-                    alert("Unknown response status: " + response.status);
+                switch (response.status) {
+                    case 200:
+                        nameText.innerText = newText;
+                        break;
+                    default:
+                        alert("Unknown response status: " + response.status);
+                }
             }
         }
-    }
 
-    // function sleep(ms) {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
+        // function sleep(ms) {
+        //     return new Promise(resolve => setTimeout(resolve, ms));
+        // }
 
-    // async function updateLastAction(URI) {
-    //     let statusText = document.getElementById(URI + "-action-text");
-    //     let flashing = true
-    //     while (flashing) {
-    //         let formData = new FormData();
-    //         formData.append("URI", URI);
-    //         let response = await fetch("/getStatus", {
-    //             method: "POST",
-    //             body: formData,
-    //         });
-    //         response.text().then(function (text) {
-    //             console.log(text)
-    //             statusText.innerText = text;
-    //             if (text.indexOf("Successfully flashed") === 0) {
-    //                 flashing = false;
-    //             }
-    //         });
-    //
-    //         await sleep(1000);
-    //     }
-    // }
-
-</script>
-
+        // async function updateLastAction(URI) {
+        //     let statusText = document.getElementById(URI + "-action-text");
+        //     let flashing = true
+        //     while (flashing) {
+        //         let formData = new FormData();
+        //         formData.append("URI", URI);
+        //         let response = await fetch("/getStatus", {
+        //             method: "POST",
+        //             body: formData,
+        //         });
+        //         response.text().then(function (text) {
+        //             console.log(text)
+        //             statusText.innerText = text;
+        //             if (text.indexOf("Successfully flashed") === 0) {
+        //                 flashing = false;
+        //             }
+        //         });
+        //
+        //         await sleep(1000);
+        //     }
+        // }
+    </script>
+</section>
 </body>
 </html>
