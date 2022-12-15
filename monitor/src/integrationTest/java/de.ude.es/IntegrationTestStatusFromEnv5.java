@@ -69,7 +69,6 @@ public class IntegrationTestStatusFromEnv5 {
             BROKER_PORT,
             clientId
         );
-        broker.connectWithKeepaliveAndLwtMessage();
         return broker;
     }
 }

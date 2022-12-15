@@ -66,7 +66,6 @@ public class Main {
             BROKER_PORT,
             "monitor"
         );
-        broker.connectWithKeepaliveAndLwtMessage();
         return broker;
     }
 }
