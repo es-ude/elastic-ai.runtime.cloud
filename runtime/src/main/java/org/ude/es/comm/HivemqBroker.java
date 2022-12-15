@@ -18,19 +18,7 @@ public class HivemqBroker implements CommunicationEndpoint {
     private final int brokerPort;
     private Mqtt5AsyncClient client;
 
-    public void connectWithoutKeepalive() {
-        Mqtt5BlockingClient blockingClient = MqttClient
-            .builder()
-            .useMqttVersion5()
-            .identifier(this.mqttDomain)
-            .serverHost(this.brokerIp)
-            .serverPort(this.brokerPort)
-            .buildBlocking();
-        Mqtt5ConnAck connAck = blockingClient.connect();
-        client = blockingClient.toAsync();
-    }
-
-    public void connectWithKeepaliveAndLwtMessage() {
+    private void connectWithKeepaliveAndLwtMessage() {
         Mqtt5BlockingClient blockingClient = MqttClient
             .builder()
             .useMqttVersion5()
@@ -68,6 +56,7 @@ public class HivemqBroker implements CommunicationEndpoint {
         this.mqttDomain = fixDomain(mqttDomain);
         this.brokerIp = brokerIp;
         this.brokerPort = brokerPort;
+        connectWithKeepaliveAndLwtMessage();
     }
 
     private static String fixClientId(String id) {
