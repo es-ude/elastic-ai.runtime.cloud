@@ -174,7 +174,6 @@ public class IntegrationTest4ExternalBroker {
             BROKER_PORT,
             clientId
         );
-        broker.connectWithKeepaliveAndLwtMessage();
         return broker;
     }
 }
