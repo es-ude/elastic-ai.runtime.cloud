@@ -40,12 +40,12 @@ public class PowerConsumptionTwin extends JavaTwin {
         enV5.bindToCommunicationEndpoint(endpoint);
     }
 
-    private void requestWifiPowerConsumptionContinuously() {
+    public void requestWifiPowerConsumptionContinuously() {
         enV5.publishDataStartRequest("wifiValue", identifier);
         enV5.subscribeForData("wifiValue", wifiValueReceiver);
     }
 
-    private void stopRequestingWifiPowerConsumptionContinuously() {
+    public void stopRequestingWifiPowerConsumptionContinuously() {
         enV5.publishDataStopRequest("wifiValue", identifier);
         enV5.unsubscribeFromData("wifiValue", wifiValueReceiver);
     }
@@ -82,12 +82,12 @@ public class PowerConsumptionTwin extends JavaTwin {
         }
     }
 
-    private void requestSRamPowerConsumptionContinuously() {
+    public void requestSRamPowerConsumptionContinuously() {
         enV5.publishDataStartRequest("sRam", identifier);
         enV5.subscribeForData("sRamValue", sramValueReceiver);
     }
 
-    private void stopRequestingSRamPowerConsumptionContinuously() {
+    public void stopRequestingSRamPowerConsumptionContinuously() {
         enV5.publishDataStopRequest("sRamValue", identifier);
         enV5.unsubscribeFromData("sRamValue", sramValueReceiver);
     }

@@ -71,6 +71,10 @@ public class Twin {
         return endpoint.getId() + identifier;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
     public CommunicationEndpoint getEndpoint() {
         return endpoint;
     }
