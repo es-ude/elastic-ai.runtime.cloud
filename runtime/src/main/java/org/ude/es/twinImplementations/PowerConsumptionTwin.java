@@ -7,110 +7,87 @@ import org.ude.es.twinBase.TwinStub;
 
 public class PowerConsumptionTwin extends JavaTwin {
 
-    private float sRamPowerConsumption = -1;
-    private float wifiPowerConsumption = -1;
-
-    private volatile boolean receivedWifiPowerConsumption = false;
-    private volatile boolean receivedSRamPowerConsumption = false;
-
-    private final WifiValueReceiver wifiValueReceiver;
-    private final SRamValueReceiver sramValueReceiver;
     private final TwinStub enV5;
+    public ValueClass wifiValueReceiver;
+    public ValueClass sRamValueReceiver;
+    private boolean deviceOnline = false;
 
-    // WIFI
-
-    private class WifiValueReceiver implements Subscriber {
+    private class StatusReceiver implements Subscriber {
         @Override
         public void deliver(Posting posting) {
-            wifiPowerConsumption = Float.parseFloat(posting.data());
-            receivedWifiPowerConsumption = true;
+            String data= posting.data();
+            if(data.contains(";1"))
+                deviceOnline = true;
+            if(data.contains(";0"))
+                deviceOnline = false;
         }
     }
 
     public PowerConsumptionTwin(String identifier) {
         super(identifier);
 
-        wifiValueReceiver = new WifiValueReceiver();
-        sramValueReceiver = new SRamValueReceiver();
-        enV5 = new ENv5TwinStub("ENv5");
+        wifiValueReceiver = new ValueClass("wifiValue");
+        sRamValueReceiver = new ValueClass("sRamValue");
+
+        enV5 = new ENv5TwinStub("enV5");
     }
 
     @Override
     protected void executeOnBind() {
         enV5.bindToCommunicationEndpoint(endpoint);
+        StatusReceiver statusReceiver = new StatusReceiver();
+        enV5.subscribeForStatus(statusReceiver);
     }
 
-    public void requestWifiPowerConsumptionContinuously() {
-        enV5.publishDataStartRequest("wifiValue", identifier);
-        enV5.subscribeForData("wifiValue", wifiValueReceiver);
-    }
-
-    public void stopRequestingWifiPowerConsumptionContinuously() {
-        enV5.publishDataStopRequest("wifiValue", identifier);
-        enV5.unsubscribeFromData("wifiValue", wifiValueReceiver);
-    }
-
-    public float requestWifiPowerConsumptionOnce(float timeOut) {
-        receivedWifiPowerConsumption = false;
-        long start = System.currentTimeMillis();
-        long timeElapsed = 0;
-        requestWifiPowerConsumptionContinuously();
-        while (!receivedWifiPowerConsumption && timeElapsed < timeOut) {
-            long finish = System.currentTimeMillis();
-            timeElapsed = finish - start;
+    public class ValueClass {
+        private float value = -1;
+        private volatile boolean       receivedNewValue = false;
+        private final String        dataID;
+        private final ValueReceiver valueReceiver;
+        private class ValueReceiver implements Subscriber {
+            @Override
+            public void deliver(Posting posting) {
+                value = Float.parseFloat(posting.data());
+                receivedNewValue = true;
+            }
         }
-        stopRequestingWifiPowerConsumptionContinuously();
-        return wifiPowerConsumption;
-    }
 
-    public boolean receivedNewWifiPowerConsumptionMeasurement() {
-        return receivedWifiPowerConsumption;
-    }
+        public ValueClass (String dataID) {
+            this.dataID = dataID;
+            valueReceiver = new ValueReceiver();
+        }
 
-    public float getLastWifiPowerConsumption() {
-        receivedWifiPowerConsumption = false;
-        return wifiPowerConsumption;
-    }
+        public void startRequestingData() {
+            enV5.publishDataStartRequest(dataID, identifier);
+            enV5.subscribeForData(dataID, valueReceiver);
+        }
 
-    // SRAM
+        public void stopRequestingData() {
+            enV5.publishDataStopRequest(dataID, identifier);
+            enV5.unsubscribeFromData(dataID, valueReceiver);
+        }
 
-    private class SRamValueReceiver implements Subscriber {
-        @Override
-        public void deliver(Posting posting) {
-            sRamPowerConsumption = Float.parseFloat(posting.data());
-            receivedSRamPowerConsumption = true;
+        public float requestWifiPowerConsumptionOnce(float timeOut) {
+            receivedNewValue = false;
+            long start = System.currentTimeMillis();
+            long timeElapsed = 0;
+            startRequestingData();
+            while (!receivedNewValue && timeElapsed < timeOut) {
+                long finish = System.currentTimeMillis();
+                timeElapsed = finish - start;
+            }
+            stopRequestingData();
+            return value;
+        }
+
+        public boolean receivedNewValue () {
+            return receivedNewValue;
+        }
+
+        public float getLastValue () {
+            receivedNewValue = false;
+            return value;
         }
     }
 
-    public void requestSRamPowerConsumptionContinuously() {
-        enV5.publishDataStartRequest("sRam", identifier);
-        enV5.subscribeForData("sRamValue", sramValueReceiver);
-    }
-
-    public void stopRequestingSRamPowerConsumptionContinuously() {
-        enV5.publishDataStopRequest("sRamValue", identifier);
-        enV5.unsubscribeFromData("sRamValue", sramValueReceiver);
-    }
-
-    public float requestSRamPowerConsumptionOnce(float timeOut) {
-        receivedSRamPowerConsumption = false;
-        long start = System.currentTimeMillis();
-        long timeElapsed = 0;
-        requestSRamPowerConsumptionContinuously();
-        while (!receivedSRamPowerConsumption && timeElapsed < timeOut) {
-            long finish = System.currentTimeMillis();
-            timeElapsed = finish - start;
-        }
-        stopRequestingSRamPowerConsumptionContinuously();
-        return sRamPowerConsumption;
-    }
-
-    public boolean receivedNewSRamPowerConsumptionMeasurement() {
-        return receivedSRamPowerConsumption;
-    }
-
-    public float getLastSRamPowerConsumption() {
-        receivedSRamPowerConsumption = false;
-        return sRamPowerConsumption;
-    }
 }
