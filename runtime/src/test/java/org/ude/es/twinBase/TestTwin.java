@@ -65,6 +65,6 @@ public class TestTwin {
         var broker = new BrokerMock("broker");
         var twin = new Twin("twin");
         twin.bindToCommunicationEndpoint(broker);
-        assertEquals("broker/twin", twin.getId());
+        assertEquals("broker/twin", twin.getDomainAndIdentifier());
     }
 }

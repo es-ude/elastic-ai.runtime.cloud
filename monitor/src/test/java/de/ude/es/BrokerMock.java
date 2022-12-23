@@ -131,17 +131,22 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     @Override
+    public String getClientIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public String getDomain() {
+        return identifier;
+    }
+
+    @Override
     public void publish(Posting posting) {
         Posting toPublish = rewriteTopicToIncludeMe(posting);
         executePublish(toPublish);
         System.out.println(
             "Published: " + toPublish.data() + " to: " + toPublish.topic()
         );
-    }
-
-    @Override
-    public String getId() {
-        return identifier;
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {
@@ -155,9 +160,15 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
-        if (subscription.matches(msg.topic())) subscription
-            .subscriber()
-            .deliver(msg);
+    private void deliverIfTopicMatches(Posting msg, Subscription subscription)  {
+        if (subscription.matches(msg.topic())) {
+            try {
+                subscription
+                    .subscriber()
+                    .deliver(msg);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

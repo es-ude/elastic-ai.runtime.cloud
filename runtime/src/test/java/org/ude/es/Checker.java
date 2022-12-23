@@ -105,7 +105,7 @@ public class Checker {
     }
 
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
-        String fullTopic = broker.getId() + topic;
+        String fullTopic = broker.getClientIdentifier() + topic;
         expected = new Posting(fullTopic, data);
         broker.publish(new Posting(topic, data));
     }
@@ -156,7 +156,7 @@ public class Checker {
     }
 
     public void whenPostingIsPublishedAtJavaTwin(String topic, String data) {
-        String fullTopic = javaTwin.getId() + topic;
+        String fullTopic = javaTwin.getDomainAndIdentifier() + topic;
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);

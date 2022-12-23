@@ -43,19 +43,17 @@ public class Twin {
      * </p>
      * <p>
      * <b>Note:</b> This method cannot be overwritten! If you
-     *              want your DigitalTwin subclass to perform its own
-     *              actions when binding, please override @executeOnBind.
+     * want your DigitalTwin subclass to perform its own
+     * actions when binding, please override @executeOnBind.
      * </p>
      * <p>
      * <b>Important:</b> Every Twin must have its own instance of the implemented
-     *                   Communication Interface.
+     * Communication Interface.
      * </p>
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bindToCommunicationEndpoint(
-        CommunicationEndpoint channel
-    ) {
+    public final void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
         this.endpoint = channel;
         executeOnBind();
     }
@@ -65,14 +63,19 @@ public class Twin {
      * DigitalTwin to a CommunicationEndpoint, e.g., to subscribe for certain
      * topics or notify someone that you are interested in some data.
      */
-    protected void executeOnBind() {}
+    protected void executeOnBind() {
+    }
 
-    public String getId() {
-        return endpoint.getId() + identifier;
+    public String getDomain() {
+        return endpoint.getDomain();
     }
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public String getDomainAndIdentifier() {
+        return getDomain() + getIdentifier();
     }
 
     public CommunicationEndpoint getEndpoint() {

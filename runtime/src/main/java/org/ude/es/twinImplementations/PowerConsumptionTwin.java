@@ -9,101 +9,128 @@ import org.ude.es.twinBase.TwinStub;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class PowerConsumptionTwin extends JavaTwin {
 
-    private final TwinStub      enV5;
-    public        ValueClass    wifiValueReceiver;
-    public        ValueClass    sRamValueReceiver;
-    private       boolean       deviceOnline     = false;
-    private final List <String> openDataRequests = new ArrayList <>( );
+    private static final int WAIT_AFTER_COMMAND = 1000;
+    private final TwinStub enV5;
+    public ValueClass wifiValueReceiver;
+    public ValueClass sRamValueReceiver;
+    private boolean deviceOnline = false;
+    private final List<String> openDataRequests = new ArrayList<>();
 
     private class StatusReceiver implements Subscriber {
-        @Override public void deliver ( Posting posting ) {
-            String data = posting.data( );
-            if( data.contains( ";1" ) ) {
+
+        String identifier;
+
+        public StatusReceiver(String identifier) {
+            this.identifier = identifier;
+        }
+
+        @Override
+        public void deliver(Posting posting) throws InterruptedException {
+            String data = posting.data();
+            if (data.contains(";1")) {
+                System.out.println("Device " + this.identifier + " online.");
                 deviceOnline = true;
-                for( String request : openDataRequests ) {
-                    enV5.publishDataStartRequest( request, identifier );
+                for (String request : openDataRequests) {
+                    enV5.publishDataStartRequest(request, identifier);
                 }
             }
-            openDataRequests.clear( );
 
-            if( data.contains( ";0" ) ) {
+            if (data.contains(";0")) {
+                System.out.println("Device " + this.identifier + " offline.");
                 deviceOnline = false;
             }
         }
     }
 
-    public PowerConsumptionTwin ( String identifier ) {
-        super( identifier );
+    public PowerConsumptionTwin(String identifier) {
+        super(identifier);
 
-        wifiValueReceiver = new ValueClass( "wifiValue" );
-        sRamValueReceiver = new ValueClass( "sRamValue" );
+        wifiValueReceiver = new ValueClass("wifiValue");
+        sRamValueReceiver = new ValueClass("sRamValue");
 
-        enV5 = new ENv5TwinStub( "enV5" );
+        enV5 = new ENv5TwinStub("enV5");
     }
 
-    @Override protected void executeOnBind () {
-        enV5.bindToCommunicationEndpoint( endpoint );
-        StatusReceiver statusReceiver = new StatusReceiver( );
-        enV5.subscribeForStatus( statusReceiver );
+    private static void waitAfterCommand() {
+        try {
+            Thread.sleep(WAIT_AFTER_COMMAND);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void executeOnBind() {
+        enV5.bindToCommunicationEndpoint(endpoint);
+        StatusReceiver statusReceiver = new StatusReceiver(enV5.getDomainAndIdentifier());
+        enV5.subscribeForStatus(statusReceiver);
+        waitAfterCommand();
     }
 
     public class ValueClass {
-        private          float         value            = -1;
-        private          long          lastTimeReceived;
-        private volatile boolean       receivedNewValue = false;
-        private final    String        dataID;
-        private final    ValueReceiver valueReceiver;
+        private float value = -1;
+        private long lastTimeReceived;
+        private volatile boolean receivedNewValue = false;
+        private final String dataID;
+        private final ValueReceiver valueReceiver;
+
         private class ValueReceiver implements Subscriber {
-            @Override public void deliver ( Posting posting ) {
-                value            = Float.parseFloat( posting.data( ) );
+            @Override
+            public void deliver(Posting posting) {
+                value = Float.parseFloat(posting.data());
                 receivedNewValue = true;
-                lastTimeReceived = System.currentTimeMillis( );
+                lastTimeReceived = System.currentTimeMillis();
             }
         }
 
-        public ValueClass ( String dataID ) {
-            this.dataID   = dataID;
-            valueReceiver = new ValueReceiver( );
+        public ValueClass(String dataID) {
+            this.dataID = dataID;
+            valueReceiver = new ValueReceiver();
         }
 
-        public void startRequestingData () {
-            if( deviceOnline ) {
-                enV5.publishDataStartRequest( dataID, identifier );
-                openDataRequests.add( dataID );
-            } enV5.subscribeForData( dataID, valueReceiver );
+        public void startRequestingData() {
+            if (deviceOnline) {
+                enV5.publishDataStartRequest(dataID, getDomainAndIdentifier());
+                waitAfterCommand();
+            }
+            openDataRequests.add(dataID);
+            enV5.subscribeForData(dataID, valueReceiver);
         }
 
-        public void stopRequestingData () {
-            openDataRequests.remove( dataID );
-            enV5.publishDataStopRequest( dataID, identifier );
-            enV5.unsubscribeFromData( dataID, valueReceiver );
+        public void stopRequestingData() {
+            if (deviceOnline) {
+                enV5.publishDataStopRequest(dataID, getDomainAndIdentifier());
+            }
+            openDataRequests.remove(dataID);
+            enV5.unsubscribeFromData(dataID, valueReceiver);
         }
 
-        public float requestWifiPowerConsumptionOnce ( float timeOut ) {
+        public float requestValueOnce(float timeOut) {
             receivedNewValue = false;
-            long start       = System.currentTimeMillis( );
+            long start = System.currentTimeMillis();
             long timeElapsed = 0;
-            startRequestingData( );
-            while( !receivedNewValue && timeElapsed < timeOut ) {
-                long finish = System.currentTimeMillis( );
+            startRequestingData();
+            while (!receivedNewValue && timeElapsed < timeOut) {
+                long finish = System.currentTimeMillis();
                 timeElapsed = finish - start;
             }
-            stopRequestingData( );
+            stopRequestingData();
             return value;
         }
 
-        public boolean receivedNewValue () {
+        public boolean receivedNewValue() {
             return receivedNewValue;
         }
 
-        public float getLastValue () {
+        public float getLastValue() {
             receivedNewValue = false;
             return value;
         }
 
-        public long receivedWhen () {
+        public long receivedWhen() {
             return lastTimeReceived;
         }
     }

@@ -38,12 +38,12 @@ public class TemperatureSink {
         this.dataSource = dataSource;
         this.subscriber = new DataSubscriber();
         this.dataSource.subscribeForData(dataId, subscriber);
-        this.dataSource.publishDataStartRequest(dataId, twin.getId());
+        this.dataSource.publishDataStartRequest(dataId, twin.getDomainAndIdentifier());
     }
 
     public void disconnectDataSource() {
         this.dataSource.unsubscribeFromData(dataId, this.subscriber);
-        this.dataSource.publishDataStopRequest(dataId, twin.getId());
+        this.dataSource.publishDataStopRequest(dataId, twin.getDomainAndIdentifier());
         this.dataSource = null;
     }
 

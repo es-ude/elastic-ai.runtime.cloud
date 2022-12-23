@@ -28,11 +28,11 @@ public class MonitorTwin extends JavaTwin {
         @Override
         public void deliver(Posting posting) {
             String twinID = posting
-                .data()
-                .substring(0, posting.data().length() - 2);
+                    .data()
+                    .substring(0, posting.data().length() - 2);
             boolean twinActive = posting.data().endsWith("1");
 
-            if (this.twin.getId().contains(twinID)) {
+            if (this.twin.getDomainAndIdentifier().contains(twinID)) {
                 return;
             }
 

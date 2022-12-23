@@ -12,7 +12,7 @@ package org.ude.es.comm;
  * </p>
  * <p>
  * <b>Note:</b> A broker can but doesn't need to be implemented by
- *              an MQTT broker.
+ * an MQTT broker.
  * </p>
  */
 public interface CommunicationEndpoint {
@@ -44,5 +44,7 @@ public interface CommunicationEndpoint {
 
     void unsubscribeRaw(String topic, Subscriber subscriber);
 
-    String getId();
+    String getClientIdentifier();
+
+    String getDomain();
 }
