@@ -1,50 +1,1 @@
-plugins {
-  id 'application'
-
-  id 'org.springframework.boot' version '2.5.2'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'com.google.cloud.tools.jib' version '3.0.0'
-  id 'nebula.facet' version '9.4.0'
-  id 'com.adarshr.test-logger' version '3.1.0'
-}
-
-group 'de.ude.es'
-version '0.0.2'
-mainClassName = 'de.ude.es.Main'
-
-dependencies {
-  implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.springframework.boot:spring-boot-starter-web-services'
-  implementation 'org.springframework.session:spring-session-core'
-  implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
-  implementation 'com.google.guava:guava:31.1-jre'
-  implementation project(':runtime')
-
-  compileOnly 'org.projectlombok:lombok'
-
-  developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-  annotationProcessor 'org.projectlombok:lombok'
-
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-facets {
-  integrationTest {
-    parentSourceSet = 'test'
-    testTaskName = 'integrationTest'
-  }
-}
-
-integrationTest {
-  useJUnitPlatform()
-  testLogging {
-    events 'passed', 'skipped', 'failed'
-  }
-}
-
-task wrapper {}
-
-task prepareKotlinBuildScriptModel {}
+plugins {  id 'application'  id 'org.springframework.boot' version '2.5.2'  id 'io.spring.dependency-management' version '1.0.11.RELEASE'  id 'com.google.cloud.tools.jib' version '3.0.0'  id 'nebula.facet' version '9.4.0'  id 'com.adarshr.test-logger' version '3.1.0'}group 'de.ude.es'version '0.0.2'mainClassName = 'de.ude.es.Main'dependencies {  implementation 'org.springframework.boot:spring-boot-starter-data-rest'  implementation 'org.springframework.boot:spring-boot-starter-web'  implementation 'org.springframework.boot:spring-boot-starter-web-services'  implementation 'org.springframework.session:spring-session-core'  implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'  implementation 'com.google.guava:guava:31.1-jre'  implementation project(':runtime')  compileOnly 'org.projectlombok:lombok'  developmentOnly 'org.springframework.boot:spring-boot-devtools'  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'  annotationProcessor 'org.projectlombok:lombok'  testImplementation 'org.springframework.boot:spring-boot-starter-test'}facets {  integrationTest {    parentSourceSet = 'test'    testTaskName = 'integrationTest'  }}integrationTest {  useJUnitPlatform()  testLogging {    events 'passed', 'skipped', 'failed'  }}task wrapper {}task prepareKotlinBuildScriptModel {}
