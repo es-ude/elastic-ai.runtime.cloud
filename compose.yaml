@@ -1,0 +1,12 @@
+services:
+  broker:
+    image: eclipse-mosquitto:1.6.14
+    volumes:
+      - "$PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+    ports:
+      - "1883:1883"
+
+  demotwin:
+    depends_on:
+      - broker
+    image: runtime:1.0
