@@ -17,35 +17,35 @@ Requested Values combined into VALUE.
 
 ```mermaid
 sequenceDiagram
-      participant pw as Power Consumption Twin
+      participant dt as enV5 Twin
       participant b as Broker
-      participant d as ENv5
+      participant d as enV5
 
-    pw ->> b: pub("eip://DOMAIN/powerConsumptionTwin/STATUS", ONLINE)
-    pw ->> b: sub("eip://DOMAIN/ENv5/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
+    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
     
-    Note over pw: WAITS FOR DEVICE
+    Note over dt: WAITS FOR DEVICE
     
-    d ->> b: sub("eip://DOMAIN/ENv5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
         
-    d ->> b: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    b ->> pw: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
+    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
  
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/Value")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
     
     Note over d: GETS MEASUREMENT
         
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/Value")
-    b ->> pw: pub("eip://DOMAIN/ENv5/DATA/Value")
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
+    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
     
-    Note over pw,d: ...
+    Note over dt,d: ...
     
-    pw ->> b: pub("eip://DOMAIN/ENv5/STOP/Value")
-    d ->> b: unsub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/STOP/Value")
+    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
 ```
 
 ## Detailed Overview
@@ -54,152 +54,152 @@ PowerConsumption twin gets online and waits for device, when device comes online
 
 ```mermaid
 sequenceDiagram
-      participant pw as Power Consumption Twin
-      participant ds as ENv5 Stub
+      participant dt as enV5 Twin
+      participant ds as enV5 Stub
       participant b as Broker
-      participant d as ENv5
+      participant d as enV5
 
-    pw ->> b: pub("eip://DOMAIN/powerConsumptionTwin/STATUS", ONLINE)
-    pw ->> ds: subscribeForStatus
-    ds ->> b: sub("eip://DOMAIN/ENv5/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
+    dt ->> ds: subscribeForStatus
+    ds ->> b: sub("eip://DOMAIN/enV5/STATUS")
     
-    Note over pw, ds: WAITS FOR DEVICE
+    Note over dt, ds: WAITS FOR DEVICE
     
-    d ->> b: sub("eip://DOMAIN/ENv5/START/wifiValue")
-    d ->> b: sub("eip://DOMAIN/ENv5/START/sRamValue")
+    d ->> b: sub("eip://DOMAIN/enV5/START/wifiValue")
+    d ->> b: sub("eip://DOMAIN/enV5/START/sRamValue")
     
-    d ->> b: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    b ->> ds: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    ds ->> pw: deviceStatus
+    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    b ->> ds: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    ds ->> dt: deviceStatus
  
-    pw ->> ds: publishDataStartRequest
-    ds ->> b: pub("eip://DOMAIN/ENv5/START/wifiValue")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/wifiValue")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> ds: publishDataStartRequest
+    ds ->> b: pub("eip://DOMAIN/enV5/START/wifiValue")
+    b ->> d: pub("eip://DOMAIN/enV5/START/wifiValue")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
-    pw ->> ds: publishDataStartRequest
-    ds ->> b: pub("eip://DOMAIN/ENv5/START/sRamValue")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/sRamValue")
-    
-    Note over d: GETS MEASUREMENT
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/wifiValue")
-    b ->> ds: pub("eip://DOMAIN/ENv5/DATA/wifiValue")
-    ds ->> pw: setWifiValue
+    dt ->> ds: publishDataStartRequest
+    ds ->> b: pub("eip://DOMAIN/enV5/START/sRamValue")
+    b ->> d: pub("eip://DOMAIN/enV5/START/sRamValue")
     
     Note over d: GETS MEASUREMENT
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/sRamValue")
-    b ->> ds: pub("eip://DOMAIN/ENv5/DATA/sRamValue")
-    ds ->> pw: setSRamValue
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/wifiValue")
+    b ->> ds: pub("eip://DOMAIN/enV5/DATA/wifiValue")
+    ds ->> dt: setWifiValue
     
-    Note over pw,d: ...
+    Note over d: GETS MEASUREMENT
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/sRamValue")
+    b ->> ds: pub("eip://DOMAIN/enV5/DATA/sRamValue")
+    ds ->> dt: setSRamValue
     
-    pw ->> ds: publishDataStopRequest
-    ds ->> b: pub("eip://DOMAIN/ENv5/STOP/wifiValue")
-    b ->> d: pub("eip://DOMAIN/ENv5/STOP/wifiValue")
+    Note over dt,d: ...
     
-    pw ->> ds: publishDataStopRequest
-    ds ->> b: pub("eip://DOMAIN/ENv5/STOP/sRamValue")
-    b ->> d: pub("eip://DOMAIN/ENv5/STOP/sRamValue")
-    d ->> b: unsub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> ds: publishDataStopRequest
+    ds ->> b: pub("eip://DOMAIN/enV5/STOP/wifiValue")
+    b ->> d: pub("eip://DOMAIN/enV5/STOP/wifiValue")
+    
+    dt ->> ds: publishDataStopRequest
+    ds ->> b: pub("eip://DOMAIN/enV5/STOP/sRamValue")
+    b ->> d: pub("eip://DOMAIN/enV5/STOP/sRamValue")
+    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
 ```
 
 ## Simplified Device Loses Connection
 
 ```mermaid
 sequenceDiagram
-      participant pw as Power Consumption Twin
+      participant dt as enV5 Twin
       participant b as Broker
-      participant d as ENv5
+      participant d as enV5
 
-    pw ->> b: pub("eip://DOMAIN/powerConsumptionTwin/STATUS", ONLINE)
-    pw ->> b: sub("eip://DOMAIN/ENv5/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
+    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
     
-    Note over pw: WAITS FOR DEVICE
+    Note over dt: WAITS FOR DEVICE
     
-    d ->> b: sub("eip://DOMAIN/ENv5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
         
-    d ->> b: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    b ->> pw: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
+    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
  
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/Value")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
     Note over d: GETS MEASUREMENT
         
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/Value")
-    b ->> pw: pub("eip://DOMAIN/ENv5/DATA/Value")
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
+    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
     
     Note over d: LOSES CONNECTION
         
-    b ->> pw:  pub("eip://DOMAIN/ENv5/STATUS", OFFLINE)
+    b ->> dt:  pub("eip://DOMAIN/enV5/STATUS", OFFLINE)
       
     Note over d: RECONNECTS
 
-    d ->> b: sub("eip://DOMAIN/ENv5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
         
-    d ->> b: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    b ->> pw: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
+    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
  
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/Value")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
     Note over d: GETS MEASUREMENT
         
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/Value")
-    b ->> pw: pub("eip://DOMAIN/ENv5/DATA/Value")
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
+    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
 ```
 
 ## Simplified Twin Loses Connection
 
 ```mermaid
 sequenceDiagram
-      participant pw as Power Consumption Twin
+      participant dt as enV5 Twin
       participant b as Broker
-      participant d as ENv5
+      participant d as enV5
 
-    pw ->> b: pub("eip://DOMAIN/powerConsumptionTwin/STATUS", ONLINE)
-    pw ->> b: sub("eip://DOMAIN/ENv5/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
+    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
     
-    Note over pw: WAITS FOR DEVICE
+    Note over dt: WAITS FOR DEVICE
     
-    d ->> b: sub("eip://DOMAIN/ENv5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
         
-    d ->> b: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
-    b ->> pw: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
+    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
+    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
  
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/Value")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
     Note over d: GETS MEASUREMENT
         
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/Value")
-    b ->> pw: pub("eip://DOMAIN/ENv5/DATA/Value")
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
+    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
     
-    Note over pw: LOSES CONNECTION
+    Note over dt: LOSES CONNECTION
         
-    b ->> d:  pub("eip://DOMAIN/powerConsumptionTwin/STATUS", OFFLINE)
+    b ->> d:  pub("eip://DOMAIN/enV5Twin/STATUS", OFFLINE)
         
-    d ->> b: unsub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
             
     Note over d: STOPS PUBLISHING DATA
       
-    Note over pw: RECONNECTS
+    Note over dt: RECONNECTS
 
 
-    pw ->> b: pub("eip://DOMAIN/powerConsumptionTwin/STATUS", ONLINE)
-    pw ->> b: sub("eip://DOMAIN/ENv5/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
+    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
     
-    b ->> pw: pub("eip://DOMAIN/ENv5/STATUS", ONLINE)
+    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
  
-    pw ->> b: pub("eip://DOMAIN/ENv5/START/Value")
-    b ->> d: pub("eip://DOMAIN/ENv5/START/Value")
-    d ->> b: sub("eip://DOMAIN/powerConsumptionTwin/STATUS")
+    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
+    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
+    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
     
     Note over d: GETS MEASUREMENT
         
-    d ->> b: pub("eip://DOMAIN/ENv5/DATA/Value")
-    b ->> pw: pub("eip://DOMAIN/ENv5/DATA/Value")
+    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
+    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
 ```

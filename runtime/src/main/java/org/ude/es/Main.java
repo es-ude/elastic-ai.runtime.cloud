@@ -8,7 +8,8 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import org.ude.es.comm.HivemqBroker;
-import org.ude.es.twinImplementations.PowerConsumptionTwin;
+import org.ude.es.twinImplementations.enV5Twin;
+
 
 public class Main {
 
@@ -26,21 +27,20 @@ public class Main {
             System.exit(10);
         }
 
-        PowerConsumptionTwin powerConsumptionTwin = new PowerConsumptionTwin("powerConsumptionTwin");
-        HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT, powerConsumptionTwin.getIdentifier());
-        powerConsumptionTwin.bindToCommunicationEndpoint(broker);
+        enV5Twin     enV5Twin = new enV5Twin( "enV5Twin");
+        HivemqBroker broker   = new HivemqBroker( DOMAIN, BROKER_IP, BROKER_PORT, enV5Twin.getIdentifier( ));
+        enV5Twin.bindToCommunicationEndpoint( broker );
 
-        powerConsumptionTwin.sRamValueReceiver.startRequestingData();
-
-        powerConsumptionTwin.wifiValueReceiver.startRequestingData();
+//        enV5Twin.sRamValueReceiver.startRequestingData( );
+//        enV5Twin.wifiValueReceiver.startRequestingData( );
 
         while (true) {
-            if (powerConsumptionTwin.sRamValueReceiver.receivedNewValue()) {
-                System.out.println("sRAM:" + powerConsumptionTwin.sRamValueReceiver.getLastValue());
-            }
-            if (powerConsumptionTwin.wifiValueReceiver.receivedNewValue()) {
-                System.out.println("Wifi: " + powerConsumptionTwin.wifiValueReceiver.getLastValue());
-            }
+//            if ( enV5Twin.sRamValueReceiver.receivedNewValue( )) {
+//                System.out.println( "sRAM:" + enV5Twin.sRamValueReceiver.getLastValue( ) );
+//            }
+//            if ( enV5Twin.wifiValueReceiver.receivedNewValue( )) {
+//                System.out.println( "Wifi: " + enV5Twin.wifiValueReceiver.getLastValue( ) );
+//            }
             Thread.sleep(100);
         }
     }

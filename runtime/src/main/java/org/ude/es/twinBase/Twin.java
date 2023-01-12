@@ -53,9 +53,9 @@ public class Twin {
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
+    public void bindToCommunicationEndpoint ( CommunicationEndpoint channel ) {
         this.endpoint = channel;
-        executeOnBind();
+        executeOnBindPrivate();
     }
 
     /**
@@ -66,6 +66,9 @@ public class Twin {
     protected void executeOnBind() {
     }
 
+    protected void executeOnBindPrivate() {
+        executeOnBind();
+    }
     public String getDomain() {
         return endpoint.getDomain();
     }
