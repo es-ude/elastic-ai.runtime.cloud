@@ -26,15 +26,17 @@
     <h1>Elastic AI Monitor</h1>
     <h3>TWIN_NAME</h3>
 
-    <div>
-        <button type="button" class="btn btn-primary" onClick="window.location.reload();">Refresh</button>
-        <a class="btn btn-primary" href="/index">HOME</a>
+    <div class="row">
+        <div class="col" >
+            <button type="button" class="btn btn-primary" onClick="window.location.reload();">Refresh</button>
+            <a class="btn btn-primary" href="/index">Home</a>
+        </div>
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Twin Data</h4>
-    <div>
-        <table class="table table-bordered border-primary table-hover">
+    <div class="container">
+        <table class="table table-borderless table-hover">
             <tbody>
             <tr>
                 <th class="text-end pe-2" scope="row">Name</th>
@@ -54,7 +56,25 @@
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Measurements</h4>
-    TWIN_MEASUREMENTS
+    <div class="d-grid container gap-2">
+        <div class="row">
+            <div class="col text-center">
+                <h5>Sensor 1</h5>
+                <div class="input-group">
+                    <span class="input-group-text" id="label-wlan">WLAN</span>
+                    <input type="text" class="form-control" aria-label="WLAN" aria-describedby="label-wlan" readonly>
+                </div>
+            </div>
+            <div class="col text-center">
+                <h5>Sensor 2</h5>
+                <div class="input-group">
+                    <span class="input-group-text" id="label-sram">SRAM</span>
+                    <input type="text" class="form-control" aria-label="SRAM" aria-describedby="label-sram" readonly>
+                </div>
+            </div>
+            <!-- TODO: add JS to request and update data fields -->
+        </div>
+    </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Flash FPGA</h4>

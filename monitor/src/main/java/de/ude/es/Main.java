@@ -61,6 +61,15 @@ public class Main {
         return parser.parseArgs(args);
     }
 
+    public static float getMeasurement(
+        String deviceId,
+        String sensorId,
+        String value
+    ) {
+        // TODO: get value from ENv5 TwinStub
+        return -100.0f;
+    }
+
     private static HivemqBroker createBrokerWithKeepalive() {
         HivemqBroker broker = new HivemqBroker(
             MQTT_DOMAIN,

@@ -128,6 +128,17 @@ public class MonitoringServiceApplication {
         return "404";
     }
 
+    @GetMapping("/{name}/{sensorId}/{value}")
+    public String requestPowerSensorData(
+        @PathVariable String name,
+        @PathVariable String sensorId,
+        @PathVariable String value
+    ) {
+        float latest = Main.getMeasurement(name, sensorId, value);
+        // TODO: return latest as JSON
+        return "";
+    }
+
     private String getTwinTableElement(TwinData tw, int number) {
         String name = tw.getName();
         String ID = tw.getId();
