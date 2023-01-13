@@ -1,40 +1,49 @@
 package org.ude.es.twinBase;
 
-import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 import org.ude.es.comm.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-
 
 public class TwinStub extends Twin {
 
-    private int deviceDelay = 0;
+    private final int deviceDelay;
+    public boolean deviceOnline = false;
+    public final List<String> openDataRequests = new ArrayList<>();
 
-    public       boolean       deviceOnline     = false;
-    public final List <String> openDataRequests = new ArrayList <>();
+    public interface StatusInterface {
+        void deviceGoesOnline();
 
-    public TwinStub(String identifier) {
-        super(identifier);
+        void deviceGoesOffline();
     }
 
-    public TwinStub(String identifier, int deviceDelay) {
+    StatusInterface statusInterface;
+
+
+    public TwinStub(String identifier, StatusInterface statusInterface, int deviceDelay) {
         super(identifier);
+        this.statusInterface = statusInterface;
         this.deviceDelay = deviceDelay;
     }
 
-    private void waitAfterCommand() {
-        try {
-            Thread.sleep(deviceDelay);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public TwinStub(String identifier, StatusInterface statusInterface) {
+        this(identifier, statusInterface, 0);
     }
-    public ValueClass newValueClass ( String wifiValue ) {
-        return new ValueClass( wifiValue );
+
+    public TwinStub(String identifier) {
+        this(identifier, new StatusInterface() {
+            @Override
+            public void deviceGoesOnline() {
+
+            }
+
+            @Override
+            public void deviceGoesOffline() {
+
+            }
+        }, 0);
     }
 
     private class StatusReceiver implements Subscriber {
@@ -49,87 +58,75 @@ public class TwinStub extends Twin {
         public void deliver(Posting posting) throws InterruptedException {
             String data = posting.data();
             if (data.contains(";1")) {
-                System.out.println(this.identifier + " online.");
                 deviceOnline = true;
                 for (String request : openDataRequests) {
                     publishDataStartRequest(request, identifier);
                 }
+
+                statusInterface.deviceGoesOnline();
             }
 
             if (data.contains(";0")) {
-                System.out.println(this.identifier + " offline.");
                 deviceOnline = false;
+
+                statusInterface.deviceGoesOffline();
             }
         }
     }
 
-    public class ValueClass {
+    public class DataRequester implements DataRequesterInterface {
         private String value = "";
-        private long   lastTimeReceived;
         private volatile boolean receivedNewValue = false;
         private final String dataID;
+        private final String requesterID;
         private final ValueReceiver valueReceiver;
 
-        private Function <String, ?> function;
         private class ValueReceiver implements Subscriber {
-
             @Override
-            public void deliver( Posting posting ) {
-                value =  posting.data();
+            public void deliver(Posting posting) {
+                value = posting.data();
                 receivedNewValue = true;
-                lastTimeReceived = System.currentTimeMillis();
             }
         }
 
-        public ValueClass(String dataID) {
+        public DataRequester(String dataID, String requesterID) {
             this.dataID = dataID;
+            this.requesterID = requesterID;
             valueReceiver = new ValueReceiver();
         }
 
+        @Override
         public void startRequestingData() {
             if (deviceOnline) {
-                publishDataStartRequest(dataID, getDomainAndIdentifier());
+                publishDataStartRequest(dataID, requesterID);
                 waitAfterCommand();
             }
             openDataRequests.add(dataID);
             subscribeForData(dataID, valueReceiver);
         }
 
+        @Override
         public void stopRequestingData() {
             if (deviceOnline) {
-                publishDataStopRequest(dataID, getDomainAndIdentifier());
+                publishDataStopRequest(dataID, requesterID);
                 waitAfterCommand();
             }
             openDataRequests.remove(dataID);
             unsubscribeFromData(dataID, valueReceiver);
         }
 
-        public Object requestValueOnce ( float timeOut ) {
-            receivedNewValue = false;
-            long start = System.currentTimeMillis();
-            long timeElapsed = 0;
-            startRequestingData();
-            while (!receivedNewValue && timeElapsed < timeOut) {
-                long finish = System.currentTimeMillis();
-                timeElapsed = finish - start;
-            }
-            stopRequestingData();
-            return value;
-        }
-
+        @Override
         public boolean receivedNewValue() {
             return receivedNewValue;
         }
 
-        public Object getLastValue () {
+        @Override
+        public String getLastValue() {
             receivedNewValue = false;
             return value;
         }
-
-        public long receivedWhen() {
-            return lastTimeReceived;
-        }
     }
+
     @Override
     public void executeOnBindPrivate() {
         StatusReceiver statusReceiver = new StatusReceiver(getDomainAndIdentifier());
@@ -137,7 +134,19 @@ public class TwinStub extends Twin {
         executeOnBind();
     }
 
-    public void subscribeForData ( String dataId, Subscriber subscriber ) {
+    private void waitAfterCommand() {
+        try {
+            Thread.sleep(deviceDelay);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public DataRequester newDataRequester(String wifiValue, String requesterID) {
+        return new DataRequester(wifiValue, requesterID);
+    }
+
+    public void subscribeForData(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.DATA.topic(dataId), subscriber);
     }
 

@@ -9,6 +9,16 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
+    public interface DataRequesterInterface {
+        void startRequestingData();
+
+        void stopRequestingData();
+
+        boolean receivedNewValue();
+
+        String getLastValue();
+    }
+
     public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
@@ -53,7 +63,7 @@ public class Twin {
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public void bindToCommunicationEndpoint ( CommunicationEndpoint channel ) {
+    public void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
         this.endpoint = channel;
         executeOnBindPrivate();
     }
@@ -69,6 +79,7 @@ public class Twin {
     protected void executeOnBindPrivate() {
         executeOnBind();
     }
+
     public String getDomain() {
         return endpoint.getDomain();
     }

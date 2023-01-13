@@ -27,7 +27,7 @@ public class Main {
             System.exit(10);
         }
 
-        enV5Twin     enV5Twin = new enV5Twin( "enV5Twin");
+        enV5Twin     enV5Twin = new enV5Twin( "enV5");
         HivemqBroker broker   = new HivemqBroker( DOMAIN, BROKER_IP, BROKER_PORT, enV5Twin.getIdentifier( ));
         enV5Twin.bindToCommunicationEndpoint( broker );
 

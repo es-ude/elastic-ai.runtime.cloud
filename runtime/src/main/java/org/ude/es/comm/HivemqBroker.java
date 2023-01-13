@@ -18,6 +18,9 @@ public class HivemqBroker implements CommunicationEndpoint {
     private final String brokerIp;
     private final int brokerPort;
     private Mqtt5AsyncClient client;
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
 
     private void connectWithKeepaliveAndLwtMessage() {
         Mqtt5BlockingClient blockingClient = MqttClient.builder().useMqttVersion5()
@@ -68,10 +71,10 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
         if (throwable != null) {
-            System.out.println("Publishing failed for\t" + pubAck.getPublish().getTopic());
+            System.out.println("Publishing failed for\t" + ANSI_RED + pubAck.getPublish().getTopic() + ANSI_RESET);
         } else {
-            System.out.println("Published: " + unwrapPayload(pubAck.getPublish().getPayload().get()) +
-                    " to: " + pubAck.getPublish().getTopic());
+            System.out.println("Published " + ANSI_GREEN + unwrapPayload(pubAck.getPublish().getPayload().get()) + ANSI_RESET +
+                    " to: " + ANSI_GREEN + pubAck.getPublish().getTopic() + ANSI_RESET);
         }
     }
 
@@ -98,9 +101,9 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
         if (subFailed != null) {
-            System.out.println("Subscription failed:\t" + topic);
+            System.out.println("Subscription failed:\t" + ANSI_RED + topic + ANSI_RESET);
         } else {
-            System.out.println("Subscribed to:\t" + topic);
+            System.out.println("Subscribed to:\t" + ANSI_GREEN + topic + ANSI_RESET);
         }
     }
 
@@ -118,9 +121,9 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
         if (throwable != null) {
-            System.out.println("Unsubscription failed for:\t" + topic);
+            System.out.println("Unsubscription failed for:\t" + ANSI_RED + topic + ANSI_RESET);
         } else {
-            System.out.println("Unsubscribe from:\t" + topic);
+            System.out.println("Unsubscribe from:\t" + ANSI_GREEN + topic + ANSI_RESET);
         }
     }
 
