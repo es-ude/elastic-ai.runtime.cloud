@@ -160,12 +160,10 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private void deliverIfTopicMatches(Posting msg, Subscription subscription)  {
+    private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
         if (subscription.matches(msg.topic())) {
             try {
-                subscription
-                    .subscriber()
-                    .deliver(msg);
+                subscription.subscriber().deliver(msg);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

@@ -20,13 +20,16 @@ public class TestJavaTwin {
         }
 
         public void whenPublishingData(String dataId, String value) {
-            String topic = device.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
+            String topic =
+                device.getDomainAndIdentifier() +
+                PostingType.DATA.topic(dataId);
             expected = new Posting(topic, value);
             device.publishData(dataId, value);
         }
 
         public void whenPublishingStatus(boolean online) {
-            String topic = device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
+            String topic =
+                device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
                 new Posting(topic, "/" + twinID + (online ? ";1" : ";0"));
             device.publishStatus(online);

@@ -6,7 +6,6 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
-
 import java.nio.ByteBuffer;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -20,21 +19,39 @@ public class HivemqBroker implements CommunicationEndpoint {
     private Mqtt5AsyncClient client;
 
     private void connectWithKeepaliveAndLwtMessage() {
-        Mqtt5BlockingClient blockingClient = MqttClient.builder().useMqttVersion5()
-                .identifier(this.mqttDomain + this.clientId).serverHost(this.brokerIp).serverPort(this.brokerPort)
-                //region LWT message
-                .willPublish().topic(this.mqttDomain + this.clientId + PostingType.STATUS.topic(""))
-                .payload((this.clientId + ";0").getBytes()).qos(MqttQos.AT_MOST_ONCE).retain(true).applyWillPublish()
-                //endregion
-                .buildBlocking();
+        Mqtt5BlockingClient blockingClient = MqttClient
+            .builder()
+            .useMqttVersion5()
+            .identifier(this.mqttDomain + this.clientId)
+            .serverHost(this.brokerIp)
+            .serverPort(this.brokerPort)
+            //region LWT message
+            .willPublish()
+            .topic(
+                this.mqttDomain + this.clientId + PostingType.STATUS.topic("")
+            )
+            .payload((this.clientId + ";0").getBytes())
+            .qos(MqttQos.AT_MOST_ONCE)
+            .retain(true)
+            .applyWillPublish()
+            //endregion
+            .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
 
-        Posting onlineStatus = new Posting(PostingType.STATUS.topic(""), this.clientId + ";1");
+        Posting onlineStatus = new Posting(
+            PostingType.STATUS.topic(""),
+            this.clientId + ";1"
+        );
         publish(onlineStatus.cloneWithTopicAffix(this.clientId));
     }
 
-    public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort, String clientId) {
+    public HivemqBroker(
+        String mqttDomain,
+        String brokerIp,
+        int brokerPort,
+        String clientId
+    ) {
         this.clientId = fixClientId(clientId);
         this.mqttDomain = fixDomain(mqttDomain);
         this.brokerIp = brokerIp;
@@ -61,17 +78,30 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void publish(Posting posting) {
-        client.publishWith().topic(posting.cloneWithTopicAffix(this.mqttDomain).topic())
-                .payload(posting.data().getBytes()).qos(MqttQos.EXACTLY_ONCE).send()
-                .whenComplete(this::onPublishComplete);
+        client
+            .publishWith()
+            .topic(posting.cloneWithTopicAffix(this.mqttDomain).topic())
+            .payload(posting.data().getBytes())
+            .qos(MqttQos.EXACTLY_ONCE)
+            .send()
+            .whenComplete(this::onPublishComplete);
     }
 
-    private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
+    private void onPublishComplete(
+        Mqtt5PublishResult pubAck,
+        Throwable throwable
+    ) {
         if (throwable != null) {
-            System.out.println("Publishing failed for\t" + pubAck.getPublish().getTopic());
+            System.out.println(
+                "Publishing failed for\t" + pubAck.getPublish().getTopic()
+            );
         } else {
-            System.out.println("Published: " + unwrapPayload(pubAck.getPublish().getPayload().get()) +
-                    " to: " + pubAck.getPublish().getTopic());
+            System.out.println(
+                "Published: " +
+                unwrapPayload(pubAck.getPublish().getPayload().get()) +
+                " to: " +
+                pubAck.getPublish().getTopic()
+            );
         }
     }
 
@@ -87,13 +117,25 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        client.subscribeWith().topicFilter(topic).callback(publish -> {
-            try {
-                subscriber.deliver(new Posting(topic, unwrapPayload(publish.getPayload().get())));
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }).send().whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
+        client
+            .subscribeWith()
+            .topicFilter(topic)
+            .callback(publish -> {
+                try {
+                    subscriber.deliver(
+                        new Posting(
+                            topic,
+                            unwrapPayload(publish.getPayload().get())
+                        )
+                    );
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .send()
+            .whenComplete(
+                ((subAck, throwable) -> onSubscribeComplete(throwable, topic))
+            );
     }
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
@@ -112,8 +154,16 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     @Override
     public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        client.unsubscribeWith().topicFilter(topic).send().whenComplete(((unsubAck, throwable)
-                -> onUnsubscribeComplete(throwable, topic)));
+        client
+            .unsubscribeWith()
+            .topicFilter(topic)
+            .send()
+            .whenComplete(
+                (
+                    (unsubAck, throwable) ->
+                        onUnsubscribeComplete(throwable, topic)
+                )
+            );
     }
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {

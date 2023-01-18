@@ -1,14 +1,11 @@
 package org.ude.es.twinImplementations;
 
-
+import java.util.ArrayList;
+import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class PowerConsumptionTwin extends JavaTwin {
 
@@ -47,7 +44,6 @@ public class PowerConsumptionTwin extends JavaTwin {
 
     public PowerConsumptionTwin(String identifier) {
         super(identifier);
-
         wifiValueReceiver = new ValueClass("wifiValue");
         sRamValueReceiver = new ValueClass("sRamValue");
 
@@ -65,12 +61,15 @@ public class PowerConsumptionTwin extends JavaTwin {
     @Override
     protected void executeOnBind() {
         enV5.bindToCommunicationEndpoint(endpoint);
-        StatusReceiver statusReceiver = new StatusReceiver(enV5.getDomainAndIdentifier());
+        StatusReceiver statusReceiver = new StatusReceiver(
+            enV5.getDomainAndIdentifier()
+        );
         enV5.subscribeForStatus(statusReceiver);
         waitAfterCommand();
     }
 
     public class ValueClass {
+
         private float value = -1;
         private long lastTimeReceived;
         private volatile boolean receivedNewValue = false;
@@ -78,6 +77,7 @@ public class PowerConsumptionTwin extends JavaTwin {
         private final ValueReceiver valueReceiver;
 
         private class ValueReceiver implements Subscriber {
+
             @Override
             public void deliver(Posting posting) {
                 value = Float.parseFloat(posting.data());

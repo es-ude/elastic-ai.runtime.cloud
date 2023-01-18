@@ -53,7 +53,9 @@ public class Twin {
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
+    public final void bindToCommunicationEndpoint(
+        CommunicationEndpoint channel
+    ) {
         this.endpoint = channel;
         executeOnBind();
     }
@@ -63,8 +65,7 @@ public class Twin {
      * DigitalTwin to a CommunicationEndpoint, e.g., to subscribe for certain
      * topics or notify someone that you are interested in some data.
      */
-    protected void executeOnBind() {
-    }
+    protected void executeOnBind() {}
 
     public String getDomain() {
         return endpoint.getDomain();

@@ -11,8 +11,12 @@ public class Stresstest4enV5IsSubscribing {
     private static final String TEST_TWIN_ID = "integTestTwin";
 
     public static void main(String[] args) throws InterruptedException {
-        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(TEST_TWIN_ID);
-        twin.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT, TEST_TWIN_ID));
+        IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
+            TEST_TWIN_ID
+        );
+        twin.bindToCommunicationEndpoint(
+            new HivemqBroker(DOMAIN, IP, PORT, TEST_TWIN_ID)
+        );
         twin.startPublishing(1000);
     }
 }

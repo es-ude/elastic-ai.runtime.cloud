@@ -3,7 +3,6 @@ package org.ude.es;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 
@@ -22,7 +21,13 @@ public class SubscriberMock implements Subscriber {
             topics.append(actual).append(", ");
             if (expected.equals(actual)) return;
         }
-        fail("posting " + expected + " should have delivered (delivered topics: " + topics + ")");
+        fail(
+            "posting " +
+            expected +
+            " should have delivered (delivered topics: " +
+            topics +
+            ")"
+        );
     }
 
     public void checkTopicDelivered(String expected) {
@@ -38,8 +43,9 @@ public class SubscriberMock implements Subscriber {
 
     public void checkNumberOfPostingsDelivered(int amount) {
         StringBuilder topics = new StringBuilder();
-        for (Posting p : deliveredPostings)
-            topics.append(p.topic()).append(", ");
+        for (Posting p : deliveredPostings) topics
+            .append(p.topic())
+            .append(", ");
         assertEquals(amount, deliveredPostings.size(), topics.toString());
     }
 }
