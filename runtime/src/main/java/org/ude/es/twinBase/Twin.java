@@ -9,14 +9,8 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
-    public interface DataRequesterInterface {
-        void startRequestingData();
-
-        void stopRequestingData();
-
-        boolean receivedNewValue();
-
-        String getLastValue();
+    public interface FunctionalInterface {
+        void function();
     }
 
     public Twin(String identifier) {
@@ -41,9 +35,9 @@ public class Twin {
         endpoint.unsubscribe(identifier + topic, subscriber);
     }
 
-    protected void publish(Posting posting) {
+    protected void publish(Posting posting, boolean retain) {
         Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend);
+        endpoint.publish(toSend, retain);
     }
 
     /**

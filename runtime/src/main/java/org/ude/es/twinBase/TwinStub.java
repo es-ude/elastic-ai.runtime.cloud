@@ -11,39 +11,26 @@ public class TwinStub extends Twin {
 
     private final int deviceDelay;
     public boolean deviceOnline = false;
-    public final List<String> openDataRequests = new ArrayList<>();
 
-    public interface StatusInterface {
-        void deviceGoesOnline();
+    List<FunctionalInterface> deviceGoesOnline = new ArrayList<>();
 
-        void deviceGoesOffline();
-    }
+    List<FunctionalInterface> deviceGoesOffline = new ArrayList<>();
 
-    StatusInterface statusInterface;
-
-
-    public TwinStub(String identifier, StatusInterface statusInterface, int deviceDelay) {
+    public TwinStub(String identifier, int deviceDelay) {
         super(identifier);
-        this.statusInterface = statusInterface;
         this.deviceDelay = deviceDelay;
     }
 
-    public TwinStub(String identifier, StatusInterface statusInterface) {
-        this(identifier, statusInterface, 0);
+    public TwinStub(String identifier) {
+        this(identifier, 0);
     }
 
-    public TwinStub(String identifier) {
-        this(identifier, new StatusInterface() {
-            @Override
-            public void deviceGoesOnline() {
+    public void addWhenDeviceGoesOnline(FunctionalInterface function) {
+        deviceGoesOnline.add(function);
+    }
 
-            }
-
-            @Override
-            public void deviceGoesOffline() {
-
-            }
-        }, 0);
+    public void addWhenDeviceGoesOffline(FunctionalInterface function) {
+        deviceGoesOffline.add(function);
     }
 
     private class StatusReceiver implements Subscriber {
@@ -59,71 +46,19 @@ public class TwinStub extends Twin {
             String data = posting.data();
             if (data.contains(";1")) {
                 deviceOnline = true;
-                for (String request : openDataRequests) {
-                    publishDataStartRequest(request, identifier);
-                }
 
-                statusInterface.deviceGoesOnline();
+                for (FunctionalInterface function : deviceGoesOnline) {
+                    function.function();
+                }
             }
 
             if (data.contains(";0")) {
                 deviceOnline = false;
 
-                statusInterface.deviceGoesOffline();
+                for (FunctionalInterface function : deviceGoesOffline) {
+                    function.function();
+                }
             }
-        }
-    }
-
-    public class DataRequester implements DataRequesterInterface {
-        private String value = "";
-        private volatile boolean receivedNewValue = false;
-        private final String dataID;
-        private final String requesterID;
-        private final ValueReceiver valueReceiver;
-
-        private class ValueReceiver implements Subscriber {
-            @Override
-            public void deliver(Posting posting) {
-                value = posting.data();
-                receivedNewValue = true;
-            }
-        }
-
-        public DataRequester(String dataID, String requesterID) {
-            this.dataID = dataID;
-            this.requesterID = requesterID;
-            valueReceiver = new ValueReceiver();
-        }
-
-        @Override
-        public void startRequestingData() {
-            if (deviceOnline) {
-                publishDataStartRequest(dataID, requesterID);
-                waitAfterCommand();
-            }
-            openDataRequests.add(dataID);
-            subscribeForData(dataID, valueReceiver);
-        }
-
-        @Override
-        public void stopRequestingData() {
-            if (deviceOnline) {
-                publishDataStopRequest(dataID, requesterID);
-                waitAfterCommand();
-            }
-            openDataRequests.remove(dataID);
-            unsubscribeFromData(dataID, valueReceiver);
-        }
-
-        @Override
-        public boolean receivedNewValue() {
-            return receivedNewValue;
-        }
-
-        @Override
-        public String getLastValue() {
-            receivedNewValue = false;
-            return value;
         }
     }
 
@@ -134,16 +69,12 @@ public class TwinStub extends Twin {
         executeOnBind();
     }
 
-    private void waitAfterCommand() {
+    public void waitAfterCommand() {
         try {
             Thread.sleep(deviceDelay);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public DataRequester newDataRequester(String wifiValue, String requesterID) {
-        return new DataRequester(wifiValue, requesterID);
     }
 
     public void subscribeForData(String dataId, Subscriber subscriber) {
@@ -166,26 +97,26 @@ public class TwinStub extends Twin {
 
     public void publishDataStartRequest(String dataId, String receiver) {
         Posting post = Posting.createStartSending(dataId, receiver);
-        this.publish(post);
+        this.publish(post, false);
     }
 
     public void publishDataStopRequest(String dataId, String receiver) {
         Posting post = Posting.createStopSending(dataId, receiver);
-        this.publish(post);
+        this.publish(post, false);
     }
 
     public void publishCommand(String service, String cmd) {
         Posting post = Posting.createCommand(service, cmd);
-        this.publish(post);
+        this.publish(post, false);
     }
 
     public void publishOnCommand(String service) {
         Posting post = Posting.createTurnOn(service);
-        this.publish(post);
+        this.publish(post, false);
     }
 
     public void publishOffCommand(String service) {
         Posting post = Posting.createTurnOff(service);
-        this.publish(post);
+        this.publish(post, false);
     }
 }

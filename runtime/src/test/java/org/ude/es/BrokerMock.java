@@ -129,10 +129,10 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     @Override
-    public void publish(Posting posting) {
+    public void publish(Posting posting, boolean retain) {
         Posting toPublish = rewriteTopicToIncludeMe(posting);
         executePublish(toPublish);
-        System.out.println("Published: " + toPublish.data() + " to: " + toPublish.topic());
+        System.out.println("Published to: " +  toPublish.topic() + ", Message: " + toPublish.data());
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {

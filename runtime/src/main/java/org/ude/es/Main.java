@@ -8,6 +8,9 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import org.ude.es.comm.HivemqBroker;
+import org.ude.es.twinBase.DataRequester;
+import org.ude.es.twinBase.TwinStub;
+import org.ude.es.twinImplementations.MonitorTwin;
 import org.ude.es.twinImplementations.enV5Twin;
 
 
@@ -27,21 +30,12 @@ public class Main {
             System.exit(10);
         }
 
-        enV5Twin     enV5Twin = new enV5Twin( "enV5");
-        HivemqBroker broker   = new HivemqBroker( DOMAIN, BROKER_IP, BROKER_PORT, enV5Twin.getIdentifier( ));
-        enV5Twin.bindToCommunicationEndpoint( broker );
-
-//        enV5Twin.sRamValueReceiver.startRequestingData( );
-//        enV5Twin.wifiValueReceiver.startRequestingData( );
+        enV5Twin enV5Twin = new enV5Twin("enV5");
+        HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT, enV5Twin.getIdentifier());
+        enV5Twin.bindToCommunicationEndpoint(broker);
 
         while (true) {
-//            if ( enV5Twin.sRamValueReceiver.receivedNewValue( )) {
-//                System.out.println( "sRAM:" + enV5Twin.sRamValueReceiver.getLastValue( ) );
-//            }
-//            if ( enV5Twin.wifiValueReceiver.receivedNewValue( )) {
-//                System.out.println( "Wifi: " + enV5Twin.wifiValueReceiver.getLastValue( ) );
-//            }
-            Thread.sleep(100);
+            Thread.sleep(10000);
         }
     }
 

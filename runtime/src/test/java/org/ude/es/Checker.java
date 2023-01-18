@@ -83,8 +83,8 @@ public class Checker {
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting topic, boolean retain) {
+            super.publish(topic, retain);
         }
     }
 
@@ -107,7 +107,7 @@ public class Checker {
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
         String fullTopic = broker.getClientIdentifier() + topic;
         expected = new Posting(fullTopic, data);
-        broker.publish(new Posting(topic, data));
+        broker.publish(new Posting(topic, data), false);
     }
 
     //endregion testing with broker
@@ -133,8 +133,8 @@ public class Checker {
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting topic, boolean retain) {
+            super.publish(topic, retain);
         }
     }
 
@@ -160,7 +160,7 @@ public class Checker {
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);
-        javaTwin.publish(posting);
+        javaTwin.publish(posting, false);
     }
     //endregion testing with JavaTwin
 }

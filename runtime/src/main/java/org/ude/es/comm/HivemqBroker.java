@@ -34,7 +34,7 @@ public class HivemqBroker implements CommunicationEndpoint {
         client = blockingClient.toAsync();
 
         Posting onlineStatus = new Posting(PostingType.STATUS.topic(""), this.clientId + ";1");
-        publish(onlineStatus.cloneWithTopicAffix(this.clientId));
+        publish(onlineStatus.cloneWithTopicAffix(this.clientId), true);
     }
 
     public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort, String clientId) {
@@ -63,9 +63,9 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public void publish(Posting posting) {
+    public void publish(Posting posting, boolean retain) {
         client.publishWith().topic(posting.cloneWithTopicAffix(this.mqttDomain).topic())
-                .payload(posting.data().getBytes()).qos(MqttQos.EXACTLY_ONCE).send()
+                .payload(posting.data().getBytes()).qos(MqttQos.EXACTLY_ONCE).retain(retain).send()
                 .whenComplete(this::onPublishComplete);
     }
 
@@ -73,8 +73,10 @@ public class HivemqBroker implements CommunicationEndpoint {
         if (throwable != null) {
             System.out.println("Publishing failed for\t" + ANSI_RED + pubAck.getPublish().getTopic() + ANSI_RESET);
         } else {
-            System.out.println("Published " + ANSI_GREEN + unwrapPayload(pubAck.getPublish().getPayload().get()) + ANSI_RESET +
-                    " to: " + ANSI_GREEN + pubAck.getPublish().getTopic() + ANSI_RESET);
+            System.out.println("Published to: " + ANSI_GREEN + pubAck.getPublish().getTopic() + ANSI_RESET +
+                    ", message: " + ANSI_GREEN + unwrapPayload(pubAck.getPublish().getPayload().get()) + ANSI_RESET +
+                    ", retain: " + ANSI_RESET + pubAck.getPublish().isRetain() + ANSI_RESET
+            );
         }
     }
 

@@ -1,6 +1,8 @@
 package org.ude.es.twinImplementations;
 
 
+import org.ude.es.twinBase.DataRequestReceiver;
+import org.ude.es.twinBase.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
 
@@ -11,23 +13,18 @@ public class enV5Twin extends JavaTwin {
 
     public enV5Twin(String identifier) {
         super(identifier + "Twin");
-        enV5 = new TwinStub(identifier, new TwinStub.StatusInterface() {
-            @Override
-            public void deviceGoesOnline() {
-                System.out.println(identifier + " online.");
-            }
-
-            @Override
-            public void deviceGoesOffline() {
-                System.out.println(identifier + " offline.");
-            }
-        }, WAIT_AFTER_COMMAND);
-
-//        sRamValueReceiver = enV5.newDataRequester("sRamValue");
+        enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
+        enV5.addWhenDeviceGoesOnline(() -> System.out.println(identifier + " online."));
+        enV5.addWhenDeviceGoesOnline(enV5::waitAfterCommand);
+        enV5.addWhenDeviceGoesOffline(() -> System.out.println(identifier + " offline."));
     }
 
     void provideValue(String dataID) {
-        new DataRequestReceiver(dataID, enV5.newDataRequester(dataID, getDomainAndIdentifier()));
+        DataRequester dataRequester = new DataRequester(enV5, dataID, getDomainAndIdentifier());
+        DataRequestReceiver dataRequestReceiver = new DataRequestReceiver(this, dataID);
+        dataRequestReceiver.addWhenStartRequestingData(dataRequester::startRequestingData);
+        dataRequestReceiver.addWhenStopRequestingData(dataRequester::stopRequestingData);
+        dataRequester.addWhenNewDataReceived(dataRequestReceiver::newDataToPublish);
     }
 
     @Override
@@ -36,8 +33,7 @@ public class enV5Twin extends JavaTwin {
 
         System.out.println(getDomainAndIdentifier());
 
-//        provideValue("wifiValue");
+        provideValue("wifiValue");
         provideValue("sRamValue");
-
     }
 }

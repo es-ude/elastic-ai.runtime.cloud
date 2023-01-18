@@ -47,12 +47,12 @@ class TestTemperatureSink {
                 PostingType.DATA.topic(DATA_ID),
                 Double.toString(data)
             );
-            this.publish(response);
+            this.publish(response, false);
         }
 
         @Override
-        public void publish(Posting posting) {
-            endpoint.publish(posting.cloneWithTopicAffix(identifier));
+        public void publish(Posting posting, boolean retain) {
+            endpoint.publish(posting.cloneWithTopicAffix(identifier), false);
         }
 
         @Override
