@@ -9,8 +9,8 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
-    public interface FunctionalInterface {
-        void function();
+    public interface Executer {
+        void execute();
     }
 
     public Twin(String identifier) {

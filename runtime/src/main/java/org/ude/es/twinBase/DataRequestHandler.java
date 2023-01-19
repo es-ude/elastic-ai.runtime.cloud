@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class DataRequestReceiver {
+public class DataRequestHandler {
 
     private final String dataID;
     private final JavaTwin twin;
-    List<Twin.FunctionalInterface> startRequestingData = new ArrayList<>();
+    List<Twin.Executer> startRequestingData = new ArrayList<>();
 
-    List<Twin.FunctionalInterface> stopRequestingData = new ArrayList<>();
+    List<Twin.Executer> stopRequestingData = new ArrayList<>();
     HashMap<String, TwinStub> subscribers = new HashMap<>();
     private final DataStopRequestReceiver dataStopRequestReceiver = new DataStopRequestReceiver();
 
@@ -30,8 +30,8 @@ public class DataRequestReceiver {
             subscribers.put(posting.data(), stub);
 
             if (subscribers.size() == 1) {
-                for (Twin.FunctionalInterface function : startRequestingData) {
-                    function.function();
+                for (Twin.Executer executer : startRequestingData) {
+                    executer.execute();
                 }
             }
         }
@@ -47,22 +47,22 @@ public class DataRequestReceiver {
             subscribers.remove(posting.data());
 
             if (subscribers.size() == 0) {
-                for (Twin.FunctionalInterface function : stopRequestingData) {
-                    function.function();
+                for (Twin.Executer executer : stopRequestingData) {
+                    executer.execute();
                 }
             }
         }
     }
 
-    public void addWhenStartRequestingData(Twin.FunctionalInterface function) {
+    public void addWhenStartRequestingData(Twin.Executer function) {
         startRequestingData.add(function);
     }
 
-    public void addWhenStopRequestingData(Twin.FunctionalInterface function) {
+    public void addWhenStopRequestingData(Twin.Executer function) {
         stopRequestingData.add(function);
     }
 
-    public DataRequestReceiver(JavaTwin twin, String dataID) {
+    public DataRequestHandler(JavaTwin twin, String dataID) {
         this.twin = twin;
         this.dataID = dataID;
         DataStartRequestReceiver dataStartRequestReceiver = new DataStartRequestReceiver();

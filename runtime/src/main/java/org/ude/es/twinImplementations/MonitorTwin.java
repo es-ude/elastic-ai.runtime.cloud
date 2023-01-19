@@ -23,6 +23,6 @@ public class MonitorTwin extends JavaTwin {
         dataRequester.startRequestingData();
 
         // Stop when no longer needed
-        dataRequester.stopRequestingData();
+//        dataRequester.stopRequestingData();
     }
 }

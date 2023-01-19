@@ -34,9 +34,11 @@ public class Main {
         HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT, enV5Twin.getIdentifier());
         enV5Twin.bindToCommunicationEndpoint(broker);
 
-        while (true) {
-            Thread.sleep(10000);
-        }
+        Thread.sleep(3000);
+
+        MonitorTwin monitorTwin = new MonitorTwin("monitor");
+        HivemqBroker monitorBroker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT, monitorTwin.getIdentifier());
+        monitorTwin.bindToCommunicationEndpoint(monitorBroker);
     }
 
     private static Namespace parseArguments(String[] args) throws ArgumentParserException {

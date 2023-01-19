@@ -1,7 +1,7 @@
 package org.ude.es.twinImplementations;
 
 
-import org.ude.es.twinBase.DataRequestReceiver;
+import org.ude.es.twinBase.DataRequestHandler;
 import org.ude.es.twinBase.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
@@ -21,10 +21,10 @@ public class enV5Twin extends JavaTwin {
 
     void provideValue(String dataID) {
         DataRequester dataRequester = new DataRequester(enV5, dataID, getDomainAndIdentifier());
-        DataRequestReceiver dataRequestReceiver = new DataRequestReceiver(this, dataID);
-        dataRequestReceiver.addWhenStartRequestingData(dataRequester::startRequestingData);
-        dataRequestReceiver.addWhenStopRequestingData(dataRequester::stopRequestingData);
-        dataRequester.addWhenNewDataReceived(dataRequestReceiver::newDataToPublish);
+        DataRequestHandler dataRequestHandler = new DataRequestHandler(this, dataID);
+        dataRequestHandler.addWhenStartRequestingData(dataRequester::startRequestingData);
+        dataRequestHandler.addWhenStopRequestingData(dataRequester::stopRequestingData);
+        dataRequester.addWhenNewDataReceived(dataRequestHandler::newDataToPublish);
     }
 
     @Override

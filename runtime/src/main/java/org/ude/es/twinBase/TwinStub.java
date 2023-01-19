@@ -12,9 +12,9 @@ public class TwinStub extends Twin {
     private final int deviceDelay;
     public boolean deviceOnline = false;
 
-    List<FunctionalInterface> deviceGoesOnline = new ArrayList<>();
+    List<Executer> deviceGoesOnline = new ArrayList<>();
 
-    List<FunctionalInterface> deviceGoesOffline = new ArrayList<>();
+    List<Executer> deviceGoesOffline = new ArrayList<>();
 
     public TwinStub(String identifier, int deviceDelay) {
         super(identifier);
@@ -25,11 +25,11 @@ public class TwinStub extends Twin {
         this(identifier, 0);
     }
 
-    public void addWhenDeviceGoesOnline(FunctionalInterface function) {
+    public void addWhenDeviceGoesOnline(Executer function) {
         deviceGoesOnline.add(function);
     }
 
-    public void addWhenDeviceGoesOffline(FunctionalInterface function) {
+    public void addWhenDeviceGoesOffline(Executer function) {
         deviceGoesOffline.add(function);
     }
 
@@ -47,16 +47,16 @@ public class TwinStub extends Twin {
             if (data.contains(";1")) {
                 deviceOnline = true;
 
-                for (FunctionalInterface function : deviceGoesOnline) {
-                    function.function();
+                for (Executer executer : deviceGoesOnline) {
+                    executer.execute();
                 }
             }
 
             if (data.contains(";0")) {
                 deviceOnline = false;
 
-                for (FunctionalInterface function : deviceGoesOffline) {
-                    function.function();
+                for (Executer executer : deviceGoesOffline) {
+                    executer.execute();
                 }
             }
         }
