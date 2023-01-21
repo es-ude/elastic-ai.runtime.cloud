@@ -20,7 +20,7 @@ public class enV5Twin extends JavaTwin {
     }
 
     void provideValue(String dataID) {
-        DataRequester dataRequester = new DataRequester(enV5, dataID, getDomainAndIdentifier());
+        DataRequester dataRequester = new DataRequester(enV5, dataID, this.identifier);
         DataRequestHandler dataRequestHandler = new DataRequestHandler(this, dataID);
         dataRequestHandler.addWhenStartRequestingData(dataRequester::startRequestingData);
         dataRequestHandler.addWhenStopRequestingData(dataRequester::stopRequestingData);

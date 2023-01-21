@@ -26,7 +26,7 @@ public class HivemqBroker implements CommunicationEndpoint {
         Mqtt5BlockingClient blockingClient = MqttClient.builder().useMqttVersion5()
                 .identifier(this.mqttDomain + this.clientId).serverHost(this.brokerIp).serverPort(this.brokerPort)
                 //region LWT message
-                .willPublish().topic(this.mqttDomain + this.clientId + PostingType.STATUS.topic(""))
+                .willPublish().topic(this.mqttDomain + "/" + this.clientId + PostingType.STATUS.topic(""))
                 .payload((this.clientId + ";0").getBytes()).qos(MqttQos.AT_MOST_ONCE).retain(true).applyWillPublish()
                 //endregion
                 .buildBlocking();
@@ -34,7 +34,7 @@ public class HivemqBroker implements CommunicationEndpoint {
         client = blockingClient.toAsync();
 
         Posting onlineStatus = new Posting(PostingType.STATUS.topic(""), this.clientId + ";1");
-        publish(onlineStatus.cloneWithTopicAffix(this.clientId), true);
+        publish(onlineStatus.cloneWithTopicAffix("/" + this.clientId), true);
     }
 
     public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort, String clientId) {
@@ -46,9 +46,9 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     private static String fixClientId(String id) {
-        if (!id.startsWith("/")) {
-            id = "/" + id;
-        }
+//        if (!id.startsWith("/")) {
+//            id = "/" + id;
+//        }
         if (id.endsWith("/")) {
             id = id.substring(0, id.length() - 1);
         }

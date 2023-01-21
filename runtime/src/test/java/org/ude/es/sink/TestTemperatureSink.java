@@ -84,8 +84,8 @@ class TestTemperatureSink {
         }
     }
 
-    private static final String SENSOR_ID = "/sensor";
-    private static final String CONSUMER_ID = "/consumer";
+    private static final String SENSOR_ID = "sensor";
+    private static final String CONSUMER_ID = "consumer";
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String DATA_ID = "temp";
     private BrokerMock broker;
@@ -121,7 +121,7 @@ class TestTemperatureSink {
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
         var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
-        var device2 = createDeviceTwin("/twin4321");
+        var device2 = createDeviceTwin("twin4321");
         var tempTwin2 = createTemperatureSink(device2, CONSUMER_ID + "2");
 
         remote.sendUpdate(13.7);

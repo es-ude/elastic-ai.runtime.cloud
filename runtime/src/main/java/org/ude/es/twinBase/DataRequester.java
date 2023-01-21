@@ -46,8 +46,8 @@ public class DataRequester {
     }
 
     public void startRequestingData() {
-        if (twinStub.deviceOnline) {
-            twinStub.publishDataStartRequest(dataID, "requesterID");
+        if (twinStub.isOnline()) {
+            twinStub.publishDataStartRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }
         openDataRequests.add(dataID);
@@ -55,7 +55,7 @@ public class DataRequester {
     }
 
     public void stopRequestingData() {
-        if (twinStub.deviceOnline) {
+        if (twinStub.isOnline()) {
             twinStub.publishDataStopRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }

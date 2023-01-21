@@ -79,19 +79,19 @@ public class TestTwinStub {
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
+                "/" + twinID + "/DATA/light",
+                "33"
         );
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanUnsubscribeFromData() {
-        checker.whenSubscribingForData("/light");
-        checker.whenUnsubscribingFromData("/light");
+        checker.whenSubscribingForData("light");
+        checker.whenUnsubscribingFromData("light");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
+                "/" + twinID + "/DATA/light",
+                "33"
         );
         checker.thenPostingIsNotDelivered();
     }

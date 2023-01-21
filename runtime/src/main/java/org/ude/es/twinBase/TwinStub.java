@@ -10,7 +10,7 @@ import java.util.List;
 public class TwinStub extends Twin {
 
     private final int deviceDelay;
-    public boolean deviceOnline = false;
+    private boolean deviceOnline = false;
 
     List<Executer> deviceGoesOnline = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class TwinStub extends Twin {
     }
 
     @Override
-    public void executeOnBindPrivate() {
+    protected void executeOnBindPrivate() {
         StatusReceiver statusReceiver = new StatusReceiver(getDomainAndIdentifier());
         subscribeForStatus(statusReceiver);
         executeOnBind();
@@ -75,6 +75,10 @@ public class TwinStub extends Twin {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isOnline() {
+        return deviceOnline;
     }
 
     public void subscribeForData(String dataId, Subscriber subscriber) {

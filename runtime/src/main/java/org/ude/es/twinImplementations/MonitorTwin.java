@@ -14,7 +14,7 @@ public class MonitorTwin extends JavaTwin {
     protected void executeOnBind() {
         TwinStub enV5TwinStub = new TwinStub("enV5Twin");
         enV5TwinStub.bindToCommunicationEndpoint(endpoint);
-        DataRequester dataRequester = new DataRequester(enV5TwinStub, "wifiValue", getDomainAndIdentifier());
+        DataRequester dataRequester = new DataRequester(enV5TwinStub, "wifiValue", this.identifier);
 
         // Received new Values
         dataRequester.addWhenNewDataReceived(System.out::println);
