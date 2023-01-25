@@ -29,7 +29,7 @@ public class DataRequestHandler {
         public void deliver(Posting posting) {
             TwinStub stub = new TwinStub(posting.data());
             stub.addWhenDeviceGoesOffline(() -> dataStopRequestReceiver.deliver(new Posting("", posting.data())));
-            stub.bindToCommunicationEndpoint(twin.endpoint);
+            twin.bindStub(stub);
             subscribers.put(posting.data(), stub);
 
             if (subscribers.size() == 1) {

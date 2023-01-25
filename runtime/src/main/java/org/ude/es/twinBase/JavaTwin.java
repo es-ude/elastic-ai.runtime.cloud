@@ -41,4 +41,8 @@ public class JavaTwin extends Twin {
     public void unsubscribeFromCommand(String dataId, Subscriber subscriber) {
         this.unsubscribe(PostingType.SET.topic(dataId), subscriber);
     }
+
+    public void bindStub(TwinStub stub) {
+        stub.bindToCommunicationEndpoint(endpoint);
+    }
 }
