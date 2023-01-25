@@ -108,6 +108,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
+        System.out.println("brocker sub");
         subscribeRaw(identifier + topic, subscriber);
     }
 

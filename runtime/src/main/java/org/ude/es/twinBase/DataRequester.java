@@ -41,6 +41,7 @@ public class DataRequester {
         twinStub.addWhenDeviceGoesOnline(() -> {
             for (String request : openDataRequests) {
                 twinStub.publishDataStartRequest(request, requesterID);
+                twinStub.waitAfterCommand();
             }
         });
     }

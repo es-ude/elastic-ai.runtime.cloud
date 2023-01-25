@@ -18,6 +18,9 @@ public class Twin {
     }
 
     private String fixIdentifierIfNecessary(String identifier) {
+        if (identifier.startsWith("/")) {
+            identifier = identifier.substring(1);
+        }
         if (identifier.endsWith("/")) {
             identifier = identifier.substring(0, identifier.length() - 1);
         }
@@ -25,11 +28,11 @@ public class Twin {
     }
 
     protected void subscribe(String topic, Subscriber subscriber) {
-        endpoint.subscribe("/" +identifier +  topic, subscriber);
+        endpoint.subscribe("/" + identifier + topic, subscriber);
     }
 
     protected void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe("/" +identifier +  topic, subscriber);
+        endpoint.unsubscribe("/" + identifier + topic, subscriber);
     }
 
     protected void publish(Posting posting, boolean retain) {
