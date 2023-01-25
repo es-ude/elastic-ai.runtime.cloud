@@ -28,7 +28,7 @@ public class TestJavaTwin {
         public void whenPublishingStatus(boolean online) {
             String topic = device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, "/" + twinID + (online ? ";1" : ";0"));
+                new Posting(topic,  twinID + (online ? ";1" : ";0"));
             device.publishStatus(online);
         }
 
