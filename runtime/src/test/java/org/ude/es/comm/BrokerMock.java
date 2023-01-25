@@ -1,11 +1,7 @@
-package org.ude.es;
+package org.ude.es.comm;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
 
 public class BrokerMock implements CommunicationEndpoint {
 
@@ -96,7 +92,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        subscribeRaw(identifier + topic, subscriber);
+        subscribeRaw(identifier + "/" + topic, subscriber);
     }
 
     @Override
@@ -108,7 +104,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + topic, subscriber);
+        unsubscribeRaw(identifier + "/" + topic, subscriber);
     }
 
     @Override
@@ -130,9 +126,9 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void publish(Posting posting, boolean retain) {
-        Posting toPublish = rewriteTopicToIncludeMe(posting);
+        Posting toPublish = new Posting(identifier + "/" + posting.topic(), posting.data());
         executePublish(toPublish);
-        System.out.println("Published to: " +  toPublish.topic() + ", Message: " + toPublish.data());
+        System.out.println("Published to: " + toPublish.topic() + ", Message: " + toPublish.data());
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {

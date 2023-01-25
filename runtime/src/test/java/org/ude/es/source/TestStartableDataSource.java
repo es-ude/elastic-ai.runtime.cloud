@@ -10,9 +10,9 @@ import org.ude.es.comm.PostingType;
 
 class TestStartableDataSource {
 
-    private static final String DATA_ID = "/data";
-    private static final String SOURCE_ID = "/source";
-    private static final String CONSUMER_ID = "/consumer";
+    private static final String DATA_ID = "data";
+    private static final String SOURCE_ID = "source";
+    private static final String CONSUMER_ID = "consumer";
 
     private static class DataSourceChecker extends Checker {
 

@@ -1,32 +1,25 @@
-package de.ude.es;
+package de.ude.es.comm;
 
-import java.util.*;
-import java.util.stream.Collectors;
 import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class BrokerMock implements CommunicationEndpoint {
 
-    private record Subscription(
-        List<String> topicFilter,
-        Subscriber subscriber
-    ) {
+    private record Subscription(List<String> topicFilter, Subscriber subscriber) {
         public Subscription(String topicFilter, Subscriber subscriber) {
             this(getTokensWithCollection(topicFilter), subscriber);
         }
 
         public boolean matches(String msgTopic) {
-            return new Matcher(getTokensWithCollection(msgTopic), topicFilter)
-                .check();
+            return new Matcher(getTokensWithCollection(msgTopic), topicFilter).check();
         }
 
         private static List<String> getTokensWithCollection(String str) {
-            return Collections
-                .list(new StringTokenizer(str, "/"))
-                .stream()
-                .map(token -> (String) token)
-                .collect(Collectors.toList());
+            return Collections.list(new StringTokenizer(str, "/")).stream().map(token -> (String) token).collect(Collectors.toList());
         }
     }
 
@@ -36,20 +29,14 @@ public class BrokerMock implements CommunicationEndpoint {
         private final Iterator<String> filterTokens;
         private boolean isMatching;
 
-        public Matcher(
-            List<String> msgTokenList,
-            List<String> filterTokenList
-        ) {
+        public Matcher(List<String> msgTokenList, List<String> filterTokenList) {
             msgTokens = msgTokenList.iterator();
             filterTokens = filterTokenList.iterator();
         }
 
         public boolean check() {
             while (hasMoreTokensToCheck()) {
-                boolean isDone = checkToken(
-                    msgTokens.next(),
-                    filterTokens.next()
-                );
+                boolean isDone = checkToken(msgTokens.next(), filterTokens.next());
                 if (isDone) return isMatching;
             }
             return allTokensConsumed();
@@ -91,6 +78,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     private final List<Subscription> subscriptions = new LinkedList<>();
     private final String identifier;
+//    private final String clientID;
 
     public BrokerMock(String identifier) {
         this.identifier = fixIdentifier(identifier);
@@ -108,8 +96,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        System.out.println("brocker sub");
-        subscribeRaw(identifier + topic, subscriber);
+        subscribeRaw(identifier + "/" + topic, subscriber);
     }
 
     @Override
@@ -121,7 +108,7 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + topic, subscriber);
+        unsubscribeRaw(identifier + "/" + topic, subscriber);
     }
 
     @Override
@@ -143,11 +130,9 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void publish(Posting posting, boolean retain) {
-        Posting toPublish = rewriteTopicToIncludeMe(posting);
+        Posting toPublish = new Posting(identifier + "/" + posting.topic(), posting.data());
         executePublish(toPublish);
-        System.out.println(
-            "Published: " + toPublish.data() + " to: " + toPublish.topic()
-        );
+        System.out.println("Published to: " + toPublish.topic() + ", Message: " + toPublish.data());
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {
@@ -161,12 +146,10 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private void deliverIfTopicMatches(Posting msg, Subscription subscription)  {
+    private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
         if (subscription.matches(msg.topic())) {
             try {
-                subscription
-                    .subscriber()
-                    .deliver(msg);
+                subscription.subscriber().deliver(msg);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

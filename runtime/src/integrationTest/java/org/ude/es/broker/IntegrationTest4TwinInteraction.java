@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.BrokerMock;
+import org.ude.es.comm.BrokerMock;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
 import org.ude.es.twinBase.JavaTwin;
