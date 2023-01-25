@@ -8,9 +8,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import org.ude.es.comm.HivemqBroker;
-import org.ude.es.twinBase.DataRequester;
-import org.ude.es.twinBase.TwinStub;
-import org.ude.es.twinImplementations.MonitorTwin;
 import org.ude.es.twinImplementations.enV5Twin;
 
 
@@ -35,10 +32,6 @@ public class Main {
         enV5Twin.bindToCommunicationEndpoint(broker);
 
         Thread.sleep(3000);
-
-        MonitorTwin monitorTwin = new MonitorTwin("monitor");
-        HivemqBroker monitorBroker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT, monitorTwin.getIdentifier());
-        monitorTwin.bindToCommunicationEndpoint(monitorBroker);
     }
 
     private static Namespace parseArguments(String[] args) throws ArgumentParserException {

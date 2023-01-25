@@ -1,8 +1,8 @@
 package org.ude.es.twinImplementations;
 
 
-import org.ude.es.twinBase.DataRequestHandler;
-import org.ude.es.twinBase.DataRequester;
+import org.ude.es.protocol.DataRequestHandler;
+import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
 

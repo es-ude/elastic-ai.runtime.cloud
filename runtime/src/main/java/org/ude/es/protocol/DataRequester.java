@@ -1,7 +1,8 @@
-package org.ude.es.twinBase;
+package org.ude.es.protocol;
 
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
+import org.ude.es.twinBase.TwinStub;
 
 import java.util.ArrayList;
 import java.util.List;
