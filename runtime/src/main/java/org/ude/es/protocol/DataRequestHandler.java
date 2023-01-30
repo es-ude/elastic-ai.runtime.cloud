@@ -1,14 +1,13 @@
 package org.ude.es.protocol;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.Twin;
 import org.ude.es.twinBase.TwinStub;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class DataRequestHandler {
 
@@ -25,10 +24,13 @@ public class DataRequestHandler {
     }
 
     private class DataStartRequestReceiver implements Subscriber {
+
         @Override
         public void deliver(Posting posting) {
             TwinStub stub = new TwinStub(posting.data());
-            stub.addWhenDeviceGoesOffline(() -> dataStopRequestReceiver.deliver(new Posting("", posting.data())));
+            stub.addWhenDeviceGoesOffline(() ->
+                dataStopRequestReceiver.deliver(new Posting("", posting.data()))
+            );
             twin.bindStub(stub);
             subscribers.put(posting.data(), stub);
 
@@ -41,12 +43,15 @@ public class DataRequestHandler {
     }
 
     private class DataStopRequestReceiver implements Subscriber {
+
         @Override
         public void deliver(Posting posting) {
             if (subscribers.get(posting.data()) == null) {
                 return;
             }
-            subscribers.get(posting.data()).unsubscribeFromStatus(dataStopRequestReceiver);
+            subscribers
+                .get(posting.data())
+                .unsubscribeFromStatus(dataStopRequestReceiver);
             subscribers.remove(posting.data());
 
             if (subscribers.size() == 0) {

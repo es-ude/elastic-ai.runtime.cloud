@@ -24,14 +24,17 @@ class TestTemperatureSink {
         public void registrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    DOMAIN + "/" + this.identifier + PostingType.START.topic(DATA_ID),
-                    deliveredPosting.topic(),
-                    "should have received command to start sending temperature updates"
+                DOMAIN +
+                "/" +
+                this.identifier +
+                PostingType.START.topic(DATA_ID),
+                deliveredPosting.topic(),
+                "should have received command to start sending temperature updates"
             );
             assertEquals(
-                    CONSUMER_ID,
-                    deliveredPosting.data(),
-                    "should have received twin identifier to check for its aliveness"
+                CONSUMER_ID,
+                deliveredPosting.data(),
+                "should have received twin identifier to check for its aliveness"
             );
         }
 
@@ -43,8 +46,8 @@ class TestTemperatureSink {
 
         public void sendUpdate(double data) {
             Posting response = new Posting(
-                    PostingType.DATA.topic(DATA_ID),
-                    Double.toString(data)
+                PostingType.DATA.topic(DATA_ID),
+                Double.toString(data)
             );
             this.publish(response, false);
         }
@@ -61,14 +64,17 @@ class TestTemperatureSink {
         public void deregistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                    DOMAIN + "/" + this.identifier + PostingType.STOP.topic(DATA_ID),
-                    deliveredPosting.topic(),
-                    "should have received command to stop sending temperature updates"
+                DOMAIN +
+                "/" +
+                this.identifier +
+                PostingType.STOP.topic(DATA_ID),
+                deliveredPosting.topic(),
+                "should have received command to stop sending temperature updates"
             );
             assertEquals(
-                    CONSUMER_ID,
-                    deliveredPosting.data(),
-                    "should have received twin identifier to deregister it as a client"
+                CONSUMER_ID,
+                deliveredPosting.data(),
+                "should have received twin identifier to deregister it as a client"
             );
         }
     }
@@ -122,7 +128,7 @@ class TestTemperatureSink {
     void temperatureSinkCanReceiveMultipleUpdates() {
         var temperature = createTemperatureSink(device, CONSUMER_ID);
 
-        double[] measuredValues = {13.5, 11.7};
+        double[] measuredValues = { 13.5, 11.7 };
         for (double value : measuredValues) {
             remote.sendUpdate(value);
             assertEquals(value, temperature.getCurrentTemperature());
@@ -158,7 +164,9 @@ class TestTemperatureSink {
     }
 
     private TwinForDeviceWithTemperatureSensor createRemoteTwin() {
-        TwinForDeviceWithTemperatureSensor remoteTwin = new TwinForDeviceWithTemperatureSensor(SENSOR_ID);
+        TwinForDeviceWithTemperatureSensor remoteTwin = new TwinForDeviceWithTemperatureSensor(
+            SENSOR_ID
+        );
         remoteTwin.bindToCommunicationEndpoint(broker);
         return remoteTwin;
     }

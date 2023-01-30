@@ -86,10 +86,7 @@ public class TestTwinStub {
     @Test
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
-        checker.whenPostingIsPublishedAtBroker(
-                twinID + "/DATA/light",
-                "33"
-        );
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
         checker.thenPostingIsDelivered();
     }
 
@@ -97,10 +94,7 @@ public class TestTwinStub {
     void weCanUnsubscribeFromData() {
         checker.whenSubscribingForData("light");
         checker.whenUnsubscribingFromData("light");
-        checker.whenPostingIsPublishedAtBroker(
-                twinID + "/DATA/light",
-                "33"
-        );
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
         checker.thenPostingIsNotDelivered();
     }
 
