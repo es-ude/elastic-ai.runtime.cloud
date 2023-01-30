@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @SpringBootApplication
 @RestController
@@ -28,25 +29,29 @@ public class MonitoringServiceApplication {
                               </tr>
                               """;
 
-    String pleaseRetryLater =
+    String sensorValueResponseJSON =
         """
-                              <div class="text-center text-danger">
-                                 Currently no data available.
-                                  </br>
-                                  Please try again later.
-                              </div>
-                              """;
+                                     {
+                                        "device": "DEVICE_ID",
+                                        "sensor": "SENSOR_ID",
+                                        "type": "VAL_TYPE",
+                                        "value": VALUE
+                                     }
+                                     """;
+
+    String ledStatusJSON =
+        """
+                           {
+                                "led" : "%s",
+                                "status" : "%s"
+                           }
+                           """;
 
     public void startServer(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
 
-    @GetMapping("/")
-    public String start() {
-        return index();
-    }
-
-    @GetMapping({ "/index" })
+    @GetMapping({ "/", "/index" })
     public String index() {
         try {
             File file = ResourceUtils.getFile(
@@ -75,8 +80,8 @@ public class MonitoringServiceApplication {
             return side;
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "404";
     }
 
     //    @PostMapping("/upload")
@@ -134,9 +139,39 @@ public class MonitoringServiceApplication {
         @PathVariable String sensorId,
         @PathVariable String value
     ) {
-        float latest = Main.getMeasurement(name, sensorId, value);
-        // TODO: return latest as JSON
-        return "";
+        String response;
+
+        if (Main.getTwinList().getTwin(name) == null) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Device not found"
+            );
+        } else if (name.contains("env5")) {
+            float latest = Main.getMeasurement(name, sensorId, value);
+
+            response = sensorValueResponseJSON;
+            response = response.replace("DEVICE_ID", name);
+            response = response.replace("SENSOR_ID", sensorId);
+            response = response.replace("VAL_TYPE", value);
+            response = response.replace("VALUE", Float.toString(latest));
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @GetMapping("/{name}/led1")
+    public String toggleLED(
+        @RequestParam String setTo,
+        @PathVariable String name
+    ) {
+        boolean result = false;
+        if (setTo.equals("ON")) {
+            result = Main.setLED1(name, true);
+        } else if (setTo.equals("OFF")) {
+            result = Main.setLED1(name, false);
+        }
+        return (String.format(ledStatusJSON, "led1", result ? "ON" : "OFF"));
     }
 
     private String getTwinTableElement(TwinData tw, int number) {
@@ -155,14 +190,27 @@ public class MonitoringServiceApplication {
         return newTableElement;
     }
 
-    private String getEnv5Landingpage(TwinData twin) throws IOException {
-        File file = ResourceUtils.getFile("src/main/resources/html/env5.html");
-        String side = new String(Files.readAllBytes(file.toPath()));
-        side = side.replace("TWIN_NAME", twin.getName());
-        side = side.replace("TWIN_ID", twin.getId());
-        side =
-            side.replace("TWIN_STATUS", twin.isActive() ? "ONLINE" : "OFFLINE");
-        side = side.replace("TWIN_MEASUREMENTS", pleaseRetryLater);
-        return side;
+    private String getEnv5Landingpage(TwinData twin) {
+        try {
+            File file = ResourceUtils.getFile(
+                "src/main/resources/html/env5.html"
+            );
+            String side = new String(Files.readAllBytes(file.toPath()));
+            side = side.replace("TWIN_NAME", twin.getName());
+            side = side.replace("TWIN_ID", twin.getId());
+            side =
+                side.replace(
+                    "TWIN_STATUS",
+                    twin.isActive() ? "ONLINE" : "OFFLINE"
+                );
+            if (Main.isLED1On(twin.getId())) {
+                side = side.replace("LED1_STATUS", "checked");
+            } else {
+                side = side.replace("LED1_STATUS", "");
+            }
+            return side;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

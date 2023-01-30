@@ -67,7 +67,18 @@ public class Main {
         String value
     ) {
         // TODO: get value from ENv5 TwinStub
-        return -100.0f;
+        return -3.5f;
+    }
+
+    public static boolean isLED1On(String deviceId) {
+        // TODO: get status from ENv5 TwinStub
+        return true;
+    }
+
+    public static boolean setLED1(String deviceId, boolean on) {
+        // TODO: set status for ENv5 TwinStub
+        // TODO: return status form ENv5 TwinStub
+        return true;
     }
 
     private static HivemqBroker createBrokerWithKeepalive() {
