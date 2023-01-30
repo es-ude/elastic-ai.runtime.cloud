@@ -78,6 +78,12 @@ To start the monitor run
 ./gradlew :monitor:run
 ```
 
+The broker domain and port can be given as follows:
+
+```bash
+./gradlew :monitor:run --args="-b localhost -b 1883"
+```
+
 The monitor can then be accessed locally at [http://localhost:8081](localhost.com:8081).
 
 #### Exit Codes
@@ -91,3 +97,17 @@ The monitor can then be accessed locally at [http://localhost:8081](localhost.co
 
 The runtime is meant to provide the necessary functions to implement a backend for the elastic-ai ecosystem.
 It provides the necessary functions to operate the ecosystem, like the implementation of the Twin concept or the HiveMQBroker implementation together with the necessary functions to handle the MQTT Broker interactions.
+
+## Docker
+
+A docker container for a subproject can be created with:
+
+```bash
+./gradlew  :<subproject>:jibDockerbuild
+```
+
+This container can then be used by docker compose or by running:
+
+```bash
+docker run <subproject>:<tag>
+```

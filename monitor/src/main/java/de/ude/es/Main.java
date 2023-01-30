@@ -40,7 +40,7 @@ public class Main {
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-            .newFor("elastic.ai-monitor")
+            .newFor("elastic-ai.runtime.monitor")
             .build()
             .defaultHelp(true)
             .description(

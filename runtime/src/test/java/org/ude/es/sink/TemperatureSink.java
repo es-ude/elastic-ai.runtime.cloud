@@ -11,7 +11,7 @@ import org.ude.es.twinBase.TwinStub;
  * to communicate with the remote device that actually measures the
  * temperature.
  */
-public class TemperatureSink {
+public class TemperatureSink extends JavaTwin {
 
     private class DataSubscriber implements Subscriber {
 
@@ -27,10 +27,9 @@ public class TemperatureSink {
     private final String dataId;
     private DataSubscriber subscriber;
     private TwinStub dataSource;
-    private final JavaTwin twin;
 
-    public TemperatureSink(JavaTwin twin, String dataId) {
-        this.twin = twin;
+    public TemperatureSink(String twinID, String dataId) {
+        super(twinID);
         this.dataId = dataId;
     }
 
@@ -38,18 +37,12 @@ public class TemperatureSink {
         this.dataSource = dataSource;
         this.subscriber = new DataSubscriber();
         this.dataSource.subscribeForData(dataId, subscriber);
-        this.dataSource.publishDataStartRequest(
-                dataId,
-                twin.getDomainAndIdentifier()
-            );
+        this.dataSource.publishDataStartRequest(dataId, this.identifier);
     }
 
     public void disconnectDataSource() {
         this.dataSource.unsubscribeFromData(dataId, this.subscriber);
-        this.dataSource.publishDataStopRequest(
-                dataId,
-                twin.getDomainAndIdentifier()
-            );
+        this.dataSource.publishDataStopRequest(dataId, this.identifier);
         this.dataSource = null;
     }
 

@@ -16,7 +16,7 @@ package org.ude.es.comm;
  * </p>
  */
 public interface CommunicationEndpoint {
-    void publish(Posting posting);
+    void publish(Posting posting, boolean retain);
 
     /**
      * Subscribe relative to the ID od the communication endpoint.

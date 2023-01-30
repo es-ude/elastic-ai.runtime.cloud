@@ -9,13 +9,17 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
+    public interface Executer {
+        void execute();
+    }
+
     public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
 
     private String fixIdentifierIfNecessary(String identifier) {
-        if (!identifier.startsWith("/")) {
-            identifier = "/" + identifier;
+        if (identifier.startsWith("/")) {
+            identifier = identifier.substring(1);
         }
         if (identifier.endsWith("/")) {
             identifier = identifier.substring(0, identifier.length() - 1);
@@ -31,9 +35,9 @@ public class Twin {
         endpoint.unsubscribe(identifier + topic, subscriber);
     }
 
-    protected void publish(Posting posting) {
+    protected void publish(Posting posting, boolean retain) {
         Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend);
+        endpoint.publish(toSend, retain);
     }
 
     /**
@@ -53,11 +57,9 @@ public class Twin {
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bindToCommunicationEndpoint(
-        CommunicationEndpoint channel
-    ) {
+    public void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
         this.endpoint = channel;
-        executeOnBind();
+        executeOnBindPrivate();
     }
 
     /**
@@ -65,7 +67,12 @@ public class Twin {
      * DigitalTwin to a CommunicationEndpoint, e.g., to subscribe for certain
      * topics or notify someone that you are interested in some data.
      */
-    protected void executeOnBind() {}
+    protected void executeOnBind() {
+    }
+
+    protected void executeOnBindPrivate() {
+        executeOnBind();
+    }
 
     public String getDomain() {
         return endpoint.getDomain();
@@ -76,7 +83,7 @@ public class Twin {
     }
 
     public String getDomainAndIdentifier() {
-        return getDomain() + getIdentifier();
+        return getDomain() + "/" + getIdentifier();
     }
 
     public CommunicationEndpoint getEndpoint() {

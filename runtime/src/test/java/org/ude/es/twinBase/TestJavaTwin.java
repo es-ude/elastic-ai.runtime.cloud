@@ -31,7 +31,7 @@ public class TestJavaTwin {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, "/" + twinID + (online ? ";1" : ";0"));
+                new Posting(topic,  twinID + (online ? ";1" : ";0"));
             device.publishStatus(online);
         }
 
@@ -72,7 +72,7 @@ public class TestJavaTwin {
     @Test
     void weCanPublishData() {
         checker.givenSubscriptionAtBrokerFor(
-            "/" + twinID + "/DATA/temperature"
+            twinID + "/DATA/temperature"
         );
         checker.whenPublishingData("temperature", "13.5");
         checker.thenPostingIsDelivered();
@@ -80,14 +80,14 @@ public class TestJavaTwin {
 
     @Test
     void weCanPublishStatusOnline() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/STATUS");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
         checker.whenPublishingStatus(true);
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanPublishStatusOffline() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/STATUS");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
         checker.whenPublishingStatus(false);
         checker.thenPostingIsDelivered();
     }
@@ -96,7 +96,7 @@ public class TestJavaTwin {
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/START/data",
+            twinID + "/START/data",
             twinID
         );
         checker.thenPostingIsDelivered();
@@ -107,7 +107,7 @@ public class TestJavaTwin {
         checker.whenSubscribingForDataStart("data");
         checker.whenUnsubscribingFromDataStart("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/START/data",
+            twinID + "/START/data",
             twinID
         );
         checker.thenPostingIsNotDelivered();
@@ -117,7 +117,7 @@ public class TestJavaTwin {
     void weCanSubscribeForDataStopRequest() {
         checker.whenSubscribingForDataStop("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/STOP/data",
+            twinID + "/STOP/data",
             twinID
         );
         checker.thenPostingIsDelivered();
@@ -128,7 +128,7 @@ public class TestJavaTwin {
         checker.whenSubscribingForDataStop("data");
         checker.whenUnsubscribingFromDataStop("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/STOP/data",
+            twinID + "/STOP/data",
             twinID
         );
         checker.thenPostingIsNotDelivered();
@@ -138,7 +138,7 @@ public class TestJavaTwin {
     void weCanSubscribeForCommand() {
         checker.whenSubscribingForCommand("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/SET/data",
+            twinID + "/SET/data",
             twinID
         );
         checker.thenPostingIsDelivered();
@@ -149,7 +149,7 @@ public class TestJavaTwin {
         checker.whenSubscribingForCommand("data");
         checker.whenUnsubscribingFromCommand("data");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/SET/data",
+            twinID + "/SET/data",
             twinID
         );
         checker.thenPostingIsNotDelivered();

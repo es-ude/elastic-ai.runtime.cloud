@@ -11,38 +11,26 @@ public class JavaTwin extends Twin {
     }
 
     public void publishData(String dataId, String value) {
-        this.publish(Posting.createData(dataId, value));
+        this.publish(Posting.createData(dataId, value), false);
     }
 
     public void publishStatus(boolean online) {
-        this.publish(Posting.createStatus(this.identifier, online));
+        this.publish(Posting.createStatus(this.identifier, online), true);
     }
 
-    public void subscribeForDataStartRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromDataStartRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) {
         this.unsubscribe(PostingType.START.topic(dataId), subscriber);
     }
 
-    public void subscribeForDataStopRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromDataStopRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void unsubscribeFromDataStopRequest(String dataId, Subscriber subscriber) {
         this.unsubscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 
@@ -52,5 +40,9 @@ public class JavaTwin extends Twin {
 
     public void unsubscribeFromCommand(String dataId, Subscriber subscriber) {
         this.unsubscribe(PostingType.SET.topic(dataId), subscriber);
+    }
+
+    public void bindStub(TwinStub stub) {
+        stub.bindToCommunicationEndpoint(endpoint);
     }
 }
