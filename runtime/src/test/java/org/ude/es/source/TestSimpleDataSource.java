@@ -32,7 +32,7 @@ class TestSimpleDataSource {
     @Test
     void whenDataIsSetThenPostingIsSent() {
         checker.givenBroker();
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin("twin1234");
         checker.givenDataSource();
         checker.givenSubscriptionAtJavaTwinFor("/#");
         checker.whenDataIsSetTo(3);

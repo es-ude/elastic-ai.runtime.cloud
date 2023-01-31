@@ -79,19 +79,19 @@ public class TestTwinStub {
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
+                twinID + "/DATA/light",
+                "33"
         );
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanUnsubscribeFromData() {
-        checker.whenSubscribingForData("/light");
-        checker.whenUnsubscribingFromData("/light");
+        checker.whenSubscribingForData("light");
+        checker.whenUnsubscribingFromData("light");
         checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
+                twinID + "/DATA/light",
+                "33"
         );
         checker.thenPostingIsNotDelivered();
     }
@@ -99,7 +99,7 @@ public class TestTwinStub {
     @Test
     void weCanSubscribeForStatus() {
         checker.whenSubscribingForStatus();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "");
         checker.thenPostingIsDelivered();
     }
 
@@ -107,41 +107,41 @@ public class TestTwinStub {
     void weCanUnsubscribeFromStatus() {
         checker.whenSubscribingForStatus();
         checker.whenUnsubscribingFromStatus();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "33");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanPublishDataStartRequest() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/START/data");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/START/data");
         checker.whenAskingForDataStart("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanAskToStopSendingData() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/STOP/data");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/STOP/data");
         checker.whenAskingForDataStop("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanSendACommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
         checker.whenSendingCommand("led", "on");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanSendOnCommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
         checker.whenSendingOnCommand("led");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanSendOffCommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
         checker.whenSendingOffCommand("led");
         checker.thenPostingIsDelivered();
     }

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.BrokerMock;
+import org.ude.es.comm.BrokerMock;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
 import org.ude.es.twinBase.JavaTwin;
@@ -18,9 +18,9 @@ import org.ude.es.twinBase.TwinStub;
 public class IntegrationTest4TwinInteraction {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
-    private static final String PRODUCER_ID = "/producer";
-    private static final String CONSUMER_ID = "/consumer";
-    private static final String DATA_ID = "/temp";
+    private static final String PRODUCER_ID = "producer";
+    private static final String CONSUMER_ID = "consumer";
+    private static final String DATA_ID = "temp";
     /**
      * The BrokerMock is an MQTTClient and MQTTBroker dummy to test the Twin
      * on the local machine without the need to start a local MQTT Broker.
@@ -46,22 +46,15 @@ public class IntegrationTest4TwinInteraction {
         }
     }
 
-    private class TwinThatConsumesTemperature extends JavaTwin {
+    private class TwinThatConsumesTemperature {
 
         private TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(String id, String resourceId) {
-            super(id);
-            this.bindToCommunicationEndpoint(broker);
-
-            createTemperatureSink(resourceId);
-        }
-
-        private void createTemperatureSink(String resourceId) {
             TwinStub dataSource = new TwinStub(resourceId);
             dataSource.bindToCommunicationEndpoint(broker);
 
-            this.temperatureSink = new TemperatureSink(this, DATA_ID);
+            this.temperatureSink = new TemperatureSink(id, DATA_ID);
             temperatureSink.connectDataSource(dataSource);
         }
 

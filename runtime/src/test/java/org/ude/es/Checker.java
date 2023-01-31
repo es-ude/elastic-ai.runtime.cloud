@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ude.es.comm.BrokerMock;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
@@ -34,23 +36,23 @@ public class Checker {
 
     public void thenSubscriptionIsDoneFor(String topic) {
         assertTrue(
-            subscriptions.contains(topic),
-            "should have received subscription " +
-            "for topic " +
-            topic +
-            ", topics received:" +
-            getTopics(subscriptions)
+                subscriptions.contains(topic),
+                "should have received subscription " +
+                        "for topic " +
+                        topic +
+                        ", topics received:" +
+                        getTopics(subscriptions)
         );
     }
 
     public void thenUnsubscribeIsDoneFor(String topic) {
         assertTrue(
-            unsubscribes.contains(topic),
-            "should have received unsubscribe " +
-            "for topic " +
-            topic +
-            ", topics received:" +
-            getTopics(unsubscribes)
+                unsubscribes.contains(topic),
+                "should have received unsubscribe " +
+                        "for topic " +
+                        topic +
+                        ", topics received:" +
+                        getTopics(unsubscribes)
         );
     }
 
@@ -83,8 +85,8 @@ public class Checker {
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting topic, boolean retain) {
+            super.publish(topic, retain);
         }
     }
 
@@ -105,9 +107,9 @@ public class Checker {
     }
 
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
-        String fullTopic = broker.getClientIdentifier() + topic;
+        String fullTopic = broker.getClientIdentifier() + "/" + topic;
         expected = new Posting(fullTopic, data);
-        broker.publish(new Posting(topic, data));
+        broker.publish(new Posting(topic, data), false);
     }
 
     //endregion testing with broker
@@ -133,8 +135,8 @@ public class Checker {
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting topic, boolean retain) {
+            super.publish(topic, retain);
         }
     }
 
@@ -160,7 +162,7 @@ public class Checker {
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);
-        javaTwin.publish(posting);
+        javaTwin.publish(posting, false);
     }
     //endregion testing with JavaTwin
 }
