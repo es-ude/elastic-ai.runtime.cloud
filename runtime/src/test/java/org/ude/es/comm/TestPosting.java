@@ -43,14 +43,14 @@ public class TestPosting {
     void testStatusOnlinePosting() {
         Posting posting = Posting.createStatus(PAYLOAD, true);
         assertEquals("/STATUS", posting.topic());
-        assertEquals(PAYLOAD + ";1", posting.data());
+        assertEquals(PAYLOAD + ";TWIN;1", posting.data());
     }
 
     @Test
     void testStatusOfflinePosting() {
         Posting posting = Posting.createStatus(PAYLOAD, false);
         assertEquals("/STATUS", posting.topic());
-        assertEquals(PAYLOAD + ";0", posting.data());
+        assertEquals(PAYLOAD + ";TWIN;0", posting.data());
     }
 
     @Test
