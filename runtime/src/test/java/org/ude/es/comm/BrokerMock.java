@@ -91,6 +91,8 @@ public class BrokerMock implements CommunicationEndpoint {
 
     //    private final String clientID;
 
+    //    private final String clientID;
+
     public BrokerMock(String identifier) {
         this.identifier = fixIdentifier(identifier);
     }

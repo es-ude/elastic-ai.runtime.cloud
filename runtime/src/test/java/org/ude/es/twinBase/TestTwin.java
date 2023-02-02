@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.Checker;
 import org.ude.es.comm.BrokerMock;
+import org.ude.es.Checker;
 
 public class TestTwin {
 

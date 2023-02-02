@@ -1,13 +1,13 @@
 package org.ude.es.protocol;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.TwinStub;
 
-public class DataRequester {
+import java.util.ArrayList;
+import java.util.List;
 
+public class DataRequester {
     private final TwinStub twinStub;
     private final String dataID;
     private final String requesterID;
@@ -21,7 +21,6 @@ public class DataRequester {
     List<DataExecuter> dataExecuter = new ArrayList<>();
 
     private class ValueReceiver implements Subscriber {
-
         @Override
         public void deliver(Posting posting) {
             for (DataExecuter executer : dataExecuter) {

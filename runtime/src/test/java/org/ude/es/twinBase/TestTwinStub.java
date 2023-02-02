@@ -36,39 +36,31 @@ public class TestTwinStub {
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic =
-                device.getDomainAndIdentifier() + PostingType.START.topic(data);
+            String topic = device.getDomainAndIdentifier() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic =
-                device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
+            String topic = device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.SET.topic(service);
+            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
             expected = new Posting(topic, cmd);
             device.publishCommand(service, cmd);
         }
 
         public void whenSendingOnCommand(String service) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.SET.topic(service);
+            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
             expected = new Posting(topic, "1");
             device.publishOnCommand(service);
         }
 
         public void whenSendingOffCommand(String service) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.SET.topic(service);
+            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
             expected = new Posting(topic, "0");
             device.publishOffCommand(service);
         }
@@ -86,7 +78,10 @@ public class TestTwinStub {
     @Test
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
+        checker.whenPostingIsPublishedAtBroker(
+                twinID + "/DATA/light",
+                "33"
+        );
         checker.thenPostingIsDelivered();
     }
 
@@ -94,7 +89,10 @@ public class TestTwinStub {
     void weCanUnsubscribeFromData() {
         checker.whenSubscribingForData("light");
         checker.whenUnsubscribingFromData("light");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
+        checker.whenPostingIsPublishedAtBroker(
+                twinID + "/DATA/light",
+                "33"
+        );
         checker.thenPostingIsNotDelivered();
     }
 
