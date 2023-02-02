@@ -3,6 +3,7 @@ package de.ude.es;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,34 +19,26 @@ public class MonitoringServiceApplication {
 
     String twinTableElement =
         """
-                              <tr>
-                                  <th>NUMBER</th>
-                                  <td>
-                                      <div id=NAME_ID>NAME</div>
-                                  </td>
-                                  <td>TWIN_ID</td>
-                                  <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
-                                  <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
-                              </tr>
-                              """;
+                    <tr>
+                        <th>NUMBER</th>
+                        <td>
+                            <div id=NAME_ID>NAME</div>
+                        </td>
+                        <td>TWIN_ID</td>
+                        <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
+                        <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
+                    </tr>
+                    """;
 
     String sensorValueResponseJSON =
         """
-                                     {
-                                        "device": "DEVICE_ID",
-                                        "sensor": "SENSOR_ID",
-                                        "type": "VAL_TYPE",
-                                        "value": VALUE
-                                     }
-                                     """;
-
-    String ledStatusJSON =
-        """
-                           {
-                                "led" : "%s",
-                                "status" : "%s"
-                           }
-                           """;
+                    {
+                       "device": "DEVICE_ID",
+                       "sensor": "SENSOR_ID",
+                       "type": "VAL_TYPE",
+                       "value": VALUE
+                    }
+                    """;
 
     public void startServer(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);
@@ -119,7 +112,7 @@ public class MonitoringServiceApplication {
             String pageToReturn;
             if (name.contains("env5")) {
                 pageToReturn =
-                    getEnv5Landingpage(Main.getTwinList().getTwin(name));
+                    getEnv5LandingPage(Main.getTwinList().getTwin(name));
             } else {
                 File file = ResourceUtils.getFile(
                     "src/main/resources/html/" + name + ".html"
@@ -133,11 +126,10 @@ public class MonitoringServiceApplication {
         return "404";
     }
 
-    @GetMapping("/{name}/{sensorId}/{value}")
+    @GetMapping("/{name}/{dataId}")
     public String requestPowerSensorData(
         @PathVariable String name,
-        @PathVariable String sensorId,
-        @PathVariable String value
+        @PathVariable String dataId
     ) {
         String response;
 
@@ -147,31 +139,22 @@ public class MonitoringServiceApplication {
                 "Device not found"
             );
         } else if (name.contains("env5")) {
-            float latest = Main.getMeasurement(name, sensorId, value);
+            try {
+                float latest = Main.getLatestMeasurement(name, dataId);
 
-            response = sensorValueResponseJSON;
-            response = response.replace("DEVICE_ID", name);
-            response = response.replace("SENSOR_ID", sensorId);
-            response = response.replace("VAL_TYPE", value);
-            response = response.replace("VALUE", Float.toString(latest));
+                response = sensorValueResponseJSON;
+                response = response.replace("DEVICE_ID", name);
+                response = response.replace("DATA_ID", dataId);
+                response = response.replace("VALUE", Float.toString(latest));
+            } catch (TimeoutException t) {
+                throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
+            }
         } else {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
-    }
-
-    @GetMapping("/{name}/led1")
-    public String toggleLED(
-        @RequestParam String setTo,
-        @PathVariable String name
-    ) {
-        boolean result = false;
-        if (setTo.equals("ON")) {
-            result = Main.setLED1(name, true);
-        } else if (setTo.equals("OFF")) {
-            result = Main.setLED1(name, false);
-        }
-        return (String.format(ledStatusJSON, "led1", result ? "ON" : "OFF"));
     }
 
     private String getTwinTableElement(TwinData tw, int number) {
@@ -190,7 +173,7 @@ public class MonitoringServiceApplication {
         return newTableElement;
     }
 
-    private String getEnv5Landingpage(TwinData twin) {
+    private String getEnv5LandingPage(TwinData twin) {
         try {
             File file = ResourceUtils.getFile(
                 "src/main/resources/html/env5.html"
@@ -203,11 +186,6 @@ public class MonitoringServiceApplication {
                     "TWIN_STATUS",
                     twin.isActive() ? "ONLINE" : "OFFLINE"
                 );
-            if (Main.isLED1On(twin.getId())) {
-                side = side.replace("LED1_STATUS", "checked");
-            } else {
-                side = side.replace("LED1_STATUS", "");
-            }
             return side;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

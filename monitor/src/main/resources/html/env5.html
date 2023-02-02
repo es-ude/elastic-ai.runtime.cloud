@@ -67,29 +67,6 @@
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
-    <h4>LED</h4>
-    <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="led1" onchange="requestLedToggle()"
-               LED1_STATUS>
-        <label class="form-check-label" for="led1">LED 1</label>
-        <script>
-            function setFieldValue(post) {
-                document.getElementById("led1").checked = post.status.normalize() === "ON".normalize();
-            }
-
-            async function requestLedToggle() {
-                if (document.getElementById("led1").checked) {
-                    const post = await fetch(getRootUrl() + "TWIN_ID/led1?setTo=ON").then((response) => response.json());
-                    setFieldValue(post);
-                } else {
-                    const post = await fetch(getRootUrl() + "TWIN_ID/led1?setTo=OFF").then((response) => response.json());
-                    setFieldValue(post);
-                }
-            }
-        </script>
-    </div>
-</section>
-<section class="d-flex flex-column align-items-center pt-3">
     <h4>Measurements</h4>
     <div class="d-grid container gap-2">
         <div class="row text-center">
@@ -101,7 +78,7 @@
             </div>
             <script>
                 getValueUpdate("TWIN_ID", "sensor1", "wifi", "wifi");
-                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor1\", \"wifi\", \"wifi\")", 5000);
+                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor1\", \"wifi\", \"wifi\")", 10000);
             </script>
         </div>
         <div class="row text-center">
@@ -113,7 +90,7 @@
             </div>
             <script>
                 getValueUpdate("TWIN_ID", "sensor1", "sram", "sram");
-                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor2\", \"sram\", \"sram\");", 5000);
+                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor2\", \"sram\", \"sram\");", 10000);
             </script>
         </div>
     </div>
