@@ -24,6 +24,7 @@ public class enV5Twin extends JavaTwin {
         DataRequestHandler dataRequestHandler = new DataRequestHandler(this, dataID);
         dataRequestHandler.addWhenStartRequestingData(dataRequester::startRequestingData);
         dataRequestHandler.addWhenStopRequestingData(dataRequester::stopRequestingData);
+        dataRequestHandler.addWhenStopRequestingData(enV5::waitAfterCommand);
         dataRequester.addWhenNewDataReceived(dataRequestHandler::newDataToPublish);
     }
 
