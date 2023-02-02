@@ -31,7 +31,7 @@ public record Posting(String topic, String data) {
     public static Posting createStatus(String identifier, boolean online) {
         return new Posting(
             PostingType.STATUS.topic(""),
-            identifier + (online ? ";1" : ";0")
+            identifier + ";TWIN" + (online ? ";1" : ";0")
         );
     }
 

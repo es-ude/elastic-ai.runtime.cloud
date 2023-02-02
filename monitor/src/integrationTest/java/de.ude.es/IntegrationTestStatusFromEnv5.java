@@ -14,8 +14,6 @@ import org.ude.es.twinImplementations.IntegrationTestTwinForEnV5;
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
 
-    private final String MQTT_DOMAIN = "eip://uni-due.de/es";
-    private final String BROKER_IP = "localhost";
     private int BROKER_PORT = 1883;
     private MonitorTwin monitor;
     private IntegrationTestTwinForEnV5 enV5;
@@ -63,12 +61,8 @@ public class IntegrationTestStatusFromEnv5 {
     }
 
     private HivemqBroker createBrokerWithKeepalive(String clientId) {
-        HivemqBroker broker = new HivemqBroker(
-            MQTT_DOMAIN,
-            BROKER_IP,
-            BROKER_PORT,
-            clientId
-        );
-        return broker;
+        String BROKER_IP = "localhost";
+        String MQTT_DOMAIN = "eip://uni-due.de/es";
+        return new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT, clientId);
     }
 }

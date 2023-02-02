@@ -29,8 +29,12 @@ public class MonitorTwin extends JavaTwin {
         public void deliver(Posting posting) {
             String twinID = posting
                 .data()
-                .substring(0, posting.data().length() - 2);
+                .substring(0, posting.data().indexOf(";"));
             boolean twinActive = posting.data().endsWith("1");
+
+            if (!posting.data().contains("TWIN")) {
+                return;
+            }
 
             if (this.twin.getDomainAndIdentifier().contains(twinID)) {
                 return;
