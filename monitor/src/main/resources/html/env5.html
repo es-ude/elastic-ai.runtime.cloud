@@ -7,6 +7,19 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 
+<script>
+    function getRootUrl() {
+        return window.location.origin
+            ? window.location.origin + "/"
+            : window.location.protocol + "/" + window.location.host + "/";
+    }
+
+    async function getValueUpdate(sensorName, sensorId, valueId, fieldId) {
+        const post = await fetch(getRootUrl() + sensorName + "/" + sensorId + "/" + valueId).then((res) => res.json());
+        document.getElementById(fieldId).value = post.value;
+    }
+</script>
+
 <head>
     <meta charset="UTF-8">
     <title>ENV5</title>
@@ -25,16 +38,17 @@
 <section class="d-flex flex-column align-items-center pt-1">
     <h1>Elastic AI Monitor</h1>
     <h3>TWIN_NAME</h3>
-
-    <div>
-        <button type="button" class="btn btn-primary" onClick="window.location.reload();">Refresh</button>
-        <a class="btn btn-primary" href="/index">HOME</a>
+    <div class="row">
+        <div class="col">
+            <button type="button" class="btn btn-primary" onClick="window.location.reload();">Refresh</button>
+            <a class="btn btn-primary" href="/index">Home</a>
+        </div>
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Twin Data</h4>
-    <div>
-        <table class="table table-bordered border-primary table-hover">
+    <div class="container">
+        <table class="table table-borderless table-hover">
             <tbody>
             <tr>
                 <th class="text-end pe-2" scope="row">Name</th>
@@ -54,7 +68,32 @@
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Measurements</h4>
-    TWIN_MEASUREMENTS
+    <div class="d-grid container gap-2">
+        <div class="row text-center">
+            <h5>Sensor 1</h5>
+            <div class="input-group">
+                <span class="input-group-text" id="label-wifi">WIFI</span>
+                <input type="text" class="form-control" aria-label="wifi" aria-describedby="label-wifi" id="wifi"
+                       readonly>
+            </div>
+            <script>
+                getValueUpdate("TWIN_ID", "sensor1", "wifi", "wifi");
+                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor1\", \"wifi\", \"wifi\")", 10000);
+            </script>
+        </div>
+        <div class="row text-center">
+            <h5>Sensor 2</h5>
+            <div class="input-group">
+                <span class="input-group-text" id="label-sram">SRAM</span>
+                <input type="text" class="form-control" aria-label="sram" aria-describedby="label-sram" id="sram"
+                       readonly>
+            </div>
+            <script>
+                getValueUpdate("TWIN_ID", "sensor1", "sram", "sram");
+                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor2\", \"sram\", \"sram\");", 10000);
+            </script>
+        </div>
+    </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>Flash FPGA</h4>

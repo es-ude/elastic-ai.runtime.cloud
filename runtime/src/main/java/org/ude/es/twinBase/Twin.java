@@ -67,8 +67,7 @@ public class Twin {
      * DigitalTwin to a CommunicationEndpoint, e.g., to subscribe for certain
      * topics or notify someone that you are interested in some data.
      */
-    protected void executeOnBind() {
-    }
+    protected void executeOnBind() {}
 
     protected void executeOnBindPrivate() {
         executeOnBind();

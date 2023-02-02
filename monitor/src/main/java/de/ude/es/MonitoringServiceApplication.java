@@ -3,6 +3,7 @@ package de.ude.es;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @SpringBootApplication
 @RestController
@@ -17,36 +19,32 @@ public class MonitoringServiceApplication {
 
     String twinTableElement =
         """
-                              <tr>
-                                  <th>NUMBER</th>
-                                  <td>
-                                      <div id=NAME_ID>NAME</div>
-                                  </td>
-                                  <td>TWIN_ID</td>
-                                  <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
-                                  <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
-                              </tr>
-                              """;
+                    <tr>
+                        <th>NUMBER</th>
+                        <td>
+                            <div id=NAME_ID>NAME</div>
+                        </td>
+                        <td>TWIN_ID</td>
+                        <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
+                        <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
+                    </tr>
+                    """;
 
-    String pleaseRetryLater =
+    String sensorValueResponseJSON =
         """
-                              <div class="text-center text-danger">
-                                 Currently no data available.
-                                  </br>
-                                  Please try again later.
-                              </div>
-                              """;
+                    {
+                       "device": "DEVICE_ID",
+                       "sensor": "SENSOR_ID",
+                       "type": "VAL_TYPE",
+                       "value": VALUE
+                    }
+                    """;
 
     public void startServer(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
 
-    @GetMapping("/")
-    public String start() {
-        return index();
-    }
-
-    @GetMapping({ "/index" })
+    @GetMapping({ "/", "/index" })
     public String index() {
         try {
             File file = ResourceUtils.getFile(
@@ -75,8 +73,8 @@ public class MonitoringServiceApplication {
             return side;
         } catch (IOException e) {
             e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "404";
     }
 
     //    @PostMapping("/upload")
@@ -114,7 +112,7 @@ public class MonitoringServiceApplication {
             String pageToReturn;
             if (name.contains("env5")) {
                 pageToReturn =
-                    getEnv5Landingpage(Main.getTwinList().getTwin(name));
+                    getEnv5LandingPage(Main.getTwinList().getTwin(name));
             } else {
                 File file = ResourceUtils.getFile(
                     "src/main/resources/html/" + name + ".html"
@@ -126,6 +124,37 @@ public class MonitoringServiceApplication {
             e.printStackTrace();
         }
         return "404";
+    }
+
+    @GetMapping("/{name}/{dataId}")
+    public String requestPowerSensorData(
+        @PathVariable String name,
+        @PathVariable String dataId
+    ) {
+        String response;
+
+        if (Main.getTwinList().getTwin(name) == null) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Device not found"
+            );
+        } else if (name.contains("env5")) {
+            try {
+                float latest = Main.getLatestMeasurement(name, dataId);
+
+                response = sensorValueResponseJSON;
+                response = response.replace("DEVICE_ID", name);
+                response = response.replace("DATA_ID", dataId);
+                response = response.replace("VALUE", Float.toString(latest));
+            } catch (TimeoutException t) {
+                throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
     }
 
     private String getTwinTableElement(TwinData tw, int number) {
@@ -144,14 +173,22 @@ public class MonitoringServiceApplication {
         return newTableElement;
     }
 
-    private String getEnv5Landingpage(TwinData twin) throws IOException {
-        File file = ResourceUtils.getFile("src/main/resources/html/env5.html");
-        String side = new String(Files.readAllBytes(file.toPath()));
-        side = side.replace("TWIN_NAME", twin.getName());
-        side = side.replace("TWIN_ID", twin.getId());
-        side =
-            side.replace("TWIN_STATUS", twin.isActive() ? "ONLINE" : "OFFLINE");
-        side = side.replace("TWIN_MEASUREMENTS", pleaseRetryLater);
-        return side;
+    private String getEnv5LandingPage(TwinData twin) {
+        try {
+            File file = ResourceUtils.getFile(
+                "src/main/resources/html/env5.html"
+            );
+            String side = new String(Files.readAllBytes(file.toPath()));
+            side = side.replace("TWIN_NAME", twin.getName());
+            side = side.replace("TWIN_ID", twin.getId());
+            side =
+                side.replace(
+                    "TWIN_STATUS",
+                    twin.isActive() ? "ONLINE" : "OFFLINE"
+                );
+            return side;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
