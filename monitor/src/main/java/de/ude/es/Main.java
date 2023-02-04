@@ -1,5 +1,6 @@
 package de.ude.es;
 
+import java.sql.SQLOutput;
 import java.util.concurrent.TimeoutException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
@@ -29,8 +30,6 @@ public class Main {
 
         monitor = new MonitorTwin("monitor");
         monitor.bindToCommunicationEndpoint(createBrokerWithKeepalive());
-
-        monitor.getTwinList().addTwin("env5_1");
 
         MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
         serviceApplication.startServer(args);
@@ -123,8 +122,8 @@ public class Main {
         }
 
         public void setValue(Type value) {
-            this.updated = true;
             this.value = value;
+            this.updated = true;
         }
     }
 }

@@ -27,16 +27,25 @@ public class MonitorTwin extends JavaTwin {
 
         @Override
         public void deliver(Posting posting) {
+            String[] twinData = posting.data().split(";");
             String twinID = posting
                 .data()
                 .substring(0, posting.data().indexOf(";"));
             boolean twinActive = posting.data().endsWith("1");
 
-            if (!posting.data().contains("TWIN")) {
+            if (!"TWIN".equals(twinData[1].trim())) {
+                System.out.printf(
+                    "Device of type %s with id %s detected.%n",
+                    twinData[1],
+                    twinData[0]
+                );
+                // DEVICES not handled by monitor
                 return;
             }
 
-            if (this.twin.getDomainAndIdentifier().contains(twinID)) {
+            if (
+                this.twin.getDomainAndIdentifier().contains(twinData[0].trim())
+            ) {
                 return;
             }
 
@@ -49,7 +58,6 @@ public class MonitorTwin extends JavaTwin {
                 }
                 // if twin == null -> ignore status message,
                 //                    no need to add inactive Twin
-
             }
         }
     }
