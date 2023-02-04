@@ -1,28 +1,12 @@
 <!DOCTYPE html>
 <html style="font-size: 20px;" lang="en">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
-
-<script>
-    function getRootUrl() {
-        return window.location.origin
-            ? window.location.origin + "/"
-            : window.location.protocol + "/" + window.location.host + "/";
-    }
-
-    async function getValueUpdate(sensorName, sensorId, valueId, fieldId) {
-        const post = await fetch(getRootUrl() + sensorName + "/" + sensorId + "/" + valueId).then((res) => res.json());
-        document.getElementById(fieldId).value = post.value;
-    }
-</script>
-
 <head>
     <meta charset="UTF-8">
-    <title>ENV5</title>
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Elastic AI Monitor - ENV5</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
@@ -30,9 +14,32 @@
     <link rel="manifest" href="favicons/site.webmanifest">
     <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#5bbad5">
     <link rel="shortcut icon" href="favicons/favicon.ico">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="msapplication-config" content="favicons/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+    <!-- Custom JS -->
+    <script>
+        function getRootUrl() {
+            return window.location.origin
+                ? window.location.origin + "/"
+                : window.location.protocol + "/" + window.location.host + "/";
+        }
+
+        async function getValueUpdate(deviceId, sensorId, fieldId) {
+            const response = await fetch(getRootUrl() + deviceId + "/" + sensorId);
+
+            if (response.status !== 200) {
+                console.log(response.json());
+                document.getElementById(fieldId).value = "HTTP Status: " + response.status;
+                return;
+            }
+
+            const result = await response.json();
+            document.getElementById(fieldId).value = result.value;
+        }
+    </script>
 </head>
 <body>
 <section class="d-flex flex-column align-items-center pt-1">
@@ -77,8 +84,8 @@
                        readonly>
             </div>
             <script>
-                getValueUpdate("TWIN_ID", "sensor1", "wifi", "wifi");
-                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor1\", \"wifi\", \"wifi\")", 10000);
+                getValueUpdate("TWIN_ID", "wifi", "wifi");
+                setInterval("getValueUpdate(\"TWIN_ID\", \"wifi\", \"wifi\");", 10000);
             </script>
         </div>
         <div class="row text-center">
@@ -89,8 +96,8 @@
                        readonly>
             </div>
             <script>
-                getValueUpdate("TWIN_ID", "sensor1", "sram", "sram");
-                setInterval("getValueUpdate(\"TWIN_ID\", \"sensor2\", \"sram\", \"sram\");", 10000);
+                getValueUpdate("TWIN_ID", "sram", "sram");
+                setInterval("getValueUpdate(\"TWIN_ID\", \"sram\", \"sram\");", 10000);
             </script>
         </div>
     </div>

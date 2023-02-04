@@ -1,6 +1,5 @@
 package org.ude.es.twinImplementations;
 
-
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
@@ -14,18 +13,35 @@ public class enV5Twin extends JavaTwin {
     public enV5Twin(String identifier) {
         super(identifier + "Twin");
         enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
-        enV5.addWhenDeviceGoesOnline(() -> System.out.println(identifier + " online."));
+        enV5.addWhenDeviceGoesOnline(() ->
+            System.out.println(identifier + " online.")
+        );
         enV5.addWhenDeviceGoesOnline(enV5::waitAfterCommand);
-        enV5.addWhenDeviceGoesOffline(() -> System.out.println(identifier + " offline."));
+        enV5.addWhenDeviceGoesOffline(() ->
+            System.out.println(identifier + " offline.")
+        );
     }
 
     void provideValue(String dataID) {
-        DataRequester dataRequester = new DataRequester(enV5, dataID, this.identifier);
-        DataRequestHandler dataRequestHandler = new DataRequestHandler(this, dataID);
-        dataRequestHandler.addWhenStartRequestingData(dataRequester::startRequestingData);
-        dataRequestHandler.addWhenStopRequestingData(dataRequester::stopRequestingData);
+        DataRequester dataRequester = new DataRequester(
+            enV5,
+            dataID,
+            this.identifier
+        );
+        DataRequestHandler dataRequestHandler = new DataRequestHandler(
+            this,
+            dataID
+        );
+        dataRequestHandler.addWhenStartRequestingData(
+            dataRequester::startRequestingData
+        );
+        dataRequestHandler.addWhenStopRequestingData(
+            dataRequester::stopRequestingData
+        );
         dataRequestHandler.addWhenStopRequestingData(enV5::waitAfterCommand);
-        dataRequester.addWhenNewDataReceived(dataRequestHandler::newDataToPublish);
+        dataRequester.addWhenNewDataReceived(
+            dataRequestHandler::newDataToPublish
+        );
     }
 
     @Override
@@ -34,7 +50,7 @@ public class enV5Twin extends JavaTwin {
 
         System.out.println(getDomainAndIdentifier());
 
-        provideValue("wifiValue");
-        provideValue("sRamValue");
+        provideValue("wifi");
+        provideValue("sram");
     }
 }

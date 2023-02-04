@@ -1,6 +1,7 @@
 package de.ude.es;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.concurrent.TimeoutException;
@@ -34,8 +35,7 @@ public class MonitoringServiceApplication {
         """
                     {
                        "device": "DEVICE_ID",
-                       "sensor": "SENSOR_ID",
-                       "type": "VAL_TYPE",
+                       "sensor": "DATA_ID",
                        "value": VALUE
                     }
                     """;
@@ -109,21 +109,11 @@ public class MonitoringServiceApplication {
     @GetMapping("/{name}")
     public String loadPage(@PathVariable String name) {
         try {
-            String pageToReturn;
-            if (name.contains("env5")) {
-                pageToReturn =
-                    getEnv5LandingPage(Main.getTwinList().getTwin(name));
-            } else {
-                File file = ResourceUtils.getFile(
-                    "src/main/resources/html/" + name + ".html"
-                );
-                pageToReturn = new String(Files.readAllBytes(file.toPath()));
-            }
-            return pageToReturn;
+            return getEnv5LandingPage(Main.getTwinList().getTwin(name));
         } catch (Exception e) {
             e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return "404";
     }
 
     @GetMapping("/{name}/{dataId}")
@@ -131,30 +121,32 @@ public class MonitoringServiceApplication {
         @PathVariable String name,
         @PathVariable String dataId
     ) {
-        String response;
-
         if (Main.getTwinList().getTwin(name) == null) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Device not found"
             );
-        } else if (name.contains("env5")) {
+        }
+
+        if (name.contains("enV5")) {
             try {
                 float latest = Main.getLatestMeasurement(name, dataId);
 
-                response = sensorValueResponseJSON;
+                String response = sensorValueResponseJSON;
                 response = response.replace("DEVICE_ID", name);
                 response = response.replace("DATA_ID", dataId);
                 response = response.replace("VALUE", Float.toString(latest));
+
+                return response;
             } catch (TimeoutException t) {
                 throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Device not reachable"
                 );
             }
-        } else {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return response;
+
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private String getTwinTableElement(TwinData tw, int number) {
@@ -173,22 +165,15 @@ public class MonitoringServiceApplication {
         return newTableElement;
     }
 
-    private String getEnv5LandingPage(TwinData twin) {
-        try {
-            File file = ResourceUtils.getFile(
-                "src/main/resources/html/env5.html"
-            );
-            String side = new String(Files.readAllBytes(file.toPath()));
-            side = side.replace("TWIN_NAME", twin.getName());
-            side = side.replace("TWIN_ID", twin.getId());
-            side =
-                side.replace(
-                    "TWIN_STATUS",
-                    twin.isActive() ? "ONLINE" : "OFFLINE"
-                );
-            return side;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    private String getEnv5LandingPage(TwinData twin) throws IOException {
+        File file = ResourceUtils.getFile("src/main/resources/html/env5.html");
+        String side = new String(Files.readAllBytes(file.toPath()));
+
+        side = side.replace("TWIN_NAME", twin.getName());
+        side = side.replace("TWIN_ID", twin.getId());
+        side =
+            side.replace("TWIN_STATUS", twin.isActive() ? "ONLINE" : "OFFLINE");
+
+        return side;
     }
 }
