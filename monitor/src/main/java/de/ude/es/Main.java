@@ -1,6 +1,5 @@
 package de.ude.es;
 
-import java.sql.SQLOutput;
 import java.util.concurrent.TimeoutException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
@@ -87,6 +86,8 @@ public class Main {
                 throw new TimeoutException("No Message Received");
             }
         }
+
+        deviceRequest.stopRequestingData();
 
         return latestValue.getValue();
     }
