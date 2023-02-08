@@ -19,29 +19,29 @@ public class JavaTwin extends Twin {
     }
 
     public void subscribeForDataStartRequest(
-        String dataId,
-        Subscriber subscriber
+            String dataId,
+            Subscriber subscriber
     ) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
 
     public void unsubscribeFromDataStartRequest(
-        String dataId,
-        Subscriber subscriber
+            String dataId,
+            Subscriber subscriber
     ) {
         this.unsubscribe(PostingType.START.topic(dataId), subscriber);
     }
 
     public void subscribeForDataStopRequest(
-        String dataId,
-        Subscriber subscriber
+            String dataId,
+            Subscriber subscriber
     ) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 
     public void unsubscribeFromDataStopRequest(
-        String dataId,
-        Subscriber subscriber
+            String dataId,
+            Subscriber subscriber
     ) {
         this.unsubscribe(PostingType.STOP.topic(dataId), subscriber);
     }

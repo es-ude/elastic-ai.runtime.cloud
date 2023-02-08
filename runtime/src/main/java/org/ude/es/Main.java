@@ -10,7 +10,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.ude.es.comm.HivemqBroker;
 import org.ude.es.twinImplementations.enV5Twin;
 
-
 public class Main {
 
     private static final String DOMAIN = "eip://uni-due.de/es";

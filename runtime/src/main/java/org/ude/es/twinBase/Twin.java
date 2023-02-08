@@ -9,10 +9,6 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
-    public interface Executer {
-        void execute();
-    }
-
     public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }

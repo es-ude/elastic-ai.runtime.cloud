@@ -5,6 +5,8 @@ import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
 
+import java.util.ArrayList;
+
 public class enV5Twin extends JavaTwin {
 
     private static final int WAIT_AFTER_COMMAND = 1000;

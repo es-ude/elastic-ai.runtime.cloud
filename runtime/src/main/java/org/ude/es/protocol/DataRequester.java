@@ -14,23 +14,23 @@ public class DataRequester {
     private final ValueReceiver valueReceiver;
     public final List<String> openDataRequests = new ArrayList<>();
 
-    public interface DataExecuter {
+    public interface DataExecutor {
         void execute(String data);
     }
 
-    List<DataExecuter> dataExecuter = new ArrayList<>();
+    List<DataExecutor> dataExecutor = new ArrayList<>();
 
     private class ValueReceiver implements Subscriber {
         @Override
         public void deliver(Posting posting) {
-            for (DataExecuter executer : dataExecuter) {
-                executer.execute(posting.data());
+            for (DataExecutor executor : dataExecutor) {
+                executor.execute(posting.data());
             }
         }
     }
 
-    public void addWhenNewDataReceived(DataExecuter function) {
-        dataExecuter.add(function);
+    public void addWhenNewDataReceived(DataExecutor function) {
+        dataExecutor.add(function);
     }
 
     public DataRequester(TwinStub twinStub, String dataID, String requesterID) {

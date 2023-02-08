@@ -3,7 +3,6 @@ package org.ude.es.protocol;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.Twin;
 import org.ude.es.twinBase.TwinStub;
 
 import java.util.ArrayList;
@@ -12,64 +11,109 @@ import java.util.List;
 
 public class DataRequestHandler {
 
-    private final String dataID;
-    private final JavaTwin twin;
-    List<Twin.Executer> startRequestingData = new ArrayList<>();
+    private static final HashMap<String, RequesterTwinStub> currentlyRequestingTwins = new HashMap<>();
 
-    List<Twin.Executer> stopRequestingData = new ArrayList<>();
-    HashMap<String, TwinStub> subscribers = new HashMap<>();
+    private final List<String> subscribers = new ArrayList<>();
+
+    private final List<TwinStub.Executor> startRequestingData = new ArrayList<>();
+    private final List<TwinStub.Executor> stopRequestingData = new ArrayList<>();
+
     private final DataStopRequestReceiver dataStopRequestReceiver = new DataStopRequestReceiver();
 
+    private final String dataID;
+    private final JavaTwin twinWithData;
+
+    public DataRequestHandler(JavaTwin twinWithData, String dataID) {
+        this.twinWithData = twinWithData;
+        this.dataID = dataID;
+        DataStartRequestReceiver dataStartRequestReceiver = new DataStartRequestReceiver();
+        twinWithData.subscribeForDataStartRequest(dataID, dataStartRequestReceiver);
+        twinWithData.subscribeForDataStopRequest(dataID, dataStopRequestReceiver);
+    }
+
     public void newDataToPublish(String data) {
-        twin.publishData(dataID, data);
+        twinWithData.publishData(dataID, data);
+    }
+
+    public void addWhenStartRequestingData(TwinStub.Executor function) {
+        startRequestingData.add(function);
+    }
+
+    public void addWhenStopRequestingData(TwinStub.Executor function) {
+        stopRequestingData.add(function);
     }
 
     private class DataStartRequestReceiver implements Subscriber {
         @Override
         public void deliver(Posting posting) {
-            TwinStub stub = new TwinStub(posting.data());
-            stub.addWhenDeviceGoesOffline(() -> dataStopRequestReceiver.deliver(new Posting("", posting.data())));
-            twin.bindStub(stub);
-            subscribers.put(posting.data(), stub);
+            String requesterID = posting.data();
+            if (alreadySubscribed(requesterID))
+                return;
 
+            handleRequesterTwinStub(requesterID);
+            stopWhenDeviceGoesOffline(requesterID);
+            handleSubscribers(requesterID);
+        }
+
+        private boolean alreadySubscribed(String requesterID) {
+            return subscribers.contains(requesterID);
+        }
+
+        private void handleSubscribers(String requesterID) {
+            subscribers.add(requesterID);
             if (subscribers.size() == 1) {
-                for (Twin.Executer executer : startRequestingData) {
-                    executer.execute();
+                for (TwinStub.Executor executor : startRequestingData) {
+                    executor.execute();
                 }
             }
         }
+
+        private void handleRequesterTwinStub(String requesterID) {
+            if (!currentlyRequestingTwins.containsKey(requesterID)) {
+                RequesterTwinStub stub = new RequesterTwinStub(requesterID);
+                twinWithData.bindStub(stub);
+                currentlyRequestingTwins.put(requesterID, stub);
+            } else {
+                currentlyRequestingTwins.get(requesterID).newSubscriber();
+            }
+        }
+    }
+
+    private void stopWhenDeviceGoesOffline(String requesterID) {
+        currentlyRequestingTwins.get(requesterID).addWhenDeviceGoesOffline(
+                () -> dataStopRequestReceiver.deliver(new Posting("", requesterID)));
     }
 
     private class DataStopRequestReceiver implements Subscriber {
         @Override
         public void deliver(Posting posting) {
-            if (subscribers.get(posting.data()) == null) {
+            String requesterID = posting.data();
+            if (notSubscribed(requesterID))
                 return;
-            }
-            subscribers.get(posting.data()).unsubscribeFromStatus(dataStopRequestReceiver);
-            subscribers.remove(posting.data());
 
+            handleSubscriber(requesterID);
+            handleRequesterTwinStub(requesterID);
+        }
+
+        private boolean notSubscribed(String requesterID) {
+            return !subscribers.contains(requesterID);
+        }
+
+        private void handleRequesterTwinStub(String requesterID) {
+            currentlyRequestingTwins.get(requesterID).subscriberLeaves();
+            if (!currentlyRequestingTwins.get(requesterID).hasSubscriber()) {
+                currentlyRequestingTwins.get(requesterID).unsubscribeFromStatus(dataStopRequestReceiver);
+                currentlyRequestingTwins.remove(requesterID);
+            }
+        }
+
+        private void handleSubscriber(String requesterID) {
+            subscribers.remove(requesterID);
             if (subscribers.size() == 0) {
-                for (Twin.Executer executer : stopRequestingData) {
-                    executer.execute();
+                for (TwinStub.Executor executor : stopRequestingData) {
+                    executor.execute();
                 }
             }
         }
-    }
-
-    public void addWhenStartRequestingData(Twin.Executer function) {
-        startRequestingData.add(function);
-    }
-
-    public void addWhenStopRequestingData(Twin.Executer function) {
-        stopRequestingData.add(function);
-    }
-
-    public DataRequestHandler(JavaTwin twin, String dataID) {
-        this.twin = twin;
-        this.dataID = dataID;
-        DataStartRequestReceiver dataStartRequestReceiver = new DataStartRequestReceiver();
-        twin.subscribeForDataStartRequest(dataID, dataStartRequestReceiver);
-        twin.subscribeForDataStopRequest(dataID, dataStopRequestReceiver);
     }
 }
