@@ -3,10 +3,39 @@ services:
     image: eclipse-mosquitto:1.6.14
     volumes:
       - "$PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+    networks:
+      - elastic-ai-network
     ports:
       - "1883:1883"
 
-  demotwin:
+  monitor:
+    image: monitor:latest
     depends_on:
       - broker
-    image: runtime:1.0
+    networks:
+      - elastic-ai-network
+    ports:
+      - "8081:8081"
+    command:
+      - "-b"
+      - "broker"
+      - "-p"
+      - "1883"
+
+  enV5-twin:
+    image: runtime:latest
+    depends_on:
+      - broker
+      - monitor
+    networks:
+      - elastic-ai-network
+    command:
+      - "-b"
+      - "broker"
+      - "-p"
+      - "1883"
+
+networks:
+  elastic-ai-network:
+    external: false
+    name: elastic-ai-network
