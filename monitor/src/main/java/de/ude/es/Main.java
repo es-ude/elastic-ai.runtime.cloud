@@ -83,11 +83,10 @@ public class Main {
         long end = start + 60000;
         while (!latestValue.isUpdated()) {
             if (start >= end) {
+                deviceRequest.stopRequestingData();
                 throw new TimeoutException("No Message Received");
             }
         }
-
-        deviceRequest.stopRequestingData();
 
         return latestValue.getValue();
     }
