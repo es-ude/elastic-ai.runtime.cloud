@@ -86,6 +86,27 @@ The broker domain and port can be given as follows:
 
 The monitor can then be accessed locally at [http://localhost:8081](localhost.com:8081).
 
+### Docker
+
+A monitor running in a docker contaienr can be created via
+
+```bash
+./gradlew :monitor:jibDockerBuild
+```
+
+And can (should be) be run via
+
+```bash
+docker run --rm --network=runtime-network -p 8081:8081 --name monitor monitor:0.0.2
+```
+
+The flags serve for the following purposes:
+- `--rm`: removes the container after shutdown
+- `--network`: required to access the docker container running the broker
+  - this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
+- `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host machines
+- `--name`: specifies the name of the container
+
 #### Exit Codes
 
 | Exit Code | Description            |
@@ -103,7 +124,7 @@ It provides the necessary functions to operate the ecosystem, like the implement
 A docker container for a subproject can be created with:
 
 ```bash
-./gradlew  :<subproject>:jibDockerbuild
+./gradlew  :<subproject>:jibDockerBuild
 ```
 
 This container can then be used by docker compose or by running:
