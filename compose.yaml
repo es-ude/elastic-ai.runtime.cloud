@@ -1,5 +1,3 @@
-version: '1.0'
-
 services:
   broker:
     image: eclipse-mosquitto:1.6.14
@@ -17,13 +15,25 @@ services:
     networks:
       - elastic-ai-network
     ports:
-      - "80:8081"
+      - "8081:8081"
+    command:
+      - "-b"
+      - "broker"
+      - "-p"
+      - "1883"
 
   enV5-twin:
     image: runtime:latest
     depends_on:
       - broker
       - monitor
+    networks:
+      - elastic-ai-network
+    command:
+      - "-b"
+      - "broker"
+      - "-p"
+      - "1883"
 
 networks:
   elastic-ai-network:

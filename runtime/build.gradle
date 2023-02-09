@@ -31,7 +31,6 @@ jib {
   }
   container {
     mainClass = mainClassName
-    args = ['-b', 'broker']
     creationTime = "USE_CURRENT_TIMESTAMP"
   }
 }
