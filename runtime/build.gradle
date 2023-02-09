@@ -26,6 +26,9 @@ integrationTest {
 }
 
 jib {
+  to {
+    tags = ['latest', version]
+  }
   container {
     mainClass = mainClassName
     args = ['-b', 'broker']
