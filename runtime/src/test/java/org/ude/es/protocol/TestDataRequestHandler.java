@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
+import org.ude.es.comm.Posting;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -78,4 +79,54 @@ public class TestDataRequestHandler {
         Assertions.assertTrue(received.get());
     }
 
+    @Test
+    void publishedNewDataToSubscribers() {
+        checker.givenSubscriptionAtBrokerFor("test/DATA/data");
+
+        dataRequestHandler.newDataToPublish("testData");
+
+        checker.expected = new Posting(checker.DOMAIN + "/test/DATA/data", "testData");
+        checker.thenPostingIsDelivered();
+
+    }
+
+    @Test
+    void duplicatedSubscriptionsAreIgnored() {
+        checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
+        checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
+
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester");
+
+        checker.thenUnsubscribeIsDoneFor("requester/STATUS");
+    }
+
+    @Test
+    void multipleValuesAreRequestedBySameRequester() {
+        DataRequestHandler dataRequestHandler1 = new DataRequestHandler(checker.javaTwin, "data1");
+        AtomicReference<Boolean> received = new AtomicReference<>(false);
+        dataRequestHandler1.addWhenStartRequestingData(() -> received.set(true));
+
+        checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
+        checker.whenPostingIsPublishedAtBroker("test/START/data1", "requester");
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester");
+
+        checker.whenPostingIsPublishedAtBroker("test/DATA/data", "data");
+        Assertions.assertEquals(true, received.get());
+
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data1", "requester");
+        checker.thenUnsubscribeIsDoneFor("requester/STATUS");
+
+    }
+
+    @Test
+    void valueRequestedBuMultipleRequesters() {
+        checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
+        checker.whenPostingIsPublishedAtBroker("test/START/data", "requester1");
+
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester");
+        checker.thenUnsubscribeIsDoneFor("requester/STATUS");
+
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester1");
+        checker.thenUnsubscribeIsDoneFor("requester1/STATUS");
+    }
 }

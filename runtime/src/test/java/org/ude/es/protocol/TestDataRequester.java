@@ -1,17 +1,19 @@
 package org.ude.es.protocol;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.twinBase.TwinStub;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class TestDataRequester {
 
     Checker checker;
     DataRequester dataRequester;
     TwinStub stub;
-
 
     @BeforeEach
     void beforeEach() {
@@ -58,5 +60,27 @@ public class TestDataRequester {
         checker.expected = new Posting(checker.DOMAIN + "/stub/START/data", "test");
         checker.thenPostingIsDelivered();
     }
+
+    @Test
+    void dataIsNotReceivedWhenNotRequested() {
+        AtomicReference<String> value = new AtomicReference<>("notSet");
+        dataRequester.addWhenNewDataReceived(value::set);
+
+        checker.whenPostingIsPublishedAtBroker("stub/DATA/data", "testData");
+
+        Assertions.assertEquals("notSet", value.get());
+    }
+
+    @Test
+    void dataIsReceivedWhenDataIsRequested() {
+        AtomicReference<String> value = new AtomicReference<>("notSet");
+        dataRequester.addWhenNewDataReceived(value::set);
+
+        dataRequester.startRequestingData();
+        checker.whenPostingIsPublishedAtBroker("stub/DATA/data", "testData");
+
+        Assertions.assertEquals("testData", value.get());
+    }
+
 
 }
