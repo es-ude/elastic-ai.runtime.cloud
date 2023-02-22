@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head}">
+    <title>Home</title>
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+<section class="d-flex flex-column align-items-center pt-3">
+    <table id="twinTable" class="container table table-sm align-middle text-center">
+        <thead>
+        <tr class="table-success">
+            <th style="width: 10%">#</th>
+            <th>Name</th>
+            <th>ID</th>
+            <th style="width: 10%"></th>
+            <th style="width: 10%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="twin,iState: ${twins.getTwins()}">
+            <th th:text="${iState.index + 1}">
+                Table Index
+            </th>
+            <td>
+                <div th:id="${twin.getId() + '-name'}" th:text="${twin.getName()}">
+                    Twin Name
+                </div>
+            </td>
+            <td th:text="${twin.getId()}">TWIN ID</td>
+            <td>
+                <a class="btn btn-primary" th:href="${'/sensor/' + twin.getId()}" title="Info">
+                    <i class="fa-solid fa-circle-info"></i>
+                </a></td>
+            <td>
+                <button th:id="${twin.getId() + '-name-button'}" type="button" class="btn btn-secondary" title="Rename" onclick="changeName(this)">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table> <!--twinTable-->
+</section>
+<section>
+</section>
+</body>
+</html>
