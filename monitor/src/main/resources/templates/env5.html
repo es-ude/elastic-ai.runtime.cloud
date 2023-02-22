@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/layout :: head}">
+    <title>enV5</title>
+</head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<section class="d-flex flex-column align-items-center pt-3">
+    <h4>Twin Data</h4>
+    <div class="container grid gap-2">
+        <div class="row">
+            <div class="col text-end fw-bold">
+                Name
+            </div>
+            <div class="col" th:text="${twin.getName()}">
+                Twin Name
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-end fw-bold">
+                ID
+            </div>
+            <div class="col" th:text="${twin.getId()}">
+                Twin ID
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-end fw-bold">
+                Status
+            </div>
+            <div class="col" th:text="${twin.isActive() ? 'ONLINE' : 'OFFLINE'}">
+                Twin Status
+            </div>
+        </div>
+    </div>
+</section>
+<section class="d-flex flex-column align-items-center pt-3">
+    <h4>Measurements</h4>
+    <div class="d-grid container gap-2">
+        <div class="row text-center">
+            <h5>Sensor 1</h5>
+            <div class="input-group">
+                <span class="input-group-text" id="label-wifi">WIFI</span>
+                <input type="text" class="form-control" aria-label="wifi" aria-describedby="label-wifi" id="wifi"
+                       readonly>
+            </div>
+            <script th:inline="javascript">
+                getValueUpdate([[${twin.getId()}]], "wifi", "wifi");
+                setInterval("getValueUpdate(\"[(${twin.id})]\", \"wifi\", \"wifi\");", 10000);
+            </script>
+        </div>
+        <div class="row text-center">
+            <h5>Sensor 2</h5>
+            <div class="input-group">
+                <span class="input-group-text" id="label-sram">SRAM</span>
+                <input type="text" class="form-control" aria-label="sram" aria-describedby="label-sram" id="sram"
+                       readonly>
+            </div>
+            <script th:inline="javascript">
+                getValueUpdate([[${twin.getId()}]], "sram", "sram");
+                setInterval("getValueUpdate(\"[(${twin.id})]\", \"sram\", \"sram\");", 10000);
+            </script>
+        </div>
+    </div>
+</section>
+<section class="d-flex flex-column align-items-center pt-3">
+    <h4>FPGA</h4>
+    <div class="text-secondary">
+        WORK IN PROGRESS
+    </div>
+</section>
+</body>
+</html>
