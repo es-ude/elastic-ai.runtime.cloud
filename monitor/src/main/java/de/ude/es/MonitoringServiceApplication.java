@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @SpringBootApplication
@@ -77,19 +79,21 @@ public class MonitoringServiceApplication {
         }
     }
 
-    //    @PostMapping("/upload")
-    //    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinURI") String twinURI) {
-    //        String fileName = file.getOriginalFilename();
-    //
-    //        Main.twin.getDeviceListReference().changeLastAction(twinURI, "Send file \"" + fileName + "\"");
-    //        Main.twin.getDeviceListReference().changeLastFlashedFile(twinURI, fileName);
-    //        try {
-    //            Main.twin.sendFileToDevice(file, twinURI);
-    //        } catch (Exception e) {
-    //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //        }
-    //        return ResponseEntity.ok("File uploaded.");
-    //    }
+        @PostMapping("/upload")
+        public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) {
+            String fileName = file.getOriginalFilename();
+
+            System.out.println(Main.getTwinList().getTwin(twinID).getId());
+
+            Main.requestBitFileUpload(twinID);
+
+//            try {
+//                Main.getTwinList().getTwin(twinID).sendFileToDevice(file, twinID);
+//            } catch (Exception e) {
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//            }
+            return ResponseEntity.ok("File uploaded.");
+        }
 
     @PostMapping("/changeName")
     public ResponseEntity<?> handleChangeName(

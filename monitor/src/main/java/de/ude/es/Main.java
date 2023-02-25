@@ -62,6 +62,13 @@ public class Main {
         return parser.parseArgs(args);
     }
 
+    public static void requestBitFileUpload(String twinID) {
+        TwinStub deviceStub = new TwinStub(twinID);
+        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+
+        deviceStub.publishCommand("bitFile", "flash");
+    }
+
     public static float getLatestMeasurement(String deviceId, String sensorId)
         throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
