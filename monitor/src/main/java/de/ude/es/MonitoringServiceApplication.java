@@ -1,183 +1,139 @@
 package de.ude.es;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.inf.ArgumentGroup;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+import org.ude.es.comm.HivemqBroker;
+import org.ude.es.protocol.DataRequester;
+import org.ude.es.twinBase.TwinStub;
 
 @SpringBootApplication
-@RestController
 public class MonitoringServiceApplication {
 
-    String twinTableElement =
-        """
-                    <tr>
-                        <th>NUMBER</th>
-                        <td>
-                            <div id=NAME_ID>NAME</div>
-                        </td>
-                        <td>TWIN_ID</td>
-                        <td><a class="btn btn-primary" href="/TWIN_ID">PAGE</a></td>
-                        <td><button id="NAME_BUTTON_ID" type="button" class="btn btn-secondary" onclick="changeName(this)">Rename</button></td>
-                    </tr>
-                    """;
+    private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
+    private static final String TWIN_ID = "monitor";
+    private static String BROKER_IP = null;
+    private static Integer BROKER_PORT = null;
+    private static MonitorTwin monitor = null;
 
-    String sensorValueResponseJSON =
-        """
-                    {
-                       "device": "DEVICE_ID",
-                       "sensor": "DATA_ID",
-                       "value": VALUE
-                    }
-                    """;
+    public static void main(String[] args) {
+        try {
+            Namespace arguments = parseArguments(args);
+            BROKER_IP = arguments.getString("broker_address");
+            BROKER_PORT = arguments.getInt("broker_port");
+        } catch (ArgumentParserException exception) {
+            System.out.println(exception.getMessage());
+            System.exit(10);
+        }
 
-    public void startServer(String[] args) {
+        monitor = createMonitorTwin();
+
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
 
-    @GetMapping({ "/", "/index" })
-    public String index() {
-        try {
-            File file = ResourceUtils.getFile(
-                "src/main/resources/html/index.html"
+    private static Namespace parseArguments(String[] args)
+        throws ArgumentParserException {
+        ArgumentParser parser = ArgumentParsers
+            .newFor("elastic-ai.runtime.monitor")
+            .build()
+            .defaultHelp(true)
+            .description(
+                "Service for monitoring digital twins in the elastic-ai.runtime"
             );
-            String side = new String(Files.readAllBytes(file.toPath()));
-
-            StringBuilder twinTable = new StringBuilder();
-            int i = 0;
-            for (TwinData tw : Main.getTwinList().getActiveTwins()) {
-                twinTable.append(getTwinTableElement(tw, i));
-                i++;
-            }
-            if (Main.getTwinList().getActiveTwins().size() == 0) {
-                String start = Pattern.quote("<table id=\"twinTable\"");
-                String end = Pattern.quote("<!--twinTable-->");
-                side =
-                    side.replaceAll(
-                        "(" + start + ")" + "[\\d\\D]*" + "(" + end + ")",
-                        "<p id=\"twinTable\" class=\"text-center\">No Twins</p>"
-                    );
-            } else {
-                side = side.replace("TABLE_PLACE_HOLDER", twinTable.toString());
-            }
-
-            return side;
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        defineBrokerArgumentGroup(parser);
+        return parser.parseArgs(args);
     }
 
-        @PostMapping("/upload")
-        public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) {
-            String fileName = file.getOriginalFilename();
+    private static void defineBrokerArgumentGroup(ArgumentParser parser) {
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
+            "MQTT Broker Specification"
+        );
+        brokerSpecification
+            .addArgument("-b", "--broker-address")
+            .help("Broker Address")
+            .setDefault("localhost");
+        brokerSpecification
+            .addArgument("-p", "--broker-port")
+            .type(Integer.class)
+            .help("Broker Port")
+            .setDefault(1883);
+    }
 
-            System.out.println(Main.getTwinList().getTwin(twinID).getId());
+    private static MonitorTwin createMonitorTwin() {
+        MonitorTwin monitor = new MonitorTwin(TWIN_ID);
+        monitor.bindToCommunicationEndpoint(
+            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT, TWIN_ID)
+        );
+        return monitor;
+    }
 
-            Main.requestBitFileUpload(twinID);
+    public static TwinList getTwinList() {
+        return monitor.getTwinList();
+    }
 
-//            try {
-//                Main.getTwinList().getTwin(twinID).sendFileToDevice(file, twinID);
-//            } catch (Exception e) {
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//            }
-            return ResponseEntity.ok("File uploaded.");
+    public static float getLatestMeasurement(String deviceId, String sensorId)
+        throws TimeoutException {
+        UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
+
+        TwinStub deviceStub = new TwinStub(deviceId);
+        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+
+        DataRequester deviceRequest = new DataRequester(
+            deviceStub,
+            sensorId,
+            monitor.getIdentifier()
+        );
+        deviceRequest.addWhenNewDataReceived(data ->
+            handleNewData(deviceRequest, latestValue, data)
+        );
+        deviceRequest.startRequestingData();
+
+        long start = System.currentTimeMillis();
+        long end = start + 60000;
+        while (!latestValue.isUpdated()) {
+            if (start >= end) {
+                deviceRequest.stopRequestingData();
+                throw new TimeoutException("No Message Received");
+            }
         }
 
-    @PostMapping("/changeName")
-    public ResponseEntity<?> handleChangeName(
-        @RequestParam("name") String name,
-        @RequestParam("ID") String ID
+        return latestValue.getValue();
+    }
+
+    private static void handleNewData(
+        DataRequester requester,
+        UpdatedValueStorage<Float> latestValue,
+        String input
     ) {
-        try {
-            Main.getTwinList().changeTwinName(ID, name);
-        } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build();
-        }
-        return ResponseEntity.ok("Name set.");
+        requester.stopRequestingData();
+        latestValue.setValue(Float.parseFloat(input));
     }
 
-    @GetMapping("/{name}")
-    public String loadPage(@PathVariable String name) {
-        try {
-            return getEnv5LandingPage(Main.getTwinList().getTwin(name));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    private static class UpdatedValueStorage<Type> {
 
-    @GetMapping("/{name}/{dataId}")
-    public String requestPowerSensorData(
-        @PathVariable String name,
-        @PathVariable String dataId
-    ) {
-        if (Main.getTwinList().getTwin(name) == null) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Device not found"
-            );
+        private volatile Type value;
+        private volatile boolean updated;
+
+        public UpdatedValueStorage() {
+            updated = false;
         }
 
-        if (name.contains("enV5")) {
-            try {
-                float latest = Main.getLatestMeasurement(name, dataId);
-
-                String response = sensorValueResponseJSON;
-                response = response.replace("DEVICE_ID", name);
-                response = response.replace("DATA_ID", dataId);
-                response = response.replace("VALUE", Float.toString(latest));
-
-                return response;
-            } catch (TimeoutException t) {
-                throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Device not reachable"
-                );
-            }
+        public boolean isUpdated() {
+            return updated;
         }
 
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+        public Type getValue() {
+            return value;
+        }
 
-    private String getTwinTableElement(TwinData tw, int number) {
-        String name = tw.getName();
-        String ID = tw.getId();
-
-        String newTableElement = twinTableElement;
-
-        newTableElement = newTableElement.replace("NUMBER", "" + number);
-        newTableElement = newTableElement.replace("NAME_ID", (ID + "-name"));
-        newTableElement =
-            newTableElement.replace("NAME_BUTTON_ID", (ID + "-name-button"));
-        newTableElement = newTableElement.replace("NAME", name);
-        newTableElement = newTableElement.replace("TWIN_ID", ID);
-
-        return newTableElement;
-    }
-
-    private String getEnv5LandingPage(TwinData twin) throws IOException {
-        File file = ResourceUtils.getFile("src/main/resources/html/env5.html");
-        String side = new String(Files.readAllBytes(file.toPath()));
-
-        side = side.replace("TWIN_NAME", twin.getName());
-        side = side.replace("TWIN_ID", twin.getId());
-        side =
-            side.replace("TWIN_STATUS", twin.isActive() ? "ONLINE" : "OFFLINE");
-
-        return side;
+        public void setValue(Type value) {
+            this.value = value;
+            this.updated = true;
+        }
     }
 }
