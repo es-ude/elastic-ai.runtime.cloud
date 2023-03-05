@@ -5,7 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+
+import static de.ude.es.MonitoringServiceApplication.uploadBifFile;
 
 @Controller
 public class MonitorController {
@@ -22,19 +27,18 @@ public class MonitorController {
         return "index";
     }
 
-    //    @PostMapping("/upload")
-    //    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinURI") String twinURI) {
-    //        String fileName = file.getOriginalFilename();
-    //
-    //        MonitoringServiceApplication.twin.getDeviceListReference().changeLastAction(twinURI, "Send file \"" + fileName + "\"");
-    //        MonitoringServiceApplication.twin.getDeviceListReference().changeLastFlashedFile(twinURI, fileName);
-    //        try {
-    //            MonitoringServiceApplication.twin.sendFileToDevice(file, twinURI);
-    //        } catch (Exception e) {
-    //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    //        }
-    //        return ResponseEntity.ok("File uploaded.");
-    //    }
+        @PostMapping("/upload")
+        public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) throws IOException {
+            String fileName = file.getOriginalFilename().split("\\.")[0];
+            BitFile.bitFiles.put(fileName, file.getBytes());
+
+            try {
+                uploadBifFile(twinID, fileName, file.getBytes().length / 256);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            return ResponseEntity.ok("fileName");
+        }
 
     @PostMapping("/changeName")
     @ResponseBody
