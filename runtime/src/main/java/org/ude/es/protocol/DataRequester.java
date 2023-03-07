@@ -40,9 +40,11 @@ public class DataRequester {
         valueReceiver = new ValueReceiver();
 
         twinStub.addWhenDeviceGoesOnline(() -> {
-            for (String request : openDataRequests) {
+            final List<String> openDataRequestsCopy = new ArrayList<>(openDataRequests);
+            for (String request : openDataRequestsCopy) {
                 twinStub.publishDataStartRequest(request, requesterID);
                 twinStub.waitAfterCommand();
+
             }
         });
     }
