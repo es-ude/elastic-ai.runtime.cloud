@@ -136,4 +136,12 @@ public class MonitoringServiceApplication {
             this.updated = true;
         }
     }
+
+    public static void uploadBifFile(String twinID, String fileName, int size) {
+        TwinStub deviceStub = new TwinStub(twinID);
+        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+
+        // TODO: Send command to Device over Twin
+        deviceStub.publishCommand("bitFile", "flash" + fileName + "/" + size);
+    }
 }

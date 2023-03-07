@@ -67,7 +67,8 @@
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>FPGA</h4>
     <div class="text-secondary">
-        WORK IN PROGRESS
+        <input id="bitFile" type="file" accept=".bit,.bin">
+        <button th:id="${twin.getId() + '-flash-button'}" onclick=uploadFile(this)>Flash</button>
     </div>
 </section>
 </body>
