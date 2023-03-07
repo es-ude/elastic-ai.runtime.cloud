@@ -15,6 +15,9 @@ import static de.ude.es.MonitoringServiceApplication.uploadBifFile;
 @Controller
 public class MonitorController {
 
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
     @GetMapping({ "/", "/index", "/index.html" })
     public String index(Model model) {
         try {
@@ -27,18 +30,20 @@ public class MonitorController {
         return "index";
     }
 
-        @PostMapping("/upload")
-        public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) throws IOException {
-            String fileName = file.getOriginalFilename().split("\\.")[0];
-            BitFile.bitFiles.put(fileName, file.getBytes());
+    @PostMapping("/upload")
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) throws IOException {
+        String fileName = file.getOriginalFilename().split("\\.")[0];
+        BitFile.bitFiles.put(fileName, file.getBytes());
 
-            try {
-                uploadBifFile(twinID, fileName, file.getBytes().length / 256);
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-            return ResponseEntity.ok("fileName");
+        System.out.println("BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET);
+
+        try {
+            uploadBifFile(twinID, fileName, file.getBytes().length / 256);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        return ResponseEntity.ok("fileName");
+    }
 
     @PostMapping("/changeName")
     @ResponseBody

@@ -142,6 +142,7 @@ public class MonitoringServiceApplication {
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
         // TODO: Send command to Device over Twin
-        deviceStub.publishCommand("bitFile", "flash" + fileName + "/" + size);
+        deviceStub.publishCommand("bitFile", "flash" + "/" + fileName + "/" + size);
+        
     }
 }
