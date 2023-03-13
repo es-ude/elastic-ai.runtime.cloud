@@ -1,15 +1,20 @@
 package de.ude.es;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TwinData {
 
     private final String ID;
     private String name;
     private boolean active;
+    private final ArrayList<String> sensors;
 
     public TwinData(String name, String ID) {
         this.ID = ID;
         this.name = name;
         this.active = true;
+        this.sensors = new ArrayList<>();
     }
 
     public boolean isActive() {
@@ -34,6 +39,10 @@ public class TwinData {
 
     public String getId() {
         return ID;
+    }
+
+    public List<String> getAvailableSensors() {
+        return sensors;
     }
 
     public String toString() {

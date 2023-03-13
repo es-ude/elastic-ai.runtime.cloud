@@ -51,6 +51,7 @@ public class MonitorTwin extends JavaTwin {
 
             if (twinActive) {
                 twins.addTwin(twinID);
+
             } else {
                 TwinData twin = twins.getTwin(twinID);
                 if (twin != null) {

@@ -35,34 +35,39 @@
         </div>
     </div>
 </section>
-<section class="d-flex flex-column align-items-center pt-3">
+<section class="d-flex flex-column align-items-center pt-3" id="section-sensors">
     <h4>Measurements</h4>
-    <div class="d-grid container gap-2">
-        <div class="row text-center">
-            <h5>Sensor 1</h5>
-            <div class="input-group">
-                <span class="input-group-text" id="label-wifi">WIFI</span>
-                <input type="text" class="form-control" aria-label="wifi" aria-describedby="label-wifi" id="wifi"
-                       readonly>
-            </div>
-            <script th:inline="javascript">
-                getValueUpdate([[${twin.getId()}]], "wifi", "wifi");
-                setInterval("getValueUpdate(\"[(${twin.id})]\", \"wifi\", \"wifi\");", 10000);
-            </script>
-        </div>
-        <div class="row text-center">
-            <h5>Sensor 2</h5>
-            <div class="input-group">
-                <span class="input-group-text" id="label-sram">SRAM</span>
-                <input type="text" class="form-control" aria-label="sram" aria-describedby="label-sram" id="sram"
-                       readonly>
-            </div>
-            <script th:inline="javascript">
-                getValueUpdate([[${twin.getId()}]], "sram", "sram");
-                setInterval("getValueUpdate(\"[(${twin.id})]\", \"sram\", \"sram\");", 10000);
-            </script>
-        </div>
-    </div>
+    <div class="d-grid container gap-2" id="sensors" th:text="${twin.getAvailableSensors()}"></div>
+
+    <script>
+        function addSensor(value) {
+            console.log(value)
+            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replace(value,
+                '<div class="row text-center">' +
+                '   <div class="input-group">' +
+                '       <span class="input-group-text" id="label-' + value + '">' + value.toUpperCase() + '</span>' +
+                '       <input type="text" class="form-control" aria-label="' + value + '" ' +
+                '           aria-describedby="label-' + value + '" id="' + value + '" readonly>' +
+                '   </div>' +
+                '   <script th:inline="javascript">' +
+                '       getValueUpdate([[${twin.getId()}]], "' + value + '", "' + value + '");' +
+                '       setInterval("getValueUpdate(\\"[(${twin.id})]\\", ' +
+                '           \\"' + value + '\\", \\"' + value + '\\");", 10000);' +
+                '   </script' + '>' +
+                '</div>')
+        }
+
+        if (document.getElementById("sensors").innerHTML.includes(",")) {
+            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replaceAll(",", "#")
+            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replace("[", "").replace("]", "").replaceAll(" ", "")
+            document.getElementById("sensors").innerHTML.split("#").forEach(addSensor)
+            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replaceAll("#", "")
+        } else {
+            document.getElementById("section-sensors").innerHTML = ""
+        }
+
+    </script>
+
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>FPGA</h4>
