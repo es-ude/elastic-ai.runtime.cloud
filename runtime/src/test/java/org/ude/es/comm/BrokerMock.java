@@ -142,6 +142,11 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     @Override
+    public void connect(String clientId, String lwtMessage) {
+
+    }
+
+    @Override
     public void publish(Posting posting, boolean retain) {
         Posting toPublish = new Posting(
             identifier + "/" + posting.topic(),

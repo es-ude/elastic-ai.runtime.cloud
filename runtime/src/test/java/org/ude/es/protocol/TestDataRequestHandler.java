@@ -24,7 +24,7 @@ public class TestDataRequestHandler {
 
     @AfterEach
     void afterEach() {
-        checker.whenPostingIsPublishedAtBroker("requester/STATUS", ";0");
+        checker.whenPostingIsPublishedAtBroker("requester/STATUS", "STATUS:OFFLINE;");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class TestDataRequestHandler {
 
         dataRequestHandler.addWhenStopRequestingData(() -> received.set(true));
         checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
-        checker.whenPostingIsPublishedAtBroker("requester/STATUS", ";0");
+        checker.whenPostingIsPublishedAtBroker("requester/STATUS", "STATUS:OFFLINE;");
 
         Assertions.assertTrue(received.get());
     }

@@ -10,12 +10,20 @@ public class JavaTwin extends Twin {
         super(identifier);
     }
 
-    public void publishData(String dataId, String value) {
-        this.publish(Posting.createData(dataId, value), false);
+    @Override
+    protected void executeOnBindPrivate() {
+        String lwtMessage = "ID:" + this.identifier + ";TYPE:TWIN;STATUS:OFFLINE;";
+        this.endpoint.connect(this.identifier, lwtMessage);
+        publishStatus("");
+        executeOnBind();
     }
 
-    public void publishStatus(boolean online) {
-        this.publish(Posting.createStatus(this.identifier, online), true);
+    public void publishData(String dataId, String value) {
+        this.publish(Posting.createData(dataId, value));
+    }
+
+    public void publishStatus(String information) {
+        this.publish(Posting.createStatus("ID:" + this.identifier + ";TYPE:TWIN;STATUS:ONLINE;" + information), true);
     }
 
     public void subscribeForDataStartRequest(

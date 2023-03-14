@@ -71,7 +71,7 @@ public class IntegrationTest4ExternalBroker {
         }
     }
 
-    private static class TwinThatConsumesTemperature {
+    private static class TwinThatConsumesTemperature extends JavaTwin {
 
         TemperatureSink temperatureSink;
 
@@ -80,8 +80,10 @@ public class IntegrationTest4ExternalBroker {
             String id,
             String resourceId
         ) {
+            super(id);
+            this.bindToCommunicationEndpoint(broker);
             TwinStub dataSource = new TwinStub(resourceId);
-            dataSource.bindToCommunicationEndpoint(broker);
+            bindStub(dataSource);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
             this.temperatureSink.bindToCommunicationEndpoint(broker);
@@ -165,8 +167,7 @@ public class IntegrationTest4ExternalBroker {
         HivemqBroker broker = new HivemqBroker(
             MQTT_DOMAIN,
             BROKER_IP,
-            BROKER_PORT,
-            clientId
+            BROKER_PORT
         );
         return broker;
     }

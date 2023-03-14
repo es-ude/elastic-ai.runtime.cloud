@@ -9,6 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import org.ude.es.comm.HivemqBroker;
+import org.ude.es.comm.Posting;
 import org.ude.es.twinImplementations.IntegrationTestTwinForEnV5;
 
 @Testcontainers
@@ -34,7 +35,7 @@ public class IntegrationTestStatusFromEnv5 {
 
     @Test
     void testOnlineCanBeReceived() throws InterruptedException {
-        enV5.publishStatus(true);
+        enV5.publishStatus("");
         Thread.sleep(1000);
         int activeTwins = monitor.getTwinList().getActiveTwins().size();
         assertEquals(1, activeTwins);
@@ -42,7 +43,8 @@ public class IntegrationTestStatusFromEnv5 {
 
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
-        enV5.publishStatus(false);
+        enV5.getEndpoint().publish(new Posting(enV5.getIdentifier() + "/STATUS", "ID:" +
+                enV5.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"), true);
         Thread.sleep(1000);
         int activeTwins = monitor.getTwinList().getActiveTwins().size();
         assertEquals(0, activeTwins);
@@ -63,6 +65,6 @@ public class IntegrationTestStatusFromEnv5 {
     private HivemqBroker createBrokerWithKeepalive(String clientId) {
         String BROKER_IP = "localhost";
         String MQTT_DOMAIN = "eip://uni-due.de/es";
-        return new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT, clientId);
+        return new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT);
     }
 }

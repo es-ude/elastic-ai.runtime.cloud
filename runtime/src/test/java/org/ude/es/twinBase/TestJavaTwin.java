@@ -27,12 +27,12 @@ public class TestJavaTwin {
             device.publishData(dataId, value);
         }
 
-        public void whenPublishingStatus(boolean online) {
+        public void whenPublishingStatus() {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, twinID + ";TWIN" + (online ? ";1" : ";0"));
-            device.publishStatus(online);
+                new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATUS:ONLINE;");
+            device.publishStatus("");
         }
 
         public void whenSubscribingForDataStart(String dataId) {
@@ -77,16 +77,9 @@ public class TestJavaTwin {
     }
 
     @Test
-    void weCanPublishStatusOnline() {
+    void weCanPublishStatus() {
         checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
-        checker.whenPublishingStatus(true);
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanPublishStatusOffline() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
-        checker.whenPublishingStatus(false);
+        checker.whenPublishingStatus();
         checker.thenPostingIsDelivered();
     }
 

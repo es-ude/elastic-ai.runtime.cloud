@@ -12,7 +12,7 @@ import java.util.Hashtable;
 
 public class HivemqBroker implements CommunicationEndpoint {
 
-    private final String clientId;
+    private String clientId;
     private final String mqttDomain;
     private final String brokerIp;
     private final int brokerPort;
@@ -21,7 +21,8 @@ public class HivemqBroker implements CommunicationEndpoint {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
 
-    private void connectWithKeepaliveAndLwtMessage() {
+    public void connect(String clientId, String lwtMessage) {
+        this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
 
         Mqtt5BlockingClient blockingClient = MqttClient
@@ -33,7 +34,7 @@ public class HivemqBroker implements CommunicationEndpoint {
             //region LWT message
             .willPublish()
             .topic(domainIdentifier + PostingType.STATUS.topic(""))
-            .payload((this.clientId + ";TWIN;0").getBytes())
+            .payload((lwtMessage).getBytes())
             .qos(MqttQos.AT_MOST_ONCE)
             .retain(true)
             .applyWillPublish()
@@ -41,25 +42,16 @@ public class HivemqBroker implements CommunicationEndpoint {
             .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
-
-        Posting onlineStatus = new Posting(
-            this.clientId + PostingType.STATUS.topic(""),
-            this.clientId + ";TWIN;1"
-        );
-        publish(onlineStatus, true);
     }
 
     public HivemqBroker(
         String mqttDomain,
         String brokerIp,
-        int brokerPort,
-        String clientId
+        int brokerPort
     ) {
-        this.clientId = fixClientId(clientId);
         this.mqttDomain = fixDomain(mqttDomain);
         this.brokerIp = brokerIp;
         this.brokerPort = brokerPort;
-        connectWithKeepaliveAndLwtMessage();
     }
 
     private static String fixClientId(String id) {
@@ -82,6 +74,7 @@ public class HivemqBroker implements CommunicationEndpoint {
             this.mqttDomain + "/" + posting.topic(),
             posting.data()
         );
+
         client
             .publishWith()
             .topic(toPublish.topic())

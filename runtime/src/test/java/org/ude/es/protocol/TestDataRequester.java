@@ -29,7 +29,7 @@ public class TestDataRequester {
     @Test
     void dataStartRequestIsPublishedWhenStartedAndDeviceOnline() {
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", ";1");
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
         dataRequester.startRequestingData();
 
         checker.expected = new Posting(checker.DOMAIN + "/stub/START/data", "test");
@@ -40,7 +40,7 @@ public class TestDataRequester {
     @Test
     void dataStopRequestIsPublishedWhenStartedAndDeviceOnline() {
         checker.givenSubscriptionAtBrokerFor("stub/STOP/data");
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", ";1");
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
         dataRequester.startRequestingData();
         dataRequester.stopRequestingData();
 
@@ -52,11 +52,11 @@ public class TestDataRequester {
     void dataIsRequestedAgainWhenDeviceComesBackOnline() {
         dataRequester.startRequestingData();
 
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", ";1");
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", ";0");
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:OFFLINE;");
 
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", ";1");
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
         checker.expected = new Posting(checker.DOMAIN + "/stub/START/data", "test");
         checker.thenPostingIsDelivered();
     }

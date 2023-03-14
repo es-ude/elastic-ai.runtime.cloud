@@ -12,12 +12,8 @@ public class TwinStub extends Twin {
     private final int deviceDelay;
     private boolean deviceOnline = false;
 
-    public interface Executor {
-        void execute();
-    }
-
-    List<Executor> deviceGoesOnline = new ArrayList<>();
-    List<Executor> deviceGoesOffline = new ArrayList<>();
+    List<DataExecutor> deviceGoesOnline = new ArrayList<>();
+    List<DataExecutor> deviceGoesOffline = new ArrayList<>();
 
     public TwinStub(String identifier, int deviceDelay) {
         super(identifier);
@@ -28,11 +24,11 @@ public class TwinStub extends Twin {
         this(identifier, 0);
     }
 
-    public void addWhenDeviceGoesOnline(Executor function) {
+    public void addWhenDeviceGoesOnline(DataExecutor function) {
         deviceGoesOnline.add(function);
     }
 
-    public void addWhenDeviceGoesOffline(Executor function) {
+    public void addWhenDeviceGoesOffline(DataExecutor function) {
         deviceGoesOffline.add(function);
     }
 
@@ -47,20 +43,20 @@ public class TwinStub extends Twin {
         @Override
         public void deliver(Posting posting) throws InterruptedException {
             String data = posting.data();
-            if (data.contains(";1")) {
-                deviceOnline = true;
+            List<DataExecutor> tmpExecutor = new ArrayList<>();
 
-                for (Executor executor : deviceGoesOnline) {
-                    executor.execute();
-                }
+            if (data.contains("STATUS:ONLINE;")) {
+                deviceOnline = true;
+                tmpExecutor = new ArrayList<>(deviceGoesOnline);
             }
 
-            if (data.contains(";0")) {
+            if (data.contains("STATUS:OFFLINE;")) {
                 deviceOnline = false;
+                tmpExecutor =  new ArrayList<>(deviceGoesOffline);
+            }
 
-                for (Executor executor : deviceGoesOffline) {
-                    executor.execute();
-                }
+            for (DataExecutor executor : tmpExecutor) {
+                executor.execute(posting.data());
             }
         }
     }
@@ -104,26 +100,26 @@ public class TwinStub extends Twin {
 
     public void publishDataStartRequest(String dataId, String receiver) {
         Posting post = Posting.createStartSending(dataId, receiver);
-        this.publish(post, false);
+        this.publish(post);
     }
 
     public void publishDataStopRequest(String dataId, String receiver) {
         Posting post = Posting.createStopSending(dataId, receiver);
-        this.publish(post, false);
+        this.publish(post);
     }
 
     public void publishCommand(String service, String cmd) {
         Posting post = Posting.createCommand(service, cmd);
-        this.publish(post, false);
+        this.publish(post);
     }
 
     public void publishOnCommand(String service) {
         Posting post = Posting.createTurnOn(service);
-        this.publish(post, false);
+        this.publish(post);
     }
 
     public void publishOffCommand(String service) {
         Posting post = Posting.createTurnOff(service);
-        this.publish(post, false);
+        this.publish(post);
     }
 }

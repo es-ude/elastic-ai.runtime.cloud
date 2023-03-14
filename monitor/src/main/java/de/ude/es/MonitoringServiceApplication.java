@@ -67,7 +67,7 @@ public class MonitoringServiceApplication {
     private static MonitorTwin createMonitorTwin() {
         MonitorTwin monitor = new MonitorTwin(TWIN_ID);
         monitor.bindToCommunicationEndpoint(
-            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT, TWIN_ID)
+            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
         return monitor;
     }
