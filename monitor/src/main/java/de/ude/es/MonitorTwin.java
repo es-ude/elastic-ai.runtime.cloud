@@ -33,7 +33,7 @@ public class MonitorTwin extends JavaTwin {
             String twinType = posting.data().substring(posting.data().indexOf("TYPE:") + 5);
             twinType = twinType.substring(0, twinType.indexOf(";"));
 
-            boolean twinActive = posting.data().contains("STATUS:ONLINE");
+            boolean twinActive = posting.data().contains("STATE:ONLINE");
 
             System.out.printf(
                     "Device of type %s with id %s online: %b.%n",

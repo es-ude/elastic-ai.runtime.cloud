@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
+import org.ude.es.comm.Status;
 
 public class TestJavaTwin {
 
@@ -31,8 +32,8 @@ public class TestJavaTwin {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATUS:ONLINE;");
-            device.publishStatus("");
+                new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;");
+            device.publishStatus(new Status(device.getIdentifier()).Type("TWIN").State("ONLINE"));
         }
 
         public void whenSubscribingForDataStart(String dataId) {

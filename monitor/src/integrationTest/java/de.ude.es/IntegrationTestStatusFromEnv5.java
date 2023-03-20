@@ -35,7 +35,6 @@ public class IntegrationTestStatusFromEnv5 {
 
     @Test
     void testOnlineCanBeReceived() throws InterruptedException {
-        enV5.publishStatus("");
         Thread.sleep(1000);
         int activeTwins = monitor.getTwinList().getActiveTwins().size();
         assertEquals(1, activeTwins);

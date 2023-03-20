@@ -6,6 +6,7 @@ import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.comm.Posting;
+import org.ude.es.comm.Status;
 import org.ude.es.twinBase.JavaTwin;
 
 public class TestMonitorTwin {
@@ -38,7 +39,7 @@ public class TestMonitorTwin {
     void testTwinListIsUpdatedOnLeave() {
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
         broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
-                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"), true);
+                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
     }
 
@@ -46,9 +47,9 @@ public class TestMonitorTwin {
     void testTwinListIsUpdatedOnReenter() {
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
         broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
-                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"), true);
+                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
-        dummyTwin.publishStatus("");
+        dummyTwin.publishStatus(new Status(dummyTwin.getIdentifier()).Type("TWIN").State("ONLINE"));
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
     }
 

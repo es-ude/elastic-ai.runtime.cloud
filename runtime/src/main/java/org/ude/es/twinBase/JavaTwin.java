@@ -2,6 +2,7 @@ package org.ude.es.twinBase;
 
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
+import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
 
 public class JavaTwin extends Twin {
@@ -10,11 +11,13 @@ public class JavaTwin extends Twin {
         super(identifier);
     }
 
+    protected final Status minimalStatus = new Status(this.identifier).Type("TWIN").State("ONLINE");
+
     @Override
     protected void executeOnBindPrivate() {
-        String lwtMessage = "ID:" + this.identifier + ";TYPE:TWIN;STATUS:OFFLINE;";
-        this.endpoint.connect(this.identifier, lwtMessage);
-        publishStatus("");
+        Status lwtMessage = new Status(this.identifier).Type("TWIN").State("OFFLINE");
+        this.endpoint.connect(this.identifier, lwtMessage.create());
+        publishStatus(minimalStatus);
         executeOnBind();
     }
 
@@ -22,8 +25,8 @@ public class JavaTwin extends Twin {
         this.publish(Posting.createData(dataId, value));
     }
 
-    public void publishStatus(String information) {
-        this.publish(Posting.createStatus("ID:" + this.identifier + ";TYPE:TWIN;STATUS:ONLINE;" + information), true);
+    public void publishStatus(Status status) {
+        this.publish(Posting.createStatus(status.create()), true);
     }
 
     public void subscribeForDataStartRequest(

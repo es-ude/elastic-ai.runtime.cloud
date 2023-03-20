@@ -9,30 +9,34 @@ public class enV5Twin extends JavaTwin {
 
     private static final int WAIT_AFTER_COMMAND = 1000;
     private final TwinStub enV5;
-    private String[] measurements;
 
     public enV5Twin(String identifier) {
         super(identifier + "Twin");
+
         enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
+
         enV5.addWhenDeviceGoesOnline(data ->
                 System.out.println(identifier + " online.")
         );
-        enV5.addWhenDeviceGoesOnline(data -> {
-            if (data.contains("MEASUREMENTS:")) {
-                System.out.println(data);
-                String measurements = data.substring(data.indexOf("MEASUREMENTS:") + 13);
-                measurements = measurements.substring(0, measurements.indexOf(";"));
-                this.measurements = measurements.split(",");
-                this.publishStatus("MEASUREMENTS:" + measurements + ";");
-                for (String measurement : this.measurements) {
-                    provideValue(measurement);
-                }
-            }
-        });
+        enV5.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
         enV5.addWhenDeviceGoesOnline(data -> enV5.waitAfterCommand());
+
         enV5.addWhenDeviceGoesOffline(data ->
                 System.out.println(identifier + " offline.")
         );
+    }
+
+    private void publishAvailableMeasurements(String data) {
+        if (data.contains("MEASUREMENTS:")) {
+            System.out.println(data);
+            String measurements = data.substring(data.indexOf("MEASUREMENTS:") + 13);
+            measurements = measurements.substring(0, measurements.indexOf(";"));
+            String[] measurements1 = measurements.split(",");
+            this.publishStatus(minimalStatus.Measurement(measurements));
+            for (String measurement : measurements1) {
+                provideValue(measurement);
+            }
+        }
     }
 
     void provideValue(String dataID) {
