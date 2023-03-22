@@ -2,6 +2,7 @@ package org.ude.es.twinBase;
 
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
+import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
 
 import java.util.ArrayList;
@@ -45,12 +46,12 @@ public class TwinStub extends Twin {
             String data = posting.data();
             List<DataExecutor> tmpExecutor = new ArrayList<>();
 
-            if (data.contains("STATUS:ONLINE;")) {
+            if (data.contains(Status.State.ONLINE.get())) {
                 deviceOnline = true;
                 tmpExecutor = new ArrayList<>(deviceGoesOnline);
             }
 
-            if (data.contains("STATUS:OFFLINE;")) {
+            if (data.contains(Status.State.OFFLINE.get())) {
                 deviceOnline = false;
                 tmpExecutor =  new ArrayList<>(deviceGoesOffline);
             }

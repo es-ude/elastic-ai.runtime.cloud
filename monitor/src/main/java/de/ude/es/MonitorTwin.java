@@ -1,6 +1,7 @@
 package de.ude.es;
 
 import org.ude.es.comm.Posting;
+import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
@@ -27,13 +28,15 @@ public class MonitorTwin extends JavaTwin {
 
         @Override
         public void deliver(Posting posting) {
-            String twinID = posting.data().substring(posting.data().indexOf("ID:") + 3);
+            String twinID = posting.data().substring(posting.data().indexOf(
+                    Status.Parameter.ID.getOnlyParameter()) + Status.Parameter.ID.getOnlyParameter().length() + 1);
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            String twinType = posting.data().substring(posting.data().indexOf("TYPE:") + 5);
+            String twinType = posting.data().substring(posting.data().indexOf(
+                    Status.Parameter.TYPE.getOnlyParameter()) + Status.Parameter.TYPE.getOnlyParameter().length() + 1);
             twinType = twinType.substring(0, twinType.indexOf(";"));
 
-            boolean twinActive = posting.data().contains("STATE:ONLINE");
+            boolean twinActive = posting.data().contains(Status.State.ONLINE.get());
 
             System.out.printf(
                     "Device of type %s with id %s online: %b.%n",
@@ -42,7 +45,7 @@ public class MonitorTwin extends JavaTwin {
                     twinActive
             );
 
-            if (!twinType.equals("TWIN")) {
+            if (!twinType.equals(Status.Type.TWIN.get())) {
                 // DEVICES not handled by monitor
                 return;
             }
@@ -52,7 +55,8 @@ public class MonitorTwin extends JavaTwin {
             }
 
             if (twinActive) {
-                String measurements = posting.data().substring(posting.data().indexOf("MEASUREMENTS:") + 13);
+                String measurements = posting.data().substring(posting.data().indexOf(
+                        Status.Parameter.MEASUREMENTS.get()) + Status.Parameter.MEASUREMENTS.get().length() + 1);
                 measurements = measurements.substring(0, measurements.indexOf(";"));
 
                 twins.addOrUpdateTwin(twinID, measurements.split(","));

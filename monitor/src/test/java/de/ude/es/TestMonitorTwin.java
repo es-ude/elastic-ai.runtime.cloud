@@ -49,7 +49,9 @@ public class TestMonitorTwin {
         broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
                 dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
-        dummyTwin.publishStatus(new Status(dummyTwin.getIdentifier()).Type("TWIN").State("ONLINE"));
+        dummyTwin.publishStatus(new Status(dummyTwin.getIdentifier())
+                .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
     }
 

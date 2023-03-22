@@ -2,32 +2,81 @@ package org.ude.es.comm;
 
 public class Status {
 
-    private String status = "";
+    private String status;
 
-    private void addToStatus(String keyWord, String value) {
-        status += keyWord + ":" + value + ";";
+    private static String getParameter(String parameterType, String value) {
+        return parameterType + ":" + value + ";";
     }
 
-    public Status(String id) {
-        addToStatus("ID", id);
+    public enum State {
+        ONLINE("ONLINE"),
+        OFFLINE("OFFLINE");
+
+        private final String state;
+
+        State (String state) {
+            this.state = state;
+        }
+
+        public String get() {
+            return state;
+        }
     }
 
-    public Status Type(String type) {
-        addToStatus("TYPE", type);
+    public enum Type {
+        TWIN("TWIN"),
+        DEVICE("DEVICE");
+
+        private final String type;
+
+        Type (String type) {
+            this.type = type;
+        }
+
+        public String get() {
+            return type;
+        }
+    }
+
+    public enum Parameter {
+        ID("ID"),
+        TYPE("TYPE"),
+        MEASUREMENTS("MEASUREMENTS"),
+        STATE("STATE");
+
+        private final String parameter;
+        private String value = null;
+
+        Parameter(String parameterType) {
+            parameter = parameterType;
+        }
+
+        public Parameter value(String value) {
+            this.value = value;
+            return this;
+        }
+
+        public String getOnlyParameter() {
+            return parameter;
+        }
+
+        public String get() {
+            if (value == null)
+                return parameter;
+            return getParameter(parameter, value);
+        }
+    }
+
+    public Status(String ID) {
+        status = Parameter.ID.value(ID).get();
+    }
+
+    public Status append(Parameter parameter) {
+        status += parameter.get();
         return this;
     }
 
-    public Status Measurement(String measurement) {
-        addToStatus("MEASUREMENT", measurement);
-        return this;
-    }
-
-    public Status State(String state) {
-        addToStatus("STATE", state);
-        return this;
-    }
-
-    public String create() {
+    public String get() {
         return status;
     }
 }

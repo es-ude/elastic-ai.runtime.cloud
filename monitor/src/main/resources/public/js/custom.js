@@ -60,6 +60,8 @@ function getRootUrl() {
 }
 
 async function getValueUpdate(deviceId, sensorId, fieldId) {
+    console.log("valueupdate");
+
     const response = await fetch(getRootUrl() + "sensor/" + deviceId + "/" + sensorId);
 
     if (response.status !== 200) {

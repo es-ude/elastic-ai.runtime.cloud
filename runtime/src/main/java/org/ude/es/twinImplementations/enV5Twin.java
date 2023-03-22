@@ -1,5 +1,6 @@
 package org.ude.es.twinImplementations;
 
+import org.ude.es.comm.Status;
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
@@ -32,7 +33,7 @@ public class enV5Twin extends JavaTwin {
             String measurements = data.substring(data.indexOf("MEASUREMENTS:") + 13);
             measurements = measurements.substring(0, measurements.indexOf(";"));
             String[] measurements1 = measurements.split(",");
-            this.publishStatus(minimalStatus.Measurement(measurements));
+            this.publishStatus(minimalStatus.append(Status.Parameter.MEASUREMENTS.value(measurements)));
             for (String measurement : measurements1) {
                 provideValue(measurement);
             }
@@ -64,7 +65,5 @@ public class enV5Twin extends JavaTwin {
     @Override
     protected void executeOnBind() {
         enV5.bindToCommunicationEndpoint(endpoint);
-
-        System.out.println(getDomainAndIdentifier());
     }
 }

@@ -33,7 +33,9 @@ public class TestJavaTwin {
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
                 new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;");
-            device.publishStatus(new Status(device.getIdentifier()).Type("TWIN").State("ONLINE"));
+            device.publishStatus(new Status(device.getIdentifier())
+                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                    .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
         }
 
         public void whenSubscribingForDataStart(String dataId) {
