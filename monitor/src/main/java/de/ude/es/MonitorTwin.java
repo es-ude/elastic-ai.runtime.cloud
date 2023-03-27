@@ -29,11 +29,11 @@ public class MonitorTwin extends JavaTwin {
         @Override
         public void deliver(Posting posting) {
             String twinID = posting.data().substring(posting.data().indexOf(
-                    Status.Parameter.ID.getOnlyParameter()) + Status.Parameter.ID.getOnlyParameter().length() + 1);
+                    Status.Parameter.ID.getKey()) + Status.Parameter.ID.getKey().length() + 1);
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
             String twinType = posting.data().substring(posting.data().indexOf(
-                    Status.Parameter.TYPE.getOnlyParameter()) + Status.Parameter.TYPE.getOnlyParameter().length() + 1);
+                    Status.Parameter.TYPE.getKey()) + Status.Parameter.TYPE.getKey().length() + 1);
             twinType = twinType.substring(0, twinType.indexOf(";"));
 
             boolean twinActive = posting.data().contains(Status.State.ONLINE.get());

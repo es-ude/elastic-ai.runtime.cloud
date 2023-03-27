@@ -56,7 +56,7 @@ public class Status {
             return this;
         }
 
-        public String getOnlyParameter() {
+        public String getKey() {
             return parameter;
         }
 

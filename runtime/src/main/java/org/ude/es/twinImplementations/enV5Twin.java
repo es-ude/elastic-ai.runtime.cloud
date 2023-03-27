@@ -28,13 +28,12 @@ public class enV5Twin extends JavaTwin {
     }
 
     private void publishAvailableMeasurements(String data) {
-        if (data.contains("MEASUREMENTS:")) {
-            System.out.println(data);
-            String measurements = data.substring(data.indexOf("MEASUREMENTS:") + 13);
+        if (data.contains(Status.Parameter.MEASUREMENTS.getKey())) {
+            String measurements = data.substring(data.indexOf(
+                    Status.Parameter.MEASUREMENTS.getKey()) + Status.Parameter.MEASUREMENTS.getKey().length() + 1);
             measurements = measurements.substring(0, measurements.indexOf(";"));
-            String[] measurements1 = measurements.split(",");
             this.publishStatus(minimalStatus.append(Status.Parameter.MEASUREMENTS.value(measurements)));
-            for (String measurement : measurements1) {
+            for (String measurement : measurements.split(",")) {
                 provideValue(measurement);
             }
         }
