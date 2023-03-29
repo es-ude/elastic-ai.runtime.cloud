@@ -81,7 +81,7 @@ To start the monitor run
 The broker domain and port can be given as follows:
 
 ```bash
-./gradlew :monitor:run --args="-b localhost -b 1883"
+./gradlew :monitor:run --args="-b localhost -p 1883"
 ```
 
 The monitor can then be accessed locally at [http://localhost:8081](localhost.com:8081).
