@@ -37,35 +37,35 @@
 </section>
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors">
     <h4>Measurements</h4>
-
-    <div id="twinID" th:text="${twin.getId()}"></div>
-    <div id="availableSensors" th:text="${twin.getAvailableSensors()}"></div>
+    <div id="information">
+        <div id="twinID" th:text="${twin.getId()}"></div>
+        <div id="availableSensors" th:text="${twin.getAvailableSensors()}"></div>
+    </div>
 
     <div class="d-grid container gap-2" id="sensors">
         <script>
-            let div = document.createElement("div")
+            let measurementsDiv = document.createElement("div")
 
             let twinID = document.getElementById("twinID").innerHTML
 
             function addSensor(value) {
-                var te = document.createElement("div")
-                te.innerHTML =
+                let valueDiv = document.createElement("div")
+                valueDiv.innerHTML =
                     '<div class="row text-center">' +
                     '   <div class="input-group">' +
                     '       <span class="input-group-text" id="label-' + value + '">' + value.toUpperCase() + '</span>' +
                     '       <input type="text" class="form-control" aria-label="' + value + '" ' +
                     '           aria-describedby="label-' + value + '" id="' + value + '" readonly>' +
                     '   </div>' +
-                    '</div>'
+                    '</div>' +
+                    '</br>'
 
-                div.appendChild(te)
+                measurementsDiv.appendChild(valueDiv)
 
-                var sr = document.createElement("script")
-                sr.type = 'text/javascript';
-                sr.appendChild(document.createTextNode(
-                    'getValueUpdate("' + twinID + '", "' + value + '", "' + value + '");' +
-                    'setInterval(getValueUpdate("' + twinID + '", "' + value + '", "' + value + '"), 10000);'))
-                div.appendChild(sr)
+                let valueScript = document.createElement("script")
+                valueScript.type = 'text/javascript';
+                valueScript.appendChild(document.createTextNode('setValueUpdate("' + twinID + '", "' + value + '", "' + value + '");'))
+                measurementsDiv.appendChild(valueScript)
             }
 
             if (document.getElementById("availableSensors").innerHTML.includes(",")) {
@@ -76,7 +76,8 @@
             } else {
                 document.getElementById("section-sensors").innerHTML = ""
             }
-            document.getElementById("sensors").appendChild(div)
+            document.getElementById("sensors").appendChild(measurementsDiv)
+            document.getElementById("information").remove()
         </script>
 
     </div>

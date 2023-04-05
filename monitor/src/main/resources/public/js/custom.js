@@ -59,6 +59,13 @@ function getRootUrl() {
         : window.location.protocol + "/" + window.location.host + "/";
 }
 
+async function setValueUpdate(deviceId, sensorId, fieldId) {
+    await getValueUpdate(deviceId, sensorId, fieldId)
+    const interval = setInterval(function() {
+        getValueUpdate(deviceId, sensorId, fieldId)
+    }, 5000);
+}
+
 async function getValueUpdate(deviceId, sensorId, fieldId) {
     console.log("value Update", deviceId);
 
