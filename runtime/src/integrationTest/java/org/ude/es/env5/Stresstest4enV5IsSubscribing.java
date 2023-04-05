@@ -15,7 +15,7 @@ public class Stresstest4enV5IsSubscribing {
             TEST_TWIN_ID
         );
         twin.bindToCommunicationEndpoint(
-            new HivemqBroker(DOMAIN, IP, PORT, TEST_TWIN_ID)
+            new HivemqBroker(DOMAIN, IP, PORT)
         );
         twin.startPublishing(1000);
     }

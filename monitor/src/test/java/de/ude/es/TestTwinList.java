@@ -14,9 +14,9 @@ public class TestTwinList {
     void setUp() {
         twinList = new TwinList();
 
-        twinList.addTwin("ID1");
-        twinList.addTwin("ID2");
-        twinList.addTwin("ID3");
+        twinList.addOrUpdateTwin("ID1", new String[]{});
+        twinList.addOrUpdateTwin("ID2", new String[]{});
+        twinList.addOrUpdateTwin("ID3", new String[]{});
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TestTwinList {
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
 
-        twinList.addTwin("ID4");
+        twinList.addOrUpdateTwin("ID4", new String[]{});
         expected =
             List.of(
                 new TwinData("Twin 1", "ID1"),
@@ -108,7 +108,7 @@ public class TestTwinList {
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
 
-        twinList.addTwin("ID2");
+        twinList.addOrUpdateTwin("ID2", new String[]{});
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
     }
@@ -125,7 +125,7 @@ public class TestTwinList {
         assertEquals(expected.size(), twinList.getTwins().size());
         assertEquals(expected.size() - 1, twinList.getActiveTwins().size());
 
-        twinList.addTwin("ID2");
+        twinList.addOrUpdateTwin("ID2", new String[]{});
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getActiveTwins().size());
     }

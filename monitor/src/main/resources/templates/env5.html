@@ -37,36 +37,50 @@
 </section>
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors">
     <h4>Measurements</h4>
-    <div class="d-grid container gap-2" id="sensors" th:text="${twin.getAvailableSensors()}"></div>
+    <div id="information">
+        <div id="twinID" th:text="${twin.getId()}"></div>
+        <div id="availableSensors" th:text="${twin.getAvailableSensors()}"></div>
+    </div>
 
-    <script>
-        function addSensor(value) {
-            console.log(value)
-            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replace(value,
-                '<div class="row text-center">' +
-                '   <div class="input-group">' +
-                '       <span class="input-group-text" id="label-' + value + '">' + value.toUpperCase() + '</span>' +
-                '       <input type="text" class="form-control" aria-label="' + value + '" ' +
-                '           aria-describedby="label-' + value + '" id="' + value + '" readonly>' +
-                '   </div>' +
-                '   <script th:inline="javascript">' +
-                '       getValueUpdate([[${twin.getId()}]], "' + value + '", "' + value + '");' +
-                '       setInterval("getValueUpdate(\\"[(${twin.id})]\\", ' +
-                '           \\"' + value + '\\", \\"' + value + '\\");", 10000);' +
-                '   </script' + '>' +
-                '</div>')
-        }
+    <div class="d-grid container gap-2" id="sensors">
+        <script>
+            let measurementsDiv = document.createElement("div")
 
-        if (document.getElementById("sensors").innerHTML.includes(",")) {
-            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replaceAll(",", "#")
-            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replace("[", "").replace("]", "").replaceAll(" ", "")
-            document.getElementById("sensors").innerHTML.split("#").forEach(addSensor)
-            document.getElementById("sensors").innerHTML = document.getElementById("sensors").innerHTML.replaceAll("#", "")
-        } else {
-            document.getElementById("section-sensors").innerHTML = ""
-        }
+            let twinID = document.getElementById("twinID").innerHTML
 
-    </script>
+            function addSensor(value) {
+                let valueDiv = document.createElement("div")
+                valueDiv.innerHTML =
+                    '<div class="row text-center">' +
+                    '   <div class="input-group">' +
+                    '       <span class="input-group-text" id="label-' + value + '">' + value.toUpperCase() + '</span>' +
+                    '       <input type="text" class="form-control" aria-label="' + value + '" ' +
+                    '           aria-describedby="label-' + value + '" id="' + value + '" readonly>' +
+                    '   </div>' +
+                    '</div>' +
+                    '</br>'
+
+                measurementsDiv.appendChild(valueDiv)
+
+                let valueScript = document.createElement("script")
+                valueScript.type = 'text/javascript';
+                valueScript.appendChild(document.createTextNode('setValueUpdate("' + twinID + '", "' + value + '", "' + value + '");'))
+                measurementsDiv.appendChild(valueScript)
+            }
+
+            if (document.getElementById("availableSensors").innerHTML.includes(",")) {
+                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replaceAll(",", "#")
+                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replace("[", "").replace("]", "").replaceAll(" ", "")
+                document.getElementById("availableSensors").innerHTML.split("#").forEach(addSensor)
+                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replaceAll("#", "")
+            } else {
+                document.getElementById("section-sensors").innerHTML = ""
+            }
+            document.getElementById("sensors").appendChild(measurementsDiv)
+            document.getElementById("information").remove()
+        </script>
+
+    </div>
 
 </section>
 <section class="d-flex flex-column align-items-center pt-3">

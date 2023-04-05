@@ -39,13 +39,14 @@ public class TwinList {
      * if twin already exists -> sets twin.active=true,
      * else -> adds new twin.
      */
-    public void addTwin(String ID) {
+    public void addOrUpdateTwin(String ID, String[] measurements) {
         if (getTwin(ID) == null) {
             twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID));
             twinIdCounter = twinIdCounter.plus(ONE);
         } else {
             getTwin(ID).setActive();
         }
+        getTwin(ID).setAvailableSensors(measurements);
     }
 
     public List<TwinData> getActiveTwins() {

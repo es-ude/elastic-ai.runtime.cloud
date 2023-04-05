@@ -28,10 +28,10 @@ public record Posting(String topic, String data) {
         return new Posting(PostingType.DATA.topic(phenomena), value);
     }
 
-    public static Posting createStatus(String identifier, boolean online) {
+    public static Posting createStatus(String message) {
         return new Posting(
             PostingType.STATUS.topic(""),
-            identifier + ";TWIN" + (online ? ";1" : ";0")
+            message
         );
     }
 

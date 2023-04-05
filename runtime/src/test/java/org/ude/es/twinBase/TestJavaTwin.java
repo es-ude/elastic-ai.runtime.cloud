@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
+import org.ude.es.comm.Status;
 
 public class TestJavaTwin {
 
@@ -27,12 +28,14 @@ public class TestJavaTwin {
             device.publishData(dataId, value);
         }
 
-        public void whenPublishingStatus(boolean online) {
+        public void whenPublishingStatus() {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, twinID + ";TWIN" + (online ? ";1" : ";0"));
-            device.publishStatus(online);
+                new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;");
+            device.publishStatus(new Status(device.getIdentifier())
+                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                    .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
         }
 
         public void whenSubscribingForDataStart(String dataId) {
@@ -77,16 +80,9 @@ public class TestJavaTwin {
     }
 
     @Test
-    void weCanPublishStatusOnline() {
+    void weCanPublishStatus() {
         checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
-        checker.whenPublishingStatus(true);
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanPublishStatusOffline() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
-        checker.whenPublishingStatus(false);
+        checker.whenPublishingStatus();
         checker.thenPostingIsDelivered();
     }
 

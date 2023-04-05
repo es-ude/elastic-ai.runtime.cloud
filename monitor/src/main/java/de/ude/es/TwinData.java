@@ -8,13 +8,13 @@ public class TwinData {
     private final String ID;
     private String name;
     private boolean active;
-    private final ArrayList<String> sensors;
+    private String[] sensors;
 
     public TwinData(String name, String ID) {
         this.ID = ID;
         this.name = name;
         this.active = true;
-        this.sensors = new ArrayList<>();
+        this.sensors = new String[]{};
     }
 
     public boolean isActive() {
@@ -41,8 +41,12 @@ public class TwinData {
         return ID;
     }
 
+    public void setAvailableSensors(String[] sensors) {
+        this.sensors = sensors;
+    }
+
     public List<String> getAvailableSensors() {
-        return sensors;
+        return List.of(sensors);
     }
 
     public String toString() {

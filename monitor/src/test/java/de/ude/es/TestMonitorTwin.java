@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ude.es.comm.Posting;
+import org.ude.es.comm.Status;
 import org.ude.es.twinBase.JavaTwin;
 
 public class TestMonitorTwin {
@@ -30,26 +32,26 @@ public class TestMonitorTwin {
 
     @Test
     void testTwinListIsUpdatedOnEnter() {
-        assertEquals(0, monitorTwin.getTwinList().getTwins().size());
-        dummyTwin.publishStatus(true);
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
     }
 
     @Test
     void testTwinListIsUpdatedOnLeave() {
-        dummyTwin.publishStatus(true);
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
-        dummyTwin.publishStatus(false);
+        broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
+                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
     }
 
     @Test
     void testTwinListIsUpdatedOnReenter() {
-        dummyTwin.publishStatus(true);
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
-        dummyTwin.publishStatus(false);
+        broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
+                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
-        dummyTwin.publishStatus(true);
+        dummyTwin.publishStatus(new Status(dummyTwin.getIdentifier())
+                .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
     }
 

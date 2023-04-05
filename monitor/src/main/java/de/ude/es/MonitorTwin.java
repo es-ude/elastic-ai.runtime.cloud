@@ -1,6 +1,7 @@
 package de.ude.es;
 
 import org.ude.es.comm.Posting;
+import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
@@ -27,31 +28,38 @@ public class MonitorTwin extends JavaTwin {
 
         @Override
         public void deliver(Posting posting) {
-            String[] twinData = posting.data().split(";");
-            String twinID = posting
-                .data()
-                .substring(0, posting.data().indexOf(";"));
-            boolean twinActive = posting.data().endsWith("1");
+            String twinID = posting.data().substring(posting.data().indexOf(
+                    Status.Parameter.ID.getKey()) + Status.Parameter.ID.getKey().length() + 1);
+            twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            if (!"TWIN".equals(twinData[1].trim())) {
-                System.out.printf(
-                    "Device of type %s with id %s detected.%n",
-                    twinData[1],
-                    twinData[0]
-                );
+            String twinType = posting.data().substring(posting.data().indexOf(
+                    Status.Parameter.TYPE.getKey()) + Status.Parameter.TYPE.getKey().length() + 1);
+            twinType = twinType.substring(0, twinType.indexOf(";"));
+
+            boolean twinActive = posting.data().contains(Status.State.ONLINE.get());
+
+            System.out.printf(
+                    "Device of type %s with id %s online: %b.%n",
+                    twinType,
+                    twinID,
+                    twinActive
+            );
+
+            if (!twinType.equals(Status.Type.TWIN.get())) {
                 // DEVICES not handled by monitor
                 return;
             }
 
-            if (
-                this.twin.getDomainAndIdentifier().contains(twinData[0].trim())
-            ) {
+            if (this.twin.getDomainAndIdentifier().contains(twinID)) {
                 return;
             }
 
             if (twinActive) {
-                twins.addTwin(twinID);
+                String measurements = posting.data().substring(posting.data().indexOf(
+                        Status.Parameter.MEASUREMENTS.get()) + Status.Parameter.MEASUREMENTS.get().length() + 1);
+                measurements = measurements.substring(0, measurements.indexOf(";"));
 
+                twins.addOrUpdateTwin(twinID, measurements.split(","));
             } else {
                 TwinData twin = twins.getTwin(twinID);
                 if (twin != null) {

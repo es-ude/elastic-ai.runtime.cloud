@@ -9,6 +9,14 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
+    public interface DataExecutor {
+        void execute(String data);
+    }
+
+    public interface Executor {
+        void execute();
+    }
+
     public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
@@ -29,6 +37,10 @@ public class Twin {
 
     protected void unsubscribe(String topic, Subscriber subscriber) {
         endpoint.unsubscribe(identifier + topic, subscriber);
+    }
+
+    protected void publish(Posting posting) {
+        publish(posting, false);
     }
 
     protected void publish(Posting posting, boolean retain) {

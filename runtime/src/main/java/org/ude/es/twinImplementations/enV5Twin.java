@@ -1,11 +1,10 @@
 package org.ude.es.twinImplementations;
 
+import org.ude.es.comm.Status;
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
-
-import java.util.ArrayList;
 
 public class enV5Twin extends JavaTwin {
 
@@ -14,45 +13,56 @@ public class enV5Twin extends JavaTwin {
 
     public enV5Twin(String identifier) {
         super(identifier + "Twin");
+
         enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
-        enV5.addWhenDeviceGoesOnline(() ->
-            System.out.println(identifier + " online.")
+
+        enV5.addWhenDeviceGoesOnline(data ->
+                System.out.println(identifier + " online.")
         );
-        enV5.addWhenDeviceGoesOnline(enV5::waitAfterCommand);
-        enV5.addWhenDeviceGoesOffline(() ->
-            System.out.println(identifier + " offline.")
+        enV5.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
+        enV5.addWhenDeviceGoesOnline(data -> enV5.waitAfterCommand());
+
+        enV5.addWhenDeviceGoesOffline(data ->
+                System.out.println(identifier + " offline.")
         );
+    }
+
+    private void publishAvailableMeasurements(String data) {
+        if (data.contains(Status.Parameter.MEASUREMENTS.getKey())) {
+            String measurements = data.substring(data.indexOf(
+                    Status.Parameter.MEASUREMENTS.getKey()) + Status.Parameter.MEASUREMENTS.getKey().length() + 1);
+            measurements = measurements.substring(0, measurements.indexOf(";"));
+            this.publishStatus(minimalStatus.append(Status.Parameter.MEASUREMENTS.value(measurements)));
+            for (String measurement : measurements.split(",")) {
+                provideValue(measurement);
+            }
+        }
     }
 
     void provideValue(String dataID) {
         DataRequester dataRequester = new DataRequester(
-            enV5,
-            dataID,
-            this.identifier
+                enV5,
+                dataID,
+                this.identifier
         );
         DataRequestHandler dataRequestHandler = new DataRequestHandler(
-            this,
-            dataID
+                this,
+                dataID
         );
         dataRequestHandler.addWhenStartRequestingData(
-            dataRequester::startRequestingData
+                dataRequester::startRequestingData
         );
         dataRequestHandler.addWhenStopRequestingData(
-            dataRequester::stopRequestingData
+                dataRequester::stopRequestingData
         );
         dataRequestHandler.addWhenStopRequestingData(enV5::waitAfterCommand);
         dataRequester.addWhenNewDataReceived(
-            dataRequestHandler::newDataToPublish
+                dataRequestHandler::newDataToPublish
         );
     }
 
     @Override
     protected void executeOnBind() {
         enV5.bindToCommunicationEndpoint(endpoint);
-
-        System.out.println(getDomainAndIdentifier());
-
-        provideValue("wifi");
-        provideValue("sram");
     }
 }
