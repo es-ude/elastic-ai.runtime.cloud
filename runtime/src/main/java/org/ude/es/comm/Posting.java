@@ -1,19 +1,9 @@
 package org.ude.es.comm;
 
 public record Posting(String topic, String data) {
-    private static final String ON = "1";
-    private static final String OFF = "0";
 
-    public static Posting createTurnOn(String topic) {
-        return createCommand(topic, ON);
-    }
-
-    public static Posting createTurnOff(String topic) {
-        return createCommand(topic, OFF);
-    }
-
-    public static Posting createCommand(String topic, String command) {
-        return new Posting(PostingType.SET.topic(topic), command);
+    public static Posting createCommand(String command, String value) {
+        return new Posting(PostingType.COMMAND.topic(command), value);
     }
 
     public static Posting createStartSending(String dataId, String receiver) {
@@ -26,6 +16,10 @@ public record Posting(String topic, String data) {
 
     public static Posting createData(String phenomena, String value) {
         return new Posting(PostingType.DATA.topic(phenomena), value);
+    }
+
+    public static Posting createDone(String command, String value) {
+        return new Posting(PostingType.DONE.topic(command), value);
     }
 
     public static Posting createStatus(String message) {

@@ -113,14 +113,4 @@ public class TwinStub extends Twin {
         Posting post = Posting.createCommand(service, cmd);
         this.publish(post);
     }
-
-    public void publishOnCommand(String service) {
-        Posting post = Posting.createTurnOn(service);
-        this.publish(post);
-    }
-
-    public void publishOffCommand(String service) {
-        Posting post = Posting.createTurnOff(service);
-        this.publish(post);
-    }
 }

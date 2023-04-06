@@ -12,7 +12,14 @@ public class TestPosting {
     @Test
     void testCreateCommand() {
         Posting posting = Posting.createCommand(TOPIC, PAYLOAD);
-        assertEquals("/SET/" + TOPIC, posting.topic());
+        assertEquals("/DO/" + TOPIC, posting.topic());
+        assertEquals(PAYLOAD, posting.data());
+    }
+
+    @Test
+    void testCreateDone() {
+        Posting posting = Posting.createDone(TOPIC, PAYLOAD);
+        assertEquals("/DONE/" + TOPIC, posting.topic());
         assertEquals(PAYLOAD, posting.data());
     }
 

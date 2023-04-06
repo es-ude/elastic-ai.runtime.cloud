@@ -48,21 +48,9 @@ public class TestTwinStub {
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
+            String topic = device.getDomainAndIdentifier() + PostingType.COMMAND.topic(service);
             expected = new Posting(topic, cmd);
             device.publishCommand(service, cmd);
-        }
-
-        public void whenSendingOnCommand(String service) {
-            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
-            expected = new Posting(topic, "1");
-            device.publishOnCommand(service);
-        }
-
-        public void whenSendingOffCommand(String service) {
-            String topic = device.getDomainAndIdentifier() + PostingType.SET.topic(service);
-            expected = new Posting(topic, "0");
-            device.publishOffCommand(service);
         }
     }
 
@@ -127,22 +115,8 @@ public class TestTwinStub {
 
     @Test
     void weCanSendACommand() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/DO/led");
         checker.whenSendingCommand("led", "on");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanSendOnCommand() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
-        checker.whenSendingOnCommand("led");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanSendOffCommand() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/SET/led");
-        checker.whenSendingOffCommand("led");
         checker.thenPostingIsDelivered();
     }
 }

@@ -30,6 +30,10 @@ public class JavaTwin extends Twin {
         this.publish(Posting.createStatus(status.get()), true);
     }
 
+    public void publishDone(String command, String value) {
+        this.publish(Posting.createDone(command, value));
+    }
+
     public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
@@ -47,11 +51,11 @@ public class JavaTwin extends Twin {
     }
 
     public void subscribeForCommand(String dataId, Subscriber subscriber) {
-        this.subscribe(PostingType.SET.topic(dataId), subscriber);
+        this.subscribe(PostingType.COMMAND.topic(dataId), subscriber);
     }
 
     public void unsubscribeFromCommand(String dataId, Subscriber subscriber) {
-        this.unsubscribe(PostingType.SET.topic(dataId), subscriber);
+        this.unsubscribe(PostingType.COMMAND.topic(dataId), subscriber);
     }
 
     public void bindStub(TwinStub stub) {

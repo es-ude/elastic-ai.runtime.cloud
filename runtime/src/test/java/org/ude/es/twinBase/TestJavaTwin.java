@@ -28,6 +28,14 @@ public class TestJavaTwin {
             device.publishData(dataId, value);
         }
 
+        public void whenPublishingDone(String dataId, String value) {
+            String topic =
+                    device.getDomainAndIdentifier() +
+                            PostingType.DONE.topic(dataId);
+            expected = new Posting(topic, value);
+            device.publishDone(dataId, value);
+        }
+
         public void whenPublishingStatus() {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
@@ -87,6 +95,13 @@ public class TestJavaTwin {
     }
 
     @Test
+    void weCanPublishDone() {
+        checker.givenSubscriptionAtBrokerFor(twinID + "/DONE/cmd");
+        checker.whenPublishingDone("cmd", "test");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenPostingIsPublishedAtBroker(twinID + "/START/data", twinID);
@@ -118,8 +133,8 @@ public class TestJavaTwin {
 
     @Test
     void weCanSubscribeForCommand() {
-        checker.whenSubscribingForCommand("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/SET/data", twinID);
+        checker.whenSubscribingForCommand("cmd");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DO/cmd", twinID);
         checker.thenPostingIsDelivered();
     }
 
