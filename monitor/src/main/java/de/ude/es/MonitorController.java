@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import static de.ude.es.BitFile.BITFILE_CHUNK_SIZE;
 import static de.ude.es.MonitoringServiceApplication.uploadBifFile;
 
 @Controller
@@ -32,13 +34,13 @@ public class MonitorController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) throws IOException {
-        String fileName = file.getOriginalFilename().split("\\.")[0];
+        String fileName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0];
         BitFile.bitFiles.put(fileName, file.getBytes());
 
         System.out.println("BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET);
 
         try {
-            uploadBifFile(twinID, fileName, file.getBytes().length / 256);
+            uploadBifFile(twinID, file.getBytes().length / BITFILE_CHUNK_SIZE);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

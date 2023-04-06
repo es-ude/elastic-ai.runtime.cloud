@@ -12,6 +12,7 @@ import java.util.HashMap;
 @RequestMapping({"/bitFile"})
 public class BitFile {
 
+    public static final int BITFILE_CHUNK_SIZE = 1024;
     public static HashMap<String, byte[]> bitFiles = new HashMap<>();
 
     @GetMapping("/{name}/{dataId}")
@@ -20,11 +21,11 @@ public class BitFile {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         byte[] bitFile = bitFiles.get(name);
+        
+        int start = dataId * BITFILE_CHUNK_SIZE;
+        int end = dataId * BITFILE_CHUNK_SIZE + BITFILE_CHUNK_SIZE;
 
-        int start = dataId * 256;
-        int end = dataId * 256 + 256;
-
-        if (dataId * 256 > bitFile.length)
+        if (dataId * BITFILE_CHUNK_SIZE > bitFile.length)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         if (end > bitFile.length)
