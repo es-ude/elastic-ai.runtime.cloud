@@ -1,6 +1,11 @@
 package de.ude.es;
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -20,8 +25,16 @@ public class MonitoringServiceApplication {
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
     private static MonitorTwin monitor = null;
+    private static String IP_ADDRESS;
 
     public static void main(String[] args) {
+        try (final DatagramSocket socket = new DatagramSocket()) {
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            IP_ADDRESS = socket.getLocalAddress().getHostAddress();
+        } catch (UnknownHostException | SocketException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             Namespace arguments = parseArguments(args);
             BROKER_IP = arguments.getString("broker_address");
@@ -137,12 +150,10 @@ public class MonitoringServiceApplication {
         }
     }
 
-    public static void uploadBifFile(String twinID, String fileName, int size) {
+    public static void uploadBifFile(String twinID, int size) throws UnknownHostException {
         TwinStub deviceStub = new TwinStub(twinID);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
-        // TODO: Send command to Device over Twin
-        deviceStub.publishCommand("bitFile", "flash" + "/" + fileName + "/" + size);
-        
+        deviceStub.publishCommand("bitFile", "URL:" + IP_ADDRESS + "8081;SIZE:" + size + ";");
     }
 }
