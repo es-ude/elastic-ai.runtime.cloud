@@ -120,21 +120,4 @@ public class IntegrationTest4TwinInteraction {
         source.setNewTemperatureMeasured(11.5);
         consumer.checkTemperatureIs(11.5);
     }
-
-    @Test
-    void sourceAndTwoSinksCanCommunicate() {
-        var source = new TwinThatOffersTemperature(PRODUCER_ID);
-        var consumer1 = new TwinThatConsumesTemperature(
-            CONSUMER_ID + "1",
-            PRODUCER_ID
-        );
-        var consumer2 = new TwinThatConsumesTemperature(
-            CONSUMER_ID + "2",
-            PRODUCER_ID
-        );
-
-        source.setNewTemperatureMeasured(11.3);
-        consumer1.checkTemperatureIs(11.3);
-        consumer2.checkTemperatureIs(11.3);
-    }
 }

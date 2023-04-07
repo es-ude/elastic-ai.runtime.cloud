@@ -1,6 +1,5 @@
 package org.ude.es.protocol;
 
-
 import org.ude.es.twinBase.TwinStub;
 
 class RequesterTwinStub extends TwinStub {

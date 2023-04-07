@@ -79,9 +79,9 @@ public class Checker {
         }
 
         @Override
-        public void unsubscribe(String topic, Subscriber subscriber) {
+        public void unsubscribe(String topic) {
             unsubscribes.add(topic);
-            super.unsubscribe(topic, subscriber);
+            super.unsubscribe(topic);
         }
 
         @Override
@@ -99,7 +99,7 @@ public class Checker {
     }
 
     public void givenUnsubscribeAtBrokerFor(String topic) {
-        broker.unsubscribe(topic, subscriber);
+        broker.unsubscribe(topic);
     }
 
     public void whenPostingIsPublishedAtBroker(String topic) {
@@ -129,9 +129,9 @@ public class Checker {
         }
 
         @Override
-        public void unsubscribe(String topic, Subscriber subscriber) {
+        public void unsubscribe(String topic) {
             unsubscribes.add(topic);
-            super.unsubscribe(topic, subscriber);
+            super.unsubscribe(topic);
         }
 
         @Override
@@ -150,7 +150,7 @@ public class Checker {
     }
 
     public void givenUnsubscriptionAtJavaTwinFor(String topic) {
-        javaTwin.unsubscribe(topic, subscriber);
+        javaTwin.unsubscribe(topic);
     }
 
     public void whenPostingIsPublishedAtJavaTwin(String topic) {

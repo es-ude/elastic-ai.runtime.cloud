@@ -35,8 +35,8 @@ public class Twin {
         endpoint.subscribe(identifier + topic, subscriber);
     }
 
-    protected void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(identifier + topic, subscriber);
+    protected void unsubscribe(String topic) {
+        endpoint.unsubscribe(identifier + topic);
     }
 
     protected void publish(Posting posting) {

@@ -38,24 +38,24 @@ public class JavaTwin extends Twin {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromDataStartRequest(String dataId, Subscriber subscriber) {
-        this.unsubscribe(PostingType.START.topic(dataId), subscriber);
+    public void unsubscribeFromDataStartRequest(String dataId) {
+        this.unsubscribe(PostingType.START.topic(dataId));
     }
 
     public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromDataStopRequest(String dataId, Subscriber subscriber) {
-        this.unsubscribe(PostingType.STOP.topic(dataId), subscriber);
+    public void unsubscribeFromDataStopRequest(String dataId) {
+        this.unsubscribe(PostingType.STOP.topic(dataId));
     }
 
     public void subscribeForCommand(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.COMMAND.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromCommand(String dataId, Subscriber subscriber) {
-        this.unsubscribe(PostingType.COMMAND.topic(dataId), subscriber);
+    public void unsubscribeFromCommand(String dataId) {
+        this.unsubscribe(PostingType.COMMAND.topic(dataId));
     }
 
     public void bindStub(TwinStub stub) {

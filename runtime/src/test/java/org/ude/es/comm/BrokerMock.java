@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 public class BrokerMock implements CommunicationEndpoint {
 
     private record Subscription(
-        List<String> topicFilter,
-        Subscriber subscriber
+            List<String> topicFilter,
+            Subscriber subscriber
     ) {
         public Subscription(String topicFilter, Subscriber subscriber) {
             this(getTokensWithCollection(topicFilter), subscriber);
@@ -15,15 +15,15 @@ public class BrokerMock implements CommunicationEndpoint {
 
         public boolean matches(String msgTopic) {
             return new Matcher(getTokensWithCollection(msgTopic), topicFilter)
-                .check();
+                    .check();
         }
 
         private static List<String> getTokensWithCollection(String str) {
             return Collections
-                .list(new StringTokenizer(str, "/"))
-                .stream()
-                .map(token -> (String) token)
-                .collect(Collectors.toList());
+                    .list(new StringTokenizer(str, "/"))
+                    .stream()
+                    .map(token -> (String) token)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -34,8 +34,8 @@ public class BrokerMock implements CommunicationEndpoint {
         private boolean isMatching;
 
         public Matcher(
-            List<String> msgTokenList,
-            List<String> filterTokenList
+                List<String> msgTokenList,
+                List<String> filterTokenList
         ) {
             msgTokens = msgTokenList.iterator();
             filterTokens = filterTokenList.iterator();
@@ -44,8 +44,8 @@ public class BrokerMock implements CommunicationEndpoint {
         public boolean check() {
             while (hasMoreTokensToCheck()) {
                 boolean isDone = checkToken(
-                    msgTokens.next(),
-                    filterTokens.next()
+                        msgTokens.next(),
+                        filterTokens.next()
                 );
                 if (isDone) return isMatching;
             }
@@ -86,10 +86,8 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private final List<Subscription> subscriptions = new LinkedList<>();
+    private final HashMap<String, Subscription> subscriptions = new HashMap<>();
     private final String identifier;
-
-    //    private final String clientID;
 
     //    private final String clientID;
 
@@ -114,20 +112,19 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.add(s);
+        var subscription = new Subscription(topic, subscriber);
+        subscriptions.put(topic, subscription);
         System.out.println("Subscribed to: " + topic);
     }
 
     @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + "/" + topic, subscriber);
+    public void unsubscribe(String topic) {
+        unsubscribeRaw(identifier + "/" + topic);
     }
 
     @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.remove(s);
+    public void unsubscribeRaw(String topic) {
+        subscriptions.remove(topic);
         System.out.println("Unsubscribed from: " + topic);
     }
 
@@ -149,15 +146,15 @@ public class BrokerMock implements CommunicationEndpoint {
     @Override
     public void publish(Posting posting, boolean retain) {
         Posting toPublish = new Posting(
-            identifier + "/" + posting.topic(),
-            posting.data()
+                identifier + "/" + posting.topic(),
+                posting.data()
         );
         executePublish(toPublish);
         System.out.println(
-            "Published to: " +
-            toPublish.topic() +
-            ", Message: " +
-            toPublish.data()
+                "Published to: " +
+                        toPublish.topic() +
+                        ", Message: " +
+                        toPublish.data()
         );
     }
 
@@ -166,14 +163,14 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     private void executePublish(Posting toPublish) {
-        var subs = new LinkedList<>(subscriptions);
-        for (Subscription subscription : subs) {
-            deliverIfTopicMatches(toPublish, subscription);
-        }
+        new HashMap<>(subscriptions).forEach(
+                (topic, subscription) -> deliverIfTopicMatches(toPublish, subscription));
     }
 
     private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
         if (subscription.matches(msg.topic())) {
+            System.out.println(msg);
+            System.out.println(subscription.subscriber);
             try {
                 subscription.subscriber().deliver(msg);
             } catch (InterruptedException e) {

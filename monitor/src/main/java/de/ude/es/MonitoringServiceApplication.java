@@ -150,10 +150,15 @@ public class MonitoringServiceApplication {
         }
     }
 
-    public static void uploadBifFile(String twinID, int size) throws UnknownHostException {
+    public static void uploadBifFile(String twinID, int size) {
         TwinStub deviceStub = new TwinStub(twinID);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
-        deviceStub.publishCommand("bitFile", "URL:" + IP_ADDRESS + "8081;SIZE:" + size + ";");
+        deviceStub.publishCommand("FLASH", "URL:" + IP_ADDRESS + "8081;SIZE:" + size + ";");
+
+        deviceStub.subscribeForDone("FLASH", posting -> {
+            System.out.println("FLASH DONE");
+            deviceStub.unsubscribeFromDone("FLASH");
+        });
     }
 }

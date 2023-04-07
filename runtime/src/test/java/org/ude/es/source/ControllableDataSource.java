@@ -56,7 +56,7 @@ public class ControllableDataSource<T> {
         private void deactivate() {
             isActive = false;
             clients.remove(this);
-            twinStub.unsubscribeFromStatus(this);
+            twinStub.unsubscribeFromStatus();
         }
 
         public boolean hasIdentifier(String identifier) {

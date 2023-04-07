@@ -36,5 +36,4 @@ public class BitFile {
         httpHeaders.set(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename("bitFile.bit").build().toString());
         return ResponseEntity.ok().headers(httpHeaders).body(Arrays.copyOfRange(bitFile, start, end));
     }
-
 }

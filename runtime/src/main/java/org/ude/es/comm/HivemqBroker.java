@@ -107,7 +107,7 @@ public class HivemqBroker implements CommunicationEndpoint {
                 unwrapPayload(pubAck.getPublish().getPayload().get()) +
                 ANSI_RESET +
                 ", retain: " +
-                ANSI_RESET +
+                ANSI_GREEN +
                 pubAck.getPublish().isRetain() +
                 ANSI_RESET
             );
@@ -120,8 +120,8 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(this.mqttDomain + "/" + topic, subscriber);
+    public void unsubscribe(String topic) {
+        unsubscribeRaw(this.mqttDomain + "/" + topic);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
+    public void unsubscribeRaw(String topic) {
         client
             .unsubscribeWith()
             .topicFilter(topic)

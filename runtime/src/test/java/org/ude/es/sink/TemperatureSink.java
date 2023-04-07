@@ -41,7 +41,7 @@ public class TemperatureSink extends JavaTwin {
     }
 
     public void disconnectDataSource() {
-        this.dataSource.unsubscribeFromData(dataId, this.subscriber);
+        this.dataSource.unsubscribeFromData(dataId);
         this.dataSource.publishDataStopRequest(dataId, this.identifier);
         this.dataSource = null;
     }

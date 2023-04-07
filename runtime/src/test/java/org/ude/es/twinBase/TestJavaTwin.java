@@ -51,7 +51,7 @@ public class TestJavaTwin {
         }
 
         public void whenUnsubscribingFromDataStart(String dataId) {
-            device.unsubscribeFromDataStartRequest(dataId, subscriber);
+            device.unsubscribeFromDataStartRequest(dataId);
         }
 
         public void whenSubscribingForDataStop(String dataId) {
@@ -59,7 +59,7 @@ public class TestJavaTwin {
         }
 
         public void whenUnsubscribingFromDataStop(String dataId) {
-            device.unsubscribeFromDataStopRequest(dataId, subscriber);
+            device.unsubscribeFromDataStopRequest(dataId);
         }
 
         public void whenSubscribingForCommand(String dataId) {
@@ -67,7 +67,7 @@ public class TestJavaTwin {
         }
 
         public void whenUnsubscribingFromCommand(String dataId) {
-            device.unsubscribeFromCommand(dataId, subscriber);
+            device.unsubscribeFromCommand(dataId);
         }
     }
 

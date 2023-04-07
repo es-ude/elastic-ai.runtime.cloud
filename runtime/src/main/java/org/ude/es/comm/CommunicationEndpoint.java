@@ -16,6 +16,7 @@ package org.ude.es.comm;
  * </p>
  */
 public interface CommunicationEndpoint {
+
     void connect(String clientId, String lwtMessage);
 
     void publish(Posting posting, boolean retain);
@@ -31,7 +32,7 @@ public interface CommunicationEndpoint {
      */
     void subscribe(String topic, Subscriber subscriber);
 
-    void unsubscribe(String topic, Subscriber subscriber);
+    void unsubscribe(String topic);
 
     /**
      * Subscribe directly to the specified topic, without any
@@ -44,7 +45,7 @@ public interface CommunicationEndpoint {
      */
     void subscribeRaw(String topic, Subscriber subscriber);
 
-    void unsubscribeRaw(String topic, Subscriber subscriber);
+    void unsubscribeRaw(String topic);
 
     String getClientIdentifier();
 

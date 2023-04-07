@@ -85,8 +85,16 @@ public class TwinStub extends Twin {
         this.subscribe(PostingType.DATA.topic(dataId), subscriber);
     }
 
-    public void unsubscribeFromData(String dataId, Subscriber subscriber) {
-        this.unsubscribe(PostingType.DATA.topic(dataId), subscriber);
+    public void unsubscribeFromData(String dataId) {
+        this.unsubscribe(PostingType.DATA.topic(dataId));
+    }
+
+    public void subscribeForDone(String dataId, Subscriber subscriber) {
+        this.subscribe(PostingType.DONE.topic(dataId), subscriber);
+    }
+
+    public void unsubscribeFromDone(String dataId) {
+        this.unsubscribe(PostingType.DONE.topic(dataId));
     }
 
     public void subscribeForStatus(Subscriber subscriber) {
@@ -94,9 +102,9 @@ public class TwinStub extends Twin {
         this.subscribe(topic, subscriber);
     }
 
-    public void unsubscribeFromStatus(Subscriber subscriber) {
+    public void unsubscribeFromStatus() {
         var topic = PostingType.STATUS.topic("");
-        this.unsubscribe(topic, subscriber);
+        this.unsubscribe(topic);
     }
 
     public void publishDataStartRequest(String dataId, String receiver) {

@@ -24,7 +24,7 @@ public class TestTwinStub {
         }
 
         public void whenUnsubscribingFromData(String dataId) {
-            device.unsubscribeFromData(dataId, subscriber);
+            device.unsubscribeFromData(dataId);
         }
 
         public void whenSubscribingForStatus() {
@@ -32,7 +32,7 @@ public class TestTwinStub {
         }
 
         public void whenUnsubscribingFromStatus() {
-            device.unsubscribeFromStatus(subscriber);
+            device.unsubscribeFromStatus();
         }
 
         public void whenAskingForDataStart(String data, String receiver) {

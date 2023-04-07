@@ -1,6 +1,5 @@
 package de.ude.es;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TwinData {

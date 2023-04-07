@@ -39,7 +39,7 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
                 if (isActive) {
                     isActive = false;
                     clients.remove(this);
-                    twinStub.unsubscribeFromStatus(this);
+                    twinStub.unsubscribeFromStatus();
                 }
             }
 

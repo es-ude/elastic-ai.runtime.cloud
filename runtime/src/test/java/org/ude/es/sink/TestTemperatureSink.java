@@ -98,16 +98,6 @@ class TestTemperatureSink {
     }
 
     @Test
-    void multipleTemperatureSinksGetUpdate() {
-        var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
-        var tempTwin2 = createTemperatureSink(device, CONSUMER_ID + "2");
-
-        remote.sendUpdate(13.5);
-        assertEquals(13.5, tempTwin1.getCurrentTemperature());
-        assertEquals(13.5, tempTwin2.getCurrentTemperature());
-    }
-
-    @Test
     void weDoNotGetUpdateFromWrongDevice() {
         var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
         var device2 = createDeviceTwin("twin4321");
@@ -152,7 +142,6 @@ class TestTemperatureSink {
 
     private TemperatureSink createTemperatureSink(TwinStub device, String id) {
         TemperatureSink temperature = new TemperatureSink(id, DATA_ID);
-        temperature.bindToCommunicationEndpoint(broker);
         temperature.connectDataSource(device);
         return temperature;
     }

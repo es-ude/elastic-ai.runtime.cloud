@@ -102,7 +102,7 @@ public class DataRequestHandler {
         private void handleRequesterTwinStub(String requesterID) {
             currentlyRequestingTwins.get(requesterID).subscriberLeaves();
             if (!currentlyRequestingTwins.get(requesterID).hasSubscriber()) {
-                currentlyRequestingTwins.get(requesterID).unsubscribeFromStatus(dataStopRequestReceiver);
+                currentlyRequestingTwins.get(requesterID).unsubscribeFromStatus();
                 currentlyRequestingTwins.remove(requesterID);
             }
         }

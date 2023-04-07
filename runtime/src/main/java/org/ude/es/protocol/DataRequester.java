@@ -60,6 +60,6 @@ public class DataRequester {
             twinStub.waitAfterCommand();
         }
         openDataRequests.remove(dataID);
-        twinStub.unsubscribeFromData(dataID, valueReceiver);
+        twinStub.unsubscribeFromData(dataID);
     }
 }

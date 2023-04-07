@@ -90,7 +90,7 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private final List<Subscription> subscriptions = new LinkedList<>();
+    private final HashMap<String, Subscription> subscriptions = new HashMap<>();
     private final String identifier;
 
     //    private final String clientID;
@@ -116,20 +116,19 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.add(s);
+        var subscription = new Subscription(topic, subscriber);
+        subscriptions.put(topic, subscription);
         System.out.println("Subscribed to: " + topic);
     }
 
     @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + "/" + topic, subscriber);
+    public void unsubscribe(String topic) {
+        unsubscribeRaw(identifier + "/" + topic);
     }
 
     @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.remove(s);
+    public void unsubscribeRaw(String topic) {
+        subscriptions.remove(topic);
         System.out.println("Unsubscribed from: " + topic);
     }
 
@@ -168,10 +167,7 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     private void executePublish(Posting toPublish) {
-        var subs = new LinkedList<>(subscriptions);
-        for (Subscription subscription : subs) {
-            deliverIfTopicMatches(toPublish, subscription);
-        }
+        subscriptions.forEach((topic, subscription) -> deliverIfTopicMatches(toPublish, subscription));
     }
 
     private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
