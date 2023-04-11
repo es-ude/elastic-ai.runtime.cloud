@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static de.ude.es.BitFile.BITFILE_CHUNK_SIZE;
-import static de.ude.es.MonitoringServiceApplication.uploadBifFile;
+import static de.ude.es.BitFile.uploadBifFile;
 
 @Controller
 public class MonitorController {

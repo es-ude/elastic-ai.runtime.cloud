@@ -169,8 +169,6 @@ public class BrokerMock implements CommunicationEndpoint {
 
     private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
         if (subscription.matches(msg.topic())) {
-            System.out.println(msg);
-            System.out.println(subscription.subscriber);
             try {
                 subscription.subscriber().deliver(msg);
             } catch (InterruptedException e) {

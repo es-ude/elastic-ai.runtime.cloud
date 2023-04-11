@@ -3,10 +3,14 @@ package de.ude.es;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.ude.es.twinBase.TwinStub;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.IP_ADDRESS;
+import static de.ude.es.MonitoringServiceApplication.monitor;
 
 @Controller
 @RequestMapping({"/bitFile"})
@@ -35,5 +39,17 @@ public class BitFile {
         httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
         httpHeaders.set(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment().filename("bitFile.bit").build().toString());
         return ResponseEntity.ok().headers(httpHeaders).body(Arrays.copyOfRange(bitFile, start, end));
+    }
+
+    public static void uploadBifFile(String twinID, int size) {
+        TwinStub deviceStub = new TwinStub(twinID);
+        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+
+        deviceStub.publishCommand("FLASH", "URL:" + IP_ADDRESS + ":8081;SIZE:" + size + ";");
+
+        deviceStub.subscribeForDone("FLASH", posting -> {
+            System.out.println("FLASH DONE");
+            deviceStub.unsubscribeFromDone("FLASH");
+        });
     }
 }

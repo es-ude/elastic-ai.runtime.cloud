@@ -64,6 +64,7 @@ public class enV5Twin extends JavaTwin {
         this.publishStatus(minimalStatus.append(Status.Parameter.MEASUREMENTS.value(measurements)));
 
         for (String measurement : measurements.split(",")) {
+            System.out.println(measurement);
             provideValue(measurement);
         }
     }

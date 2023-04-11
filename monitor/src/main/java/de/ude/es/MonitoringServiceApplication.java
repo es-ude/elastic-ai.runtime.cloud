@@ -24,7 +24,7 @@ public class MonitoringServiceApplication {
     private static final String TWIN_ID = "monitor";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
-    private static MonitorTwin monitor = null;
+    static MonitorTwin monitor = null;
     private static String IP_ADDRESS;
 
     public static void main(String[] args) {
@@ -148,17 +148,5 @@ public class MonitoringServiceApplication {
             this.value = value;
             this.updated = true;
         }
-    }
-
-    public static void uploadBifFile(String twinID, int size) {
-        TwinStub deviceStub = new TwinStub(twinID);
-        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
-
-        deviceStub.publishCommand("FLASH", "URL:" + IP_ADDRESS + "8081;SIZE:" + size + ";");
-
-        deviceStub.subscribeForDone("FLASH", posting -> {
-            System.out.println("FLASH DONE");
-            deviceStub.unsubscribeFromDone("FLASH");
-        });
     }
 }
