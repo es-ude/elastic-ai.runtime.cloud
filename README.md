@@ -86,9 +86,9 @@ The broker domain and port can be given as follows:
 
 The monitor can then be accessed locally at [http://localhost:8081](localhost.com:8081).
 
-### Docker
+### Docker Container
 
-A monitor running in a docker contaienr can be created via
+A monitor running in a docker container can be created via
 
 ```bash
 ./gradlew :monitor:jibDockerBuild

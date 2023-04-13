@@ -1,205 +1,74 @@
 # DEMO
 
-[Simplified Overview](#Simplified-Overview)
+For running the DEMO, four components are needed. An MQTT Broker, the Monitor, the EnV5 Twin, and a EnV5 Device.
 
-[Detailed Overview](#Detailed-Overview)
+The three software components can be started together by using the docker compose file. 
+For this the Twin and Monitor docker images need to be built beforehand (See [README](README.md#docker-container)). 
 
-[Simplified Device Loses Connection](#Simplified-Device-Loses-Connection)
-
-[Simplified Twin Loses Connection](#Simplified-Twin-Loses-Connection)
-
-## Simplified Overview
-
-PowerConsumption twin gets online and waits for device, when device comes online data is requested.
-After some time data is requested no longer.
-Twin Stub included in PowerConsumptionTwin.
-Requested Values combined into VALUE.
-
-```mermaid
-sequenceDiagram
-      participant dt as enV5 Twin
-      participant b as Broker
-      participant d as enV5
-
-    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
-    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
-    
-    Note over dt: WAITS FOR DEVICE
-    
-    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
-        
-    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
- 
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
-    
-    Note over d: GETS MEASUREMENT
-        
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
-    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
-    
-    Note over dt,d: ...
-    
-    dt ->> b: pub("eip://DOMAIN/enV5/STOP/Value")
-    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
+```bash
+    docker compose up
 ```
 
-## Detailed Overview
+## Communication
 
-PowerConsumption twin gets online and waits for device, when device comes online data is requested. After some time data is requested no longer.
+The diagrams show simplified, how the parties communicate with each other in the DEMO.
+
+### Status
 
 ```mermaid
 sequenceDiagram
-      participant dt as enV5 Twin
-      participant ds as enV5 Stub
-      participant b as Broker
-      participant d as enV5
+    participant twin as enV5Twin
+    participant device as enV5
+    participant monitor as Monitor
+    participant broker as Broker
 
-    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
-    dt ->> ds: subscribeForStatus
-    ds ->> b: sub("eip://DOMAIN/enV5/STATUS")
+    twin ->> broker: STATUS
+    device ->> broker: STATUS
+    monitor ->> broker: STATUS
+    broker ->> monitor: EnV5Twin STATUS
+
+    broker ->> twin: Env5 STATUS
+    twin ->> broker: UPDATED STATUS
     
-    Note over dt, ds: WAITS FOR DEVICE
-    
-    d ->> b: sub("eip://DOMAIN/enV5/START/wifiValue")
-    d ->> b: sub("eip://DOMAIN/enV5/START/sRamValue")
-    
-    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    b ->> ds: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    ds ->> dt: deviceStatus
- 
-    dt ->> ds: publishDataStartRequest
-    ds ->> b: pub("eip://DOMAIN/enV5/START/wifiValue")
-    b ->> d: pub("eip://DOMAIN/enV5/START/wifiValue")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    dt ->> ds: publishDataStartRequest
-    ds ->> b: pub("eip://DOMAIN/enV5/START/sRamValue")
-    b ->> d: pub("eip://DOMAIN/enV5/START/sRamValue")
-    
-    Note over d: GETS MEASUREMENT
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/wifiValue")
-    b ->> ds: pub("eip://DOMAIN/enV5/DATA/wifiValue")
-    ds ->> dt: setWifiValue
-    
-    Note over d: GETS MEASUREMENT
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/sRamValue")
-    b ->> ds: pub("eip://DOMAIN/enV5/DATA/sRamValue")
-    ds ->> dt: setSRamValue
-    
-    Note over dt,d: ...
-    
-    dt ->> ds: publishDataStopRequest
-    ds ->> b: pub("eip://DOMAIN/enV5/STOP/wifiValue")
-    b ->> d: pub("eip://DOMAIN/enV5/STOP/wifiValue")
-    
-    dt ->> ds: publishDataStopRequest
-    ds ->> b: pub("eip://DOMAIN/enV5/STOP/sRamValue")
-    b ->> d: pub("eip://DOMAIN/enV5/STOP/sRamValue")
-    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
+    broker ->> monitor: EnV5Twin STATUS
 ```
 
-## Simplified Device Loses Connection
+### DATA
+
+Broker removed for simplicity
 
 ```mermaid
 sequenceDiagram
-      participant dt as enV5 Twin
-      participant b as Broker
-      participant d as enV5
+    participant monitor as Monitor
+    participant twin as enV5Twin
+    participant device as enV5
 
-    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
-    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
-    
-    Note over dt: WAITS FOR DEVICE
-    
-    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
-        
-    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
- 
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    Note over d: GETS MEASUREMENT
-        
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
-    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
-    
-    Note over d: LOSES CONNECTION
-        
-    b ->> dt:  pub("eip://DOMAIN/enV5/STATUS", OFFLINE)
-      
-    Note over d: RECONNECTS
+    monitor ->> twin: START
+    twin ->> device: START
 
-    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
-        
-    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
- 
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    Note over d: GETS MEASUREMENT
-        
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
-    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
+    device ->> twin: DATA
+    twin ->> monitor: DATA
+
+    monitor ->> twin: STOP
+    twin ->> device: STOP
 ```
 
-## Simplified Twin Loses Connection
+### FLASH
+
+Broker removed for simplicity
 
 ```mermaid
 sequenceDiagram
-      participant dt as enV5 Twin
-      participant b as Broker
-      participant d as enV5
+    participant monitor as Monitor
+    participant twin as enV5Twin
+    participant device as enV5
 
-    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
-    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
-    
-    Note over dt: WAITS FOR DEVICE
-    
-    d ->> b: sub("eip://DOMAIN/enV5/START/Value")
-        
-    d ->> b: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
-    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
- 
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    Note over d: GETS MEASUREMENT
-        
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
-    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
-    
-    Note over dt: LOSES CONNECTION
-        
-    b ->> d:  pub("eip://DOMAIN/enV5Twin/STATUS", OFFLINE)
-        
-    d ->> b: unsub("eip://DOMAIN/enV5Twin/STATUS")
-            
-    Note over d: STOPS PUBLISHING DATA
-      
-    Note over dt: RECONNECTS
+    monitor ->> twin: FLASH
+    twin ->> device: FLASH
 
+    device ->> monitor: REQUEST
+    monitor ->> device: BITFILE
 
-    dt ->> b: pub("eip://DOMAIN/enV5Twin/STATUS", ONLINE)
-    dt ->> b: sub("eip://DOMAIN/enV5/STATUS")
-    
-    b ->> dt: pub("eip://DOMAIN/enV5/STATUS", ONLINE)
- 
-    dt ->> b: pub("eip://DOMAIN/enV5/START/Value")
-    b ->> d: pub("eip://DOMAIN/enV5/START/Value")
-    d ->> b: sub("eip://DOMAIN/enV5Twin/STATUS")
-    
-    Note over d: GETS MEASUREMENT
-        
-    d ->> b: pub("eip://DOMAIN/enV5/DATA/Value")
-    b ->> dt: pub("eip://DOMAIN/enV5/DATA/Value")
+    device ->> twin: DONE
+    twin ->> monitor: DONE
 ```
