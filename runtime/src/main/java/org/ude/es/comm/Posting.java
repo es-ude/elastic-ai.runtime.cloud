@@ -2,6 +2,10 @@ package org.ude.es.comm;
 
 public record Posting(String topic, String data) {
 
+    public Posting(String topic) {
+        this(topic, "");
+    }
+
     public static Posting createCommand(String command, String value) {
         return new Posting(PostingType.COMMAND.topic(command), value);
     }

@@ -88,6 +88,7 @@ public class Checker {
         public void publish(Posting topic, boolean retain) {
             super.publish(topic, retain);
         }
+
     }
 
     public void givenBroker() {
@@ -106,10 +107,14 @@ public class Checker {
         whenPostingIsPublishedAtBroker(topic, "");
     }
 
+    public void whenPostingIsPublishedAtBroker(String topic, String data, Posting expected) {
+        this.expected = expected;
+        broker.publish(new Posting(topic, data), false);
+    }
+
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
         String fullTopic = broker.getClientIdentifier() + "/" + topic;
-        expected = new Posting(fullTopic, data);
-        broker.publish(new Posting(topic, data), false);
+        whenPostingIsPublishedAtBroker(topic, data, new Posting(fullTopic, data));
     }
 
     //endregion testing with broker
@@ -135,8 +140,8 @@ public class Checker {
         }
 
         @Override
-        public void publish(Posting topic, boolean retain) {
-            super.publish(topic, retain);
+        public void publish(Posting posting, boolean retain) {
+            super.publish(posting, retain);
         }
     }
 
