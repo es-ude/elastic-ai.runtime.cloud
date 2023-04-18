@@ -26,13 +26,13 @@ public class enV5Twin extends JavaTwin {
 
     private void setupDeviceStub() {
         enV5.addWhenDeviceGoesOnline(data ->
-                System.out.println(identifier + " online.")
+                System.out.println("Device " + enV5.getIdentifier() + " online.")
         );
         enV5.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
         enV5.addWhenDeviceGoesOnline(data -> enV5.waitAfterCommand());
 
         enV5.addWhenDeviceGoesOffline(data ->
-                System.out.println(identifier + " offline.")
+                System.out.println("Device " + enV5.getIdentifier() + " offline.")
         );
 
         setupFlashCommand();
@@ -61,10 +61,9 @@ public class enV5Twin extends JavaTwin {
                 Status.Parameter.MEASUREMENTS.getKey()) + Status.Parameter.MEASUREMENTS.getKey().length() + 1);
         measurements = measurements.substring(0, measurements.indexOf(";"));
 
-        this.publishStatus(minimalStatus.append(Status.Parameter.MEASUREMENTS.value(measurements)));
+        this.publishStatus(new Status(minimalStatus).append(Status.Parameter.MEASUREMENTS.value(measurements)));
 
         for (String measurement : measurements.split(",")) {
-            System.out.println(measurement);
             provideValue(measurement);
         }
     }
@@ -89,5 +88,5 @@ public class enV5Twin extends JavaTwin {
                 dataRequestHandler::newDataToPublish
         );
     }
-
+        
 }

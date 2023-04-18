@@ -67,6 +67,10 @@ public class Status {
         }
     }
 
+    public Status(Status status) {
+        this.status = status.status;
+    }
+
     public Status(String ID) {
         status = Parameter.ID.value(ID).get();
     }
