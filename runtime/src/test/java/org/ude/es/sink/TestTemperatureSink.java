@@ -171,9 +171,8 @@ class TestTemperatureSink {
     }
 
     private TwinForDeviceWithTemperatureSensor createRemoteTwin() {
-        TwinForDeviceWithTemperatureSensor remoteTwin = new TwinForDeviceWithTemperatureSensor(
-            SENSOR_ID
-        );
+        TwinForDeviceWithTemperatureSensor remoteTwin =
+            new TwinForDeviceWithTemperatureSensor(SENSOR_ID);
         remoteTwin.bindToCommunicationEndpoint(broker);
         return remoteTwin;
     }
