@@ -12,7 +12,7 @@ public class minimalDigitalTwin extends ExecutableJavaTwin {
     }
 
     public minimalDigitalTwin(String identifier) {
-        super(identifier);
+        super(identifier + "Twin");
         twinStub = new TwinStub(identifier);
     }
 }

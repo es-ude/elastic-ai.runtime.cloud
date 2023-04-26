@@ -7,7 +7,7 @@ After these steps the class should resample [minimalDigitalTwin](../runtime/src/
 
 1. A Java Class needs to be created, which extends from ExecutableJavaTwin
 2. A main method needs to be added, which calls the startJavaTwin in ExecutableJavaTwin
-3. A Twin Stub must be created in the initializer
+3. A Twin Stub must be created in the initializer (make sure the Device and Twin have different identifiers)
 4. Lastly, the Stub needs to be bound to the broker
 
 This minimal Twin on its own has no real functionality.

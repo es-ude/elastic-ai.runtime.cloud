@@ -18,7 +18,7 @@ public class enV5Twin extends ExecutableJavaTwin {
     private int bitfilePosition = 0;
 
     public enV5Twin(String identifier) {
-        super(identifier);
+        super(identifier + "Twin");
         enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
     }
 
