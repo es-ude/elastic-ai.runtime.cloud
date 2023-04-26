@@ -6,14 +6,15 @@ import org.springframework.web.bind.annotation.*;
 import org.ude.es.twinBase.TwinStub;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.IP_ADDRESS;
 import static de.ude.es.MonitoringServiceApplication.monitor;
 
 @Controller
-@RequestMapping({"/bitFile"})
+@RequestMapping({"/getfile"})
 public class BitFile {
 
     public static final int BITFILE_CHUNK_SIZE = 1024;
@@ -25,7 +26,6 @@ public class BitFile {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
         byte[] bitFile = bitFiles.get(name);
-        
         int start = dataId * BITFILE_CHUNK_SIZE;
         int end = dataId * BITFILE_CHUNK_SIZE + BITFILE_CHUNK_SIZE;
 
@@ -41,11 +41,16 @@ public class BitFile {
         return ResponseEntity.ok().headers(httpHeaders).body(Arrays.copyOfRange(bitFile, start, end));
     }
 
-    public static void uploadBifFile(String twinID, int size) {
+    public static void uploadBitFile ( String twinID, int size, String name ) {
         TwinStub deviceStub = new TwinStub(twinID);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
-        deviceStub.publishCommand("FLASH", "URL:" + IP_ADDRESS + ":8081;SIZE:" + size + ";");
+        try {
+            deviceStub.publishCommand("FLASH",
+                                      "URL:http://" + Inet4Address.getLocalHost( ).getHostAddress( )+":8081"+"/getfile/"+name +"/;SIZE:" + size + ";" );
+        } catch( UnknownHostException e ) {
+            e.printStackTrace( );
+        }
 
         deviceStub.subscribeForDone("FLASH", posting -> {
             System.out.println("FLASH DONE");
