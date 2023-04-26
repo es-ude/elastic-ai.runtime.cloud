@@ -2,10 +2,10 @@ package org.ude.es.twinImplementations;
 
 import static java.lang.Thread.sleep;
 
-import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.twinBase.ExecutableJavaTwin;
 import org.ude.es.twinBase.TwinStub;
 
-public class IntegrationTestTwinForEnV5 extends JavaTwin {
+public class IntegrationTestTwinForEnV5 extends ExecutableJavaTwin {
 
     private final TwinStub enV5;
 

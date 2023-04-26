@@ -4,7 +4,7 @@ plugins {
 
 group 'org.ude.es'
 version '1.0'
-mainClassName = "org.ude.es.Main"
+mainClassName = "org.ude.es.twinImplementations.enV5Twin"
 
 dependencies {
     implementation 'com.hivemq:hivemq-mqtt-client:1.3.0'

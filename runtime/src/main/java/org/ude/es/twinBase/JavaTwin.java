@@ -5,7 +5,7 @@ import org.ude.es.comm.*;
 public class JavaTwin extends Twin {
 
     public JavaTwin(String identifier) {
-        super(identifier);
+        super(identifier + "Twin");
     }
 
     protected final Status minimalStatus = new Status(this.identifier)

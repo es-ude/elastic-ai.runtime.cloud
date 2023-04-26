@@ -3,18 +3,22 @@ package org.ude.es.twinImplementations;
 import org.ude.es.comm.Status;
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
+import org.ude.es.twinBase.ExecutableJavaTwin;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
 
-public class enV5Twin extends JavaTwin {
+public class enV5Twin extends ExecutableJavaTwin {
+
+    public static void main(String[] args) throws InterruptedException {
+        startJavaTwin(args, "enV5");
+    }
 
     private static final int WAIT_AFTER_COMMAND = 1000;
     private final TwinStub enV5;
     private int bitfilePosition = 0;
 
     public enV5Twin(String identifier) {
-        super(identifier + "Twin");
-
+        super(identifier);
         enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
     }
 
