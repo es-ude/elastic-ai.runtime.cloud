@@ -27,7 +27,8 @@ public class Main {
         monitor = new MonitorTwin("monitor");
         monitor.bindToCommunicationEndpoint(createBrokerWithKeepalive());
 
-        MonitoringServiceApplication serviceApplication = new MonitoringServiceApplication();
+        MonitoringServiceApplication serviceApplication =
+            new MonitoringServiceApplication();
         serviceApplication.startServer(args);
     }
 
