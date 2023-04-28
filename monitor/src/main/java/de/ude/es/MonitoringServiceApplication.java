@@ -36,7 +36,7 @@ public class MonitoringServiceApplication {
     private static String IP_ADDRESS;
 
     public static void main(String[] args) {
-        IP_ADDRESS = System.getenv("HOST-IP");
+        IP_ADDRESS = System.getenv("HOST_IP");
 
         if (IP_ADDRESS == null) {
             try (final DatagramSocket socket = new DatagramSocket()) {

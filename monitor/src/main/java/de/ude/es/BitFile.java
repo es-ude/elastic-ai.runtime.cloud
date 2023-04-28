@@ -45,12 +45,8 @@ public class BitFile {
         TwinStub deviceStub = new TwinStub(twinID);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
-        try {
-            deviceStub.publishCommand("FLASH",
-                                      "URL:http://" + Inet4Address.getLocalHost( ).getHostAddress( )+":8081"+"/getfile/"+name +"/;SIZE:" + size + ";" );
-        } catch( UnknownHostException e ) {
-            e.printStackTrace( );
-        }
+        deviceStub.publishCommand("FLASH", "URL:http://" + System.getenv("HOST_IP") + ":8081" + "/getfile/" + name +"/;SIZE:" + size + ";" );
+
 
         deviceStub.subscribeForDone("FLASH", posting -> {
             System.out.println("FLASH DONE");
