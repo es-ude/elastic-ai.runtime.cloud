@@ -1,0 +1,46 @@
+name: "Release Docker Image"
+
+on:
+  release:
+  workflow_dispatch:
+
+jobs:
+
+  # When a release is done, a new docker Image is build with the release and published to the container registry
+  pushImage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Action
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build Docker Image
+        run: ./gradlew jibDockerBuild
+
+      - name: Tag Runtime
+        run: docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime
+
+      - name: Tag Monitor
+        run: docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: es-ude
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Runtime
+        run: docker push ghcr.io/es-ude/elastic-ai.runtime:latest
+
+      - name: Push Monitor
+        run: docker push ghcr.io/es-ude/elastic-ai.monitor:latest
