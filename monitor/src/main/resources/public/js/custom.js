@@ -17,7 +17,7 @@ async function uploadFile(button) {
     switch (response.status) {
         case 200:
             let fileName = file.value.split("\\")
-            alert("BitFile received successfully to.");
+            alert("BitFile received successfully.");
             break;
         case 400:
             alert("No file selected.");

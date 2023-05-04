@@ -65,7 +65,7 @@ public class BitFile {
 
         deviceStub.publishCommand(
             "FLASH",
-            "URL:http://192.168.203.99" +
+            "URL:http://192.168.178.24" +
             ":8081" +
             "/getfile/" +
             name +

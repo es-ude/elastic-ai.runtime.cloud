@@ -28,21 +28,33 @@ public class MonitorTwin extends JavaTwin {
 
         @Override
         public void deliver(Posting posting) {
-            String twinID = posting.data().substring(posting.data().indexOf(
-                    Status.Parameter.ID.getKey()) + Status.Parameter.ID.getKey().length() + 1);
+            String twinID = posting
+                .data()
+                .substring(
+                    posting.data().indexOf(Status.Parameter.ID.getKey()) +
+                    Status.Parameter.ID.getKey().length() +
+                    1
+                );
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            String twinType = posting.data().substring(posting.data().indexOf(
-                    Status.Parameter.TYPE.getKey()) + Status.Parameter.TYPE.getKey().length() + 1);
+            String twinType = posting
+                .data()
+                .substring(
+                    posting.data().indexOf(Status.Parameter.TYPE.getKey()) +
+                    Status.Parameter.TYPE.getKey().length() +
+                    1
+                );
             twinType = twinType.substring(0, twinType.indexOf(";"));
 
-            boolean twinActive = posting.data().contains(Status.State.ONLINE.get());
+            boolean twinActive = posting
+                .data()
+                .contains(Status.State.ONLINE.get());
 
             System.out.printf(
-                    "Device of type %s with id %s online: %b.%n",
-                    twinType,
-                    twinID,
-                    twinActive
+                "Device of type %s with id %s online: %b.%n",
+                twinType,
+                twinID,
+                twinActive
             );
 
             if (!twinType.equals(Status.Type.TWIN.get())) {
@@ -55,11 +67,24 @@ public class MonitorTwin extends JavaTwin {
             }
 
             if (twinActive) {
-                String measurements = posting.data().substring(posting.data().indexOf(
-                        Status.Parameter.MEASUREMENTS.get()) + Status.Parameter.MEASUREMENTS.get().length() + 1);
-                measurements = measurements.substring(0, measurements.indexOf(";"));
+                int measurementsIndex = posting
+                    .data()
+                    .indexOf(Status.Parameter.MEASUREMENTS.get());
+                if (measurementsIndex >= 0) {
+                    String measurements = posting
+                        .data()
+                        .substring(
+                            measurementsIndex +
+                            Status.Parameter.MEASUREMENTS.get().length() +
+                            1
+                        );
+                    measurements =
+                        measurements.substring(0, measurements.indexOf(";"));
 
-                twins.addOrUpdateTwin(twinID, measurements.split(","));
+                    twins.addOrUpdateTwin(twinID, measurements.split(","));
+                } else {
+                    twins.addOrUpdateTwin(twinID, null);
+                }
             } else {
                 TwinData twin = twins.getTwin(twinID);
                 if (twin != null) {

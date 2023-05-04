@@ -13,7 +13,7 @@ public class TwinData {
         this.ID = ID;
         this.name = name;
         this.active = true;
-        this.sensors = new String[]{};
+        this.sensors = null;
     }
 
     public boolean isActive() {
@@ -45,7 +45,13 @@ public class TwinData {
     }
 
     public List<String> getAvailableSensors() {
-        return List.of(sensors);
+        List<String> sensorList;
+        try {
+            sensorList = List.of(sensors);
+        } catch (Exception exception) {
+            sensorList = null;
+        }
+        return sensorList;
     }
 
     public String toString() {

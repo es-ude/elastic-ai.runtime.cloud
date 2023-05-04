@@ -35,53 +35,22 @@
         </div>
     </div>
 </section>
-<section class="d-flex flex-column align-items-center pt-3" id="section-sensors">
+<section class="d-flex flex-column align-items-center pt-3" id="section-sensors"
+         th:if="${twin.getAvailableSensors() != null}">
     <h4>Measurements</h4>
-    <div id="information">
-        <div id="twinID" th:text="${twin.getId()}"></div>
-        <div id="availableSensors" th:text="${twin.getAvailableSensors()}"></div>
-    </div>
-
     <div class="d-grid container gap-2" id="sensors">
-        <script>
-            let measurementsDiv = document.createElement("div")
-
-            let twinID = document.getElementById("twinID").innerHTML
-
-            function addSensor(value) {
-                let valueDiv = document.createElement("div")
-                valueDiv.innerHTML =
-                    '<div class="row text-center">' +
-                    '   <div class="input-group">' +
-                    '       <span class="input-group-text" id="label-' + value + '">' + value.toUpperCase() + '</span>' +
-                    '       <input type="text" class="form-control" aria-label="' + value + '" ' +
-                    '           aria-describedby="label-' + value + '" id="' + value + '" readonly>' +
-                    '   </div>' +
-                    '</div>' +
-                    '</br>'
-
-                measurementsDiv.appendChild(valueDiv)
-
-                let valueScript = document.createElement("script")
-                valueScript.type = 'text/javascript';
-                valueScript.appendChild(document.createTextNode('setValueUpdate("' + twinID + '", "' + value + '", "' + value + '");'))
-                measurementsDiv.appendChild(valueScript)
-            }
-
-            if (document.getElementById("availableSensors").innerHTML.includes(",")) {
-                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replaceAll(",", "#")
-                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replace("[", "").replace("]", "").replaceAll(" ", "")
-                document.getElementById("availableSensors").innerHTML.split("#").forEach(addSensor)
-                document.getElementById("availableSensors").innerHTML = document.getElementById("availableSensors").innerHTML.replaceAll("#", "")
-            } else {
-                document.getElementById("section-sensors").innerHTML = ""
-            }
-            document.getElementById("sensors").appendChild(measurementsDiv)
-            document.getElementById("information").remove()
-        </script>
-
+        <div class="row text-center" th:each="sensor: ${twin.getAvailableSensors()}">
+            <div class="input-group">
+                <span class="input-group-text" th:id="${'label-' + sensor.toLowerCase()}"
+                      th:text="${sensor.toUpperCase()}"></span>
+                <input class="form-control" th:id="${sensor.toLowerCase()}" th:attr="aria-label=${sensor.toLowerCase()}"
+                       type="text" readonly>
+                <script th:inline="javascript">
+                    setValueUpdate([[${twin.getId()}]], [[${sensor}]], [[${sensor}]]);
+                </script>
+            </div>
+        </div>
     </div>
-
 </section>
 <section class="d-flex flex-column align-items-center pt-3">
     <h4>FPGA</h4>

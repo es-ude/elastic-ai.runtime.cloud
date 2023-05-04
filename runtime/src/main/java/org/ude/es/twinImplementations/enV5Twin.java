@@ -77,6 +77,9 @@ public class enV5Twin extends ExecutableJavaTwin {
                 flashInProgress = false;
                 publishDone(cmd, posting.data());
                 enV5.unsubscribeFromDone(cmd);
+                for (DataRequester dataRequester : availableDataRequester) {
+                    dataRequester.startRequestingData();
+                }
             }
         );
     }
