@@ -6,7 +6,7 @@ The three software components can be started together by using the docker compos
 For this the Twin and Monitor docker images need to be built beforehand (See [README](../README.md#docker-container)).
 
 ```bash
-    docker compose up
+docker compose up
 ```
 
 ## Communication
