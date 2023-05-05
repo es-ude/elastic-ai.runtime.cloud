@@ -13,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -33,11 +32,10 @@ public class MonitoringServiceApplication {
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
     static MonitorTwin monitor = null;
-    private static String IP_ADDRESS;
+    public static String IP_ADDRESS;
 
     public static void main(String[] args) {
         IP_ADDRESS = System.getenv("HOST_IP");
-
         if (IP_ADDRESS == null) {
             try (final DatagramSocket socket = new DatagramSocket()) {
                 socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
@@ -46,6 +44,7 @@ public class MonitoringServiceApplication {
                 throw new RuntimeException(e);
             }
         }
+        IP_ADDRESS = IP_ADDRESS.strip();
 
         try {
             Namespace arguments = parseArguments(args);
@@ -62,37 +61,37 @@ public class MonitoringServiceApplication {
     }
 
     private static Namespace parseArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-                .newFor("elastic-ai.runtime.monitor")
-                .build()
-                .defaultHelp(true)
-                .description(
-                        "Service for monitoring digital twins in the elastic-ai.runtime"
-                );
+            .newFor("elastic-ai.runtime.monitor")
+            .build()
+            .defaultHelp(true)
+            .description(
+                "Service for monitoring digital twins in the elastic-ai.runtime"
+            );
         defineBrokerArgumentGroup(parser);
         return parser.parseArgs(args);
     }
 
     private static void defineBrokerArgumentGroup(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
         brokerSpecification
-                .addArgument("-b", "--broker-address")
-                .help("Broker Address")
-                .setDefault("localhost");
+            .addArgument("-b", "--broker-address")
+            .help("Broker Address")
+            .setDefault("localhost");
         brokerSpecification
-                .addArgument("-p", "--broker-port")
-                .type(Integer.class)
-                .help("Broker Port")
-                .setDefault(1883);
+            .addArgument("-p", "--broker-port")
+            .type(Integer.class)
+            .help("Broker Port")
+            .setDefault(1883);
     }
 
     private static MonitorTwin createMonitorTwin() {
         MonitorTwin monitor = new MonitorTwin(TWIN_ID);
         monitor.bindToCommunicationEndpoint(
-                new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
+            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
         return monitor;
     }
@@ -102,19 +101,19 @@ public class MonitoringServiceApplication {
     }
 
     public static float getLatestMeasurement(String deviceId, String sensorId)
-            throws TimeoutException {
+        throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
 
         TwinStub deviceStub = new TwinStub(deviceId);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
         DataRequester deviceRequest = new DataRequester(
-                deviceStub,
-                sensorId,
-                monitor.getIdentifier()
+            deviceStub,
+            sensorId,
+            monitor.getIdentifier()
         );
         deviceRequest.addWhenNewDataReceived(data ->
-                handleNewData(deviceRequest, latestValue, data)
+            handleNewData(deviceRequest, latestValue, data)
         );
         deviceRequest.startRequestingData();
 
@@ -131,9 +130,9 @@ public class MonitoringServiceApplication {
     }
 
     private static void handleNewData(
-            DataRequester requester,
-            UpdatedValueStorage<Float> latestValue,
-            String input
+        DataRequester requester,
+        UpdatedValueStorage<Float> latestValue,
+        String input
     ) {
         requester.stopRequestingData();
         latestValue.setValue(Float.parseFloat(input));

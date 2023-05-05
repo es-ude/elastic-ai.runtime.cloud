@@ -62,18 +62,15 @@ public class BitFile {
     public static void uploadBitFile(String twinID, int size, String name) {
         TwinStub deviceStub = new TwinStub(twinID);
         deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
-
         deviceStub.publishCommand(
             "FLASH",
-            "URL:http://192.168.178.24" +
-            ":8081" +
-            "/getfile/" +
-            name +
-            "/;SIZE:" +
-            size +
-            ";"
+            String.format(
+                "URL:http://%s:8081/getfile/%s/;SIZE:%d;",
+                MonitoringServiceApplication.IP_ADDRESS,
+                name,
+                size
+            )
         );
-
         deviceStub.subscribeForDone(
             "FLASH",
             posting -> {

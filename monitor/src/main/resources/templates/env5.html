@@ -39,14 +39,16 @@
          th:if="${twin.getAvailableSensors() != null}">
     <h4>Measurements</h4>
     <div class="d-grid container gap-2" id="sensors">
-        <div class="row text-center" th:each="sensor: ${twin.getAvailableSensors()}">
+        <div class="row text-center" th:each="sensor, iState: ${twin.getAvailableSensors()}">
             <div class="input-group">
                 <span class="input-group-text" th:id="${'label-' + sensor.toLowerCase()}"
                       th:text="${sensor.toUpperCase()}"></span>
                 <input class="form-control" th:id="${sensor.toLowerCase()}" th:attr="aria-label=${sensor.toLowerCase()}"
                        type="text" readonly>
                 <script th:inline="javascript">
-                    setValueUpdate([[${twin.getId()}]], [[${sensor}]], [[${sensor}]]);
+                    setTimeout(function() {
+                        setValueUpdate([[${twin.getId()}]], [[${sensor}]], [[${sensor}]]);
+                    }, [[${iState.index}]]*1000)
                 </script>
             </div>
         </div>
