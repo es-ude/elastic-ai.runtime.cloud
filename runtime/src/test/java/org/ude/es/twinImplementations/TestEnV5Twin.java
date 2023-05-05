@@ -17,18 +17,43 @@ public class TestEnV5Twin {
     private static class EnV5Checker extends Checker {
 
         public void whenDevicePublishedStatus() {
-            expected = new Posting(DOMAIN + "/" + twinID + PostingType.STATUS.topic(""),
+            expected =
+                new Posting(
+                    DOMAIN + "/" + twinID + PostingType.STATUS.topic(""),
                     new Status(twinID)
-                            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                            .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
-                            .append(Status.Parameter.MEASUREMENTS.value("value1,value2")).get());
-            javaTwin.publishStatus(new Status(deviceID)
-                    .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
-                    .append(Status.Parameter.MEASUREMENTS.value("value1,value2")));
+                        .append(
+                            Status.Parameter.TYPE.value(Status.Type.TWIN.get())
+                        )
+                        .append(
+                            Status.Parameter.STATE.value(
+                                Status.State.ONLINE.get()
+                            )
+                        )
+                        .append(
+                            Status.Parameter.MEASUREMENTS.value("value1,value2")
+                        )
+                        .get()
+                );
+            javaTwin.publishStatus(
+                new Status(deviceID)
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+                    .append(
+                        Status.Parameter.MEASUREMENTS.value("value1,value2")
+                    )
+            );
         }
 
         public void whenFlashIsPublished() {
-            expected = new Posting(DOMAIN + "/" + deviceID + PostingType.COMMAND.topic("FLASH"), "POSITION:0;");
+            expected =
+                new Posting(
+                    DOMAIN +
+                    "/" +
+                    deviceID +
+                    PostingType.COMMAND.topic("FLASH"),
+                    "POSITION:0;"
+                );
             whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "", expected);
         }
     }
@@ -61,9 +86,11 @@ public class TestEnV5Twin {
         checker.thenPostingIsDelivered();
 
         checker.givenSubscriptionAtBrokerFor(twinID + "/DONE/FLASH");
-        checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH", "",
-                new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", ""));
+        checker.whenPostingIsPublishedAtBroker(
+            deviceID + "/DONE/FLASH",
+            "",
+            new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", "")
+        );
         checker.thenPostingIsDelivered();
     }
-
 }

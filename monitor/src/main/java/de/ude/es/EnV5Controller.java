@@ -41,10 +41,11 @@ public class EnV5Controller {
 
         if (name.contains("enV5")) {
             try {
-                float latest = MonitoringServiceApplication.getLatestMeasurement(
-                    name,
-                    dataId
-                );
+                float latest =
+                    MonitoringServiceApplication.getLatestMeasurement(
+                        name,
+                        dataId
+                    );
 
                 return new SensorData(name, dataId, latest);
             } catch (TimeoutException t) {

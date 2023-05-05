@@ -1,5 +1,9 @@
 package de.ude.es;
 
+import static de.ude.es.BitFile.uploadBitFile;
+
+import java.io.IOException;
+import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -7,11 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.io.IOException;
-import java.util.Objects;
-
-import static de.ude.es.BitFile.uploadBitFile;
 
 @Controller
 public class MonitorController {
@@ -32,17 +31,26 @@ public class MonitorController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("twinID") String twinID) throws IOException {
-        String fileName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0];
+    public ResponseEntity<?> handleFileUpload(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("twinID") String twinID
+    ) throws IOException {
+        String fileName = Objects
+            .requireNonNull(file.getOriginalFilename())
+            .split("\\.")[0];
         System.out.println(fileName);
         BitFile.bitFiles.put(fileName, file.getBytes());
 
-        System.out.println("BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET);
+        System.out.println(
+            "BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET
+        );
 
         try {
-            uploadBitFile( twinID, file.getBytes( ).length , fileName);
+            uploadBitFile(twinID, file.getBytes().length, fileName);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         }
         return ResponseEntity.ok("fileName");
     }

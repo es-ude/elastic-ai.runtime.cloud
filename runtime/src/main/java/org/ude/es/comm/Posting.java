@@ -1,7 +1,6 @@
 package org.ude.es.comm;
 
 public record Posting(String topic, String data) {
-
     public Posting(String topic) {
         this(topic, "");
     }
@@ -27,10 +26,7 @@ public record Posting(String topic, String data) {
     }
 
     public static Posting createStatus(String message) {
-        return new Posting(
-            PostingType.STATUS.topic(""),
-            message
-        );
+        return new Posting(PostingType.STATUS.topic(""), message);
     }
 
     public Posting cloneWithTopicAffix(String affix) {

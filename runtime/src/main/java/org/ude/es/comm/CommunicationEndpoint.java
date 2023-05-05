@@ -16,7 +16,6 @@ package org.ude.es.comm;
  * </p>
  */
 public interface CommunicationEndpoint {
-
     void connect(String clientId, String lwtMessage);
 
     void publish(Posting posting, boolean retain);

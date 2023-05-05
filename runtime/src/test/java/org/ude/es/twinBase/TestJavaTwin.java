@@ -30,8 +30,8 @@ public class TestJavaTwin {
 
         public void whenPublishingDone(String dataId, String value) {
             String topic =
-                    device.getDomainAndIdentifier() +
-                            PostingType.DONE.topic(dataId);
+                device.getDomainAndIdentifier() +
+                PostingType.DONE.topic(dataId);
             expected = new Posting(topic, value);
             device.publishDone(dataId, value);
         }
@@ -40,10 +40,17 @@ public class TestJavaTwin {
             String topic =
                 device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             expected =
-                new Posting(topic, "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;");
-            device.publishStatus(new Status(device.getIdentifier())
+                new Posting(
+                    topic,
+                    "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;"
+                );
+            device.publishStatus(
+                new Status(device.getIdentifier())
                     .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                    .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+            );
         }
 
         public void whenSubscribingForDataStart(String dataId) {

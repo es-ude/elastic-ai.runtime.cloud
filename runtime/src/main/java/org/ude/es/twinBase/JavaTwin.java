@@ -9,14 +9,14 @@ public class JavaTwin extends Twin {
     }
 
     protected final Status minimalStatus = new Status(this.identifier)
-            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-            .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
+        .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+        .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
 
     @Override
     protected void executeOnBindPrivate() {
         Status lwtMessage = new Status(this.identifier)
-                .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
+            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+            .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
         this.endpoint.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
         executeOnBind();
@@ -34,7 +34,10 @@ public class JavaTwin extends Twin {
         this.publish(Posting.createDone(command, value));
     }
 
-    public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
+    public void subscribeForDataStartRequest(
+        String dataId,
+        Subscriber subscriber
+    ) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
 
@@ -42,7 +45,10 @@ public class JavaTwin extends Twin {
         this.unsubscribe(PostingType.START.topic(dataId));
     }
 
-    public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
+    public void subscribeForDataStopRequest(
+        String dataId,
+        Subscriber subscriber
+    ) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 

@@ -44,11 +44,7 @@ public class HivemqBroker implements CommunicationEndpoint {
         client = blockingClient.toAsync();
     }
 
-    public HivemqBroker(
-        String mqttDomain,
-        String brokerIp,
-        int brokerPort
-    ) {
+    public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort) {
         this.mqttDomain = fixDomain(mqttDomain);
         this.brokerIp = brokerIp;
         this.brokerPort = brokerPort;

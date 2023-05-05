@@ -2,7 +2,7 @@
 
 This guide explains how to create a simple digital twin for your device.
 
-With four steps the minimal setup for a Digital Twin can be done. 
+With four steps the minimal setup for a Digital Twin can be done.
 After these steps the class should resample [minimalDigitalTwin](../runtime/src/main/java/org/ude/es/twinImplementations/minimalDigitalTwin.java).
 
 1. A Java Class needs to be created, which extends from ExecutableJavaTwin
@@ -35,24 +35,28 @@ The Data Request Handler can be used to process data requests from other twins m
 Normally, these two are combined to process the request directed to the twin, which is then forwarded to the device.
 
 To do this, a Data Requester and a Data Request Handler must be created.
+
 ```Java
         DataRequester dataRequester = new DataRequester(enV5, dataID, this.identifier);
         DataRequestHandler dataRequestHandler = new DataRequestHandler(this, dataID);
 ```
 
 The start and stop requests received by the request handler must be forwarded to the data requester.
+
 ```Java
         dataRequestHandler.addWhenStartRequestingData(dataRequester::startRequestingData);
         dataRequestHandler.addWhenStopRequestingData(dataRequester::stopRequestingData);
 ```
 
 When the data requester receives new data, it must be forwarded to the data request handler.
+
 ```Java
         dataRequester.addWhenNewDataReceived(dataRequestHandler::newDataToPublish);
 ```
 
 Optionally, a pause can be inserted to avoid overloading the device with requests.
 For this, however, the pause time must be set when initialising the stub.
+
 ```Java
         new TwinStub(identifier, [wait time]);
 

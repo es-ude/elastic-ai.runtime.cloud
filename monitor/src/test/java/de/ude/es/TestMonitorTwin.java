@@ -27,7 +27,10 @@ public class TestMonitorTwin {
 
     @Test
     void testTwinCanReportItsId() {
-        assertEquals(DOMAIN + "/" + MONITOR_ID, monitorTwin.getDomainAndIdentifier());
+        assertEquals(
+            DOMAIN + "/" + MONITOR_ID,
+            monitorTwin.getDomainAndIdentifier()
+        );
     }
 
     @Test
@@ -38,20 +41,32 @@ public class TestMonitorTwin {
     @Test
     void testTwinListIsUpdatedOnLeave() {
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
-        broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
-                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
+        broker.publish(
+            new Posting(
+                dummyTwin.getIdentifier() + "/STATUS",
+                "ID:" + dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"
+            ),
+            true
+        );
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
     }
 
     @Test
     void testTwinListIsUpdatedOnReenter() {
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
-        broker.publish(new Posting(dummyTwin.getIdentifier() + "/STATUS", "ID:" +
-                dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"), true);
+        broker.publish(
+            new Posting(
+                dummyTwin.getIdentifier() + "/STATUS",
+                "ID:" + dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"
+            ),
+            true
+        );
         assertEquals(0, monitorTwin.getTwinList().getActiveTwins().size());
-        dummyTwin.publishStatus(new Status(dummyTwin.getIdentifier())
+        dummyTwin.publishStatus(
+            new Status(dummyTwin.getIdentifier())
                 .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
+                .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
+        );
         assertEquals(1, monitorTwin.getTwinList().getTwins().size());
     }
 

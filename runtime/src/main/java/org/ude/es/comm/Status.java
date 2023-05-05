@@ -14,7 +14,7 @@ public class Status {
 
         private final String state;
 
-        State (String state) {
+        State(String state) {
             this.state = state;
         }
 
@@ -29,7 +29,7 @@ public class Status {
 
         private final String type;
 
-        Type (String type) {
+        Type(String type) {
             this.type = type;
         }
 
@@ -61,8 +61,7 @@ public class Status {
         }
 
         public String get() {
-            if (value == null)
-                return parameter;
+            if (value == null) return parameter;
             return getParameter(parameter, value);
         }
     }

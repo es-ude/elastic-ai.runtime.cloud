@@ -1,14 +1,14 @@
 package org.ude.es.protocol;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
 import org.ude.es.twinBase.TwinStub;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DataRequester {
+
     private final TwinStub twinStub;
     private final String dataID;
     private final String requesterID;
@@ -18,6 +18,7 @@ public class DataRequester {
     List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
 
     private class ValueReceiver implements Subscriber {
+
         @Override
         public void deliver(Posting posting) {
             for (Twin.DataExecutor executor : dataExecutor) {
@@ -37,7 +38,9 @@ public class DataRequester {
         valueReceiver = new ValueReceiver();
 
         twinStub.addWhenDeviceGoesOnline(data -> {
-            final List<String> openDataRequestsCopy = new ArrayList<>(openDataRequests);
+            final List<String> openDataRequestsCopy = new ArrayList<>(
+                openDataRequests
+            );
             for (String request : openDataRequestsCopy) {
                 twinStub.publishDataStartRequest(request, requesterID);
                 twinStub.waitAfterCommand();

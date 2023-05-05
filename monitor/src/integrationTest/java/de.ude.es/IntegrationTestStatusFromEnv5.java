@@ -21,10 +21,10 @@ public class IntegrationTestStatusFromEnv5 {
 
     @Container
     public GenericContainer BROKER_CONTAINER = new GenericContainer(
-            DockerImageName.parse("eclipse-mosquitto:1.6.14")
+        DockerImageName.parse("eclipse-mosquitto:1.6.14")
     )
-            .withExposedPorts(BROKER_PORT)
-            .withReuse(false);
+        .withExposedPorts(BROKER_PORT)
+        .withReuse(false);
 
     @BeforeEach
     void setUp() {
@@ -42,8 +42,15 @@ public class IntegrationTestStatusFromEnv5 {
 
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
-        enV5.getEndpoint().publish(new Posting(enV5.getIdentifier() + "/STATUS", "ID:" +
-                enV5.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"), true);
+        enV5
+            .getEndpoint()
+            .publish(
+                new Posting(
+                    enV5.getIdentifier() + "/STATUS",
+                    "ID:" + enV5.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"
+                ),
+                true
+            );
         Thread.sleep(1000);
         int activeTwins = monitor.getTwinList().getActiveTwins().size();
         assertEquals(0, activeTwins);
@@ -57,7 +64,7 @@ public class IntegrationTestStatusFromEnv5 {
     private void createMonitor() {
         monitor = new MonitorTwin("monitor");
         monitor.bindToCommunicationEndpoint(
-                createBrokerWithKeepalive("monitor")
+            createBrokerWithKeepalive("monitor")
         );
     }
 

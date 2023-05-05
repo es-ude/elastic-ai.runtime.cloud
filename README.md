@@ -7,8 +7,8 @@ The elastic-AI.runtime provides a backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused on the use with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
-- elastic-ai.runtime:runtime
-- elastic-ai.runtime:monitor
+-   elastic-ai.runtime:runtime
+-   elastic-ai.runtime:monitor
 
 ## Prerequisites
 
@@ -16,7 +16,8 @@ This repository uses the gradle multi-project feature and currently contains the
 
 The Monitor requires the Host-IP to be addressed.
 The application will retrieve this information from a system environment variable called `HOST_IP`.
-It is recommended that you run 
+It is recommended that you run
+
 ```bash
 # MacOS
 export HOST_IP=127.0.0.1
@@ -24,6 +25,7 @@ export HOST_IP=127.0.0.1
 # Linux
 export HOST_IP=$(hostname -I)
 ```
+
 before starting the monitor (with docker or locally).
 
 ### Java
@@ -78,7 +80,7 @@ The reports can be found in the location `build/reports/` relative to the corres
 ### Test execution
 
 | **Command**                             | **Task**                                                                                           |
-|-----------------------------------------|----------------------------------------------------------------------------------------------------|
+| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `./gradlew test`                        | Run ** all** unit tests                                                                            |
 | `./gradlew :subproject:test`            | Run unit tests from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `./gradlew integrationTest`             | Run ** all** Integration test                                                                      |
@@ -119,17 +121,17 @@ docker run --rm --network=runtime-network -p 8081:8081 --name monitor monitor:0.
 
 The flags serve for the following purposes:
 
-- `--rm`: removes the container after shutdown
-- `--network`: required to access the docker container running the broker
-    - this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
-- `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
-  machines
-- `--name`: specifies the name of the container
+-   `--rm`: removes the container after shutdown
+-   `--network`: required to access the docker container running the broker
+    -   this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
+-   `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
+    machines
+-   `--name`: specifies the name of the container
 
 #### Exit Codes
 
 | Exit Code | Description            |
-|----------:|:-----------------------|
+| --------: | :--------------------- |
 |         0 | No error               |
 |        10 | Argument Parser failed |
 

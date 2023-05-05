@@ -14,9 +14,7 @@ public class Stresstest4enV5IsSubscribing {
         IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
             TEST_TWIN_ID
         );
-        twin.bindToCommunicationEndpoint(
-            new HivemqBroker(DOMAIN, IP, PORT)
-        );
+        twin.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
         twin.startPublishing(1000);
     }
 }
