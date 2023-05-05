@@ -12,6 +12,20 @@ This repository uses the gradle multi-project feature and currently contains the
 
 ## Prerequisites
 
+### System Environment
+
+The Monitor requires the Host-IP to be addressed.
+The application will retrieve this information from a system environment variable called `HOST_IP`.
+It is recommended that you run 
+```bash
+# MacOS
+export HOST_IP=127.0.0.1
+
+# Linux
+export HOST_IP=$(hostname -I)
+```
+before starting the monitor (with docker or locally).
+
 ### Java
 
 Requires Java Version **17**
