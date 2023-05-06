@@ -10,7 +10,8 @@ public enum PostingType {
     DATA("/DATA"),
     START("/START"),
     STOP("/STOP"),
-    SET("/SET"),
+    COMMAND("/DO"),
+    DONE("/DONE"),
     STATUS("/STATUS");
 
     private final String value;

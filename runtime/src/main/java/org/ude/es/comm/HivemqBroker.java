@@ -12,25 +12,29 @@ import java.util.Hashtable;
 
 public class HivemqBroker implements CommunicationEndpoint {
 
-    private final String clientId;
+    private String clientId;
     private final String mqttDomain;
     private final String brokerIp;
     private final int brokerPort;
     private Mqtt5AsyncClient client;
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RED = "\u001B[31m";
 
-    private void connectWithKeepaliveAndLwtMessage() {
+    public void connect(String clientId, String lwtMessage) {
+        this.clientId = fixClientId(clientId);
+        String domainIdentifier = this.mqttDomain + "/" + this.clientId;
+
         Mqtt5BlockingClient blockingClient = MqttClient
             .builder()
             .useMqttVersion5()
-            .identifier(this.mqttDomain + this.clientId)
+            .identifier(domainIdentifier)
             .serverHost(this.brokerIp)
             .serverPort(this.brokerPort)
             //region LWT message
             .willPublish()
-            .topic(
-                this.mqttDomain + this.clientId + PostingType.STATUS.topic("")
-            )
-            .payload((this.clientId + ";0").getBytes())
+            .topic(domainIdentifier + PostingType.STATUS.topic(""))
+            .payload((lwtMessage).getBytes())
             .qos(MqttQos.AT_MOST_ONCE)
             .retain(true)
             .applyWillPublish()
@@ -38,31 +42,15 @@ public class HivemqBroker implements CommunicationEndpoint {
             .buildBlocking();
         Mqtt5ConnAck connAck = blockingClient.connect();
         client = blockingClient.toAsync();
-
-        Posting onlineStatus = new Posting(
-            PostingType.STATUS.topic(""),
-            this.clientId + ";1"
-        );
-        publish(onlineStatus.cloneWithTopicAffix(this.clientId));
     }
 
-    public HivemqBroker(
-        String mqttDomain,
-        String brokerIp,
-        int brokerPort,
-        String clientId
-    ) {
-        this.clientId = fixClientId(clientId);
+    public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort) {
         this.mqttDomain = fixDomain(mqttDomain);
         this.brokerIp = brokerIp;
         this.brokerPort = brokerPort;
-        connectWithKeepaliveAndLwtMessage();
     }
 
     private static String fixClientId(String id) {
-        if (!id.startsWith("/")) {
-            id = "/" + id;
-        }
         if (id.endsWith("/")) {
             id = id.substring(0, id.length() - 1);
         }
@@ -77,12 +65,18 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public void publish(Posting posting) {
+    public void publish(Posting posting, boolean retain) {
+        Posting toPublish = new Posting(
+            this.mqttDomain + "/" + posting.topic(),
+            posting.data()
+        );
+
         client
             .publishWith()
-            .topic(posting.cloneWithTopicAffix(this.mqttDomain).topic())
-            .payload(posting.data().getBytes())
+            .topic(toPublish.topic())
+            .payload(toPublish.data().getBytes())
             .qos(MqttQos.EXACTLY_ONCE)
+            .retain(retain)
             .send()
             .whenComplete(this::onPublishComplete);
     }
@@ -93,26 +87,37 @@ public class HivemqBroker implements CommunicationEndpoint {
     ) {
         if (throwable != null) {
             System.out.println(
-                "Publishing failed for\t" + pubAck.getPublish().getTopic()
+                "Publishing failed for\t" +
+                ANSI_RED +
+                pubAck.getPublish().getTopic() +
+                ANSI_RESET
             );
         } else {
             System.out.println(
-                "Published: " +
+                "Published to: " +
+                ANSI_GREEN +
+                pubAck.getPublish().getTopic() +
+                ANSI_RESET +
+                ", message: " +
+                ANSI_GREEN +
                 unwrapPayload(pubAck.getPublish().getPayload().get()) +
-                " to: " +
-                pubAck.getPublish().getTopic()
+                ANSI_RESET +
+                ", retain: " +
+                ANSI_GREEN +
+                pubAck.getPublish().isRetain() +
+                ANSI_RESET
             );
         }
     }
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        subscribeRaw(this.mqttDomain + topic, subscriber);
+        subscribeRaw(this.mqttDomain + "/" + topic, subscriber);
     }
 
     @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(this.mqttDomain + topic, subscriber);
+    public void unsubscribe(String topic) {
+        unsubscribeRaw(this.mqttDomain + "/" + topic);
     }
 
     @Override
@@ -120,14 +125,18 @@ public class HivemqBroker implements CommunicationEndpoint {
         client
             .subscribeWith()
             .topicFilter(topic)
-            .callback(publish ->
-                subscriber.deliver(
-                    new Posting(
-                        topic,
-                        unwrapPayload(publish.getPayload().get())
-                    )
-                )
-            )
+            .callback(publish -> {
+                try {
+                    subscriber.deliver(
+                        new Posting(
+                            topic,
+                            unwrapPayload(publish.getPayload().get())
+                        )
+                    );
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            })
             .send()
             .whenComplete(
                 ((subAck, throwable) -> onSubscribeComplete(throwable, topic))
@@ -136,9 +145,13 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
         if (subFailed != null) {
-            System.out.println("Subscription failed:\t" + topic);
+            System.out.println(
+                "Subscription failed:\t" + ANSI_RED + topic + ANSI_RESET
+            );
         } else {
-            System.out.println("Subscribed to:\t" + topic);
+            System.out.println(
+                "Subscribed to:\t" + ANSI_GREEN + topic + ANSI_RESET
+            );
         }
     }
 
@@ -149,7 +162,7 @@ public class HivemqBroker implements CommunicationEndpoint {
     }
 
     @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
+    public void unsubscribeRaw(String topic) {
         client
             .unsubscribeWith()
             .topicFilter(topic)
@@ -164,15 +177,24 @@ public class HivemqBroker implements CommunicationEndpoint {
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
         if (throwable != null) {
-            System.out.println("Unsubscription failed for:\t" + topic);
+            System.out.println(
+                "Unsubscription failed for:\t" + ANSI_RED + topic + ANSI_RESET
+            );
         } else {
-            System.out.println("Unsubscribe from:\t" + topic);
+            System.out.println(
+                "Unsubscribe from:\t" + ANSI_GREEN + topic + ANSI_RESET
+            );
         }
     }
 
     @Override
-    public String getId() {
-        return this.mqttDomain + this.clientId;
+    public String getClientIdentifier() {
+        return this.clientId;
+    }
+
+    @Override
+    public String getDomain() {
+        return this.mqttDomain;
     }
 
     public Dictionary<String, String> getConfiguration() {

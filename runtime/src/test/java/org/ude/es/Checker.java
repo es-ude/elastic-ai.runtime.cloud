@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.ude.es.comm.BrokerMock;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
@@ -77,14 +78,14 @@ public class Checker {
         }
 
         @Override
-        public void unsubscribe(String topic, Subscriber subscriber) {
+        public void unsubscribe(String topic) {
             unsubscribes.add(topic);
-            super.unsubscribe(topic, subscriber);
+            super.unsubscribe(topic);
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting topic, boolean retain) {
+            super.publish(topic, retain);
         }
     }
 
@@ -97,17 +98,29 @@ public class Checker {
     }
 
     public void givenUnsubscribeAtBrokerFor(String topic) {
-        broker.unsubscribe(topic, subscriber);
+        broker.unsubscribe(topic);
     }
 
     public void whenPostingIsPublishedAtBroker(String topic) {
         whenPostingIsPublishedAtBroker(topic, "");
     }
 
+    public void whenPostingIsPublishedAtBroker(
+        String topic,
+        String data,
+        Posting expected
+    ) {
+        this.expected = expected;
+        broker.publish(new Posting(topic, data), false);
+    }
+
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
-        String fullTopic = broker.getId() + topic;
-        expected = new Posting(fullTopic, data);
-        broker.publish(new Posting(topic, data));
+        String fullTopic = broker.getClientIdentifier() + "/" + topic;
+        whenPostingIsPublishedAtBroker(
+            topic,
+            data,
+            new Posting(fullTopic, data)
+        );
     }
 
     //endregion testing with broker
@@ -127,14 +140,14 @@ public class Checker {
         }
 
         @Override
-        public void unsubscribe(String topic, Subscriber subscriber) {
+        public void unsubscribe(String topic) {
             unsubscribes.add(topic);
-            super.unsubscribe(topic, subscriber);
+            super.unsubscribe(topic);
         }
 
         @Override
-        public void publish(Posting topic) {
-            super.publish(topic);
+        public void publish(Posting posting, boolean retain) {
+            super.publish(posting, retain);
         }
     }
 
@@ -148,7 +161,7 @@ public class Checker {
     }
 
     public void givenUnsubscriptionAtJavaTwinFor(String topic) {
-        javaTwin.unsubscribe(topic, subscriber);
+        javaTwin.unsubscribe(topic);
     }
 
     public void whenPostingIsPublishedAtJavaTwin(String topic) {
@@ -156,11 +169,11 @@ public class Checker {
     }
 
     public void whenPostingIsPublishedAtJavaTwin(String topic, String data) {
-        String fullTopic = javaTwin.getId() + topic;
+        String fullTopic = javaTwin.getDomainAndIdentifier() + topic;
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);
-        javaTwin.publish(posting);
+        javaTwin.publish(posting, false);
     }
     //endregion testing with JavaTwin
 }

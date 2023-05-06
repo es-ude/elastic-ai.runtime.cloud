@@ -1,6 +1,7 @@
 package de.ude.es;
 
 import org.ude.es.comm.Posting;
+import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
@@ -9,7 +10,7 @@ public class MonitorTwin extends JavaTwin {
 
     private static class StatusMonitor implements Subscriber {
 
-        private final TwinList twins;
+        private volatile TwinList twins;
         private final JavaTwin twin;
         private TwinStub stub;
 
@@ -29,15 +30,61 @@ public class MonitorTwin extends JavaTwin {
         public void deliver(Posting posting) {
             String twinID = posting
                 .data()
-                .substring(0, posting.data().length() - 2);
-            boolean twinActive = posting.data().endsWith("1");
+                .substring(
+                    posting.data().indexOf(Status.Parameter.ID.getKey()) +
+                    Status.Parameter.ID.getKey().length() +
+                    1
+                );
+            twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            if (this.twin.getId().contains(twinID)) {
+            String twinType = posting
+                .data()
+                .substring(
+                    posting.data().indexOf(Status.Parameter.TYPE.getKey()) +
+                    Status.Parameter.TYPE.getKey().length() +
+                    1
+                );
+            twinType = twinType.substring(0, twinType.indexOf(";"));
+
+            boolean twinActive = posting
+                .data()
+                .contains(Status.State.ONLINE.get());
+
+            System.out.printf(
+                "Device of type %s with id %s online: %b.%n",
+                twinType,
+                twinID,
+                twinActive
+            );
+
+            if (!twinType.equals(Status.Type.TWIN.get())) {
+                // DEVICES not handled by monitor
+                return;
+            }
+
+            if (this.twin.getDomainAndIdentifier().contains(twinID)) {
                 return;
             }
 
             if (twinActive) {
-                twins.addTwin(twinID);
+                int measurementsIndex = posting
+                    .data()
+                    .indexOf(Status.Parameter.MEASUREMENTS.get());
+                if (measurementsIndex >= 0) {
+                    String measurements = posting
+                        .data()
+                        .substring(
+                            measurementsIndex +
+                            Status.Parameter.MEASUREMENTS.get().length() +
+                            1
+                        );
+                    measurements =
+                        measurements.substring(0, measurements.indexOf(";"));
+
+                    twins.addOrUpdateTwin(twinID, measurements.split(","));
+                } else {
+                    twins.addOrUpdateTwin(twinID, null);
+                }
             } else {
                 TwinData twin = twins.getTwin(twinID);
                 if (twin != null) {
@@ -45,7 +92,6 @@ public class MonitorTwin extends JavaTwin {
                 }
                 // if twin == null -> ignore status message,
                 //                    no need to add inactive Twin
-
             }
         }
     }

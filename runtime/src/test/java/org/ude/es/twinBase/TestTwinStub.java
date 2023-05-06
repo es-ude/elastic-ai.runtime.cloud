@@ -24,7 +24,7 @@ public class TestTwinStub {
         }
 
         public void whenUnsubscribingFromData(String dataId) {
-            device.unsubscribeFromData(dataId, subscriber);
+            device.unsubscribeFromData(dataId);
         }
 
         public void whenSubscribingForStatus() {
@@ -32,37 +32,29 @@ public class TestTwinStub {
         }
 
         public void whenUnsubscribingFromStatus() {
-            device.unsubscribeFromStatus(subscriber);
+            device.unsubscribeFromStatus();
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic = device.getId() + PostingType.START.topic(data);
+            String topic =
+                device.getDomainAndIdentifier() + PostingType.START.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic = device.getId() + PostingType.STOP.topic(data);
+            String topic =
+                device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
             expected = new Posting(topic, receiver);
             device.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = device.getId() + PostingType.SET.topic(service);
+            String topic =
+                device.getDomainAndIdentifier() +
+                PostingType.COMMAND.topic(service);
             expected = new Posting(topic, cmd);
             device.publishCommand(service, cmd);
-        }
-
-        public void whenSendingOnCommand(String service) {
-            String topic = device.getId() + PostingType.SET.topic(service);
-            expected = new Posting(topic, "1");
-            device.publishOnCommand(service);
-        }
-
-        public void whenSendingOffCommand(String service) {
-            String topic = device.getId() + PostingType.SET.topic(service);
-            expected = new Posting(topic, "0");
-            device.publishOffCommand(service);
         }
     }
 
@@ -78,28 +70,22 @@ public class TestTwinStub {
     @Test
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
-        checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
-        );
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanUnsubscribeFromData() {
-        checker.whenSubscribingForData("/light");
-        checker.whenUnsubscribingFromData("/light");
-        checker.whenPostingIsPublishedAtBroker(
-            "/" + twinID + "/DATA/light",
-            "33"
-        );
+        checker.whenSubscribingForData("light");
+        checker.whenUnsubscribingFromData("light");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanSubscribeForStatus() {
         checker.whenSubscribingForStatus();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "");
         checker.thenPostingIsDelivered();
     }
 
@@ -107,42 +93,28 @@ public class TestTwinStub {
     void weCanUnsubscribeFromStatus() {
         checker.whenSubscribingForStatus();
         checker.whenUnsubscribingFromStatus();
-        checker.whenPostingIsPublishedAtBroker("/" + twinID + "/STATUS", "33");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanPublishDataStartRequest() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/START/data");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/START/data");
         checker.whenAskingForDataStart("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanAskToStopSendingData() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/STOP/data");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/STOP/data");
         checker.whenAskingForDataStop("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanSendACommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
+        checker.givenSubscriptionAtBrokerFor(twinID + "/DO/led");
         checker.whenSendingCommand("led", "on");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanSendOnCommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
-        checker.whenSendingOnCommand("led");
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
-    void weCanSendOffCommand() {
-        checker.givenSubscriptionAtBrokerFor("/" + twinID + "/SET/led");
-        checker.whenSendingOffCommand("led");
         checker.thenPostingIsDelivered();
     }
 }

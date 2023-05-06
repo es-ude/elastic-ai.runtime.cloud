@@ -1,50 +1,1 @@
-plugins {
-  id 'application'
-
-  id 'org.springframework.boot' version '2.5.2'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'com.google.cloud.tools.jib' version '3.0.0'
-  id 'nebula.facet' version '9.4.0'
-  id 'com.adarshr.test-logger' version '3.1.0'
-}
-
-group 'de.ude.es'
-version '0.0.2'
-mainClassName = 'de.ude.es.Main'
-
-dependencies {
-  implementation 'org.springframework.boot:spring-boot-starter-data-rest'
-  implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.springframework.boot:spring-boot-starter-web-services'
-  implementation 'org.springframework.session:spring-session-core'
-  implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
-  implementation 'com.google.guava:guava:31.1-jre'
-  implementation project(':runtime')
-
-  compileOnly 'org.projectlombok:lombok'
-
-  developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-  annotationProcessor 'org.projectlombok:lombok'
-
-  testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-facets {
-  integrationTest {
-    parentSourceSet = 'test'
-    testTaskName = 'integrationTest'
-  }
-}
-
-integrationTest {
-  useJUnitPlatform()
-  testLogging {
-    events 'passed', 'skipped', 'failed'
-  }
-}
-
-task wrapper {}
-
-task prepareKotlinBuildScriptModel {}
+plugins {    id 'org.springframework.boot' version '3.0.1'    id 'io.spring.dependency-management' version '1.1.0'}repositories {    mavenCentral()}group 'de.ude.es'version '0.0.2'mainClassName = 'de.ude.es.MonitoringServiceApplication'dependencies {    implementation 'org.springframework.boot:spring-boot-starter-data-rest'    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'    implementation 'org.springframework.boot:spring-boot-starter-web'    implementation 'org.springframework.boot:spring-boot-starter-web-services'    implementation 'org.webjars:jquery:3.6.3'    implementation 'org.webjars:bootstrap:5.2.3'    implementation 'org.webjars:font-awesome:6.2.0'    implementation 'org.springframework.session:spring-session-core'    implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'    implementation 'com.google.guava:guava:31.1-jre'    implementation project(':runtime')    compileOnly 'org.projectlombok:lombok'    developmentOnly 'org.springframework.boot:spring-boot-devtools'    testImplementation 'org.springframework.boot:spring-boot-starter-test'    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'    annotationProcessor 'org.projectlombok:lombok'}facets {    integrationTest {        parentSourceSet = 'test'        testTaskName = 'integrationTest'    }}integrationTest {    useJUnitPlatform()    testLogging {        events 'passed', 'skipped', 'failed'    }}jib {    to {        tags = ['latest', version]    }    container {        mainClass = mainClassName        creationTime = "USE_CURRENT_TIMESTAMP"    }    extraDirectories {        paths {            path {                from = file('src/main/resources')                into = '/src/main/resources'            }        }    }}tasks.register('wrapper') {}tasks.register('prepareKotlinBuildScriptModel') {}

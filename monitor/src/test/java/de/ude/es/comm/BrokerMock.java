@@ -1,4 +1,4 @@
-package de.ude.es;
+package de.ude.es.comm;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,8 +89,10 @@ public class BrokerMock implements CommunicationEndpoint {
         }
     }
 
-    private final List<Subscription> subscriptions = new LinkedList<>();
+    private final HashMap<String, Subscription> subscriptions = new HashMap<>();
     private final String identifier;
+
+    //    private final String clientID;
 
     public BrokerMock(String identifier) {
         this.identifier = fixIdentifier(identifier);
@@ -108,40 +110,53 @@ public class BrokerMock implements CommunicationEndpoint {
 
     @Override
     public void subscribe(String topic, Subscriber subscriber) {
-        subscribeRaw(identifier + topic, subscriber);
+        subscribeRaw(identifier + "/" + topic, subscriber);
     }
 
     @Override
     public void subscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.add(s);
+        var subscription = new Subscription(topic, subscriber);
+        subscriptions.put(topic, subscription);
         System.out.println("Subscribed to: " + topic);
     }
 
     @Override
-    public void unsubscribe(String topic, Subscriber subscriber) {
-        unsubscribeRaw(identifier + topic, subscriber);
+    public void unsubscribe(String topic) {
+        unsubscribeRaw(identifier + "/" + topic);
     }
 
     @Override
-    public void unsubscribeRaw(String topic, Subscriber subscriber) {
-        var s = new Subscription(topic, subscriber);
-        subscriptions.remove(s);
+    public void unsubscribeRaw(String topic) {
+        subscriptions.remove(topic);
         System.out.println("Unsubscribed from: " + topic);
     }
 
     @Override
-    public void publish(Posting posting) {
-        Posting toPublish = rewriteTopicToIncludeMe(posting);
-        executePublish(toPublish);
-        System.out.println(
-            "Published: " + toPublish.data() + " to: " + toPublish.topic()
-        );
+    public String getClientIdentifier() {
+        return identifier;
     }
 
     @Override
-    public String getId() {
+    public String getDomain() {
         return identifier;
+    }
+
+    @Override
+    public void connect(String clientId, String lwtMessage) {}
+
+    @Override
+    public void publish(Posting posting, boolean retain) {
+        Posting toPublish = new Posting(
+            identifier + "/" + posting.topic(),
+            posting.data()
+        );
+        executePublish(toPublish);
+        System.out.println(
+            "Published to: " +
+            toPublish.topic() +
+            ", Message: " +
+            toPublish.data()
+        );
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {
@@ -149,15 +164,18 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     private void executePublish(Posting toPublish) {
-        var subs = new LinkedList<>(subscriptions);
-        for (Subscription subscription : subs) {
-            deliverIfTopicMatches(toPublish, subscription);
-        }
+        subscriptions.forEach((topic, subscription) ->
+            deliverIfTopicMatches(toPublish, subscription)
+        );
     }
 
     private void deliverIfTopicMatches(Posting msg, Subscription subscription) {
-        if (subscription.matches(msg.topic())) subscription
-            .subscriber()
-            .deliver(msg);
+        if (subscription.matches(msg.topic())) {
+            try {
+                subscription.subscriber().deliver(msg);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

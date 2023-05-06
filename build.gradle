@@ -1,44 +1,53 @@
-// unit test setup for all subprojects
+plugins {
+    id 'com.google.cloud.tools.jib' version '3.3.1' apply false
+    id 'com.adarshr.test-logger' version '3.1.0' apply false
+    id 'nebula.facet' version '9.4.0' apply false
+}
+
+// Setup for all subprojects
 subprojects {
-  apply plugin: 'java'
-  apply plugin: 'jacoco'
+    apply plugin: 'java'
+    apply plugin: 'application'
+    apply plugin: 'jacoco'
+    apply plugin: 'nebula.facet'
+    apply plugin: 'com.adarshr.test-logger'
+    apply plugin: 'com.google.cloud.tools.jib'
+    sourceCompatibility = '17'
 
-  sourceCompatibility = '17'
-
-  repositories {
-    mavenCentral()
-  }
-
-  dependencies {
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.8.2'
-
-    testImplementation 'org.testcontainers:testcontainers:1.16.3'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
-    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.3'
-    testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.4'
-    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.4'
-  }
-
-  test {
-    useJUnitPlatform()
-    testLogging {
-      events "passed", "skipped", "failed"
+    repositories {
+        mavenCentral()
     }
-    finalizedBy jacocoTestReport
-  }
 
-  jacocoTestReport {
-    // tests are required to run before generating the report
-    dependsOn test
+    dependencies {
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.8.2'
 
-    // change output directory of jacoco report
-    reports {
-      html.outputLocation = layout.projectDirectory.dir("jacocoReport")
+        testImplementation 'org.testcontainers:testcontainers:1.16.3'
+        testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+        testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.3'
+        testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.4'
+        testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.4'
     }
-  }
 
-  clean {
-    // update clean task to delete old jacoco reports
-    delete "${projectDir}/jacocoReport"
-  }
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        // tests are required to run before generating the report
+        dependsOn test
+
+        // change output directory of jacoco report
+        reports {
+            html.outputLocation = layout.projectDirectory.dir("jacocoReport")
+        }
+    }
+
+    clean {
+        // update clean task to delete old jacoco reports
+        delete "${projectDir}/jacocoReport"
+    }
 }

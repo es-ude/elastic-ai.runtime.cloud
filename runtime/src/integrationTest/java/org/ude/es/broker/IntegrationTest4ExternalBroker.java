@@ -20,8 +20,8 @@ public class IntegrationTest4ExternalBroker {
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
     private static final String BROKER_IP = "localhost";
     private int BROKER_PORT = 1883;
-    private static final String PRODUCER_ID = "/producer";
-    private static final String CONSUMER_ID = "/consumer";
+    private static final String PRODUCER_ID = "producer";
+    private static final String CONSUMER_ID = "consumer";
     private static final String DATA_ID = "/temp";
     private TwinThatOffersTemperature source;
     private TwinThatConsumesTemperature consumer;
@@ -82,15 +82,11 @@ public class IntegrationTest4ExternalBroker {
         ) {
             super(id);
             this.bindToCommunicationEndpoint(broker);
-
-            createTemperatureSink(resourceId);
-        }
-
-        private void createTemperatureSink(String resourceId) {
             TwinStub dataSource = new TwinStub(resourceId);
-            dataSource.bindToCommunicationEndpoint(this.endpoint);
+            bindStub(dataSource);
 
-            this.temperatureSink = new TemperatureSink(this, DATA_ID);
+            this.temperatureSink = new TemperatureSink(id, DATA_ID);
+            this.temperatureSink.bindToCommunicationEndpoint(broker);
             this.temperatureSink.connectDataSource(dataSource);
         }
 
@@ -171,8 +167,7 @@ public class IntegrationTest4ExternalBroker {
         HivemqBroker broker = new HivemqBroker(
             MQTT_DOMAIN,
             BROKER_IP,
-            BROKER_PORT,
-            clientId
+            BROKER_PORT
         );
         return broker;
     }

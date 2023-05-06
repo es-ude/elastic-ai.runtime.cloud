@@ -14,9 +14,7 @@ public class IntegrationTest4enV5IsPublishing {
         IntegrationTestTwinForEnV5 twin = new IntegrationTestTwinForEnV5(
             TEST_TWIN_ID
         );
-        twin.bindToCommunicationEndpoint(
-            new HivemqBroker(DOMAIN, IP, PORT, TEST_TWIN_ID)
-        );
+        twin.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
         twin.startSubscribing("testPub");
     }
 }

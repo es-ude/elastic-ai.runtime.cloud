@@ -9,13 +9,21 @@ public class Twin {
     protected final String identifier;
     protected CommunicationEndpoint endpoint;
 
+    public interface DataExecutor {
+        void execute(String data);
+    }
+
+    public interface Executor {
+        void execute();
+    }
+
     public Twin(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
 
     private String fixIdentifierIfNecessary(String identifier) {
-        if (!identifier.startsWith("/")) {
-            identifier = "/" + identifier;
+        if (identifier.startsWith("/")) {
+            identifier = identifier.substring(1);
         }
         if (identifier.endsWith("/")) {
             identifier = identifier.substring(0, identifier.length() - 1);
@@ -27,13 +35,17 @@ public class Twin {
         endpoint.subscribe(identifier + topic, subscriber);
     }
 
-    protected void unsubscribe(String topic, Subscriber subscriber) {
-        endpoint.unsubscribe(identifier + topic, subscriber);
+    protected void unsubscribe(String topic) {
+        endpoint.unsubscribe(identifier + topic);
     }
 
     protected void publish(Posting posting) {
+        publish(posting, false);
+    }
+
+    protected void publish(Posting posting, boolean retain) {
         Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend);
+        endpoint.publish(toSend, retain);
     }
 
     /**
@@ -43,21 +55,19 @@ public class Twin {
      * </p>
      * <p>
      * <b>Note:</b> This method cannot be overwritten! If you
-     *              want your DigitalTwin subclass to perform its own
-     *              actions when binding, please override @executeOnBind.
+     * want your DigitalTwin subclass to perform its own
+     * actions when binding, please override @executeOnBind.
      * </p>
      * <p>
      * <b>Important:</b> Every Twin must have its own instance of the implemented
-     *                   Communication Interface.
+     * Communication Interface.
      * </p>
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public final void bindToCommunicationEndpoint(
-        CommunicationEndpoint channel
-    ) {
+    public void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
         this.endpoint = channel;
-        executeOnBind();
+        executeOnBindPrivate();
     }
 
     /**
@@ -67,8 +77,20 @@ public class Twin {
      */
     protected void executeOnBind() {}
 
-    public String getId() {
-        return endpoint.getId() + identifier;
+    protected void executeOnBindPrivate() {
+        executeOnBind();
+    }
+
+    public String getDomain() {
+        return endpoint.getDomain();
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public String getDomainAndIdentifier() {
+        return getDomain() + "/" + getIdentifier();
     }
 
     public CommunicationEndpoint getEndpoint() {

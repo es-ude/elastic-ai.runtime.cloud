@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.BrokerMock;
 import org.ude.es.Checker;
+import org.ude.es.comm.BrokerMock;
 
 public class TestTwin {
 
@@ -28,7 +28,7 @@ public class TestTwin {
     }
 
     @Test
-    void twinRemovesTrailingBackslashFromIdentifier() {
+    void twinRemovesTrailingAndAffixSlashFromIdentifier() {
         checkUpdateDelivered("/twin1234/");
     }
 
@@ -41,7 +41,7 @@ public class TestTwin {
 
     @Test
     void NoUnsubscribeIfWrongTopic() {
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin("twin1234");
         checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
         checker.givenUnsubscriptionAtJavaTwinFor(
             "eip://uni-due.de/es/DATA/temperature"
@@ -52,7 +52,7 @@ public class TestTwin {
 
     @Test
     void subscriberCanUnsubscribe() {
-        checker.givenJavaTwin("/twin1234");
+        checker.givenJavaTwin("twin1234");
 
         checker.givenSubscriptionAtJavaTwinFor("/DATA/temperature");
         checker.givenUnsubscriptionAtJavaTwinFor("/DATA/temperature");
@@ -65,6 +65,6 @@ public class TestTwin {
         var broker = new BrokerMock("broker");
         var twin = new Twin("twin");
         twin.bindToCommunicationEndpoint(broker);
-        assertEquals("broker/twin", twin.getId());
+        assertEquals("broker/twin", twin.getDomainAndIdentifier());
     }
 }
