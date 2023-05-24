@@ -1,18 +1,17 @@
-name: Integration Tests
+name: "Integration Tests"
 
 on:
   workflow_dispatch:
   workflow_call:
 
 jobs:
-  integrationTests:
+  integration-tests:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Setup Action
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Java
+      - name: Setup Java Environment
         uses: actions/setup-java@v2
         with:
           distribution: temurin
@@ -21,7 +20,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Clean Build files
+      - name: Clean Build Artifacts
         run: ./gradlew clean
 
       - name: Run Integration Tests for Runtime
