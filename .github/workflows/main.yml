@@ -1,0 +1,91 @@
+name: "MAIN"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  prettier:
+    name: Beautify
+    runs-on: ubuntu-latest
+    outputs:
+      new_sha: ${{ steps.sha.outputs.SHA }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          # Install Java Plugin for Prettier
+          prettier_plugins: prettier-plugin-java
+          # Apply Prettier to Java and Markdown files
+          prettier_options: "--write **/*.{java,md}"
+          # Use Commitlint based Commit Message
+          commit_message: "style: beautify ${{ github.sha }}"
+      - name: Update SHA
+        id: sha
+        run: |
+          new_sha=$(git rev-parse HEAD)
+          echo "SHA=$new_sha" >> $GITHUB_OUTPUT
+  
+  unit_tests:
+    needs: [prettier]
+    uses: ./.github/workflows/unit_tests.yml
+    
+  integration_tests:
+    needs: [unit_tests]
+    uses: ./.github/workflows/integration_tests.yml
+    
+  semantic_release:
+    needs: [unit_tests, integration_tests, prettier]
+    name: Generate Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install NodeJS
+        uses: actions/setup_node@v3
+        with:
+          cache: npm
+          node-version: 18
+      - name: Install NodeJS Plugins
+        run: npm ci
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.prettier.outputs.new_sha }}
+      - name: Create Release
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+        
+  docker_image:
+    needs: [semantic_release]
+    name: Genrate Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Build Docker Image
+        run: ./gradlew jibDockerBuild
+      - name: Tag Runtime
+        run: docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime
+      - name: Tag Monitor
+        run: docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: es-ude
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Runtime to Github Container Registry
+        run: docker push ghcr.io/es-ude/elastic-ai.runtime:latest
+      - name: Push Monitor to Github Container Registry
+        run: docker push ghcr.io/es-ude/elastic-ai.monitor:latest
