@@ -42,6 +42,11 @@ jobs:
     name: Generate Release
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.prettier.outputs.new_sha }}
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
@@ -49,11 +54,6 @@ jobs:
           node-version: 18
       - name: Install NodeJS Plugins
         run: npm ci
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          ref: ${{ needs.prettier.outputs.new_sha }}
       - name: Create Release
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
