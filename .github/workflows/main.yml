@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install NodeJS
-        uses: actions/setup_node@v3
+        uses: actions/setup-node@v3
         with:
           cache: npm
           node-version: 18
