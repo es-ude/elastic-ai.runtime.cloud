@@ -8,7 +8,7 @@
     "successComment": false,
     "failComment": false,
     "failTitle": false,
-    "addReleases": "bottom",
+    "addReleases": "bottom"
   },
   "devDependencies": {
     "@semantic-release/github": "^8.0.7"
