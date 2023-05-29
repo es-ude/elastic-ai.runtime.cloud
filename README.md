@@ -1,5 +1,6 @@
-[![Unit Tests](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/unitTests.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/unitTests.yml)
-[![Integration Tests](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/integrationTests.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/integrationTests.yml)
+[![Run Checks](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml)
+[![Build Container Image](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml)
+[![Create a Release](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml)
 
 # elastic-AI.runtime
 
