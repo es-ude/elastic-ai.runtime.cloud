@@ -12,9 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Get Release
+      - name: Release
         uses: GuillaumeFalourd/get-release-or-tag@v2
-        id: tag
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -27,11 +26,11 @@ jobs:
       - name: Tag Runtime
         run: |
           docker tag runtime:latest ghcr.io/DavidFederl/elastic-ai.runtime:latest
-          docker tag runtime:latest ghcr.io/DavidFederl/elastic-ai.runtime:${{ step.tags.output.tag }}
+          docker tag runtime:latest ghcr.io/DavidFederl/elastic-ai.runtime:${{ steps.Release.outputs.tag }}
       - name: Tag Monitor
         run: |
           docker tag monitor:latest ghcr.io/DavidFederl/elastic-ai.monitor:latest
-          docker tag monitor:latest ghcr.io/DavidFederl/elastic-ai.monitor:${{ step.tags.output.tag }}
+          docker tag monitor:latest ghcr.io/DavidFederl/elastic-ai.monitor:${{ steps.Release.outputs.tag }}
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
