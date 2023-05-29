@@ -5,9 +5,9 @@
     "branches": [
       "main"
     ],
-    "successComment": False,
-    "failComment": False,
-    "failTitle": False,
+    "successComment": false,
+    "failComment": false,
+    "failTitle": false,
     "addReleases": "bottom",
   },
   "devDependencies": {
