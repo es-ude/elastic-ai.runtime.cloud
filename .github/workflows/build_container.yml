@@ -35,7 +35,7 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
-          username: ${{ variables.GHCR_USER }}
+          username: ${{ vars.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Runtime to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.runtime:latest
