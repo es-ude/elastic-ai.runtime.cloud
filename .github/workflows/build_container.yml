@@ -12,7 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Release
+      - name: Get Release
+        id: release
         uses: GuillaumeFalourd/get-release-or-tag@v2
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -23,8 +24,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Docker Image
         run: ./gradlew jibDockerBuild
-      - name: Version
-        run: echo ${{ steps.release.outputs.tag }}
       - name: Tag Runtime
         run: |
           docker tag runtime:latest ghcr.io/${{ vars.GHCR_NAMESPACE }}/elastic-ai.runtime:latest
