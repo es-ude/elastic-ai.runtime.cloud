@@ -4,7 +4,11 @@
   "release": {
     "branches": [
       "main"
-    ]
+    ],
+    "successComment": False,
+    "failComment": False,
+    "failTitle": False,
+    "addReleases": "bottom",
   },
   "devDependencies": {
     "@semantic-release/github": "^8.0.7"
