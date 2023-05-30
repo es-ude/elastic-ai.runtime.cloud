@@ -1,3 +1,6 @@
+# Workflow requires Variables to be defined as follows:
+#   GITHUB_TOKEN has to have write permission !!
+
 name: "Create a Release"
 on:
   workflow_dispatch:
