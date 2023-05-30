@@ -1,0 +1,33 @@
+# Workflow requires secrets to be defined as follows:
+#   GHCT_ACCESS_TOKEN -> Token to allow pushes to the repository
+
+name: "Create Release"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  semantic_release:
+    name: Generate Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: npm
+          node-version: "lts/*"
+      - name: Install semantic-relase Plugin
+        run: npm clean-install
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_TOKEN }}
+        run: npx semantic-release
