@@ -80,8 +80,8 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ### Test execution
 
-| **Command**                             | **Task**                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Command**                             | **Task**                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `./gradlew test`                        | Run **all** unit tests                                                                            |
 | `./gradlew :subproject:test`            | Run unit tests from **specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `./gradlew integrationTest`             | Run **all** Integration test                                                                      |
