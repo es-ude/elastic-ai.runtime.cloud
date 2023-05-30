@@ -1,4 +1,7 @@
-name: "Run Checks"
+# Workflow requires Variables to be defined as follows:
+#   GITHUB_TOKEN has to have write permission !!
+
+name: "Tests"
 on:
   workflow_dispatch:
   pull_request:
