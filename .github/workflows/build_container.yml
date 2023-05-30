@@ -1,3 +1,8 @@
+# Workflow requires Variables to be defined as follows:
+#   GHCR_NAMESPACE -> repository name
+#   GHCR_USER      -> User to push to GHCR with GITHUB_TOKEN
+#   GITHUB_TOKEN has to have write permission !!
+
 name: "Build Container Image"
 on:
   workflow_dispatch:
@@ -39,8 +44,6 @@ jobs:
           username: ${{ vars.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Runtime to Github Container Registry
-        run: |
-          docker push --all-tags ghcr.io/${{ vars.GHCR_NAMESPACE }}/elastic-ai.runtime:latest
+        run: docker push --all-tags ghcr.io/${{ vars.GHCR_NAMESPACE }}/elastic-ai.runtime
       - name: Push Monitor to Github Container Registry
-        run: |
-          docker push --all-tags ghcr.io/${{ vars.GHCR_NAMESPACE }}/elastic-ai.monitor:latest
+        run: docker push --all-tags ghcr.io/${{ vars.GHCR_NAMESPACE }}/elastic-ai.monitor
