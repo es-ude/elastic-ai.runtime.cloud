@@ -1,4 +1,8 @@
-name: "Run Checks"
+# Workflow requires Variables to be defined as follows:
+#   GHCR_ACCESS_TOKEN -> Token that is allowed to push
+#   GITHUB_TOKEN has to have write permission !!
+
+name: "Tests"
 on:
   workflow_dispatch:
   pull_request:
@@ -14,6 +18,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
       - name: Prettify code
         uses: creyD/prettier_action@v4.3
         with:
@@ -23,6 +30,8 @@ jobs:
           prettier_options: "--write **/*.{java,md}"
           # Use Commitlint based Commit Message
           commit_message: "style: beautify ${{ github.sha }}"
+          # Set your custom token
+          github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
       - name: Update SHA
         id: sha
         run: |

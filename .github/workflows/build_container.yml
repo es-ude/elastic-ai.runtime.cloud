@@ -4,9 +4,8 @@
 #   GHCR_ACCESS_TOKEN -> Password for GHCR_USER
 #   GITHUB_TOKEN has to have write permission !!
 
-name: "Build Container Image"
+name: "Build And Push Container"
 on:
-  workflow_dispatch:
   release:
     types:
       - published

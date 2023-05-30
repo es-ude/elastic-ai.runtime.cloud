@@ -1,6 +1,6 @@
-[![Run Checks](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml)
-[![Create a Release](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml)
-[![Build Container Image](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml)
+[![Tests](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml)
+[![Create Release](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml)
+[![Build and Push Container Image](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml)
 
 # elastic-AI.runtime
 
@@ -80,8 +80,8 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ### Test execution
 
-| **Command**                             | **Task**                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Command**                             | **Task**                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `./gradlew test`                        | Run **all** unit tests                                                                            |
 | `./gradlew :subproject:test`            | Run unit tests from **specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `./gradlew integrationTest`             | Run **all** Integration test                                                                      |
