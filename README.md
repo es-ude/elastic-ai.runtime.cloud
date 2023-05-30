@@ -1,6 +1,6 @@
-[![Run Checks](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml)
-[![Create a Release](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml)
-[![Build Container Image](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml)
+[![Tests](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/run_checks.yml)
+[![Create Release](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/push_to_main.yml)
+[![Build and Push Container Image](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/DavidFederl/elastic-ai.runtime/actions/workflows/build_container.yml)
 
 # elastic-AI.runtime
 
