@@ -1,4 +1,5 @@
 # Workflow requires Variables to be defined as follows:
+#   GHCT_ACCESS_TOKEN -> Token to allow pushes to the repository
 #   GITHUB_TOKEN has to have write permission !!
 
 name: "Create Release"
@@ -28,5 +29,5 @@ jobs:
         run: npm audit signatures
       - name: Create Release
         env: 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_TOKEN }}
         run: npx semantic-release
