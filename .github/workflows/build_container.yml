@@ -8,7 +8,7 @@ name: "Build And Push Container"
 on:
   release:
     types:
-      - published
+      - released
       
 jobs:
   docker_image:
