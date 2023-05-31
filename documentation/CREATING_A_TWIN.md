@@ -1,5 +1,18 @@
 # How To Create Your Own Twin
 
+## Twin
+
+## Twin Stub
+
+## Java Twin
+
+## Device Twin
+
+## Executable
+
+
+## Outdated
+
 This guide explains how to create a simple digital twin for your device.
 
 With four steps the minimal setup for a Digital Twin can be done.
@@ -62,3 +75,4 @@ For this, however, the pause time must be set when initialising the stub.
 
         dataRequestHandler.addWhenStopRequestingData(enV5::waitAfterCommand);
 ```
+

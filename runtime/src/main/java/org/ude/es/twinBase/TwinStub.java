@@ -61,13 +61,12 @@ public class TwinStub extends Twin {
         }
     }
 
-    @Override
     protected void executeOnBindPrivate() {
+        super.executeOnBindPrivate();
         StatusReceiver statusReceiver = new StatusReceiver(
             getDomainAndIdentifier()
         );
         subscribeForStatus(statusReceiver);
-        executeOnBind();
     }
 
     public void waitAfterCommand() {

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.PostingType;
 
-class TestStartableDataSource {
+class TestExecutableDataSource {
 
     private static final String DATA_ID = "data";
     private static final String SOURCE_ID = "source";

@@ -6,19 +6,14 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.ude.es.comm.HivemqBroker;
-import org.ude.es.twinImplementations.enV5Twin;
 
-public class ExecutableJavaTwin extends JavaTwin {
-
-    public ExecutableJavaTwin(String identifier) {
-        super(identifier);
-    }
+public class Executable {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
 
-    public static void startJavaTwin(String[] args, String identifier)
+    public static void startJavaTwin(Twin twin, String[] args)
         throws InterruptedException {
         try {
             Namespace arguments = parseArguments(args);
@@ -29,9 +24,8 @@ public class ExecutableJavaTwin extends JavaTwin {
             System.exit(10);
         }
 
-        enV5Twin enV5Twin = new enV5Twin(identifier);
         HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT);
-        enV5Twin.bindToCommunicationEndpoint(broker);
+        twin.bindToCommunicationEndpoint(broker);
 
         Thread.sleep(3000);
     }
