@@ -1,3 +1,7 @@
+[![Tests](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/run_checks.yml)
+[![Create Release](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml)
+[![Build And Push Container](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml)
+
 # elastic-AI.runtime
 
 The elastic-AI.runtime provides a backend for operating digital twins.
