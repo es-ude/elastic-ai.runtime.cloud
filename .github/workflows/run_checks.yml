@@ -1,6 +1,7 @@
 # Workflow requires Variables to be defined as follows:
-#   GHCR_ACCESS_TOKEN -> Token that is allowed to push
-#   GITHUB_TOKEN has to have write permission !!
+#   vars.GHCR_NAMESPACE       -> Github Container Registry Namespace
+#   secrets.GHCR_USER         -> User to push to GHCR
+#   secrets.GHCR_ACCESS_TOKEN -> Password with rights to push to repository/GHCR
 
 name: "Tests"
 on:
