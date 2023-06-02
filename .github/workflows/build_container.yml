@@ -1,6 +1,6 @@
 # Workflow requires Variables to be defined as follows:
-#   secrets.GHCR_USER         -> User to push to GHCR
-#   secrets.GHCR_ACCESS_TOKEN -> Password with rights to push to repository/GHCR
+#   secrets.GHCR_USER    -> User to push to GHCR
+#   secrets.GITHUB_TOKEN -> Password with rights to push to GHCR
 
 name: "Build And Push Container"
 on:
@@ -43,7 +43,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
-          password: ${{ secrets.GHCR_ACCESS_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Runtime to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.runtime
       - name: Push Monitor to Github Container Registry
