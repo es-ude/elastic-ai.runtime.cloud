@@ -1,5 +1,5 @@
-# Workflow requires secrets to be defined as follows:
-#   GHCR_ACCESS_TOKEN -> Token that is allowed to push
+# Workflow requires Variables to be defined as follows:
+#   secrets.GHCR_ACCESS_TOKEN -> Password with rights to push to repository/GHCR
 
 name: "Tests"
 on:
@@ -28,7 +28,7 @@ jobs:
           # Apply Prettier to Java and Markdown files
           prettier_options: "--write **/*.{java,md}"
           # Use Commitlint based Commit Message
-          commit_message: "style: beautify ${{ github.sha }}"
+          commit_message: "style: beautify ${{ github.head_ref }}"
           # Set your custom token
           github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
       - name: Update SHA
@@ -64,7 +64,7 @@ jobs:
       - prettier
       - unit-tests
     steps:
-      - name: Checkout Repoisitory
+      - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           ref: ${{ needs.prettier.outputs.new_sha }}
