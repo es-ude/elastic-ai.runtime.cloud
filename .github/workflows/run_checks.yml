@@ -1,5 +1,5 @@
 # Workflow requires Variables to be defined as follows:
-#   secrets.GHCR_ACCESS_TOKEN -> Password with rights to push to repository/GHCR
+#   secrets.PUSH_TOKEN -> Password with rights to push to repository
 
 name: "Tests"
 on:
@@ -30,7 +30,7 @@ jobs:
           # Use Commitlint based Commit Message
           commit_message: "style: beautify ${{ github.head_ref }}"
           # Set your custom token
-          github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
+          github_token: ${{ secrets.PUSH_TOKEN }}
       - name: Update SHA
         id: sha
         run: |
