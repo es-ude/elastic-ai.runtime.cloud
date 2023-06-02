@@ -1,5 +1,5 @@
-# Workflow requires secrets to be defined as follows:
-#   GHCT_ACCESS_TOKEN -> Token to allow pushes to the repository
+# Workflow requires Variables to be defined as follows:
+#   secrets.GHCR_ACCESS_TOKEN -> Password with rights to push to repository/GHCR
 
 name: "Create Release"
 on:
@@ -23,7 +23,7 @@ jobs:
         with:
           cache: npm
           node-version: "lts/*"
-      - name: Install semantic-relase Plugin
+      - name: Install semantic-release Plugin
         run: npm clean-install
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
