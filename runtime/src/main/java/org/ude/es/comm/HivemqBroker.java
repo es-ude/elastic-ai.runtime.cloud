@@ -146,7 +146,13 @@ public class HivemqBroker implements CommunicationEndpoint {
     private void onSubscribeComplete(Throwable subFailed, String topic) {
         if (subFailed != null) {
             System.out.println(
-                "Subscription failed:\t" + ANSI_RED + topic + ANSI_RESET
+                "Subscription from " +
+                clientId +
+                " to topic '" +
+                ANSI_RED +
+                topic +
+                ANSI_RESET +
+                "' failed!"
             );
         } else {
             System.out.println(

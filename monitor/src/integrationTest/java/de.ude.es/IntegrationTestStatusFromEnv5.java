@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
+import org.slf4j.event.Level;
+import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -20,9 +21,10 @@ public class IntegrationTestStatusFromEnv5 {
     private IntegrationTestTwinForEnV5 enV5;
 
     @Container
-    public GenericContainer BROKER_CONTAINER = new GenericContainer(
-        DockerImageName.parse("eclipse-mosquitto:1.6.14")
+    public HiveMQContainer BROKER_CONTAINER = new HiveMQContainer(
+        DockerImageName.parse("hivemq/hivemq-ce").withTag("2023.4")
     )
+        .withLogLevel(Level.INFO)
         .withExposedPorts(BROKER_PORT)
         .withReuse(false);
 

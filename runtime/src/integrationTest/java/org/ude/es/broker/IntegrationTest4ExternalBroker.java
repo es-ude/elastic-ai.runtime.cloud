@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.GenericContainer;
+import org.slf4j.event.Level;
+import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
@@ -21,29 +22,31 @@ public class IntegrationTest4ExternalBroker {
     private static final String BROKER_IP = "localhost";
     private int BROKER_PORT = 1883;
     private static final String PRODUCER_ID = "producer";
-    private static final String CONSUMER_ID = "consumer";
+    private static final String CONSUMER_BASE_ID = "consumer";
     private static final String DATA_ID = "/temp";
-    private TwinThatOffersTemperature source;
-    private TwinThatConsumesTemperature consumer;
+    private TwinThatOffersTemperature producer;
+    private TwinThatConsumesTemperature consumer1;
 
     @Container
-    public GenericContainer<?> brokerCont = new GenericContainer<>(
-        DockerImageName.parse("eclipse-mosquitto:1.6.14")
+    public HiveMQContainer BROKER_CONTAINER = new HiveMQContainer(
+        DockerImageName.parse("hivemq/hivemq-ce").withTag("2023.4")
     )
-        .withExposedPorts(BROKER_PORT);
+        .withLogLevel(Level.INFO)
+        .withExposedPorts(BROKER_PORT)
+        .withReuse(false);
 
     @BeforeEach
-    void setUp() {
-        BROKER_PORT = brokerCont.getFirstMappedPort();
-        source =
+    void setUp() throws InterruptedException {
+        BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
+        producer =
             new TwinThatOffersTemperature(
                 createBrokerWithKeepAlive(PRODUCER_ID),
                 PRODUCER_ID
             );
-        consumer =
+        consumer1 =
             new TwinThatConsumesTemperature(
-                createBrokerWithKeepAlive(CONSUMER_ID),
-                CONSUMER_ID,
+                createBrokerWithKeepAlive(CONSUMER_BASE_ID + "1"),
+                CONSUMER_BASE_ID + "1",
                 PRODUCER_ID
             );
     }
@@ -68,6 +71,13 @@ public class IntegrationTest4ExternalBroker {
 
         public boolean hasClients() {
             return temperatureSource.hasClients();
+        }
+
+        public boolean hasClients(int numberOfRequiredClients) {
+            return (
+                temperatureSource.getNumberOfClients() ==
+                numberOfRequiredClients
+            );
         }
     }
 
@@ -108,58 +118,58 @@ public class IntegrationTest4ExternalBroker {
      */
     @Test
     void twinsCanCommunicate() {
-        while (!source.hasClients());
-        source.setNewTemperatureMeasured(11.6);
-        while (!consumer.isNewTemperatureAvailable());
-        consumer.checkTemperatureIs(11.6);
-        source.setNewTemperatureMeasured(1.7);
-        while (!consumer.isNewTemperatureAvailable());
-        consumer.checkTemperatureIs(1.7);
+        while (!producer.hasClients());
+        producer.setNewTemperatureMeasured(11.6);
+        while (!consumer1.isNewTemperatureAvailable());
+        consumer1.checkTemperatureIs(11.6);
+        producer.setNewTemperatureMeasured(1.7);
+        while (!consumer1.isNewTemperatureAvailable());
+        consumer1.checkTemperatureIs(1.7);
     }
 
     @Test
     void communicationCanBeStopped() throws InterruptedException {
-        while (!source.hasClients()) {}
-        consumer.temperatureSink.disconnectDataSource();
-        while (source.hasClients()) {}
-        source.setNewTemperatureMeasured(9.8);
+        while (!producer.hasClients()) {}
+        consumer1.temperatureSink.disconnectDataSource();
+        while (producer.hasClients()) {}
+        producer.setNewTemperatureMeasured(9.8);
         Thread.sleep(1000);
-        consumer.checkTemperatureIs(0.0);
+        consumer1.checkTemperatureIs(0.0);
     }
 
     @Test
     void communicationCanBeResumed() {
-        TwinStub stub = consumer.temperatureSink.getDataSource();
+        TwinStub stub = consumer1.temperatureSink.getDataSource();
 
-        while (!source.hasClients());
-        consumer.temperatureSink.disconnectDataSource();
-        while (source.hasClients());
-        assertFalse(source.hasClients());
-        consumer.temperatureSink.connectDataSource(stub);
-        while (!source.hasClients());
-        assertTrue(source.hasClients());
+        while (!producer.hasClients());
+        consumer1.temperatureSink.disconnectDataSource();
+        while (producer.hasClients());
+        assertFalse(producer.hasClients());
+        consumer1.temperatureSink.connectDataSource(stub);
+        while (!producer.hasClients());
+        assertTrue(producer.hasClients());
 
-        source.setNewTemperatureMeasured(11.2);
-        while (!consumer.isNewTemperatureAvailable());
-        consumer.checkTemperatureIs(11.2);
+        producer.setNewTemperatureMeasured(11.2);
+        while (!consumer1.isNewTemperatureAvailable());
+        consumer1.checkTemperatureIs(11.2);
     }
 
     @Test
     void sourceAndTwoSinksCanCommunicate() {
-        var consumer2 = new TwinThatConsumesTemperature(
-            createBrokerWithKeepAlive(CONSUMER_ID + "2"),
-            CONSUMER_ID + "2",
+        TwinThatConsumesTemperature consumer2 = new TwinThatConsumesTemperature(
+            createBrokerWithKeepAlive(CONSUMER_BASE_ID + "2"),
+            CONSUMER_BASE_ID + "2",
             PRODUCER_ID
         );
 
-        while (!source.hasClients());
-        source.setNewTemperatureMeasured(11.6);
+        while (!producer.hasClients(2));
+        producer.setNewTemperatureMeasured(11.6);
         while (
-            !consumer.isNewTemperatureAvailable() ||
+            !consumer1.isNewTemperatureAvailable() ||
             !consumer2.isNewTemperatureAvailable()
         );
 
-        consumer.checkTemperatureIs(11.6);
+        consumer1.checkTemperatureIs(11.6);
         consumer2.checkTemperatureIs(11.6);
     }
 
