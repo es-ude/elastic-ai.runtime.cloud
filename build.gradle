@@ -21,8 +21,9 @@ subprojects {
     dependencies {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.8.2'
 
-        testImplementation 'org.testcontainers:testcontainers:1.16.3'
-        testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+        testImplementation 'org.testcontainers:testcontainers:1.18.3'
+        testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+        testImplementation 'org.testcontainers:hivemq:1.18.3'
         testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.3'
         testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.4'
         testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.4'
