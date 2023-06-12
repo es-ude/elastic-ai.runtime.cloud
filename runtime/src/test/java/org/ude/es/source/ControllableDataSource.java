@@ -97,6 +97,10 @@ public class ControllableDataSource<T> {
         return !clients.isEmpty();
     }
 
+    public synchronized int getNumberOfClients() {
+        return clients.size();
+    }
+
     public void set(T data) {
         if (hasClients()) {
             javaTwin.publishData(dataId, data.toString());

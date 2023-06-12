@@ -1,15 +1,17 @@
 services:
   broker:
-    image: eclipse-mosquitto:1.6.14
-    volumes:
-      - "$PWD/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+    image: hivemq/hivemq-ce:2023.4
+    restart: always
+    environment:
+      - HIVEMQ_LOG_LEVEL=ERROR
     networks:
       - elastic-ai-network
     ports:
       - "1883:1883"
 
   monitor:
-    image: monitor:latest
+    image: ghcr.io/es-ude/elastic-ai.monitor:latest
+    restart: always
     depends_on:
       - broker
     networks:
@@ -25,7 +27,8 @@ services:
       - "1883"
 
   enV5-twin:
-    image: runtime:latest
+    image: ghcr.io/es-ude/elastic-ai.runtime:latest
+    restart: always
     depends_on:
       - broker
       - monitor
