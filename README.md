@@ -4,18 +4,21 @@
 
 # elastic-AI.runtime
 
-The elastic-AI.runtime provides a backend for operating digital twins.
-It uses MQTT as a messaging protocol and is primarily focused on the use with the Elastic Node v5.
+The elastic-AI.runtime provides a cloud backend for operating digital twins.
+It uses MQTT as a messaging protocol and is primarily focused to be used in combination with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
--   elastic-ai.runtime:runtime
--   elastic-ai.runtime:monitor
+- elastic-ai.runtime:runtime
+- elastic-ai.runtime:monitor
 
-## Prerequisites
+## Setup
+
+> You can check if your local machine satisfies the required dependencies by executing `test_setup.sh` script in the
+> project [root directory](.).
 
 ### System Environment
 
-The Monitor requires the Host-IP to be addressed.
+The elastic-ai.runtime:monitor requires the Host-IP to be addressed.
 The application will retrieve this information from a system environment variable called `HOST_IP`.
 It is recommended that you run
 
@@ -31,16 +34,16 @@ before starting the monitor (with docker or locally).
 
 ### Java
 
-Requires Java Version **17**
+Requires JDK Version **17** or higher.
 
 ### Docker
 
-The project needs the [Docker](https://www.docker.com/)-CLI to run the integration tests, because a running MQTT Broker
-is needed to run successful as described in [MQTT Broker](#mqtt-broker).
+The project depends on the [Docker](https://www.docker.com/)-CLI to run the integration tests,
+because a local MQTT Broker is needed to run as described in [MQTT Broker](#mqtt-broker).
 
 ### MQTT Broker
 
-The runtime uses MQTT as the main communication protocol, therefore an MQTT Broker is needed to run the code locally.
+The runtime uses MQTT as the main communication protocol, therefore, an MQTT Broker is needed to run the code locally.
 You can either install a broker on your machine or run it via docker.
 The default for the project is [Mosquitto](https://mosquitto.org/) by Eclipse.
 The elastic-AI.runtime communicates with the broker on port 1883.
@@ -81,7 +84,7 @@ The reports can be found in the location `build/reports/` relative to the corres
 ### Test execution
 
 | **Command**                             | **Task**                                                                                           |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
+|-----------------------------------------|----------------------------------------------------------------------------------------------------|
 | `./gradlew test`                        | Run ** all** unit tests                                                                            |
 | `./gradlew :subproject:test`            | Run unit tests from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `./gradlew integrationTest`             | Run ** all** Integration test                                                                      |
@@ -89,16 +92,16 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ### Monitor
 
-The monitor is used to provide an external interface for user to interact with the elastic-ai ecosystem.
-This interface is provided via a java web application, which can be accessed via every common browser (e.g. Chrome,
+The monitor is used to provide an external interface for the user to interact with the elastic-ai.runtime ecosystem.
+This interface is provided via a Java web application, which can be accessed with every common browser (e.g. Chrome,
 Firefox, Safari, ...).
-To start the monitor run
+To start the monitor locally via Gradle run
 
 ```bash
-./gradlew :monitor:run -e " "
+./gradlew :monitor:run 
 ```
 
-The broker domain and port can be given as follows:
+The broker domain and port can be passed to the monitor as follows:
 
 ```bash
 ./gradlew :monitor:run --args="-b localhost -p 1883"
@@ -106,43 +109,28 @@ The broker domain and port can be given as follows:
 
 The monitor can then be accessed locally at [http://localhost:8081](localhost.com:8081).
 
-### Docker Container
-
-A monitor running in a docker container can be created via
-
-```bash
-./gradlew :monitor:jibDockerBuild
-```
-
-And can (should be) be run via
-
-```bash
-docker run --rm --network=runtime-network -p 8081:8081 --name monitor monitor:0.0.2
-```
-
-The flags serve for the following purposes:
-
--   `--rm`: removes the container after shutdown
--   `--network`: required to access the docker container running the broker
-    -   this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
--   `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
-    machines
--   `--name`: specifies the name of the container
-
-#### Exit Codes
-
-| Exit Code | Description            |
-| --------: | :--------------------- |
-|         0 | No error               |
-|        10 | Argument Parser failed |
-
 ### Runtime
 
 The runtime is meant to provide the necessary functions to implement a backend for the elastic-ai ecosystem.
 It provides the necessary functions to operate the ecosystem, like the implementation of the Twin concept or the
 HiveMQBroker implementation together with the necessary functions to handle the MQTT Broker interactions.
 
+To start the runtime locally via Gradle run
+
+```bash
+./gradlew :runtime:run
+```
+
+### Exit Codes
+
+| Exit Code | Description            |
+|----------:|:-----------------------|
+|         0 | No error               |
+|        10 | Argument Parser failed |
+
 ## Docker
+
+### Build Container
 
 A docker container for a subproject can be created with:
 
@@ -150,14 +138,27 @@ A docker container for a subproject can be created with:
 ./gradlew  :<subproject>:jibDockerBuild
 ```
 
-This container can then be used by docker compose or by running:
+This container can then be used in a docker-compose file or started manually.
+
+### Run Container
+
+A Container should be run with:
 
 ```bash
-docker run <subproject>:<tag>
+docker run --rm --network=runtime-network -p 8081:8081 --name <subproject> <subproject:tag>
 ```
 
-### Monitor
+The flags serve for the following purposes:
 
-The Monitor needs to be run with the additional flag `-e "[HOST-IP]"`, where HOST-IP is the IP from which the monitor will
-be reachable in the network.
-When run in docker compose, the value needs to be set as an environmental variable `export HOST-IP="[HOST-IP]"`
+- `--rm`: removes the container after shutdown
+- `--network`: required to access the docker container running the broker
+    - this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
+- `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
+  machines
+- `--name`: specifies the name of the container
+
+#### Monitor
+
+The Monitor needs to be run with the additional flag `-e "[HOST-IP]"`, where HOST-IP is the IP from which the monitor
+will be reachable in the network.
+When run in docker compose, the value needs to be set as an environmental variable `export HOST-IP="[HOST-IP]"`.
