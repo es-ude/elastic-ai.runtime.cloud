@@ -8,8 +8,8 @@ The elastic-AI.runtime provides a cloud backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused to be used in combination with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
-- elastic-ai.runtime:runtime
-- elastic-ai.runtime:monitor
+-   elastic-ai.runtime:runtime
+-   elastic-ai.runtime:monitor
 
 ## Setup
 
@@ -84,7 +84,7 @@ The reports can be found in the location `build/reports/` relative to the corres
 ### Test execution
 
 | **Command**                             | **Task**                                                                                           |
-|-----------------------------------------|----------------------------------------------------------------------------------------------------|
+| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `./gradlew test`                        | Run ** all** unit tests                                                                            |
 | `./gradlew :subproject:test`            | Run unit tests from ** specific** subproject <br/> (i.g. `gradle :runtime:test`)                   |
 | `./gradlew integrationTest`             | Run ** all** Integration test                                                                      |
@@ -98,7 +98,7 @@ Firefox, Safari, ...).
 To start the monitor locally via Gradle run
 
 ```bash
-./gradlew :monitor:run 
+./gradlew :monitor:run
 ```
 
 The broker domain and port can be passed to the monitor as follows:
@@ -124,7 +124,7 @@ To start the runtime locally via Gradle run
 ### Exit Codes
 
 | Exit Code | Description            |
-|----------:|:-----------------------|
+| --------: | :--------------------- |
 |         0 | No error               |
 |        10 | Argument Parser failed |
 
@@ -150,12 +150,12 @@ docker run --rm --network=runtime-network -p 8081:8081 --name <subproject> <subp
 
 The flags serve for the following purposes:
 
-- `--rm`: removes the container after shutdown
-- `--network`: required to access the docker container running the broker
-    - this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
-- `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
-  machines
-- `--name`: specifies the name of the container
+-   `--rm`: removes the container after shutdown
+-   `--network`: required to access the docker container running the broker
+    -   this is mandatory, as both containers have to be on the same network, otherwise the name resolution does not work
+-   `-p`: Port mapping for the webserver port, which allows the monitor webinterface to be accessible from other host
+    machines
+-   `--name`: specifies the name of the container
 
 #### Monitor
 
