@@ -14,9 +14,9 @@ public class minimalExecutableDeviceTwin extends DeviceTwin {
         super(identifier);
     }
 
-    public void example() {
-        publishData("exampleData", "0.0");
-        device.publishDataStartRequest("dataId", this.getDomainAndIdentifier());
+    // Example on how to forward data messages to device
+    @Override
+    protected void executeOnBind() {
+        provideValue("exampleValue");
     }
-
 }

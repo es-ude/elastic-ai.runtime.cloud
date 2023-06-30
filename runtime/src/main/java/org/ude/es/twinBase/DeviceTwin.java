@@ -3,22 +3,16 @@ package org.ude.es.twinBase;
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DeviceTwin extends JavaTwin {
 
     protected TwinStub device;
-    protected ArrayList<DataRequester> availableDataRequester = new ArrayList<>();
-    protected boolean blocked = false;
-
-    private void blockDataStartRequests() {
-        while (blocked) {
-            //Just blocking Requests
-        }
-    }
+    protected HashMap<String, DataRequester> availableDataRequester = new HashMap<>();
+    protected HashMap<String, DataRequestHandler> availableDataRequesterHandler = new HashMap<>();
 
     public DeviceTwin(String identifier) {
-        super(identifier);
+        super(identifier + "Twin");
         device = new TwinStub(identifier, 1000);
     }
 
@@ -28,20 +22,27 @@ public class DeviceTwin extends JavaTwin {
         device.bindToCommunicationEndpoint(endpoint);
     }
 
+    protected void pauseDataRequests() {
+        for (DataRequester dataRequester : availableDataRequester.values()) {
+            dataRequester.pauseDataRequests();
+        }
+    }
+
+    protected void resumeDataRequests() {
+        for (DataRequester dataRequester : availableDataRequester.values()) {
+            dataRequester.resumeDataRequests();
+        }
+    }
+
     protected void provideValue(String dataID) {
         DataRequester dataRequester = new DataRequester(
                 device,
                 dataID,
                 this.identifier
         );
-        availableDataRequester.add(dataRequester);
         DataRequestHandler dataRequestHandler = new DataRequestHandler(
                 this,
                 dataID
-        );
-
-        dataRequestHandler.addWhenStartRequestingData(
-                this::blockDataStartRequests
         );
         dataRequestHandler.addWhenStartRequestingData(
                 dataRequester::startRequestingData
@@ -55,5 +56,8 @@ public class DeviceTwin extends JavaTwin {
         dataRequester.addWhenNewDataReceived(
                 dataRequestHandler::newDataToPublish
         );
+
+        availableDataRequester.put(dataID, dataRequester);
+        availableDataRequesterHandler.put(dataID, dataRequestHandler);
     }
 }
