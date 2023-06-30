@@ -1,0 +1,97 @@
+# Workflow requires Variables to be defined as follows:
+#   secrets.PUSH_TOKEN -> Password with rights to push to repository
+
+name: "Tests"
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  lint-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Lint Commits
+        uses: wagoid/commitlint-github-action@v5
+
+  prettier:
+    name: Beautify
+    runs-on: ubuntu-latest
+    needs:
+      - lint-commits
+    outputs:
+      new_sha: ${{ steps.sha.outputs.SHA }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+      - name: Prettify code
+        uses: creyD/prettier_action@v4.3
+        with:
+          # Install Java Plugin for Prettier
+          prettier_plugins: prettier-plugin-java
+          # Apply Prettier to Java and Markdown files
+          prettier_options: "--write **/*.{java,md}"
+          # Use Commitlint based Commit Message
+          commit_message: "style: beautify ${{ github.head_ref }}"
+          # Set your custom token
+          github_token: ${{ secrets.PUSH_TOKEN }}
+      - name: Update SHA
+        id: sha
+        run: |
+          new_sha=$(git rev-parse HEAD)
+          echo "SHA=$new_sha" >> $GITHUB_OUTPUT
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: 
+      - prettier
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prettier.outputs.new_sha }}
+      - name: Setup Java environment
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Clean Build Artifacts
+        run: ./gradlew clean
+      - name: Run All Integration Tests
+        run: ./gradlew test
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs:
+      - prettier
+      - unit-tests
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.prettier.outputs.new_sha }}
+      - name: Setup Java Environment
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Clean Build Artifacts
+        run: ./gradlew clean
+      - name: Run Integration Tests for Runtime
+        run: ./gradlew :runtime:integrationTest
+      - name: Run Integration Tests for Monitor
+        run: ./gradlew :monitor:integrationTest
