@@ -18,6 +18,7 @@ import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.ude.es.comm.HivemqBroker;
@@ -34,6 +35,8 @@ public class MonitoringServiceApplication {
     static MonitorTwin monitor = null;
     public static String IP_ADDRESS;
 
+    public static String PORT;
+
     public static void main(String[] args) {
         IP_ADDRESS = System.getenv("HOST_IP");
         if (IP_ADDRESS == null) {
@@ -45,6 +48,12 @@ public class MonitoringServiceApplication {
             }
         }
         IP_ADDRESS = IP_ADDRESS.strip();
+
+        if (System.getenv("MONITOR_PORT") != null) {
+            PORT = System.getenv("MONITOR_PORT");
+        } else {
+            PORT = "8081";
+        }
 
         try {
             Namespace arguments = parseArguments(args);

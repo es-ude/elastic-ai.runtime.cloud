@@ -65,8 +65,9 @@ public class BitFile {
         deviceStub.publishCommand(
             "FLASH",
             String.format(
-                "URL:http://%s:8081/getfile/%s/;SIZE:%d;",
+                "URL:http://%s:%s/getfile/%s/;SIZE:%d;",
                 MonitoringServiceApplication.IP_ADDRESS,
+                MonitoringServiceApplication.PORT,
                 name,
                 size
             )
