@@ -1,7 +1,6 @@
 package org.ude.es.twinImplementations;
 
 import org.ude.es.comm.Status;
-import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.DeviceTwin;
 
 import static org.ude.es.twinBase.Executable.startJavaTwin;
@@ -9,18 +8,19 @@ import static org.ude.es.twinBase.Executable.startJavaTwin;
 public class enV5Twin extends DeviceTwin {
 
     public static void main(String[] args) throws InterruptedException {
-        startJavaTwin(new DeviceTwin("enV5"), args);
+        startJavaTwin(new enV5Twin("enV5"), args);
     }
 
     private int bitfilePosition = 0;
 
     public enV5Twin(String identifier) {
-        super(identifier + "Twin");
+        super(identifier);
     }
 
     @Override
     protected void executeOnBind() {
         setupDeviceStub();
+        setupFlashCommand();
     }
 
     private void setupDeviceStub() {
@@ -33,8 +33,6 @@ public class enV5Twin extends DeviceTwin {
         device.addWhenDeviceGoesOffline(data ->
                 System.out.println("Device " + device.getIdentifier() + " offline.")
         );
-
-        setupFlashCommand();
     }
 
     private void setupFlashCommand() {
@@ -42,10 +40,7 @@ public class enV5Twin extends DeviceTwin {
         subscribeForCommand(
                 cmd,
                 posting -> {
-                    blocked = true;
-                    for (DataRequester dataRequester : availableDataRequester) {
-                        dataRequester.stopRequestingData();
-                    }
+                    pauseDataRequests();
                     Thread.sleep(2000);
                     device.publishCommand(
                             cmd,
@@ -60,12 +55,9 @@ public class enV5Twin extends DeviceTwin {
         device.subscribeForDone(
                 cmd,
                 posting -> {
-                    blocked = false;
                     publishDone(cmd, posting.data());
                     device.unsubscribeFromDone(cmd);
-                    for (DataRequester dataRequester : availableDataRequester) {
-                        dataRequester.startRequestingData();
-                    }
+                    resumeDataRequests();
                 }
         );
     }
