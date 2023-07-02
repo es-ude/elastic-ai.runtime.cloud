@@ -2,7 +2,6 @@ package org.ude.es.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
@@ -21,6 +20,7 @@ public class DataRequester {
     List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
 
     private class ValueReceiver implements Subscriber {
+
         @Override
         public void deliver(Posting posting) {
             for (Twin.DataExecutor executor : dataExecutor) {
@@ -53,7 +53,7 @@ public class DataRequester {
 
     private void startRequests() {
         final List<String> openDataRequestsCopy = new ArrayList<>(
-                openDataRequests
+            openDataRequests
         );
         for (String request : openDataRequestsCopy) {
             twinStub.publishDataStartRequest(request, requesterID);

@@ -2,7 +2,6 @@ package org.ude.es.twinBase;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 import org.ude.es.comm.Status;
@@ -64,7 +63,7 @@ public class TwinStub extends Twin {
     protected void executeOnBindPrivate() {
         super.executeOnBindPrivate();
         StatusReceiver statusReceiver = new StatusReceiver(
-                getDomainAndIdentifier()
+            getDomainAndIdentifier()
         );
         subscribeForStatus(statusReceiver);
     }
