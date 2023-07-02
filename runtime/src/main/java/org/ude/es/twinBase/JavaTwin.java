@@ -9,13 +9,13 @@ public class JavaTwin extends Twin {
     }
 
     protected final Status minimalStatus = new Status(this.identifier)
-            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-            .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
+        .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+        .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
 
     protected void executeOnBindPrivate() {
         Status lwtMessage = new Status(this.identifier)
-                .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
+            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+            .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
         this.endpoint.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
         super.executeOnBindPrivate();
@@ -34,8 +34,8 @@ public class JavaTwin extends Twin {
     }
 
     public void subscribeForDataStartRequest(
-            String dataId,
-            Subscriber subscriber
+        String dataId,
+        Subscriber subscriber
     ) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
@@ -45,8 +45,8 @@ public class JavaTwin extends Twin {
     }
 
     public void subscribeForDataStopRequest(
-            String dataId,
-            Subscriber subscriber
+        String dataId,
+        Subscriber subscriber
     ) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }

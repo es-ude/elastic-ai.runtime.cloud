@@ -14,7 +14,7 @@ public class Executable {
     private static Integer BROKER_PORT = null;
 
     public static void startTwin(Twin twin, String[] args)
-            throws InterruptedException {
+        throws InterruptedException {
         try {
             Namespace arguments = parseArguments(args);
             BROKER_IP = arguments.getString("broker_address");
@@ -31,23 +31,23 @@ public class Executable {
     }
 
     private static Namespace parseArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-                .newFor("elastic-ai.runtime.demo")
-                .build()
-                .defaultHelp(true)
-                .description("Start a demo twin for the elastic-ai.runtime");
+            .newFor("elastic-ai.runtime.demo")
+            .build()
+            .defaultHelp(true)
+            .description("Start a demo twin for the elastic-ai.runtime");
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
         brokerSpecification
-                .addArgument("-b", "--broker-address")
-                .help("Broker Address")
-                .setDefault("localhost");
+            .addArgument("-b", "--broker-address")
+            .help("Broker Address")
+            .setDefault("localhost");
         brokerSpecification
-                .addArgument("-p", "--broker-port")
-                .help("Broker Port")
-                .setDefault(1883);
+            .addArgument("-p", "--broker-port")
+            .help("Broker Port")
+            .setDefault(1883);
 
         return parser.parseArgs(args);
     }
