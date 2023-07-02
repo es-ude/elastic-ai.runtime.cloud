@@ -2,10 +2,10 @@ package org.ude.es.twinImplementations;
 
 import static java.lang.Thread.sleep;
 
-import org.ude.es.twinBase.ExecutableJavaTwin;
+import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
 
-public class IntegrationTestTwinForEnV5 extends ExecutableJavaTwin {
+public class IntegrationTestTwinForEnV5 extends JavaTwin {
 
     private final TwinStub enV5;
 
@@ -21,8 +21,8 @@ public class IntegrationTestTwinForEnV5 extends ExecutableJavaTwin {
 
     public void startSubscribing(String topic) {
         enV5.subscribeForData(
-            topic,
-            posting -> System.out.println(posting.data())
+                topic,
+                posting -> System.out.println(posting.data())
         );
     }
 
