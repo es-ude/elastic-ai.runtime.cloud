@@ -1,86 +1,64 @@
 package org.ude.es.twinImplementations;
 
-import java.util.ArrayList;
 import org.ude.es.comm.Status;
-import org.ude.es.protocol.DataRequestHandler;
-import org.ude.es.protocol.DataRequester;
-import org.ude.es.twinBase.ExecutableJavaTwin;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.twinBase.DeviceTwin;
 
-public class enV5Twin extends ExecutableJavaTwin {
+import static org.ude.es.twinBase.Executable.startTwin;
+
+public class enV5Twin extends DeviceTwin {
 
     public static void main(String[] args) throws InterruptedException {
-        startJavaTwin(args, "enV5");
+        startTwin(new enV5Twin("enV5"), args);
     }
 
-    private static final int WAIT_AFTER_COMMAND = 1000;
-    private final TwinStub enV5;
     private int bitfilePosition = 0;
-    private ArrayList<DataRequester> availableDataRequester = new ArrayList<>();
-    private volatile Boolean flashInProgress = false;
 
     public enV5Twin(String identifier) {
-        super(identifier + "Twin");
-        enV5 = new TwinStub(identifier, WAIT_AFTER_COMMAND);
+        super(identifier);
     }
 
     @Override
     protected void executeOnBind() {
-        enV5.bindToCommunicationEndpoint(endpoint);
         setupDeviceStub();
+        setupFlashCommand();
     }
 
     private void setupDeviceStub() {
-        enV5.addWhenDeviceGoesOnline(data ->
-            System.out.println("Device " + enV5.getIdentifier() + " online.")
+        device.addWhenDeviceGoesOnline(data ->
+                System.out.println("Device " + device.getIdentifier() + " online.")
         );
-        enV5.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
-        enV5.addWhenDeviceGoesOnline(data -> enV5.waitAfterCommand());
+        device.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
+        device.addWhenDeviceGoesOnline(data -> device.waitAfterCommand());
 
-        enV5.addWhenDeviceGoesOffline(data ->
-            System.out.println("Device " + enV5.getIdentifier() + " offline.")
+        device.addWhenDeviceGoesOffline(data ->
+                System.out.println("Device " + device.getIdentifier() + " offline.")
         );
-
-        setupFlashCommand();
     }
 
     private void setupFlashCommand() {
         String cmd = "FLASH";
         subscribeForCommand(
-            cmd,
-            posting -> {
-                flashInProgress = true;
-                for (DataRequester dataRequester : availableDataRequester) {
-                    dataRequester.stopRequestingData();
+                cmd,
+                posting -> {
+                    pauseDataRequests();
+                    Thread.sleep(2000);
+                    device.publishCommand(
+                            cmd,
+                            posting.data() + "POSITION:" + bitfilePosition + ";"
+                    );
+                    waitForDone(cmd);
                 }
-                Thread.sleep(2000);
-                enV5.publishCommand(
-                    cmd,
-                    posting.data() + "POSITION:" + bitfilePosition + ";"
-                );
-                waitForDone(cmd);
-            }
         );
     }
 
-    void blockDataStartRequests() {
-        while (flashInProgress) {
-            //Just blocking Requests
-        }
-    }
-
     private void waitForDone(String cmd) {
-        enV5.subscribeForDone(
-            cmd,
-            posting -> {
-                flashInProgress = false;
-                publishDone(cmd, posting.data());
-                enV5.unsubscribeFromDone(cmd);
-                for (DataRequester dataRequester : availableDataRequester) {
-                    dataRequester.startRequestingData();
+        device.subscribeForDone(
+                cmd,
+                posting -> {
+                    publishDone(cmd, posting.data());
+                    device.unsubscribeFromDone(cmd);
+                    resumeDataRequests();
                 }
-            }
         );
     }
 
@@ -90,48 +68,19 @@ public class enV5Twin extends ExecutableJavaTwin {
         }
 
         String measurements = data.substring(
-            data.indexOf(Status.Parameter.MEASUREMENTS.getKey()) +
-            Status.Parameter.MEASUREMENTS.getKey().length() +
-            1
+                data.indexOf(Status.Parameter.MEASUREMENTS.getKey()) +
+                        Status.Parameter.MEASUREMENTS.getKey().length() +
+                        1
         );
         measurements = measurements.substring(0, measurements.indexOf(";"));
 
         this.publishStatus(
                 new Status(minimalStatus)
-                    .append(Status.Parameter.MEASUREMENTS.value(measurements))
-            );
+                        .append(Status.Parameter.MEASUREMENTS.value(measurements))
+        );
 
         for (String measurement : measurements.split(",")) {
             provideValue(measurement);
         }
-    }
-
-    void provideValue(String dataID) {
-        DataRequester dataRequester = new DataRequester(
-            enV5,
-            dataID,
-            this.identifier
-        );
-        availableDataRequester.add(dataRequester);
-        DataRequestHandler dataRequestHandler = new DataRequestHandler(
-            this,
-            dataID
-        );
-
-        dataRequestHandler.addWhenStartRequestingData(
-            this::blockDataStartRequests
-        );
-        dataRequestHandler.addWhenStartRequestingData(
-            dataRequester::startRequestingData
-        );
-
-        dataRequestHandler.addWhenStopRequestingData(
-            dataRequester::stopRequestingData
-        );
-        dataRequestHandler.addWhenStopRequestingData(enV5::waitAfterCommand);
-
-        dataRequester.addWhenNewDataReceived(
-            dataRequestHandler::newDataToPublish
-        );
     }
 }
