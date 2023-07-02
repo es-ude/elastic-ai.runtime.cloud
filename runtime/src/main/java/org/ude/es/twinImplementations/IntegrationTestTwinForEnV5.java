@@ -21,8 +21,8 @@ public class IntegrationTestTwinForEnV5 extends JavaTwin {
 
     public void startSubscribing(String topic) {
         enV5.subscribeForData(
-                topic,
-                posting -> System.out.println(posting.data())
+            topic,
+            posting -> System.out.println(posting.data())
         );
     }
 
