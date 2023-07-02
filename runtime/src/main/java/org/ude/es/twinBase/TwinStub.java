@@ -41,10 +41,9 @@ public class TwinStub extends Twin {
         }
 
         @Override
-        public void deliver(Posting posting) throws InterruptedException {
+        public void deliver(Posting posting) {
             String data = posting.data();
             List<DataExecutor> tmpExecutor = new ArrayList<>();
-
             if (data.contains(Status.State.ONLINE.get())) {
                 deviceOnline = true;
                 tmpExecutor = new ArrayList<>(deviceGoesOnline);
@@ -61,13 +60,12 @@ public class TwinStub extends Twin {
         }
     }
 
-    @Override
     protected void executeOnBindPrivate() {
+        super.executeOnBindPrivate();
         StatusReceiver statusReceiver = new StatusReceiver(
             getDomainAndIdentifier()
         );
         subscribeForStatus(statusReceiver);
-        executeOnBind();
     }
 
     public void waitAfterCommand() {

@@ -12,14 +12,13 @@ public class JavaTwin extends Twin {
         .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
         .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
 
-    @Override
     protected void executeOnBindPrivate() {
         Status lwtMessage = new Status(this.identifier)
             .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
             .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
         this.endpoint.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
-        executeOnBind();
+        super.executeOnBindPrivate();
     }
 
     public void publishData(String dataId, String value) {
@@ -57,6 +56,7 @@ public class JavaTwin extends Twin {
     }
 
     public void subscribeForCommand(String dataId, Subscriber subscriber) {
+        System.out.println(dataId);
         this.subscribe(PostingType.COMMAND.topic(dataId), subscriber);
     }
 

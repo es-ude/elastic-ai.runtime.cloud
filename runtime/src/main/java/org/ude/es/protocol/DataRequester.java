@@ -15,6 +15,8 @@ public class DataRequester {
     private final ValueReceiver valueReceiver;
     public final List<String> openDataRequests = new ArrayList<>();
 
+    private boolean blocked = false;
+
     List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
 
     private class ValueReceiver implements Subscriber {
@@ -27,6 +29,15 @@ public class DataRequester {
         }
     }
 
+    public void pauseDataRequests() {
+        blocked = true;
+    }
+
+    public void resumeDataRequests() {
+        blocked = false;
+        startRequests();
+    }
+
     public void addWhenNewDataReceived(Twin.DataExecutor function) {
         dataExecutor.add(function);
     }
@@ -37,19 +48,21 @@ public class DataRequester {
         this.requesterID = requesterID;
         valueReceiver = new ValueReceiver();
 
-        twinStub.addWhenDeviceGoesOnline(data -> {
-            final List<String> openDataRequestsCopy = new ArrayList<>(
-                openDataRequests
-            );
-            for (String request : openDataRequestsCopy) {
-                twinStub.publishDataStartRequest(request, requesterID);
-                twinStub.waitAfterCommand();
-            }
-        });
+        twinStub.addWhenDeviceGoesOnline(data -> startRequests());
+    }
+
+    private void startRequests() {
+        final List<String> openDataRequestsCopy = new ArrayList<>(
+            openDataRequests
+        );
+        for (String request : openDataRequestsCopy) {
+            twinStub.publishDataStartRequest(request, requesterID);
+            twinStub.waitAfterCommand();
+        }
     }
 
     public void startRequestingData() {
-        if (twinStub.isOnline()) {
+        if (twinStub.isOnline() && !blocked) {
             twinStub.publishDataStartRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }
@@ -58,7 +71,7 @@ public class DataRequester {
     }
 
     public void stopRequestingData() {
-        if (twinStub.isOnline()) {
+        if (twinStub.isOnline() && !blocked) {
             twinStub.publishDataStopRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }
