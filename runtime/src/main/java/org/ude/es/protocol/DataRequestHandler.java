@@ -11,17 +11,17 @@ import org.ude.es.twinBase.TwinStub;
 public class DataRequestHandler {
 
     private static final HashMap<String, RequesterTwinStub> currentlyRequestingTwins =
-        new HashMap<>();
+            new HashMap<>();
 
     private final List<String> subscribers = new ArrayList<>();
 
     private final List<TwinStub.Executor> startRequestingData =
-        new ArrayList<>();
+            new ArrayList<>();
     private final List<TwinStub.Executor> stopRequestingData =
-        new ArrayList<>();
+            new ArrayList<>();
 
     private final DataStopRequestReceiver dataStopRequestReceiver =
-        new DataStopRequestReceiver();
+            new DataStopRequestReceiver();
 
     private final String dataID;
     private final JavaTwin twinWithData;
@@ -30,14 +30,14 @@ public class DataRequestHandler {
         this.twinWithData = twinWithData;
         this.dataID = dataID;
         DataStartRequestReceiver dataStartRequestReceiver =
-            new DataStartRequestReceiver();
+                new DataStartRequestReceiver();
         twinWithData.subscribeForDataStartRequest(
-            dataID,
-            dataStartRequestReceiver
+                dataID,
+                dataStartRequestReceiver
         );
         twinWithData.subscribeForDataStopRequest(
-            dataID,
-            dataStopRequestReceiver
+                dataID,
+                dataStopRequestReceiver
         );
     }
 
@@ -91,10 +91,10 @@ public class DataRequestHandler {
 
     private void stopWhenDeviceGoesOffline(String requesterID) {
         currentlyRequestingTwins
-            .get(requesterID)
-            .addWhenDeviceGoesOffline(data ->
-                dataStopRequestReceiver.deliver(new Posting("", requesterID))
-            );
+                .get(requesterID)
+                .addWhenDeviceGoesOffline(data ->
+                        dataStopRequestReceiver.deliver(new Posting("", requesterID))
+                );
     }
 
     private class DataStopRequestReceiver implements Subscriber {
@@ -116,8 +116,8 @@ public class DataRequestHandler {
             currentlyRequestingTwins.get(requesterID).subscriberLeaves();
             if (!currentlyRequestingTwins.get(requesterID).hasSubscriber()) {
                 currentlyRequestingTwins
-                    .get(requesterID)
-                    .unsubscribeFromStatus();
+                        .get(requesterID)
+                        .unsubscribeFromStatus();
                 currentlyRequestingTwins.remove(requesterID);
             }
         }
