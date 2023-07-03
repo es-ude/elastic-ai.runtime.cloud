@@ -1,6 +1,7 @@
 package org.ude.es.twinBase;
 
 import java.util.HashMap;
+
 import org.ude.es.protocol.DataRequestHandler;
 import org.ude.es.protocol.DataRequester;
 
@@ -8,9 +9,9 @@ public class DeviceTwin extends JavaTwin {
 
     protected TwinStub device;
     protected HashMap<String, DataRequester> availableDataRequester =
-        new HashMap<>();
+            new HashMap<>();
     protected HashMap<String, DataRequestHandler> availableDataRequesterHandler =
-        new HashMap<>();
+            new HashMap<>();
 
     public DeviceTwin(String identifier) {
         super(identifier + "Twin");
@@ -35,27 +36,34 @@ public class DeviceTwin extends JavaTwin {
         }
     }
 
+    protected void removeProvidedValue(String dataID) {
+        availableDataRequester.get(dataID).stopRequestingData();
+        availableDataRequesterHandler.get(dataID).stop();
+        availableDataRequester.remove(dataID);
+        availableDataRequesterHandler.remove(dataID);
+    }
+
     protected void provideValue(String dataID) {
         DataRequester dataRequester = new DataRequester(
-            device,
-            dataID,
-            this.identifier
+                device,
+                dataID,
+                this.identifier
         );
         DataRequestHandler dataRequestHandler = new DataRequestHandler(
-            this,
-            dataID
+                this,
+                dataID
         );
         dataRequestHandler.addWhenStartRequestingData(
-            dataRequester::startRequestingData
+                dataRequester::startRequestingData
         );
 
         dataRequestHandler.addWhenStopRequestingData(
-            dataRequester::stopRequestingData
+                dataRequester::stopRequestingData
         );
         dataRequestHandler.addWhenStopRequestingData(device::waitAfterCommand);
 
         dataRequester.addWhenNewDataReceived(
-            dataRequestHandler::newDataToPublish
+                dataRequestHandler::newDataToPublish
         );
 
         availableDataRequester.put(dataID, dataRequester);

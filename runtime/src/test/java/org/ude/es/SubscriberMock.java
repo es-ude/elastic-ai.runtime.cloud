@@ -48,4 +48,8 @@ public class SubscriberMock implements Subscriber {
             .append(", ");
         assertEquals(amount, deliveredPostings.size(), topics.toString());
     }
+
+    public void clearPostings() {
+        deliveredPostings.clear();
+    }
 }
