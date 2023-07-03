@@ -40,7 +40,7 @@ Services that offer access to a web interface also require a running service. Th
 
 #### Kustomization
 
-[Kustomization](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) manages multiple k8s configuration files. It requires a `kustomization.yml` file, in which all files are listed, that are required for the deployment. This helps to create the `k8s.yml` file, that is ultimately used for the deployment.  
+[Kustomization](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) manages multiple k8s configuration files. It requires a `kustomization.yml` file, in which all files are listed, that are required for the deployment.
 
 ### Dashboard
 
