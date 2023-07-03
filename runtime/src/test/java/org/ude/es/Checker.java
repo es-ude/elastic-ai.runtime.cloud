@@ -61,6 +61,10 @@ public class Checker {
         return topics.toString();
     }
 
+    public void clearPostings() {
+        subscriber.clearPostings();
+    }
+
     //endregion testing (un)subscription of a topic
 
     //region testing with broker
