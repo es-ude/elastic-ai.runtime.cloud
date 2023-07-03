@@ -2,7 +2,6 @@ package org.ude.es.protocol;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
@@ -44,8 +43,7 @@ public class DataRequester {
     }
 
     public void resumeDataRequests() {
-        if (!blocked)
-            return;
+        if (!blocked) return;
         blocked = false;
         if (dataWasBlocked) {
             publishStartStopRequest();
@@ -55,10 +53,10 @@ public class DataRequester {
 
     private void publishStartStopRequest() {
         if (twinStub.isOnline()) {
-            if (requested)
-                twinStub.publishDataStartRequest(dataID, requesterID);
-            else
-                twinStub.publishDataStopRequest(dataID, requesterID);
+            if (requested) twinStub.publishDataStartRequest(
+                dataID,
+                requesterID
+            ); else twinStub.publishDataStopRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }
     }
@@ -75,8 +73,7 @@ public class DataRequester {
     }
 
     public void startRequestingData() {
-        if (requested)
-            return;
+        if (requested) return;
         requested = true;
         twinStub.subscribeForData(dataID, valueReceiver);
         if (blocked) {
@@ -87,8 +84,7 @@ public class DataRequester {
     }
 
     public void stopRequestingData() {
-        if (!requested)
-            return;
+        if (!requested) return;
         requested = false;
         twinStub.unsubscribeFromData(dataID);
         if (blocked) {
