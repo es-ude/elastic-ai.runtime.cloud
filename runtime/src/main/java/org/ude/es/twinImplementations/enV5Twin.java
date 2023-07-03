@@ -2,7 +2,11 @@ package org.ude.es.twinImplementations;
 
 import static org.ude.es.twinBase.Executable.startTwin;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import org.ude.es.comm.Status;
+import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.DeviceTwin;
 
 public class enV5Twin extends DeviceTwin {
@@ -12,6 +16,7 @@ public class enV5Twin extends DeviceTwin {
     }
 
     private int bitfilePosition = 0;
+    private String lastStatusMessage = "";
 
     public enV5Twin(String identifier) {
         super(identifier);
@@ -63,9 +68,9 @@ public class enV5Twin extends DeviceTwin {
     }
 
     private void publishAvailableMeasurements(String data) {
-        if (!data.contains(Status.Parameter.MEASUREMENTS.getKey())) {
-            return;
-        }
+        if (Objects.equals(lastStatusMessage, data)) return;
+        lastStatusMessage = data;
+        if (!data.contains(Status.Parameter.MEASUREMENTS.getKey())) return;
 
         String measurements = data.substring(
             data.indexOf(Status.Parameter.MEASUREMENTS.getKey()) +
@@ -79,8 +84,15 @@ public class enV5Twin extends DeviceTwin {
                     .append(Status.Parameter.MEASUREMENTS.value(measurements))
             );
 
+        List<String> measurementsArr = Arrays.asList(measurements.split(","));
+        for (String value : availableDataRequester.keySet()) if (
+            !measurementsArr.contains(value)
+        ) removeProvidedValue(value);
+
         for (String measurement : measurements.split(",")) {
-            provideValue(measurement);
+            if (!availableDataRequester.containsKey(measurement)) provideValue(
+                measurement
+            );
         }
     }
 }

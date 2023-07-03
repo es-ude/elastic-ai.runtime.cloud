@@ -35,6 +35,13 @@ public class DeviceTwin extends JavaTwin {
         }
     }
 
+    protected void removeProvidedValue(String dataID) {
+        availableDataRequester.get(dataID).stopRequestingData();
+        availableDataRequesterHandler.get(dataID).stop();
+        availableDataRequester.remove(dataID);
+        availableDataRequesterHandler.remove(dataID);
+    }
+
     protected void provideValue(String dataID) {
         DataRequester dataRequester = new DataRequester(
             device,
