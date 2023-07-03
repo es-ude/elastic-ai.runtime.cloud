@@ -139,7 +139,7 @@ public class TestDataRequestHandler {
     }
 
     @Test
-    void test () {
+    void test() {
         checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester");
         checker.thenPostingIsNotDelivered();
     }
