@@ -137,4 +137,10 @@ public class TestDataRequestHandler {
         checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester1");
         checker.thenUnsubscribeIsDoneFor("requester1/STATUS");
     }
+
+    @Test
+    void test () {
+        checker.whenPostingIsPublishedAtBroker("test/STOP/data", "requester");
+        checker.thenPostingIsNotDelivered();
+    }
 }

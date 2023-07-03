@@ -41,6 +41,11 @@ public class DataRequestHandler {
         );
     }
 
+    public void stop() {
+        twinWithData.unsubscribeFromDataStartRequest(dataID);
+        twinWithData.unsubscribeFromDataStopRequest(dataID);
+    }
+
     public void newDataToPublish(String data) {
         twinWithData.publishData(dataID, data);
     }
