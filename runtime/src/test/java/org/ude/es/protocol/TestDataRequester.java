@@ -1,7 +1,6 @@
 package org.ude.es.protocol;
 
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ public class TestDataRequester {
         stub = new TwinStub("stub");
         stub.bindToCommunicationEndpoint(checker.javaTwin.getEndpoint());
         dataRequester =
-                new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
+            new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
     }
 
     @Test
@@ -34,7 +33,7 @@ public class TestDataRequester {
         dataRequester.startRequestingData();
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/START/data", "test");
+            new Posting(checker.DOMAIN + "/stub/START/data", "test");
         checker.thenPostingIsDelivered();
         checker.thenSubscriptionIsDoneFor("stub/DATA/data");
     }
@@ -47,7 +46,7 @@ public class TestDataRequester {
         dataRequester.stopRequestingData();
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
+            new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
         checker.thenPostingIsDelivered();
     }
 
@@ -57,14 +56,14 @@ public class TestDataRequester {
 
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
         checker.whenPostingIsPublishedAtBroker(
-                "stub/STATUS",
-                "STATUS:OFFLINE;"
+            "stub/STATUS",
+            "STATUS:OFFLINE;"
         );
 
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/START/data", "test");
+            new Posting(checker.DOMAIN + "/stub/START/data", "test");
         checker.thenPostingIsDelivered();
     }
 
@@ -95,7 +94,7 @@ public class TestDataRequester {
         dataRequester.stopRequestingData();
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
+            new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
         checker.thenPostingIsNotDelivered();
     }
 
@@ -107,7 +106,7 @@ public class TestDataRequester {
         dataRequester.startRequestingData();
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/START/data", "test");
+            new Posting(checker.DOMAIN + "/stub/START/data", "test");
         checker.thenPostingIsNotDelivered();
 
         dataRequester.resumeDataRequests();
@@ -123,7 +122,7 @@ public class TestDataRequester {
         dataRequester.stopRequestingData();
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
+            new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
         checker.thenPostingIsNotDelivered();
 
         dataRequester.resumeDataRequests();
@@ -136,7 +135,7 @@ public class TestDataRequester {
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/START/data", "test");
+            new Posting(checker.DOMAIN + "/stub/START/data", "test");
 
         dataRequester.startRequestingData();
         checker.thenPostingIsDelivered();
@@ -151,7 +150,7 @@ public class TestDataRequester {
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
+            new Posting(checker.DOMAIN + "/stub/STOP/data", "test");
 
         dataRequester.startRequestingData();
         dataRequester.stopRequestingData();
@@ -167,7 +166,7 @@ public class TestDataRequester {
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
 
         checker.expected =
-                new Posting(checker.DOMAIN + "/stub/START/data", "test");
+            new Posting(checker.DOMAIN + "/stub/START/data", "test");
 
         dataRequester.startRequestingData();
         dataRequester.pauseDataRequests();

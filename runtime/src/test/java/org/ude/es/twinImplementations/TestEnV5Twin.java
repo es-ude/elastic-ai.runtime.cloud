@@ -18,42 +18,40 @@ public class TestEnV5Twin {
 
         public void whenDevicePublishedStatus(String measurements) {
             expected =
-                    new Posting(
-                            DOMAIN + "/" + twinID + PostingType.STATUS.topic(""),
-                            new Status(twinID)
-                                    .append(
-                                            Status.Parameter.TYPE.value(Status.Type.TWIN.get())
-                                    )
-                                    .append(
-                                            Status.Parameter.STATE.value(
-                                                    Status.State.ONLINE.get()
-                                            )
-                                    )
-                                    .append(
-                                            Status.Parameter.MEASUREMENTS.value(measurements)
-                                    )
-                                    .get()
-                    );
+                new Posting(
+                    DOMAIN + "/" + twinID + PostingType.STATUS.topic(""),
+                    new Status(twinID)
+                        .append(
+                            Status.Parameter.TYPE.value(Status.Type.TWIN.get())
+                        )
+                        .append(
+                            Status.Parameter.STATE.value(
+                                Status.State.ONLINE.get()
+                            )
+                        )
+                        .append(
+                            Status.Parameter.MEASUREMENTS.value(measurements)
+                        )
+                        .get()
+                );
             javaTwin.publishStatus(
-                    new Status(deviceID)
-                            .append(
-                                    Status.Parameter.STATE.value(Status.State.ONLINE.get())
-                            )
-                            .append(
-                                    Status.Parameter.MEASUREMENTS.value(measurements)
-                            )
+                new Status(deviceID)
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+                    .append(Status.Parameter.MEASUREMENTS.value(measurements))
             );
         }
 
         public void whenFlashIsPublished() {
             expected =
-                    new Posting(
-                            DOMAIN +
-                                    "/" +
-                                    deviceID +
-                                    PostingType.COMMAND.topic("FLASH"),
-                            "POSITION:0;"
-                    );
+                new Posting(
+                    DOMAIN +
+                    "/" +
+                    deviceID +
+                    PostingType.COMMAND.topic("FLASH"),
+                    "POSITION:0;"
+                );
             whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "", expected);
         }
     }
@@ -101,9 +99,9 @@ public class TestEnV5Twin {
 
         checker.givenSubscriptionAtBrokerFor(twinID + "/DONE/FLASH");
         checker.whenPostingIsPublishedAtBroker(
-                deviceID + "/DONE/FLASH",
-                "",
-                new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", "")
+            deviceID + "/DONE/FLASH",
+            "",
+            new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", "")
         );
         checker.thenPostingIsDelivered();
     }
@@ -117,30 +115,39 @@ public class TestEnV5Twin {
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value1",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", "testTwin"));
+            "testTwin/START/value1",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsDelivered();
 
         checker.whenFlashIsPublished();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value2");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value2",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", "testTwin"));
+            "testTwin/START/value2",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsDelivered();
 
-
-        checker.whenPostingIsPublishedAtBroker(
-                deviceID + "/DONE/FLASH"
-        );
+        checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH");
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value2");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value2",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value2", "testTwin"));
+            "testTwin/START/value2",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value2",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsDelivered();
     }
 
@@ -154,24 +161,35 @@ public class TestEnV5Twin {
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value1",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", "testTwin"));
+            "testTwin/START/value1",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsNotDelivered();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value2");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value2",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value2", "testTwin"));
+            "testTwin/START/value2",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value2",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsDelivered();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value3");
         checker.whenPostingIsPublishedAtBroker(
-                "testTwin/START/value3",
-                "checker",
-                new Posting(checker.DOMAIN + "/" + deviceID + "/START/value3", "testTwin"));
+            "testTwin/START/value3",
+            "checker",
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value3",
+                "testTwin"
+            )
+        );
         checker.thenPostingIsDelivered();
     }
-
 }
