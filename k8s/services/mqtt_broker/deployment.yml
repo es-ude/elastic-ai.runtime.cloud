@@ -1,0 +1,20 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: hive-mq
+    labels:
+        app: hive-mq
+spec:
+    replicas: 1 
+    template:
+        metadata:
+            labels:
+                app: hive-mq
+        spec:
+            containers:
+                - name: hive-mq
+                  image: hivemq/hivemq-ce
+    selector:
+        matchLabels:
+            app: hive-mq

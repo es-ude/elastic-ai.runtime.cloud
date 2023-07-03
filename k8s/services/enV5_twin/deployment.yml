@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: en-v5-twin-deployment
+  labels:
+    app: en-v5-twin
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: en-v5-twin
+    spec:
+      containers:
+        - name: en-v5-twin
+          image: ghcr.io/es-ude/elastic-ai.runtime:latest
+          imagePullPolicy: Always
+          tty: true # only if console input is necessary
+          stdin: true # only if console input is necessary
+          args: ["-b", "192.168.203.46", "-p", "30135"]
+  selector:
+    matchLabels:
+      app: en-v5-twin

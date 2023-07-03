@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: <twin-name>-deployment
+    labels:
+        app: <twin-name>
+spec:
+    replicas: 1 
+    template:
+        metadata:
+            labels:
+                app: <twin-name> 
+        spec:
+            initContainers:
+                - name: init-myservice
+                  image: busybox
+                  command: [ 'sh', '-c', 'until nslookup mqtt-broker; do echo waiting for mqtt-broker; sleep 10; done;' ]
+            containers:
+                - name: <twin-name> 
+                  image: <twin-image-url> 
+                  tty: true # only if console input is necessary
+                  stdin: true # only if console input is necessary
+            imagePullSecrets:
+            - name: gitlab-auth
+    selector:
+        matchLabels:
+            app: <twin-name>

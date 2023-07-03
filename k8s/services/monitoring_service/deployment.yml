@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: monitoring-service-deployment
+    labels:
+        app: monitoring-service
+spec:
+  replicas: 1 
+  template:
+    metadata:
+      labels:
+        app: monitoring-service 
+    spec:
+      containers:
+        - name: monitoring-service 
+          image: ghcr.io/es-ude/elastic-ai.monitor:latest
+          imagePullPolicy: Always
+          args: ["-b", "192.168.203.46", "-p", "30135"]
+          env:
+          - name: HOST_IP
+            value: 192.168.203.46
+            
+  selector:
+    matchLabels:
+      app: monitoring-service
