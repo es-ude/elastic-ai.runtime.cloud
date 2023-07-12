@@ -14,10 +14,22 @@ public class DataRequester {
     private final String dataID;
     private final String requesterID;
     private final ValueReceiver valueReceiver;
-    List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
+
     private boolean requested = false;
     private boolean dataWasBlocked = false;
     private boolean blocked = false;
+
+    List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
+
+    private class ValueReceiver implements Subscriber {
+
+        @Override
+        public void deliver(Posting posting) {
+            for (Twin.DataExecutor executor : dataExecutor) {
+                executor.execute(posting.data());
+            }
+        }
+    }
 
     public DataRequester(TwinStub twinStub, String dataID, String requesterID) {
         this.twinStub = twinStub;
@@ -82,15 +94,6 @@ public class DataRequester {
         } else {
             publishStartStopRequest();
         }
-    }
-
-    private class ValueReceiver implements Subscriber {
-
-        @Override
-        public void deliver(Posting posting) {
-            for (Twin.DataExecutor executor : dataExecutor) {
-                executor.execute(posting.data());
-            }
-        }
+      
     }
 }

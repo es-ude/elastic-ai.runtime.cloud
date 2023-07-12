@@ -1,6 +1,5 @@
 package org.ude.es.twinImplementations;
 
-
 import org.ude.es.comm.Status;
 import org.ude.es.twinBase.DeviceTwin;
 
@@ -67,6 +66,7 @@ public class enV5Twin extends DeviceTwin {
             return;
         }
 
+
         String measurements = data.substring(data.indexOf(Status.Parameter.MEASUREMENTS.getKey()) +
                 Status.Parameter.MEASUREMENTS.getKey().length() + 1);
         measurements = measurements.substring(0, measurements.indexOf(";"));
@@ -85,5 +85,6 @@ public class enV5Twin extends DeviceTwin {
                 provideValue(measurement);
             }
         }
+
     }
 }

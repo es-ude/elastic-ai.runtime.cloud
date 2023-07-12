@@ -39,6 +39,21 @@ public class TestEnV5Twin {
         checker.givenJavaTwin(deviceID);
         checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
         checker.whenDevicePublishedStatus("value1,value2");
+
+        checker.thenPostingIsDelivered();
+        checker.clearPostings();
+        checker.whenDevicePublishedStatus("value1,value2");
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void sameStatusIsNotPublishedAgain() {
+        enV5Twin twin = new enV5Twin(deviceID);
+        twin.bindToCommunicationEndpoint(checker.broker);
+
+        checker.givenJavaTwin(deviceID);
+        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
+        checker.whenDevicePublishedStatus("value1,value2");
         checker.thenPostingIsDelivered();
         checker.clearPostings();
         checker.whenDevicePublishedStatus("value1,value2");
@@ -81,6 +96,7 @@ public class TestEnV5Twin {
         checker.whenDevicePublishedStatus("value1,value2");
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
+
         checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1",
                 "checker");
         checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
@@ -100,6 +116,7 @@ public class TestEnV5Twin {
 
     @Test
     void providedMeasurementsAreChangedWhenDevicesStatusChanges() {
+
         enV5Twin twin = new enV5Twin(deviceID);
         twin.bindToCommunicationEndpoint(checker.broker);
         checker.givenJavaTwin(deviceID);
@@ -107,6 +124,7 @@ public class TestEnV5Twin {
         checker.whenDevicePublishedStatus("value2,value3");
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
+
         checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1", "checker");
         checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
         checker.thenPostingIsNotDelivered();
