@@ -1,63 +1,18 @@
 package org.ude.es.twinBase;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+
 public class TestTwinStub {
 
     private static final String twinID = "test";
-
-    private static class TwinStubChecker extends Checker {
-
-        public TwinStub device;
-
-        public void givenDevice() {
-            device = new TwinStub("test");
-            device.bindToCommunicationEndpoint(broker);
-        }
-
-        public void whenSubscribingForData(String dataId) {
-            device.subscribeForData(dataId, subscriber);
-        }
-
-        public void whenUnsubscribingFromData(String dataId) {
-            device.unsubscribeFromData(dataId);
-        }
-
-        public void whenSubscribingForStatus() {
-            device.subscribeForStatus(subscriber);
-        }
-
-        public void whenUnsubscribingFromStatus() {
-            device.unsubscribeFromStatus();
-        }
-
-        public void whenAskingForDataStart(String data, String receiver) {
-            String topic =
-                device.getDomainAndIdentifier() + PostingType.START.topic(data);
-            expected = new Posting(topic, receiver);
-            device.publishDataStartRequest(data, receiver);
-        }
-
-        public void whenAskingForDataStop(String data, String receiver) {
-            String topic =
-                device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
-            expected = new Posting(topic, receiver);
-            device.publishDataStopRequest(data, receiver);
-        }
-
-        public void whenSendingCommand(String service, String cmd) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.COMMAND.topic(service);
-            expected = new Posting(topic, cmd);
-            device.publishCommand(service, cmd);
-        }
-    }
-
     private TwinStubChecker checker;
 
     @BeforeEach
@@ -98,6 +53,21 @@ public class TestTwinStub {
     }
 
     @Test
+    void weCanSubscribeForDone() {
+        checker.whenSubscribingForDone("data");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DONE/data", "");
+        checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void weCanUnsubscribeFromDone() {
+        checker.whenSubscribingForDone("data");
+        checker.whenUnsubscribingFromDone("data");
+        checker.whenPostingIsPublishedAtBroker(twinID + "/DONE/data", "33");
+        checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
     void weCanPublishDataStartRequest() {
         checker.givenSubscriptionAtBrokerFor(twinID + "/START/data");
         checker.whenAskingForDataStart("data", "me");
@@ -116,5 +86,82 @@ public class TestTwinStub {
         checker.givenSubscriptionAtBrokerFor(twinID + "/DO/led");
         checker.whenSendingCommand("led", "on");
         checker.thenPostingIsDelivered();
+    }
+
+    @Test
+    void deviceGoesOnline() {
+        AtomicReference<Boolean> received = new AtomicReference<>(false);
+        checker.device.addWhenDeviceGoesOnline(data -> received.set(true));
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:ONLINE");
+        Assertions.assertTrue(received.get());
+    }
+
+    @Test
+    void deviceGoesOffline() {
+        AtomicReference<Boolean> received = new AtomicReference<>(false);
+        checker.device.addWhenDeviceGoesOffline(data -> received.set(true));
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:OFFLINE");
+        Assertions.assertTrue(received.get());
+    }
+
+    @Test
+    void isOnline() {
+        Assertions.assertFalse(checker.device.isOnline());
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:ONLINE");
+        Assertions.assertTrue(checker.device.isOnline());
+        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:OFFLINE");
+        Assertions.assertFalse(checker.device.isOnline());
+    }
+
+    private static class TwinStubChecker extends Checker {
+
+        public TwinStub device;
+
+        public void givenDevice() {
+            device = new TwinStub("test");
+            device.bindToCommunicationEndpoint(broker);
+        }
+
+        public void whenSubscribingForData(String dataId) {
+            device.subscribeForData(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromData(String dataId) {
+            device.unsubscribeFromData(dataId);
+        }
+
+        public void whenSubscribingForStatus() {
+            device.subscribeForStatus(subscriber);
+        }
+
+        public void whenUnsubscribingFromStatus() {
+            device.unsubscribeFromStatus();
+        }
+
+        public void whenSubscribingForDone(String dataId) {
+            device.subscribeForDone(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromDone(String dataId) {
+            device.unsubscribeFromDone(dataId);
+        }
+
+        public void whenAskingForDataStart(String data, String receiver) {
+            String topic = device.getDomainAndIdentifier() + PostingType.START.topic(data);
+            isExpecting(new Posting(topic, receiver));
+            device.publishDataStartRequest(data, receiver);
+        }
+
+        public void whenAskingForDataStop(String data, String receiver) {
+            String topic = device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
+            isExpecting(new Posting(topic, receiver));
+            device.publishDataStopRequest(data, receiver);
+        }
+
+        public void whenSendingCommand(String service, String cmd) {
+            String topic = device.getDomainAndIdentifier() + PostingType.COMMAND.topic(service);
+            isExpecting(new Posting(topic, cmd));
+            device.publishCommand(service, cmd);
+        }
     }
 }
