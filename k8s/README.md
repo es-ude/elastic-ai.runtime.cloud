@@ -31,6 +31,13 @@ Stateless applications are deployed via a deployment file. This file contains at
 
 Services that offer access to a web interface also require a running service. This service is specified in the `service.yml` file in the respective service folder. This service file is linked via the _spec.selector.app_ attribute to the deployment or stateful set. In addition to that, it handles port mappings for accessing the web interface from the outside of the pod. This can be seen in `services/monitoring_service/service.yml`. Regarding port mapping: Kubernets does not allow a mapping of ports below 30000. Therefore it is not possible to i.e. map port 8080 to port 8080.
 
+##### Port Mappings
+
+| Name                 | Regular Port | K8s Port |
+|----------------------|--------------|----------|
+| Monitoring Service   | 8081         | 30134    |
+| HiveMQ (MQTT Broker) | 1883         | 30135    |
+
 #### Kustomization
 
 [Kustomization](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/) manages multiple k8s configuration files. It requires a `kustomization.yml` file, in which all files are listed, that are required for the deployment. This helps to create the `k8s.yml` file, that is ultimately used for the deployment.  
@@ -71,6 +78,15 @@ if [ "$CONT" = "y" ]; then
 fi
 ```
 After the dry-run, the user is asked whether the configuration should actually be deployed or not. If that is not the case, the script will exit. In case it should be deployed, the command only differs from the dry-run above, with the missing _--dry-run_ flag. The user the receives output from `kubectl` that states which containers are created or changed.  
+
+### Known Issues
+
+- Failed to restart if FPGA flashing was not successful:
+The twin drops all messages to enV5 that do not contain chunks of bitfiles. If the enV5 crashes during flashing, the twin does not receive the response that the flashing is done and therefore indefinitely blocks requests to the device
+
+
+- Release Target of enV5 is the only target that reliable works thorugh a longer time
+The Debug Output of the Debug target causes the enV5 to crash under conditions that we are unable to reliably replicate. This also causes the monitor to stuck at a certain point.
 
 
 ### Troubleshooting
