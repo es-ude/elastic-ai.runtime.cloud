@@ -1,20 +1,20 @@
 package org.ude.es.twinImplementations;
 
-import static org.ude.es.twinBase.Executable.startTwin;
-
 import org.ude.es.twinBase.DeviceTwin;
 
-public class minimalExecutableDeviceTwin extends DeviceTwin {
+import static org.ude.es.twinBase.Executable.startTwin;
 
-    public static void main(String[] args) throws InterruptedException {
-        startTwin(new DeviceTwin("example"), args);
-    }
+public class minimalExecutableDeviceTwin extends DeviceTwin {
 
     public minimalExecutableDeviceTwin(String identifier) {
         super(identifier);
     }
 
-    // Example on how to forward data messages to device
+    public static void main(String[] args) throws InterruptedException {
+        startTwin(new DeviceTwin("example"), args);
+    }
+
+    // Example on how to forward data messages to the Device
     @Override
     protected void executeOnBind() {
         provideValue("exampleValue");

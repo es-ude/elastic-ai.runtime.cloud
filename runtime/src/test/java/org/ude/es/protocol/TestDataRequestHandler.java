@@ -1,12 +1,13 @@
 package org.ude.es.protocol;
 
-import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TestDataRequestHandler {
 
@@ -24,8 +25,8 @@ public class TestDataRequestHandler {
     @AfterEach
     void afterEach() {
         checker.whenPostingIsPublishedAtBroker(
-            "requester/STATUS",
-            "STATUS:OFFLINE;"
+                "requester/STATUS",
+                "STATUS:OFFLINE;"
         );
     }
 
@@ -77,8 +78,8 @@ public class TestDataRequestHandler {
         dataRequestHandler.addWhenStopRequestingData(() -> received.set(true));
         checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
         checker.whenPostingIsPublishedAtBroker(
-            "requester/STATUS",
-            "STATUS:OFFLINE;"
+                "requester/STATUS",
+                "STATUS:OFFLINE;"
         );
 
         Assertions.assertTrue(received.get());
@@ -90,8 +91,7 @@ public class TestDataRequestHandler {
 
         dataRequestHandler.newDataToPublish("testData");
 
-        checker.expected =
-            new Posting(checker.DOMAIN + "/test/DATA/data", "testData");
+        checker.isExpecting(new Posting(checker.DOMAIN + "/test/DATA/data", "testData"));
         checker.thenPostingIsDelivered();
     }
 
@@ -108,8 +108,8 @@ public class TestDataRequestHandler {
     @Test
     void multipleValuesAreRequestedBySameRequester() {
         DataRequestHandler dataRequestHandler1 = new DataRequestHandler(
-            checker.javaTwin,
-            "data1"
+                checker.javaTwin,
+                "data1"
         );
         AtomicReference<Boolean> received = new AtomicReference<>(false);
         dataRequestHandler1.addWhenStartRequestingData(() -> received.set(true)
