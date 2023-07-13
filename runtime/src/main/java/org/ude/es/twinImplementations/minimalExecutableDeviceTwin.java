@@ -1,8 +1,8 @@
 package org.ude.es.twinImplementations;
 
-import org.ude.es.twinBase.DeviceTwin;
-
 import static org.ude.es.twinBase.Executable.startTwin;
+
+import org.ude.es.twinBase.DeviceTwin;
 
 public class minimalExecutableDeviceTwin extends DeviceTwin {
 

@@ -1,14 +1,13 @@
 package org.ude.es;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.ude.es.comm.BrokerMock;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.JavaTwin;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Checker {
 
@@ -36,23 +35,23 @@ public class Checker {
 
     public void thenSubscriptionIsDoneFor(String topic) {
         assertTrue(
-                subscriptions.contains(topic),
-                "should have received subscription " +
-                        "for topic " +
-                        topic +
-                        ", topics received:" +
-                        getTopics(subscriptions)
+            subscriptions.contains(topic),
+            "should have received subscription " +
+            "for topic " +
+            topic +
+            ", topics received:" +
+            getTopics(subscriptions)
         );
     }
 
     public void thenUnsubscribeIsDoneFor(String topic) {
         assertTrue(
-                unsubscribes.contains(topic),
-                "should have received unsubscribe " +
-                        "for topic " +
-                        topic +
-                        ", topics received:" +
-                        getTopics(unsubscribes)
+            unsubscribes.contains(topic),
+            "should have received unsubscribe " +
+            "for topic " +
+            topic +
+            ", topics received:" +
+            getTopics(unsubscribes)
         );
     }
 
@@ -86,14 +85,22 @@ public class Checker {
         whenPostingIsPublishedAtBroker(topic, "");
     }
 
-    private void whenPostingIsPublishedAtBroker(String topic, String data, Posting expected) {
+    private void whenPostingIsPublishedAtBroker(
+        String topic,
+        String data,
+        Posting expected
+    ) {
         this.expected = expected;
         broker.publish(new Posting(topic, data), false);
     }
 
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
         String fullTopic = broker.getClientIdentifier() + "/" + topic;
-        whenPostingIsPublishedAtBroker(topic, data, new Posting(fullTopic, data));
+        whenPostingIsPublishedAtBroker(
+            topic,
+            data,
+            new Posting(fullTopic, data)
+        );
     }
 
     public void givenJavaTwin(String id) {

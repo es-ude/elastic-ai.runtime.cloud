@@ -1,12 +1,11 @@
 package org.ude.es.protocol;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
 import org.ude.es.twinBase.TwinStub;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataRequester {
 
@@ -43,10 +42,10 @@ public class DataRequester {
 
     private void publishStartStopRequest() {
         if (twinStub.isOnline()) {
-            if (requested)
-                twinStub.publishDataStartRequest(dataID, requesterID);
-            else
-                twinStub.publishDataStopRequest(dataID, requesterID);
+            if (requested) twinStub.publishDataStartRequest(
+                dataID,
+                requesterID
+            ); else twinStub.publishDataStopRequest(dataID, requesterID);
             twinStub.waitAfterCommand();
         }
     }

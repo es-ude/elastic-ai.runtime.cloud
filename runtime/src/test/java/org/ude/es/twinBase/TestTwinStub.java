@@ -1,14 +1,12 @@
 package org.ude.es.twinBase;
 
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 
 public class TestTwinStub {
 
@@ -92,7 +90,10 @@ public class TestTwinStub {
     void deviceGoesOnline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
         checker.device.addWhenDeviceGoesOnline(data -> received.set(true));
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:ONLINE");
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/STATUS",
+            "STATUS:ONLINE"
+        );
         Assertions.assertTrue(received.get());
     }
 
@@ -100,16 +101,25 @@ public class TestTwinStub {
     void deviceGoesOffline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
         checker.device.addWhenDeviceGoesOffline(data -> received.set(true));
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:OFFLINE");
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/STATUS",
+            "STATUS:OFFLINE"
+        );
         Assertions.assertTrue(received.get());
     }
 
     @Test
     void isOnline() {
         Assertions.assertFalse(checker.device.isOnline());
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:ONLINE");
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/STATUS",
+            "STATUS:ONLINE"
+        );
         Assertions.assertTrue(checker.device.isOnline());
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "STATUS:OFFLINE");
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/STATUS",
+            "STATUS:OFFLINE"
+        );
         Assertions.assertFalse(checker.device.isOnline());
     }
 
@@ -147,19 +157,23 @@ public class TestTwinStub {
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic = device.getDomainAndIdentifier() + PostingType.START.topic(data);
+            String topic =
+                device.getDomainAndIdentifier() + PostingType.START.topic(data);
             isExpecting(new Posting(topic, receiver));
             device.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic = device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
+            String topic =
+                device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
             isExpecting(new Posting(topic, receiver));
             device.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
-            String topic = device.getDomainAndIdentifier() + PostingType.COMMAND.topic(service);
+            String topic =
+                device.getDomainAndIdentifier() +
+                PostingType.COMMAND.topic(service);
             isExpecting(new Posting(topic, cmd));
             device.publishCommand(service, cmd);
         }

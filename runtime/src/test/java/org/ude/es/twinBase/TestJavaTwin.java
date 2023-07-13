@@ -1,6 +1,5 @@
 package org.ude.es.twinBase;
 
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +7,6 @@ import org.ude.es.Checker;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.PostingType;
 import org.ude.es.comm.Status;
-
 
 public class TestJavaTwin {
 
@@ -46,8 +44,7 @@ public class TestJavaTwin {
     @Test
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data",
-                twinID);
+        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data", twinID);
         checker.thenPostingIsDelivered();
     }
 
@@ -55,8 +52,7 @@ public class TestJavaTwin {
     void weCanUnsubscribeFromDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenUnsubscribingFromDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data",
-                twinID);
+        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data", twinID);
         checker.thenPostingIsNotDelivered();
     }
 
@@ -107,26 +103,35 @@ public class TestJavaTwin {
         }
 
         public void whenPublishingData(String dataId, String value) {
-            String topic = twin.getDomainAndIdentifier() +
-                    PostingType.DATA.topic(dataId);
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
             isExpecting(new Posting(topic, value));
             twin.publishData(dataId, value);
         }
 
         public void whenPublishingDone(String dataId, String value) {
-            String topic = twin.getDomainAndIdentifier() +
-                    PostingType.DONE.topic(dataId);
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.DONE.topic(dataId);
             isExpecting(new Posting(topic, value));
             twin.publishDone(dataId, value);
         }
 
         public void whenPublishingStatus() {
-            String topic = twin.getDomainAndIdentifier() +
-                    PostingType.STATUS.topic("");
-            isExpecting(new Posting(topic, "ID:" + twin.identifier + ";TYPE:TWIN;STATE:ONLINE;"));
-            twin.publishStatus(new Status(twin.getIdentifier()).append(
-                            Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                    .append(Status.Parameter.STATE.value(Status.State.ONLINE.get())));
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.STATUS.topic("");
+            isExpecting(
+                new Posting(
+                    topic,
+                    "ID:" + twin.identifier + ";TYPE:TWIN;STATE:ONLINE;"
+                )
+            );
+            twin.publishStatus(
+                new Status(twin.getIdentifier())
+                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+            );
         }
 
         public void whenSubscribingForDataStart(String dataId) {

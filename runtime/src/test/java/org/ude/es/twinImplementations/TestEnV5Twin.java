@@ -59,18 +59,36 @@ public class TestEnV5Twin {
         checker.clearPostings();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1", "broker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value1",
+            "broker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                twinID
+            )
+        );
         checker.thenPostingIsNotDelivered();
 
-        checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH", ""); checker.isExpecting(new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", ""));
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1", "broker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
+        checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH", "");
+        checker.isExpecting(
+            new Posting(checker.DOMAIN + "/" + twinID + "/DONE/FLASH", "")
+        );
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value1",
+            "broker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                twinID
+            )
+        );
         checker.thenPostingIsDelivered();
         checker.givenSubscriptionAtBrokerFor(twinID + "/DONE/FLASH");
 
         checker.thenPostingIsDelivered();
-
     }
 
     @Test
@@ -81,19 +99,34 @@ public class TestEnV5Twin {
         checker.whenDevicePublishedStatus("value1,value2");
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1",
-                "checker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value1",
+            "checker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                twinID
+            )
+        );
         checker.thenPostingIsDelivered();
         checker.clearPostings();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/STOP/value1");
         checker.whenFlashIsPublished();
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STOP/value1", "checker");
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/STOP/value1",
+            "checker"
+        );
         checker.thenPostingIsNotDelivered();
 
         checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH", "");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/STOP/value1", twinID));
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/STOP/value1",
+                twinID
+            )
+        );
 
         checker.thenPostingIsDelivered();
     }
@@ -107,43 +140,86 @@ public class TestEnV5Twin {
         checker.whenDevicePublishedStatus("value2,value3");
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value1", "checker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value1", twinID));
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value1",
+            "checker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value1",
+                twinID
+            )
+        );
         checker.thenPostingIsNotDelivered();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value2");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value2", "checker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value2", twinID));
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value2",
+            "checker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value2",
+                twinID
+            )
+        );
         checker.thenPostingIsDelivered();
 
         checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value3");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/value3", "checker");
-        checker.isExpecting(new Posting(checker.DOMAIN + "/" + deviceID + "/START/value3", twinID));
+        checker.whenPostingIsPublishedAtBroker(
+            twinID + "/START/value3",
+            "checker"
+        );
+        checker.isExpecting(
+            new Posting(
+                checker.DOMAIN + "/" + deviceID + "/START/value3",
+                twinID
+            )
+        );
         checker.thenPostingIsDelivered();
     }
 
     private static class EnV5Checker extends Checker {
 
         public void whenDevicePublishedStatus(String measurements) {
-            isExpecting(new Posting(
+            isExpecting(
+                new Posting(
                     DOMAIN + "/" + twinID + PostingType.STATUS.topic(""),
                     new Status(twinID)
-                            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                            .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
-                            .append(Status.Parameter.MEASUREMENTS.value(measurements))
-                            .get()
-            ));
+                        .append(
+                            Status.Parameter.TYPE.value(Status.Type.TWIN.get())
+                        )
+                        .append(
+                            Status.Parameter.STATE.value(
+                                Status.State.ONLINE.get()
+                            )
+                        )
+                        .append(
+                            Status.Parameter.MEASUREMENTS.value(measurements)
+                        )
+                        .get()
+                )
+            );
             javaTwin.publishStatus(
-                    new Status(deviceID)
-                            .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
-                            .append(Status.Parameter.MEASUREMENTS.value(measurements))
+                new Status(deviceID)
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+                    .append(Status.Parameter.MEASUREMENTS.value(measurements))
             );
         }
 
         public void whenFlashIsPublished() {
             whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "");
-            isExpecting(new Posting(DOMAIN + "/" + deviceID + PostingType.COMMAND.topic("FLASH"), "POSITION:0;"));
+            isExpecting(
+                new Posting(
+                    DOMAIN +
+                    "/" +
+                    deviceID +
+                    PostingType.COMMAND.topic("FLASH"),
+                    "POSITION:0;"
+                )
+            );
         }
     }
-
 }

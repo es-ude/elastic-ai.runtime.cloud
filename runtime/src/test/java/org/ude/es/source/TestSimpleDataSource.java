@@ -34,7 +34,12 @@ class TestSimpleDataSource {
         }
 
         public void whenDataIsSetTo(int value) {
-            isExpecting(new Posting(javaTwin.getDomainAndIdentifier() + "/DATA/data", String.valueOf(value)));
+            isExpecting(
+                new Posting(
+                    javaTwin.getDomainAndIdentifier() + "/DATA/data",
+                    String.valueOf(value)
+                )
+            );
             dataSource.set(value);
         }
     }
