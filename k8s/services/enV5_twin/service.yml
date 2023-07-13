@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: en-v5-twin
+spec:
+  selector:
+    app: en-v5-twin

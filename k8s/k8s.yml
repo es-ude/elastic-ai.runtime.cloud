@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: en-v5-twin
+spec:
+  ports:
+  - port: 18833
+  selector:
+    app: en-v5-twin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive-mq
+spec:
+  ports:
+  - name: mqtt-port
+    nodePort: 30135
+    port: 1883
+    protocol: TCP
+  selector:
+    app: hive-mq
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: monitoring-service
+spec:
+  ports:
+  - name: monitoring-port
+    nodePort: 30134
+    port: 8081
+    protocol: TCP
+  selector:
+    app: monitoring-service
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: en-v5-twin
+  name: en-v5-twin-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: en-v5-twin
+  template:
+    metadata:
+      labels:
+        app: en-v5-twin
+    spec:
+      containers:
+      - args:
+        - -b
+        - 192.168.203.46
+        - -p
+        - "30135"
+        image: ghcr.io/es-ude/elastic-ai.runtime:latest
+        imagePullPolicy: Always
+        name: en-v5-twin
+        stdin: true
+        tty: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hive-mq
+  name: hive-mq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hive-mq
+  template:
+    metadata:
+      labels:
+        app: hive-mq
+    spec:
+      containers:
+      - image: eclipse-mosquitto:1.6.14
+        name: hive-mq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: monitoring-service
+  name: monitoring-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-service
+  template:
+    metadata:
+      labels:
+        app: monitoring-service
+    spec:
+      containers:
+      - args:
+        - -b
+        - 192.168.203.46
+        - -p
+        - "30135"
+        env:
+        - name: HOST_IP
+          value: 192.168.203.46
+        image: docker.io/library/monitor:0.0.2
+        name: monitoring-service
