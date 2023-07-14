@@ -1,5 +1,5 @@
 {
-  "name": "elastic-ai.runtime",
+  "name": "elastic-ai.runtime.cloud",
   "private": true,
   "release": {
     "branches": [

@@ -1,14 +1,10 @@
-# Elastic AI Runtime
-
-This repository is mainly created for Wiki and Issues
-
 ## Kubernetes
 
-This section explains how Kubernetes (k8s) can be used, to deploy and use the _elastic-AI.runtime_. Please be aware, that this section does not explain how Kubernetes works in general. For that, please take a look [here](https://kubernetes.io/de/docs/concepts/overview/what-is-kubernetes/).
+This section explains how Kubernetes (k8s) can be used, to deploy and use the _elastic-AI.runtime.cloud_. Please be aware that this section does not explain how Kubernetes works in general. For that, please take a look [here](https://kubernetes.io/de/docs/concepts/overview/what-is-kubernetes/).
 
-The elastic-ai.runtime contains the following services:
+The elastic-ai.runtime.cloud contains the following services:
 
--   elastic-ai.runtime.cloud: main application logic that also contains Digital Twins
+-   elastic-ai.runtime: main application logic that also contains Digital Twins
     -   (at least one) Digital Twin: digital representation of a physical device
 -   elastic-ai.monitor: Monitors Digital Twins throughout execution
 -   MQTT-Broker: required for communication between different twins and the resolver via MQTT

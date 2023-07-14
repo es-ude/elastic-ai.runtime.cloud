@@ -32,8 +32,8 @@ jobs:
         run: ./gradlew jibDockerBuild
       - name: Tag Runtime
         run: |
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime:latest
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime:${{ steps.release.outputs.tag }}
+          docker tag runtime:latest ghcr.io/es-ude/elastic-AI.runtime.cloud:latest
+          docker tag runtime:latest ghcr.io/es-ude/elastic-AI.runtime.cloud:${{ steps.release.outputs.tag }}
       - name: Tag Monitor
         run: |
           docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor:latest
