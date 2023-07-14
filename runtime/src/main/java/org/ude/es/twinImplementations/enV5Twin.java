@@ -6,20 +6,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.ude.es.comm.Status;
-import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.DeviceTwin;
 
 public class enV5Twin extends DeviceTwin {
-
-    public static void main(String[] args) throws InterruptedException {
-        startTwin(new enV5Twin("enV5"), args);
-    }
 
     private int bitfilePosition = 0;
     private String lastStatusMessage = "";
 
     public enV5Twin(String identifier) {
         super(identifier);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        startTwin(new enV5Twin("enV5"), args);
     }
 
     @Override
@@ -68,9 +67,13 @@ public class enV5Twin extends DeviceTwin {
     }
 
     private void publishAvailableMeasurements(String data) {
-        if (Objects.equals(lastStatusMessage, data)) return;
+        if (Objects.equals(lastStatusMessage, data)) {
+            return;
+        }
         lastStatusMessage = data;
-        if (!data.contains(Status.Parameter.MEASUREMENTS.getKey())) return;
+        if (!data.contains(Status.Parameter.MEASUREMENTS.getKey())) {
+            return;
+        }
 
         String measurements = data.substring(
             data.indexOf(Status.Parameter.MEASUREMENTS.getKey()) +
@@ -84,15 +87,17 @@ public class enV5Twin extends DeviceTwin {
                     .append(Status.Parameter.MEASUREMENTS.value(measurements))
             );
 
-        List<String> measurementsArr = Arrays.asList(measurements.split(","));
-        for (String value : availableDataRequester.keySet()) if (
-            !measurementsArr.contains(value)
-        ) removeProvidedValue(value);
+        List<String> measurementValues = Arrays.asList(measurements.split(","));
+        for (String value : availableDataRequester.keySet()) {
+            if (!measurementValues.contains(value)) {
+                removeProvidedValue(value);
+            }
+        }
 
         for (String measurement : measurements.split(",")) {
-            if (!availableDataRequester.containsKey(measurement)) provideValue(
-                measurement
-            );
+            if (!availableDataRequester.containsKey(measurement)) {
+                provideValue(measurement);
+            }
         }
     }
 }
