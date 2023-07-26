@@ -24,7 +24,7 @@ or the Sender and the `<message_type>/<type_dependant>` is defined as in the par
 ### Message Types
 
 |   Type | Object   | Description                                                       |
-|-------:|:---------|:------------------------------------------------------------------|
+| -----: | :------- | :---------------------------------------------------------------- |
 | STATUS | Sender   | a message containing the online(1)/offline(0) status of an object |
 |  START | Receiver | a message requesting an object to start sending a stream of data  |
 |   STOP | Receiver | a message requesting an object to stop sending a stream of data   |
