@@ -26,28 +26,28 @@ public class EnV5Controller {
         return "env5";
     }
 
-    @GetMapping("/{name}/{dataId}")
+    @GetMapping("/{twinID}/{dataId}")
     @ResponseBody
     public SensorData requestPowerSensorData(
-        @PathVariable String name,
+        @PathVariable String twinID,
         @PathVariable String dataId
     ) {
-        if (MonitoringServiceApplication.getTwinList().getTwin(name) == null) {
+        if (MonitoringServiceApplication.getTwinList().getTwin(twinID) == null) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Device not found"
             );
         }
 
-        if (name.contains("enV5")) {
+
+        if (twinID.contains("enV5")) {
             try {
-                float latest =
-                    MonitoringServiceApplication.getLatestMeasurement(
-                        name,
+                float latest = MonitoringServiceApplication.getLatestMeasurement(
+                    MonitoringServiceApplication.getTwinList().getTwin(twinID).getTwinStub(),
                         dataId
                     );
 
-                return new SensorData(name, dataId, latest);
+                return new SensorData(twinID, dataId, latest);
             } catch (TimeoutException t) {
                 throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,

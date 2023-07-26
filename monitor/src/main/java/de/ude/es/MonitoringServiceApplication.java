@@ -100,12 +100,13 @@ public class MonitoringServiceApplication {
         return monitor.getTwinList();
     }
 
-    public static float getLatestMeasurement(String deviceId, String sensorId)
+    public static float getLatestMeasurement(TwinStub deviceStub, String sensorId)
         throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
 
-        TwinStub deviceStub = new TwinStub(deviceId);
-        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+        //TwinStub deviceStub = new TwinStub(deviceId);
+
+        // deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
 
         DataRequester deviceRequest = new DataRequester(
             deviceStub,

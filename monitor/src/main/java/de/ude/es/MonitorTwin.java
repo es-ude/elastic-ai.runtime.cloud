@@ -1,5 +1,6 @@
 package de.ude.es;
 
+import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
@@ -13,10 +14,12 @@ public class MonitorTwin extends JavaTwin {
         private volatile TwinList twins;
         private final JavaTwin twin;
         private TwinStub stub;
+        private CommunicationEndpoint endpoint;
 
-        public StatusMonitor(JavaTwin twin, TwinList twinList) {
+        public StatusMonitor(JavaTwin twin, TwinList twinList, CommunicationEndpoint endpoint) {
             this.twins = twinList;
             this.twin = twin;
+            this.endpoint = endpoint;
             createTwinStubAndSubscribeForStatus();
         }
 
@@ -81,9 +84,9 @@ public class MonitorTwin extends JavaTwin {
                     measurements =
                         measurements.substring(0, measurements.indexOf(";"));
 
-                    twins.addOrUpdateTwin(twinID, measurements.split(","));
+                    twins.addOrUpdateTwin(twinID, measurements.split(","), endpoint);
                 } else {
-                    twins.addOrUpdateTwin(twinID, null);
+                    twins.addOrUpdateTwin(twinID, null, endpoint);
                 }
             } else {
                 TwinData twin = twins.getTwin(twinID);
@@ -96,7 +99,7 @@ public class MonitorTwin extends JavaTwin {
         }
     }
 
-    private StatusMonitor monitor;
+    private StatusMonitor statusMonitor;
     private volatile TwinList twins;
 
     public MonitorTwin(String id) {
@@ -106,7 +109,7 @@ public class MonitorTwin extends JavaTwin {
 
     @Override
     protected void executeOnBind() {
-        monitor = new StatusMonitor(this, twins);
+        statusMonitor = new StatusMonitor(this, twins, this.getEndpoint());
     }
 
     public TwinList getTwinList() {

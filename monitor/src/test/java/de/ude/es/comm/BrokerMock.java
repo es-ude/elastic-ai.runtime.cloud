@@ -164,7 +164,8 @@ public class BrokerMock implements CommunicationEndpoint {
     }
 
     private void executePublish(Posting toPublish) {
-        subscriptions.forEach((topic, subscription) ->
+        HashMap<String, Subscription> subscriptionsCopy = new HashMap<>(subscriptions);
+        subscriptionsCopy.forEach((topic, subscription) ->
             deliverIfTopicMatches(toPublish, subscription)
         );
     }
