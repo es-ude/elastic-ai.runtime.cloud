@@ -14,7 +14,7 @@ public class enV5Twin extends DeviceTwin {
     private String lastStatusMessage = "";
 
     public enV5Twin(String identifier) {
-        super(identifier);
+        super(identifier, 2500);
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -32,7 +32,6 @@ public class enV5Twin extends DeviceTwin {
             System.out.println("Device " + device.getIdentifier() + " online.")
         );
         device.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
-        device.addWhenDeviceGoesOnline(data -> device.waitAfterCommand());
 
         device.addWhenDeviceGoesOffline(data ->
             System.out.println("Device " + device.getIdentifier() + " offline.")
@@ -45,7 +44,7 @@ public class enV5Twin extends DeviceTwin {
             cmd,
             posting -> {
                 pauseDataRequests();
-                Thread.sleep(2000);
+                Thread.sleep(2500);
                 device.publishCommand(
                     cmd,
                     posting.data() + "POSITION:" + bitfilePosition + ";"
