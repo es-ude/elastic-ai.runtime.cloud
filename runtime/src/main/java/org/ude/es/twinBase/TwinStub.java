@@ -68,7 +68,7 @@ public class TwinStub extends Twin {
         subscribeForStatus(statusReceiver);
     }
 
-    public void waitAfterCommand() {
+    private void waitAfterPublish() {
         try {
             Thread.sleep(deviceDelay);
         } catch (InterruptedException e) {
@@ -104,6 +104,12 @@ public class TwinStub extends Twin {
     public void unsubscribeFromStatus() {
         var topic = PostingType.STATUS.topic("");
         this.unsubscribe(topic);
+    }
+
+    @Override
+    protected void publish(Posting posting) {
+        super.publish(posting);
+        waitAfterPublish();
     }
 
     public void publishDataStartRequest(String dataId, String receiver) {

@@ -15,7 +15,6 @@ public class DataRequester {
     private final ValueReceiver valueReceiver;
     List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
     private boolean requested = false;
-    private boolean dataWasBlocked = false;
     private boolean blocked = false;
 
     public DataRequester(TwinStub twinStub, String dataID, String requesterID) {
@@ -27,27 +26,45 @@ public class DataRequester {
         twinStub.addWhenDeviceGoesOnline(data -> getsOnline());
     }
 
-    public void pauseDataRequests() {
-        blocked = true;
+    private void publishStartRequest() {
+        if (twinStub.isOnline() && !blocked) {
+            twinStub.publishDataStartRequest(dataID, requesterID);
+        }
+    }
+
+    private void publishStopRequest() {
+        if (twinStub.isOnline() && !blocked) {
+            twinStub.publishDataStopRequest(dataID, requesterID);
+        }
+    }
+
+    public void startRequestingData() {
+        if (requested) return;
+        requested = true;
+        twinStub.subscribeForData(dataID, valueReceiver);
+        publishStartRequest();
+    }
+
+    public void stopRequestingData() {
+        if (!requested) return;
+        requested = false;
+        twinStub.unsubscribeFromData(dataID);
+        publishStopRequest();
     }
 
     public void resumeDataRequests() {
         if (!blocked) return;
         blocked = false;
-        if (dataWasBlocked) {
-            publishStartStopRequest();
-            dataWasBlocked = false;
+        if (requested) {
+            publishStartRequest();
         }
     }
 
-    private void publishStartStopRequest() {
-        if (twinStub.isOnline()) {
-            if (requested) twinStub.publishDataStartRequest(
-                dataID,
-                requesterID
-            ); else twinStub.publishDataStopRequest(dataID, requesterID);
-            twinStub.waitAfterCommand();
+    public void pauseDataRequests() {
+        if (requested) {
+            publishStopRequest();
         }
+        blocked = true;
     }
 
     public void addWhenNewDataReceived(Twin.DataExecutor function) {
@@ -56,30 +73,7 @@ public class DataRequester {
 
     private void getsOnline() {
         if (requested) {
-            twinStub.publishDataStartRequest(dataID, requesterID);
-            twinStub.waitAfterCommand();
-        }
-    }
-
-    public void startRequestingData() {
-        if (requested) return;
-        requested = true;
-        twinStub.subscribeForData(dataID, valueReceiver);
-        if (blocked) {
-            dataWasBlocked = true;
-        } else {
-            publishStartStopRequest();
-        }
-    }
-
-    public void stopRequestingData() {
-        if (!requested) return;
-        requested = false;
-        twinStub.unsubscribeFromData(dataID);
-        if (blocked) {
-            dataWasBlocked = true;
-        } else {
-            publishStartStopRequest();
+            publishStartRequest();
         }
     }
 

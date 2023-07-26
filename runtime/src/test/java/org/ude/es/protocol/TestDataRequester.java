@@ -115,23 +115,6 @@ public class TestDataRequester {
     }
 
     @Test
-    void stopIsDeliveredAfterRequestsAreResumed() {
-        checker.givenSubscriptionAtBrokerFor("stub/STOP/data");
-        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
-        dataRequester.startRequestingData();
-        dataRequester.pauseDataRequests();
-        dataRequester.stopRequestingData();
-
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/STOP/data", "test")
-        );
-        checker.thenPostingIsNotDelivered();
-
-        dataRequester.resumeDataRequests();
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
     void multipleStartRequests() {
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATUS:ONLINE;");
