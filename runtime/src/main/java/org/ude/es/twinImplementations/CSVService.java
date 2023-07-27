@@ -3,13 +3,12 @@ package org.ude.es.twinImplementations;
 import static org.ude.es.twinBase.Executable.startTwin;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Timestamp;
 import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.JavaTwin;
 import org.ude.es.twinBase.TwinStub;
-
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class CSVService extends JavaTwin {
 
@@ -30,14 +29,19 @@ public class CSVService extends JavaTwin {
     protected void executeOnBind() {
         enV5Twin.bindToCommunicationEndpoint(endpoint);
 
-        DataRequester dataRequester = new DataRequester(enV5Twin, "g-value", getDomainAndIdentifier());
+        DataRequester dataRequester = new DataRequester(
+            enV5Twin,
+            "g-value",
+            getDomainAndIdentifier()
+        );
 
         File sensorValueDir = new File(PATH);
         sensorValueDir.mkdir();
 
-        String fileName = PATH + "/" + new Timestamp(System.currentTimeMillis());
+        String fileName =
+            PATH + "/" + new Timestamp(System.currentTimeMillis());
         try {
-            FileWriter csvHeader = new FileWriter(fileName , false);
+            FileWriter csvHeader = new FileWriter(fileName, false);
             csvHeader.append("timestamp");
             csvHeader.append(",");
             csvHeader.append("g-value");
@@ -51,7 +55,9 @@ public class CSVService extends JavaTwin {
         dataRequester.addWhenNewDataReceived(data -> {
             try {
                 FileWriter csvWriter = new FileWriter(fileName, true);
-                csvWriter.append(new Timestamp(System.currentTimeMillis()).toString());
+                csvWriter.append(
+                    new Timestamp(System.currentTimeMillis()).toString()
+                );
                 csvWriter.append(",");
                 csvWriter.append(data);
                 csvWriter.append("\n");
@@ -63,5 +69,4 @@ public class CSVService extends JavaTwin {
         });
         dataRequester.startRequestingData();
     }
-
 }
