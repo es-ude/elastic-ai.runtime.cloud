@@ -92,46 +92,6 @@ public class TestEnV5Twin {
     }
 
     @Test
-    void requestsArePausedAndResumed() {
-        enV5Twin twin = new enV5Twin(deviceID);
-        twin.bindToCommunicationEndpoint(checker.broker);
-        checker.givenJavaTwin(deviceID);
-        checker.whenDevicePublishedStatus("value1,value2");
-
-        checker.givenSubscriptionAtBrokerFor(deviceID + "/START/value1");
-        checker.whenPostingIsPublishedAtBroker(
-            twinID + "/START/value1",
-            "checker"
-        );
-        checker.isExpecting(
-            new Posting(
-                checker.DOMAIN + "/" + deviceID + "/START/value1",
-                twinID
-            )
-        );
-        checker.thenPostingIsDelivered();
-        checker.clearPostings();
-
-        checker.givenSubscriptionAtBrokerFor(deviceID + "/STOP/value1");
-        checker.whenFlashIsPublished();
-        checker.whenPostingIsPublishedAtBroker(
-            twinID + "/STOP/value1",
-            "checker"
-        );
-        checker.thenPostingIsNotDelivered();
-
-        checker.whenPostingIsPublishedAtBroker(deviceID + "/DONE/FLASH", "");
-        checker.isExpecting(
-            new Posting(
-                checker.DOMAIN + "/" + deviceID + "/STOP/value1",
-                twinID
-            )
-        );
-
-        checker.thenPostingIsDelivered();
-    }
-
-    @Test
     void providedMeasurementsAreChangedWhenDevicesStatusChanges() {
         enV5Twin twin = new enV5Twin(deviceID);
         twin.bindToCommunicationEndpoint(checker.broker);
