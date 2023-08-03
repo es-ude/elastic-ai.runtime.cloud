@@ -70,7 +70,7 @@ public class TestDataRequester {
     @Test
     void dataIsNotReceivedWhenNotRequested() {
         AtomicReference<String> value = new AtomicReference<>("notSet");
-        dataRequester.addWhenNewDataReceived(value::set);
+        dataRequester.setDataReceiveFunction(value::set);
 
         checker.whenPostingIsPublishedAtBroker("stub/DATA/data", "testData");
 
@@ -80,7 +80,7 @@ public class TestDataRequester {
     @Test
     void dataIsReceivedWhenDataIsRequested() {
         AtomicReference<String> value = new AtomicReference<>("notSet");
-        dataRequester.addWhenNewDataReceived(value::set);
+        dataRequester.setDataReceiveFunction(value::set);
 
         dataRequester.startRequestingData();
         checker.whenPostingIsPublishedAtBroker("stub/DATA/data", "testData");

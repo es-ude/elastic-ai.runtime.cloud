@@ -1,18 +1,11 @@
 package de.ude.es;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -22,7 +15,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.ude.es.comm.HivemqBroker;
 import org.ude.es.protocol.DataRequester;
-import org.ude.es.twinBase.TwinStub;
 
 @SpringBootApplication
 public class MonitoringServiceApplication {
@@ -100,29 +92,17 @@ public class MonitoringServiceApplication {
         return monitor.getTwinList();
     }
 
-    public static float getLatestMeasurement(TwinStub deviceStub, String sensorId)
-        throws TimeoutException {
+    public static float getLatestMeasurement(DataRequester dataRequester) throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
-
-        //TwinStub deviceStub = new TwinStub(deviceId);
-
-        // deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
-
-        DataRequester deviceRequest = new DataRequester(
-            deviceStub,
-            sensorId,
-            monitor.getIdentifier()
+        dataRequester.setDataReceiveFunction(data ->
+            handleNewData(latestValue, data)
         );
-        deviceRequest.addWhenNewDataReceived(data ->
-            handleNewData(deviceRequest, latestValue, data)
-        );
-        deviceRequest.startRequestingData();
+        dataRequester.startRequestingData();
 
         long start = System.currentTimeMillis();
         long end = start + 60000;
         while (!latestValue.isUpdated()) {
             if (start >= end) {
-                deviceRequest.stopRequestingData();
                 throw new TimeoutException("No Message Received");
             }
         }
@@ -131,11 +111,9 @@ public class MonitoringServiceApplication {
     }
 
     private static void handleNewData(
-        DataRequester requester,
         UpdatedValueStorage<Float> latestValue,
         String input
     ) {
-        requester.stopRequestingData();
         latestValue.setValue(Float.parseFloat(input));
     }
 

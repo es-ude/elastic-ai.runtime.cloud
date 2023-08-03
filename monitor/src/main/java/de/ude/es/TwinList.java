@@ -41,14 +41,15 @@ public class TwinList {
      * if twin already exists -> sets twin.active=true,
      * else -> adds new twin.
      */
-    public void addOrUpdateTwin(String ID, String[] measurements, CommunicationEndpoint endpoint) {
+    public void addOrUpdateTwin(String ID, String[] measurements, CommunicationEndpoint endpoint, String requesterID) {
         if (getTwin(ID) == null) {
-            twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID, endpoint));
+            twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID, endpoint, requesterID));
             twinIdCounter = twinIdCounter.plus(ONE);
         } else {
             getTwin(ID).setActive();
         }
-        getTwin(ID).setAvailableSensors(measurements);
+        if (measurements != null)
+            getTwin(ID).setAvailableSensors(measurements);
     }
 
     public List<TwinData> getActiveTwins() {

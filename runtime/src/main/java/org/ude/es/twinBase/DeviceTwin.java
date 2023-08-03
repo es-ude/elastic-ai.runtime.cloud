@@ -61,7 +61,7 @@ public class DeviceTwin extends JavaTwin {
         );
         dataRequestHandler.addWhenStopRequestingData(device::waitAfterCommand);
 
-        dataRequester.addWhenNewDataReceived(
+        dataRequester.setDataReceiveFunction(
             dataRequestHandler::newDataToPublish
         );
 
