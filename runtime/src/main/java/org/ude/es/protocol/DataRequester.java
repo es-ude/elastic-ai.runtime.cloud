@@ -1,7 +1,5 @@
 package org.ude.es.protocol;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
@@ -13,7 +11,7 @@ public class DataRequester {
     private final String dataID;
     private final String requesterID;
     private final ValueReceiver valueReceiver;
-    List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
+    Twin.DataExecutor dataExecutor;
     private boolean requested = false;
     private boolean blocked = false;
 
@@ -67,8 +65,8 @@ public class DataRequester {
         blocked = true;
     }
 
-    public void addWhenNewDataReceived(Twin.DataExecutor function) {
-        dataExecutor.add(function);
+    public void setDataReceiveFunction(Twin.DataExecutor function) {
+        dataExecutor = function;
     }
 
     private void getsOnline() {
@@ -81,9 +79,7 @@ public class DataRequester {
 
         @Override
         public void deliver(Posting posting) {
-            for (Twin.DataExecutor executor : dataExecutor) {
-                executor.execute(posting.data());
-            }
+            dataExecutor.execute(posting.data());
         }
     }
 }

@@ -52,7 +52,7 @@ public class CSVService extends JavaTwin {
             throw new RuntimeException(e);
         }
 
-        dataRequester.addWhenNewDataReceived(data -> {
+        dataRequester.setDataReceiveFunction(data -> {
             try {
                 FileWriter csvWriter = new FileWriter(fileName, true);
                 csvWriter.append(

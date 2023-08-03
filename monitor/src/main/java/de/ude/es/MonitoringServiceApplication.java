@@ -100,9 +100,9 @@ public class MonitoringServiceApplication {
         dataRequester.startRequestingData();
 
         long start = System.currentTimeMillis();
-        long end = start + 60000;
+        long end = start + 5000;
         while (!latestValue.isUpdated()) {
-            if (start >= end) {
+            if (System.currentTimeMillis() >= end) {
                 throw new TimeoutException("No Message Received");
             }
         }
