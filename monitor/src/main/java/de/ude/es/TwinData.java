@@ -23,7 +23,7 @@ public class TwinData {
     @Getter
     private HashMap<String, DataRequester> dataRequester;
     @Getter
-    private HashMap<String, Long> lifeTime;
+    private final HashMap<String, Long> lifeTime;
 
     public TwinData(String name, String ID, CommunicationEndpoint endpoint, String requesterID) {
         this.requesterID = requesterID;
@@ -36,13 +36,11 @@ public class TwinData {
         twinStub.bindToCommunicationEndpoint(endpoint);
     }
 
-    public void stopDataRequest(String sensor) {
-        System.out.println("STOP DATA REQUEST STARTED");
+    public void stopDataRequest(String sensor) throws InterruptedException {
         lifeTime.put(sensor, System.currentTimeMillis());
         while (System.currentTimeMillis() - lifeTime.get(sensor) < 10000) {
-//            System.out.println(System.currentTimeMillis() - lifeTime.get(sensor));
+            Thread.sleep(100);
         }
-        System.out.println("AFTER WHILE");
         dataRequester.get(sensor).stopRequestingData();
     }
 

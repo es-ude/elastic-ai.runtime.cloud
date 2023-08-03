@@ -41,13 +41,19 @@ public class EnV5Controller {
             );
         }
 
-
         if (twinID.contains("enV5")) {
             try {
                 TwinData twinData = MonitoringServiceApplication.getTwinList().getTwin(twinID);
 
                 if (System.currentTimeMillis() - twinData.getLifeTime().get(dataId) > 10000) {
-                    twinData.stopDataRequest(dataId);
+                    new Thread(() -> {
+                        try {
+                            twinData.stopDataRequest(dataId);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).start();
+
                 }
                 twinData.getLifeTime().put(dataId, System.currentTimeMillis());
 

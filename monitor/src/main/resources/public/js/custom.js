@@ -63,7 +63,7 @@ async function setValueUpdate(deviceId, sensorId, fieldId) {
     await getValueUpdate(deviceId, sensorId, fieldId)
     const interval = setInterval(function() {
         getValueUpdate(deviceId, sensorId, fieldId)
-    }, 5000);
+    }, 1000);
 }
 
 async function getValueUpdate(deviceId, sensorId, fieldId) {
@@ -71,12 +71,8 @@ async function getValueUpdate(deviceId, sensorId, fieldId) {
 
     const response = await fetch(getRootUrl() + "sensor/" + deviceId + "/" + sensorId);
 
-    if (response.status !== 200) {
-        console.log(response.json());
-        document.getElementById(fieldId).value = "HTTP Status: " + response.status;
-        return;
+    if (response.status === 200) {
+        const result = await response.json();
+        document.getElementById(fieldId).value = result.VALUE;
     }
-
-    const result = await response.json();
-    document.getElementById(fieldId).value = result.VALUE;
 }
