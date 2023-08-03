@@ -6,15 +6,15 @@ import org.ude.es.twinBase.DeviceTwin;
 
 public class minimalExecutableDeviceTwin extends DeviceTwin {
 
-    public static void main(String[] args) throws InterruptedException {
-        startTwin(new DeviceTwin("example"), args);
-    }
-
     public minimalExecutableDeviceTwin(String identifier) {
         super(identifier);
     }
 
-    // Example on how to forward data messages to device
+    public static void main(String[] args) throws InterruptedException {
+        startTwin(new DeviceTwin("example"), args);
+    }
+
+    // Example on how to forward data messages to the Device
     @Override
     protected void executeOnBind() {
         provideValue("exampleValue");

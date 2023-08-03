@@ -1,5 +1,7 @@
 package org.ude.es.protocol;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 import org.ude.es.twinBase.Twin;
@@ -11,19 +13,9 @@ public class DataRequester {
     private final String dataID;
     private final String requesterID;
     private final ValueReceiver valueReceiver;
+    List<Twin.DataExecutor> dataExecutor = new ArrayList<>();
     private boolean requested = false;
-    private boolean dataWasBlocked = false;
     private boolean blocked = false;
-
-    Twin.DataExecutor dataExecutor;
-
-    private class ValueReceiver implements Subscriber {
-
-        @Override
-        public void deliver(Posting posting) {
-            dataExecutor.execute(posting.data());
-        }
-    }
 
     public DataRequester(TwinStub twinStub, String dataID, String requesterID) {
         this.twinStub = twinStub;
@@ -34,38 +26,15 @@ public class DataRequester {
         twinStub.addWhenDeviceGoesOnline(data -> getsOnline());
     }
 
-    public void pauseDataRequests() {
-        blocked = true;
-    }
-
-    public void resumeDataRequests() {
-        if (!blocked) return;
-        blocked = false;
-        if (dataWasBlocked) {
-            publishStartStopRequest();
-            dataWasBlocked = false;
-        }
-    }
-
-    private void publishStartStopRequest() {
-        if (twinStub.isOnline()) {
-            if (requested) twinStub.publishDataStartRequest(
-                    dataID,
-                    requesterID
-            );
-            else twinStub.publishDataStopRequest(dataID, requesterID);
-            twinStub.waitAfterCommand();
-        }
-    }
-
-    public void setDataReceiveFunction(Twin.DataExecutor function) {
-        dataExecutor = function;
-    }
-
-    private void getsOnline() {
-        if (requested) {
+    private void publishStartRequest() {
+        if (twinStub.isOnline() && !blocked) {
             twinStub.publishDataStartRequest(dataID, requesterID);
-            twinStub.waitAfterCommand();
+        }
+    }
+
+    private void publishStopRequest() {
+        if (twinStub.isOnline() && !blocked) {
+            twinStub.publishDataStopRequest(dataID, requesterID);
         }
     }
 
@@ -73,21 +42,48 @@ public class DataRequester {
         if (requested) return;
         requested = true;
         twinStub.subscribeForData(dataID, valueReceiver);
-        if (blocked) {
-            dataWasBlocked = true;
-        } else {
-            publishStartStopRequest();
-        }
+        publishStartRequest();
     }
 
     public void stopRequestingData() {
         if (!requested) return;
         requested = false;
         twinStub.unsubscribeFromData(dataID);
-        if (blocked) {
-            dataWasBlocked = true;
-        } else {
-            publishStartStopRequest();
+        publishStopRequest();
+    }
+
+    public void resumeDataRequests() {
+        if (!blocked) return;
+        blocked = false;
+        if (requested) {
+            publishStartRequest();
+        }
+    }
+
+    public void pauseDataRequests() {
+        if (requested) {
+            publishStopRequest();
+        }
+        blocked = true;
+    }
+
+    public void addWhenNewDataReceived(Twin.DataExecutor function) {
+        dataExecutor.add(function);
+    }
+
+    private void getsOnline() {
+        if (requested) {
+            publishStartRequest();
+        }
+    }
+
+    private class ValueReceiver implements Subscriber {
+
+        @Override
+        public void deliver(Posting posting) {
+            for (Twin.DataExecutor executor : dataExecutor) {
+                executor.execute(posting.data());
+            }
         }
     }
 }

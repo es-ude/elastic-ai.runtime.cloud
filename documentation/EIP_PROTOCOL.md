@@ -2,7 +2,9 @@
 
 The eip protocol is a specification of a publish/subscribe based star topology with a broker at the center.
 Typically, this will be implemented via MQTT, but this is **not** fixed.
-The basic functionality provided are _subscribing_, _unsubscribing_ and _publishing_ to and from topics and topic filters, together with a keepalive mechanism with last will message.
+The basic functionalities provided are _subscribing_,
+_unsubscribing_ and _publishing_ to and from topics and topic filters,
+together with a keepalive mechanism with last will message.
 
 ## Message
 
@@ -16,18 +18,19 @@ A topic is constructed as followed:
 eip://<broker_domain>/<object_id>/<message_type>/<type_dependent>
 ```
 
-where the `<object_id>` is the individual identifier of the target device and the `<message_type>/<type_dependant>` is defined as in the part [Message Types](#message-types).
+where the `<object_id>` is the individual identifier of the target (Receiver)
+or the Sender and the `<message_type>/<type_dependant>` is defined as in the part [Message Types](#message-types).
 
 ### Message Types
 
-|   Type | Description                                                       |
-| -----: | :---------------------------------------------------------------- |
-| STATUS | a message containing the online(1)/offline(0) status of an object |
-|  START | a message requesting an object to start sending a stream of data  |
-|   STOP | a message requesting an object to stop sending a stream of data   |
-|   DATA | a message containing data                                         |
-|     DO | a message containing a command                                    |
-|   DONE | a message containing the response to a DO message                 |
+|   Type | Object   | Description                                                       |
+| -----: | :------- | :---------------------------------------------------------------- |
+| STATUS | Sender   | a message containing the online(1)/offline(0) status of an object |
+|  START | Receiver | a message requesting an object to start sending a stream of data  |
+|   STOP | Receiver | a message requesting an object to stop sending a stream of data   |
+|   DATA | Sender   | a message containing data                                         |
+|     DO | Receiver | a message containing a command                                    |
+|   DONE | Sender   | a message containing the response to a DO message                 |
 
 #### STATUS
 
@@ -35,7 +38,7 @@ where the `<object_id>` is the individual identifier of the target device and th
 -   Data: `<object_id>` AND 0 (offline) OR 1 (online)
 -   Information:
     -   The retain-flag of this message should be set to assure status discovery for newly entered participants!
-    -   The offline message should be automatically send by the broker after connection loss (LWT message).
+    -   The offline message should be automatically sent by the broker after connection loss (LWT message).
     -   The online message should only be sent by a new hardware device or Application Twin.
 
 Example message:

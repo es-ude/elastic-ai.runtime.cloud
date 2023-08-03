@@ -32,8 +32,8 @@ jobs:
         run: ./gradlew jibDockerBuild
       - name: Tag Runtime
         run: |
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime:latest
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime:${{ steps.release.outputs.tag }}
+          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime.cloud:latest
+          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime.cloud:${{ steps.release.outputs.tag }}
       - name: Tag Monitor
         run: |
           docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor:latest
@@ -45,6 +45,6 @@ jobs:
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Runtime to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.runtime
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.runtime.cloud
       - name: Push Monitor to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.monitor
