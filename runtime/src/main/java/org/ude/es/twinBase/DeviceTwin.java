@@ -13,8 +13,12 @@ public class DeviceTwin extends JavaTwin {
         new HashMap<>();
 
     public DeviceTwin(String identifier) {
+        this(identifier, 0);
+    }
+
+    public DeviceTwin(String identifier, int deviceDelay) {
         super(identifier + "Twin");
-        device = new TwinStub(identifier, 1000);
+        device = new TwinStub(identifier, deviceDelay);
     }
 
     @Override
@@ -59,7 +63,6 @@ public class DeviceTwin extends JavaTwin {
         dataRequestHandler.addWhenStopRequestingData(
             dataRequester::stopRequestingData
         );
-        dataRequestHandler.addWhenStopRequestingData(device::waitAfterCommand);
 
         dataRequester.setDataReceiveFunction(
             dataRequestHandler::newDataToPublish

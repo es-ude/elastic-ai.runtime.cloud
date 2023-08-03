@@ -7,25 +7,6 @@ import org.ude.es.comm.Posting;
 
 class TestSimpleDataSource {
 
-    private static class SimpleDataSourceChecker extends Checker {
-
-        public DataSource<Integer> dataSource;
-
-        public void givenDataSource() {
-            dataSource = new DataSource<>("data");
-            dataSource.bind(javaTwin);
-        }
-
-        public void whenDataIsSetTo(int value) {
-            expected =
-                new Posting(
-                    javaTwin.getDomainAndIdentifier() + "/DATA/data",
-                    "" + value
-                );
-            dataSource.set(value);
-        }
-    }
-
     private SimpleDataSourceChecker checker;
 
     @BeforeEach
@@ -41,5 +22,25 @@ class TestSimpleDataSource {
         checker.givenSubscriptionAtJavaTwinFor("/#");
         checker.whenDataIsSetTo(3);
         checker.thenPostingIsDelivered();
+    }
+
+    private static class SimpleDataSourceChecker extends Checker {
+
+        public DataSource<Integer> dataSource;
+
+        public void givenDataSource() {
+            dataSource = new DataSource<>("data");
+            dataSource.bind(javaTwin);
+        }
+
+        public void whenDataIsSetTo(int value) {
+            isExpecting(
+                new Posting(
+                    javaTwin.getDomainAndIdentifier() + "/DATA/data",
+                    String.valueOf(value)
+                )
+            );
+            dataSource.set(value);
+        }
     }
 }

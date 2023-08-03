@@ -2,14 +2,14 @@
 [![Create Release](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml)
 [![Build And Push Container](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg)](https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml)
 
-# elastic-AI.runtime
+# elastic-AI.runtime.cloud
 
-The elastic-AI.runtime provides a cloud backend for operating digital twins.
+The elastic-AI.runtime.cloud provides a cloud backend for operating digital twins.
 It uses MQTT as a messaging protocol and is primarily focused to be used in combination with the Elastic Node v5.
 This repository uses the gradle multi-project feature and currently contains the following projects:
 
--   elastic-ai.runtime:runtime
--   elastic-ai.runtime:monitor
+-   elastic-AI.runtime.cloud:runtime
+-   elastic-AI.runtime.cloud:monitor
 
 ## Setup
 
@@ -18,7 +18,7 @@ This repository uses the gradle multi-project feature and currently contains the
 
 ### System Environment
 
-The elastic-ai.runtime:monitor requires the Host-IP to be addressed.
+The elastic-AI.runtime.cloud:monitor requires the Host-IP to be addressed.
 The application will retrieve this information from a system environment variable called `HOST_IP`.
 It is recommended that you run
 
@@ -46,7 +46,7 @@ because a local MQTT Broker is needed to run as described in [MQTT Broker](#mqtt
 The runtime uses MQTT as the main communication protocol, therefore, an MQTT Broker is needed to run the code locally.
 You can either install a broker on your machine or run it via docker.
 The default for the project is [Mosquitto](https://mosquitto.org/) by Eclipse.
-The elastic-AI.runtime communicates with the broker on port 1883.
+The elastic-AI.runtime.cloud communicates with the broker on port 1883.
 If you want the broker to communicate with the elasticNode over the network, you may need to open port 1883 on your
 local machine's firewall.
 
@@ -92,7 +92,7 @@ The reports can be found in the location `build/reports/` relative to the corres
 
 ### Monitor
 
-The monitor is used to provide an external interface for the user to interact with the elastic-ai.runtime ecosystem.
+The monitor is used to provide an external interface for the user to interact with the elastic-AI.runtime ecosystem.
 This interface is provided via a Java web application, which can be accessed with every common browser (e.g. Chrome,
 Firefox, Safari, ...).
 To start the monitor locally via Gradle run

@@ -90,8 +90,9 @@ public class TestDataRequestHandler {
 
         dataRequestHandler.newDataToPublish("testData");
 
-        checker.expected =
-            new Posting(checker.DOMAIN + "/test/DATA/data", "testData");
+        checker.isExpecting(
+            new Posting(checker.DOMAIN + "/test/DATA/data", "testData")
+        );
         checker.thenPostingIsDelivered();
     }
 

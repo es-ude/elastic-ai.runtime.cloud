@@ -1,5 +1,6 @@
 package org.ude.es.twinBase;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
@@ -10,74 +11,6 @@ import org.ude.es.comm.Status;
 public class TestJavaTwin {
 
     private static final String twinID = "test";
-
-    private static class JavaTwinChecker extends Checker {
-
-        public JavaTwin device;
-
-        public void givenDevice() {
-            device = new JavaTwin(twinID);
-            device.bindToCommunicationEndpoint(broker);
-        }
-
-        public void whenPublishingData(String dataId, String value) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.DATA.topic(dataId);
-            expected = new Posting(topic, value);
-            device.publishData(dataId, value);
-        }
-
-        public void whenPublishingDone(String dataId, String value) {
-            String topic =
-                device.getDomainAndIdentifier() +
-                PostingType.DONE.topic(dataId);
-            expected = new Posting(topic, value);
-            device.publishDone(dataId, value);
-        }
-
-        public void whenPublishingStatus() {
-            String topic =
-                device.getDomainAndIdentifier() + PostingType.STATUS.topic("");
-            expected =
-                new Posting(
-                    topic,
-                    "ID:" + device.identifier + ";TYPE:TWIN;STATE:ONLINE;"
-                );
-            device.publishStatus(
-                new Status(device.getIdentifier())
-                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                    .append(
-                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
-                    )
-            );
-        }
-
-        public void whenSubscribingForDataStart(String dataId) {
-            device.subscribeForDataStartRequest(dataId, subscriber);
-        }
-
-        public void whenUnsubscribingFromDataStart(String dataId) {
-            device.unsubscribeFromDataStartRequest(dataId);
-        }
-
-        public void whenSubscribingForDataStop(String dataId) {
-            device.subscribeForDataStopRequest(dataId, subscriber);
-        }
-
-        public void whenUnsubscribingFromDataStop(String dataId) {
-            device.unsubscribeFromDataStopRequest(dataId);
-        }
-
-        public void whenSubscribingForCommand(String dataId) {
-            device.subscribeForCommand(dataId, subscriber);
-        }
-
-        public void whenUnsubscribingFromCommand(String dataId) {
-            device.unsubscribeFromCommand(dataId);
-        }
-    }
-
     private JavaTwinChecker checker;
 
     @BeforeEach
@@ -151,5 +84,78 @@ public class TestJavaTwin {
         checker.whenUnsubscribingFromCommand("data");
         checker.whenPostingIsPublishedAtBroker(twinID + "/SET/data", twinID);
         checker.thenPostingIsNotDelivered();
+    }
+
+    @Test
+    void stubIsBound() {
+        TwinStub stub = new TwinStub("stub");
+        checker.twin.bindStub(stub);
+        Assertions.assertNotNull(stub.getEndpoint());
+    }
+
+    private static class JavaTwinChecker extends Checker {
+
+        public JavaTwin twin;
+
+        public void givenDevice() {
+            twin = new JavaTwin(twinID);
+            twin.bindToCommunicationEndpoint(broker);
+        }
+
+        public void whenPublishingData(String dataId, String value) {
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
+            isExpecting(new Posting(topic, value));
+            twin.publishData(dataId, value);
+        }
+
+        public void whenPublishingDone(String dataId, String value) {
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.DONE.topic(dataId);
+            isExpecting(new Posting(topic, value));
+            twin.publishDone(dataId, value);
+        }
+
+        public void whenPublishingStatus() {
+            String topic =
+                twin.getDomainAndIdentifier() + PostingType.STATUS.topic("");
+            isExpecting(
+                new Posting(
+                    topic,
+                    "ID:" + twin.identifier + ";TYPE:TWIN;STATE:ONLINE;"
+                )
+            );
+            twin.publishStatus(
+                new Status(twin.getIdentifier())
+                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+                    .append(
+                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                    )
+            );
+        }
+
+        public void whenSubscribingForDataStart(String dataId) {
+            twin.subscribeForDataStartRequest(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromDataStart(String dataId) {
+            twin.unsubscribeFromDataStartRequest(dataId);
+        }
+
+        public void whenSubscribingForDataStop(String dataId) {
+            twin.subscribeForDataStopRequest(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromDataStop(String dataId) {
+            twin.unsubscribeFromDataStopRequest(dataId);
+        }
+
+        public void whenSubscribingForCommand(String dataId) {
+            twin.subscribeForCommand(dataId, subscriber);
+        }
+
+        public void whenUnsubscribingFromCommand(String dataId) {
+            twin.unsubscribeFromCommand(dataId);
+        }
     }
 }
