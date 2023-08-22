@@ -23,7 +23,7 @@ public class TestDataRequester {
         stub = new TwinStub("stub");
         stub.bindToCommunicationEndpoint(checker.javaTwin.getEndpoint());
         dataRequester =
-            new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
+        new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
     }
 
     @Test

@@ -4,37 +4,26 @@ import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Subscriber;
 
-public abstract class CommunicationEndpointMock implements CommunicationEndpoint {
+public abstract class CommunicationEndpointMock
+    implements CommunicationEndpoint {
 
     @Override
-    public void connect(String clientId, String lwtMessage) {
-
-    }
+    public void connect(String clientId, String lwtMessage) {}
 
     @Override
-    public void publish(Posting posting, boolean retain) {
-
-    }
+    public void publish(Posting posting, boolean retain) {}
 
     @Override
-    public void subscribe(String topic, Subscriber subscriber) {
-
-    }
+    public void subscribe(String topic, Subscriber subscriber) {}
 
     @Override
-    public void unsubscribe(String topic) {
-
-    }
+    public void unsubscribe(String topic) {}
 
     @Override
-    public void subscribeRaw(String topic, Subscriber subscriber) {
-
-    }
+    public void subscribeRaw(String topic, Subscriber subscriber) {}
 
     @Override
-    public void unsubscribeRaw(String topic) {
-
-    }
+    public void unsubscribeRaw(String topic) {}
 
     @Override
     public String getClientIdentifier() {
@@ -45,5 +34,4 @@ public abstract class CommunicationEndpointMock implements CommunicationEndpoint
     public String getDomain() {
         return null;
     }
-
 }

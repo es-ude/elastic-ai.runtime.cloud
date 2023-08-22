@@ -1,31 +1,41 @@
 package de.ude.es;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import lombok.Getter;
 import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.protocol.DataRequester;
 import org.ude.es.twinBase.TwinStub;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 public class TwinData {
 
     private final String ID;
+
     @Getter
     private final TwinStub twinStub;
+
     @Getter
     private String name;
+
     @Getter
     private boolean active;
+
     private String[] sensors;
     private final String requesterID;
+
     @Getter
     private HashMap<String, DataRequester> dataRequester;
+
     @Getter
     private final HashMap<String, Long> lifeTime;
 
-    public TwinData(String name, String ID, CommunicationEndpoint endpoint, String requesterID) {
+    public TwinData(
+        String name,
+        String ID,
+        CommunicationEndpoint endpoint,
+        String requesterID
+    ) {
         this.requesterID = requesterID;
         this.ID = ID;
         this.name = name;
@@ -75,7 +85,10 @@ public class TwinData {
 
         dataRequester = new HashMap<>();
         for (String sensor : sensors) {
-            dataRequester.put(sensor, new DataRequester(this.twinStub, sensor, requesterID));
+            dataRequester.put(
+                sensor,
+                new DataRequester(this.twinStub, sensor, requesterID)
+            );
             lifeTime.put(sensor, 0L);
         }
     }

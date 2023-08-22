@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -92,7 +91,8 @@ public class MonitoringServiceApplication {
         return monitor.getTwinList();
     }
 
-    public static float getLatestMeasurement(DataRequester dataRequester) throws TimeoutException {
+    public static float getLatestMeasurement(DataRequester dataRequester)
+        throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
         dataRequester.setDataReceiveFunction(data ->
             handleNewData(latestValue, data)
