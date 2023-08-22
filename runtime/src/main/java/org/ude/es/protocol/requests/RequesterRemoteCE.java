@@ -1,12 +1,12 @@
-package org.ude.es.protocol;
+package org.ude.es.protocol.requests;
 
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
-class RequesterTwinStub extends TwinStub {
+class RequesterRemoteCE extends RemoteCommunicationEndpoint {
 
     public int subNum;
 
-    public RequesterTwinStub(String identifier) {
+    public RequesterRemoteCE(String identifier) {
         super(identifier);
         this.subNum = 1;
     }

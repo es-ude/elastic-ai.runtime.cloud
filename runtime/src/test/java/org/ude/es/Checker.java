@@ -5,15 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.ude.es.comm.BrokerMock;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class Checker {
 
     public final String DOMAIN = "eip://uni-due.de/es";
     public TestBroker broker;
-    public JavaTestTwin javaTwin;
+    public LocalCommunicationEndpoint javaTwin;
     public SubscriberMock subscriber = new SubscriberMock();
     private Posting expected;
     public List<String> subscriptions = new ArrayList<>();
@@ -104,7 +103,7 @@ public class Checker {
     }
 
     public void givenJavaTwin(String id) {
-        javaTwin = new JavaTestTwin(id);
+        javaTwin = new LocalCommunicationEndpoint(id);
         javaTwin.bindToCommunicationEndpoint(broker);
     }
 
@@ -160,9 +159,9 @@ public class Checker {
         }
     }
 
-    public class JavaTestTwin extends JavaTwin {
+    public class LocalCommunicationEndpoint extends org.ude.es.communicationEndpoints.LocalCommunicationEndpoint {
 
-        public JavaTestTwin(String identifier) {
+        public LocalCommunicationEndpoint(String identifier) {
             super(identifier);
         }
 

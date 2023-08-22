@@ -1,22 +1,22 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.communicationEndpoints.twinImplementations;
 
 import static java.lang.Thread.sleep;
 
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
-public class IntegrationTestTwinForEnV5 extends JavaTwin {
+public class IntegrationTestTwinForEnV5 extends LocalCommunicationEndpoint {
 
-    private final TwinStub enV5;
+    private final RemoteCommunicationEndpoint enV5;
 
     public IntegrationTestTwinForEnV5(String identifier) {
         super(identifier);
-        enV5 = new TwinStub("enV5");
+        enV5 = new RemoteCommunicationEndpoint("enV5");
     }
 
     @Override
     protected void executeOnBind() {
-        enV5.bindToCommunicationEndpoint(endpoint);
+        enV5.bindToCommunicationEndpoint(brokerStub);
     }
 
     public void startSubscribing(String topic) {

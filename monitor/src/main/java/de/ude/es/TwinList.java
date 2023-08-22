@@ -3,7 +3,7 @@ package de.ude.es;
 import static com.google.common.primitives.UnsignedInteger.ONE;
 
 import com.google.common.primitives.UnsignedInteger;
-import org.ude.es.comm.CommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class TwinList {
      * if twin already exists -> sets twin.active=true,
      * else -> adds new twin.
      */
-    public void addOrUpdateTwin(String ID, String[] measurements, CommunicationEndpoint endpoint, String requesterID) {
+    public void addOrUpdateTwin(String ID, String[] measurements, BrokerStub endpoint, String requesterID) {
         if (getTwin(ID) == null) {
             twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID, endpoint, requesterID));
             twinIdCounter = twinIdCounter.plus(ONE);

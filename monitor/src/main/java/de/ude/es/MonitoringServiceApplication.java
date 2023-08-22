@@ -13,8 +13,8 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.ude.es.comm.HivemqBroker;
-import org.ude.es.protocol.DataRequester;
+import org.ude.es.protocol.HivemqBroker;
+import org.ude.es.protocol.requests.DataRequester;
 
 @SpringBootApplication
 public class MonitoringServiceApplication {
@@ -23,7 +23,7 @@ public class MonitoringServiceApplication {
     private static final String TWIN_ID = "monitor";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
-    static MonitorTwin monitor = null;
+    static MonitorCommunicationEndpoint monitorCommunicationEndpoint = null;
     public static String IP_ADDRESS;
 
     public static void main(String[] args) {
@@ -47,7 +47,7 @@ public class MonitoringServiceApplication {
             System.exit(10);
         }
 
-        monitor = createMonitorTwin();
+        monitorCommunicationEndpoint = createMonitorTwin();
 
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
@@ -80,16 +80,16 @@ public class MonitoringServiceApplication {
             .setDefault(1883);
     }
 
-    private static MonitorTwin createMonitorTwin() {
-        MonitorTwin monitor = new MonitorTwin(TWIN_ID);
-        monitor.bindToCommunicationEndpoint(
+    private static MonitorCommunicationEndpoint createMonitorTwin() {
+        MonitorCommunicationEndpoint monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(TWIN_ID);
+        monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
-        return monitor;
+        return monitorCommunicationEndpoint;
     }
 
     public static TwinList getTwinList() {
-        return monitor.getTwinList();
+        return monitorCommunicationEndpoint.getTwinList();
     }
 
     public static float getLatestMeasurement(DataRequester dataRequester) throws TimeoutException {

@@ -1,4 +1,4 @@
-package org.ude.es.comm;
+package org.ude.es.protocol;
 
 import java.util.Objects;
 

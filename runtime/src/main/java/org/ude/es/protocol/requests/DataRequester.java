@@ -1,52 +1,52 @@
-package org.ude.es.protocol;
+package org.ude.es.protocol.requests;
 
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.Twin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.CommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class DataRequester {
 
-    private final TwinStub twinStub;
+    private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
     private final String dataID;
     private final String requesterID;
     private final ValueReceiver valueReceiver;
-    Twin.DataExecutor dataExecutor;
+    CommunicationEndpoint.DataExecutor dataExecutor;
     private boolean requested = false;
     private boolean blocked = false;
 
-    public DataRequester(TwinStub twinStub, String dataID, String requesterID) {
-        this.twinStub = twinStub;
+    public DataRequester(RemoteCommunicationEndpoint remoteCommunicationEndpoint, String dataID, String requesterID) {
+        this.remoteCommunicationEndpoint = remoteCommunicationEndpoint;
         this.dataID = dataID;
         this.requesterID = requesterID;
         valueReceiver = new ValueReceiver();
 
-        twinStub.addWhenDeviceGoesOnline(data -> getsOnline());
+        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(data -> getsOnline());
     }
 
     private void publishStartRequest() {
-        if (twinStub.isOnline() && !blocked) {
-            twinStub.publishDataStartRequest(dataID, requesterID);
+        if (remoteCommunicationEndpoint.isOnline() && !blocked) {
+            remoteCommunicationEndpoint.publishDataStartRequest(dataID, requesterID);
         }
     }
 
     private void publishStopRequest() {
-        if (twinStub.isOnline() && !blocked) {
-            twinStub.publishDataStopRequest(dataID, requesterID);
+        if (remoteCommunicationEndpoint.isOnline() && !blocked) {
+            remoteCommunicationEndpoint.publishDataStopRequest(dataID, requesterID);
         }
     }
 
     public void startRequestingData() {
         if (requested) return;
         requested = true;
-        twinStub.subscribeForData(dataID, valueReceiver);
+        remoteCommunicationEndpoint.subscribeForData(dataID, valueReceiver);
         publishStartRequest();
     }
 
     public void stopRequestingData() {
         if (!requested) return;
         requested = false;
-        twinStub.unsubscribeFromData(dataID);
+        remoteCommunicationEndpoint.unsubscribeFromData(dataID);
         publishStopRequest();
     }
 
@@ -65,7 +65,7 @@ public class DataRequester {
         blocked = true;
     }
 
-    public void setDataReceiveFunction(Twin.DataExecutor function) {
+    public void setDataReceiveFunction(CommunicationEndpoint.DataExecutor function) {
         dataExecutor = function;
     }
 

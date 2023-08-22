@@ -1,4 +1,4 @@
-package org.ude.es.comm;
+package org.ude.es.protocol;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ package org.ude.es.comm;
  * an MQTT broker.
  * </p>
  */
-public interface CommunicationEndpoint {
+public interface BrokerStub {
     void connect(String clientId, String lwtMessage);
 
     void publish(Posting posting, boolean retain);

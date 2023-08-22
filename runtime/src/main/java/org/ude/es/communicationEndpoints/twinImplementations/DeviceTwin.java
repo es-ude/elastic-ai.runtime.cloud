@@ -1,12 +1,15 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints.twinImplementations;
 
 import java.util.HashMap;
-import org.ude.es.protocol.DataRequestHandler;
-import org.ude.es.protocol.DataRequester;
 
-public class DeviceTwin extends JavaTwin {
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.requests.DataRequestHandler;
+import org.ude.es.protocol.requests.DataRequester;
 
-    protected TwinStub device;
+public class DeviceTwin extends LocalCommunicationEndpoint {
+
+    protected RemoteCommunicationEndpoint device;
     protected HashMap<String, DataRequester> availableDataRequester =
         new HashMap<>();
     protected HashMap<String, DataRequestHandler> availableDataRequesterHandler =
@@ -18,13 +21,13 @@ public class DeviceTwin extends JavaTwin {
 
     public DeviceTwin(String identifier, int deviceDelay) {
         super(identifier + "Twin");
-        device = new TwinStub(identifier, deviceDelay);
+        device = new RemoteCommunicationEndpoint(identifier, deviceDelay);
     }
 
     @Override
     protected void executeOnBindPrivate() {
         super.executeOnBindPrivate();
-        device.bindToCommunicationEndpoint(endpoint);
+        device.bindToCommunicationEndpoint(brokerStub);
     }
 
     protected void pauseDataRequests() {

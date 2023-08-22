@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.comm.CommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
 
 public class TestTwinData {
 
@@ -14,8 +14,8 @@ public class TestTwinData {
 
     @BeforeEach
     void setUp() {
-        CommunicationEndpoint CommunicationEndpointMock = new CommunicationEndpointMock() {};
-        twinData = new TwinData(TWIN_NAME, TWIN_ID, CommunicationEndpointMock, "requesterID");
+        BrokerStub brokerStubMock = new BrokerStubMock() {};
+        twinData = new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
     }
 
     @Test

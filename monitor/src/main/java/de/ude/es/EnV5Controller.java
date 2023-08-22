@@ -24,7 +24,7 @@ public class EnV5Controller {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        model.addAttribute("twin", twin);
+        model.addAttribute("communicationEndpoint", twin);
         return "env5";
     }
 

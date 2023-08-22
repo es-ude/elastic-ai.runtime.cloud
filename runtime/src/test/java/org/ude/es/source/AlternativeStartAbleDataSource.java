@@ -2,10 +2,10 @@ package org.ude.es.source;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
@@ -18,13 +18,13 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
             private final String id;
             private boolean isActive;
 
-            private final TwinStub twinStub;
+            private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
 
             public Client(String id) {
                 this.id = id;
-                twinStub = new TwinStub(id);
-                twinStub.bindToCommunicationEndpoint(javaTwin.getEndpoint());
-                twinStub.subscribeForStatus(this);
+                remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(id);
+                remoteCommunicationEndpoint.bindToCommunicationEndpoint(localCommunicationEndpoint.getBrokerStub());
+                remoteCommunicationEndpoint.subscribeForStatus(this);
                 isActive = true;
             }
 
@@ -39,7 +39,7 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
                 if (isActive) {
                     isActive = false;
                     clients.remove(this);
-                    twinStub.unsubscribeFromStatus();
+                    remoteCommunicationEndpoint.unsubscribeFromStatus();
                 }
             }
 
@@ -74,8 +74,8 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
     }
 
     @Override
-    public void bind(JavaTwin protocol) {
-        this.javaTwin = protocol;
+    public void bind(LocalCommunicationEndpoint protocol) {
+        this.localCommunicationEndpoint = protocol;
         protocol.subscribeForDataStartRequest(dataId, this::handleNewClient);
         protocol.subscribeForDataStopRequest(dataId, this::handleLeavingClient);
     }

@@ -1,11 +1,11 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.ude.es.comm.HivemqBroker;
+import org.ude.es.protocol.HivemqBroker;
 
 public class Executable {
 
@@ -13,7 +13,7 @@ public class Executable {
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
 
-    public static void startTwin(Twin twin, String[] args)
+    public static void startCommunicationEndpoint(CommunicationEndpoint communicationEndpoint, String[] args)
         throws InterruptedException {
         try {
             Namespace arguments = parseArguments(args);
@@ -25,7 +25,7 @@ public class Executable {
         }
 
         HivemqBroker broker = new HivemqBroker(DOMAIN, BROKER_IP, BROKER_PORT);
-        twin.bindToCommunicationEndpoint(broker);
+        communicationEndpoint.bindToCommunicationEndpoint(broker);
 
         Thread.sleep(3000);
     }

@@ -13,7 +13,7 @@
             <div class="col text-end fw-bold">
                 Name
             </div>
-            <div class="col" th:text="${twin.getName()}">
+            <div class="col" th:text="${communicationEndpoint.getName()}">
                 Twin Name
             </div>
         </div>
@@ -21,7 +21,7 @@
             <div class="col text-end fw-bold">
                 ID
             </div>
-            <div class="col" th:text="${twin.getId()}">
+            <div class="col" th:text="${communicationEndpoint.getId()}">
                 Twin ID
             </div>
         </div>
@@ -29,17 +29,17 @@
             <div class="col text-end fw-bold">
                 Status
             </div>
-            <div class="col" th:text="${twin.isActive() ? 'ONLINE' : 'OFFLINE'}">
+            <div class="col" th:text="${communicationEndpoint.isActive() ? 'ONLINE' : 'OFFLINE'}">
                 Twin Status
             </div>
         </div>
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors"
-         th:if="${twin.getAvailableSensors() != null}">
+         th:if="${communicationEndpoint.getAvailableSensors() != null}">
     <h4>Measurements</h4>
     <div class="d-grid container gap-2" id="sensors">
-        <div class="row text-center" th:each="sensor, iState: ${twin.getAvailableSensors()}">
+        <div class="row text-center" th:each="sensor, iState: ${communicationEndpoint.getAvailableSensors()}">
             <div class="input-group">
                 <span class="input-group-text" th:id="${'label-' + sensor.toLowerCase()}"
                       th:text="${sensor.toUpperCase()}"></span>
@@ -47,7 +47,7 @@
                        type="text" readonly>
                 <script th:inline="javascript">
                     setTimeout(function() {
-                        setValueUpdate([[${twin.getId()}]], [[${sensor}]], [[${sensor}]]);
+                        setValueUpdate([[${communicationEndpoint.getId()}]], [[${sensor}]], [[${sensor}]]);
                     }, [[${iState.index}]]*1000)
                 </script>
             </div>
@@ -58,7 +58,7 @@
     <h4>FPGA</h4>
     <div class="text-secondary">
         <input id="bitFile" type="file" accept=".bit,.bin">
-        <button th:id="${twin.getId() + '-flash-button'}" onclick=uploadFile(this)>Flash</button>
+        <button th:id="${communicationEndpoint.getId() + '-flash-button'}" onclick=uploadFile(this)>Flash</button>
     </div>
 </section>
 </body>

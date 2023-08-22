@@ -1,10 +1,10 @@
 package de.ude.es;
 
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
-public abstract class CommunicationEndpointMock implements CommunicationEndpoint {
+public abstract class BrokerStubMock implements BrokerStub {
 
     @Override
     public void connect(String clientId, String lwtMessage) {

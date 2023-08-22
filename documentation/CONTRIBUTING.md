@@ -170,8 +170,8 @@ classDiagram
   }
   TwinList *-- TwinData
 
-  class MonitorTwin {
-    -StatusMonitor monitor
+  class MonitorCommunicationEndpoint {
+    -StatusMonitor statusMonitor
     -TwinList twins
 
     +MonitorTwin(String id)

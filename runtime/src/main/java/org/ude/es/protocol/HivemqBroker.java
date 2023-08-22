@@ -1,4 +1,4 @@
-package org.ude.es.comm;
+package org.ude.es.protocol;
 
 import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class HivemqBroker implements CommunicationEndpoint {
+public class HivemqBroker implements BrokerStub {
 
     private String clientId;
     private final String mqttDomain;

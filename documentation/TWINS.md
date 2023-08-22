@@ -1,24 +1,19 @@
-# TWINS
+# COMMUNICATION_ENDPOINTS
 
-All Twins must posses an unique identifier. An twin must be connected to a broker.
+All Communication Endpoints (CE) must posses an unique identifier. A CE must be connected to a broker.
 
-## Twin
+## CommunicationEndpoints
 
-It Is the Base for all Twins.
+It is the Base for all Endpoints.
 
-## Twin Stub
+## Remote CE
 
-Extends the Twin Class. It is used to communicate with other Twins.
+Extends the CE Class. It is used to communicate with other CEs.
 
-## Java Twin
+## Local CE
 
-Extends the Twin Class. It can be used to implement an own Device Twin, as a Service that communicates with Twins, or
-also as a Composite Twin.
+Extends the CE Class. It can be used to implement MQTT participants, e.g. Device Twins or Services.
 
 ## Device Twin
 
-Extends the Java Twin Class. It can be used as a Twin for a Device.
-
-## Executable
-
-It can be used to make a Twin Class executable.
+Extends the Local CE Class. It can be used as a Twin for a Device.

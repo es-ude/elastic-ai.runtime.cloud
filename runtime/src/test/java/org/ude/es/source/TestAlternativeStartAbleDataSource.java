@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.PostingType;
+import org.ude.es.protocol.PostingType;
 
 class TestAlternativeStartAbleDataSource {
 

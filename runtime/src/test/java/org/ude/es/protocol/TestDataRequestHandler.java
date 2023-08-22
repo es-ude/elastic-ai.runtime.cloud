@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
+import org.ude.es.protocol.requests.DataRequestHandler;
 
 public class TestDataRequestHandler {
 

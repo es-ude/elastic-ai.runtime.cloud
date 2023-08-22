@@ -1,10 +1,10 @@
 package org.ude.es.source;
 
-import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 
 public class TemperatureSource extends ControllableDataSource<Double> {
 
-    public TemperatureSource(JavaTwin twin, String dataId) {
+    public TemperatureSource(LocalCommunicationEndpoint twin, String dataId) {
         super(twin, dataId);
     }
 }

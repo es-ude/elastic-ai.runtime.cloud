@@ -1,14 +1,14 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.PostingType;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
 
-public class TestTwinStub {
+public class TestRemoteCommunicationEndpoint {
 
     private static final String twinID = "test";
     private TwinStubChecker checker;
@@ -125,10 +125,10 @@ public class TestTwinStub {
 
     private static class TwinStubChecker extends Checker {
 
-        public TwinStub device;
+        public RemoteCommunicationEndpoint device;
 
         public void givenDevice() {
-            device = new TwinStub("test");
+            device = new RemoteCommunicationEndpoint("test");
             device.bindToCommunicationEndpoint(broker);
         }
 

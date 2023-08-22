@@ -1,14 +1,14 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.PostingType;
-import org.ude.es.comm.Status;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
+import org.ude.es.protocol.Status;
 
-public class TestJavaTwin {
+public class TestLocalCommunicationEndpoint {
 
     private static final String twinID = "test";
     private JavaTwinChecker checker;
@@ -88,17 +88,17 @@ public class TestJavaTwin {
 
     @Test
     void stubIsBound() {
-        TwinStub stub = new TwinStub("stub");
+        RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("stub");
         checker.twin.bindStub(stub);
-        Assertions.assertNotNull(stub.getEndpoint());
+        Assertions.assertNotNull(stub.getBrokerStub());
     }
 
     private static class JavaTwinChecker extends Checker {
 
-        public JavaTwin twin;
+        public LocalCommunicationEndpoint twin;
 
         public void givenDevice() {
-            twin = new JavaTwin(twinID);
+            twin = new LocalCommunicationEndpoint(twinID);
             twin.bindToCommunicationEndpoint(broker);
         }
 

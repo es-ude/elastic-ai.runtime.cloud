@@ -1,4 +1,4 @@
-package org.ude.es.comm;
+package org.ude.es.protocol;
 
 public record Posting(String topic, String data) {
     public Posting(String topic) {

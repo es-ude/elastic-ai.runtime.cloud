@@ -17,20 +17,20 @@ The diagrams show simplified, how the parties communicate with each other in the
 
 ```mermaid
 sequenceDiagram
-    participant twin as enV5Twin
+    participant communicationEndpoint as enV5Twin
     participant device as enV5
-    participant monitor as Monitor
+    participant monitorCommunicationEndpoint as Monitor
     participant broker as Broker
 
-    twin ->> broker: STATUS
+    communicationEndpoint ->> broker: STATUS
     device ->> broker: STATUS
-    monitor ->> broker: STATUS
-    broker ->> monitor: EnV5Twin STATUS
+    monitorCommunicationEndpoint ->> broker: STATUS
+    broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
 
-    broker ->> twin: Env5 STATUS
-    twin ->> broker: UPDATED STATUS
+    broker ->> communicationEndpoint: Env5 STATUS
+    communicationEndpoint ->> broker: UPDATED STATUS
 
-    broker ->> monitor: EnV5Twin STATUS
+    broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
 ```
 
 ### DATA
@@ -39,18 +39,18 @@ Broker removed for simplicity
 
 ```mermaid
 sequenceDiagram
-    participant monitor as Monitor
-    participant twin as enV5Twin
+    participant monitorCommunicationEndpoint as Monitor
+    participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitor ->> twin: START
-    twin ->> device: START
+    monitorCommunicationEndpoint ->> communicationEndpoint: START
+    communicationEndpoint ->> device: START
 
-    device ->> twin: DATA
-    twin ->> monitor: DATA
+    device ->> communicationEndpoint: DATA
+    communicationEndpoint ->> monitorCommunicationEndpoint: DATA
 
-    monitor ->> twin: STOP
-    twin ->> device: STOP
+    monitorCommunicationEndpoint ->> communicationEndpoint: STOP
+    communicationEndpoint ->> device: STOP
 ```
 
 ### FLASH
@@ -59,16 +59,16 @@ Broker removed for simplicity
 
 ```mermaid
 sequenceDiagram
-    participant monitor as Monitor
-    participant twin as enV5Twin
+    participant monitorCommunicationEndpoint as Monitor
+    participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitor ->> twin: FLASH
-    twin ->> device: FLASH
+    monitorCommunicationEndpoint ->> communicationEndpoint: FLASH
+    communicationEndpoint ->> device: FLASH
 
-    device ->> monitor: REQUEST
-    monitor ->> device: BITFILE
+    device ->> monitorCommunicationEndpoint: REQUEST
+    monitorCommunicationEndpoint ->> device: BITFILE
 
-    device ->> twin: DONE
-    twin ->> monitor: DONE
+    device ->> communicationEndpoint: DONE
+    communicationEndpoint ->> monitorCommunicationEndpoint: DONE
 ```

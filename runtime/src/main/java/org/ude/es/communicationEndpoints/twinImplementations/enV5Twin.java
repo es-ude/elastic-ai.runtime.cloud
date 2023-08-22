@@ -1,12 +1,11 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.communicationEndpoints.twinImplementations;
 
-import static org.ude.es.twinBase.Executable.startTwin;
+import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.ude.es.comm.Status;
-import org.ude.es.twinBase.DeviceTwin;
+import org.ude.es.protocol.Status;
 
 public class enV5Twin extends DeviceTwin {
 
@@ -18,7 +17,7 @@ public class enV5Twin extends DeviceTwin {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        startTwin(new enV5Twin("enV5"), args);
+        startCommunicationEndpoint(new enV5Twin("enV5"), args);
     }
 
     @Override

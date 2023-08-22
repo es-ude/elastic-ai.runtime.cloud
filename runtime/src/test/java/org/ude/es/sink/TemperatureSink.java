@@ -1,9 +1,9 @@
 package org.ude.es.sink;
 
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 /**
  * A sink representing a temperature that is measured somewhere, e.g., by a
@@ -11,7 +11,7 @@ import org.ude.es.twinBase.TwinStub;
  * to communicate with the remote device that actually measures the
  * temperature.
  */
-public class TemperatureSink extends JavaTwin {
+public class TemperatureSink extends LocalCommunicationEndpoint {
 
     private class DataSubscriber implements Subscriber {
 
@@ -26,14 +26,14 @@ public class TemperatureSink extends JavaTwin {
     private volatile boolean newTemperatureAvailable = false;
     private final String dataId;
     private DataSubscriber subscriber;
-    private TwinStub dataSource;
+    private RemoteCommunicationEndpoint dataSource;
 
     public TemperatureSink(String twinID, String dataId) {
         super(twinID);
         this.dataId = dataId;
     }
 
-    public void connectDataSource(TwinStub dataSource) {
+    public void connectDataSource(RemoteCommunicationEndpoint dataSource) {
         this.dataSource = dataSource;
         this.subscriber = new DataSubscriber();
         this.dataSource.subscribeForData(dataId, subscriber);
@@ -54,7 +54,7 @@ public class TemperatureSink extends JavaTwin {
         return newTemperatureAvailable;
     }
 
-    public TwinStub getDataSource() {
+    public RemoteCommunicationEndpoint getDataSource() {
         return this.dataSource;
     }
 

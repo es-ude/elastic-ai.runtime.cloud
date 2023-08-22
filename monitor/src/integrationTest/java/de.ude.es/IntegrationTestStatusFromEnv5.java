@@ -9,15 +9,15 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import org.ude.es.comm.HivemqBroker;
-import org.ude.es.comm.Posting;
-import org.ude.es.twinImplementations.IntegrationTestTwinForEnV5;
+import org.ude.es.protocol.HivemqBroker;
+import org.ude.es.protocol.Posting;
+import org.ude.es.communicationEndpoints.twinImplementations.IntegrationTestTwinForEnV5;
 
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
 
     private int BROKER_PORT = 1883;
-    private MonitorTwin monitor;
+    private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
     private IntegrationTestTwinForEnV5 enV5;
 
     @Container
@@ -38,14 +38,14 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOnlineCanBeReceived() throws InterruptedException {
         Thread.sleep(1000);
-        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        int activeTwins = monitorCommunicationEndpoint.getTwinList().getActiveTwins().size();
         assertEquals(1, activeTwins);
     }
 
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
         enV5
-            .getEndpoint()
+            .getBrokerStub()
             .publish(
                 new Posting(
                     enV5.getIdentifier() + "/STATUS",
@@ -54,7 +54,7 @@ public class IntegrationTestStatusFromEnv5 {
                 true
             );
         Thread.sleep(1000);
-        int activeTwins = monitor.getTwinList().getActiveTwins().size();
+        int activeTwins = monitorCommunicationEndpoint.getTwinList().getActiveTwins().size();
         assertEquals(0, activeTwins);
     }
 
@@ -64,8 +64,8 @@ public class IntegrationTestStatusFromEnv5 {
     }
 
     private void createMonitor() {
-        monitor = new MonitorTwin("monitor");
-        monitor.bindToCommunicationEndpoint(
+        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint("monitor");
+        monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             createBrokerWithKeepalive("monitor")
         );
     }

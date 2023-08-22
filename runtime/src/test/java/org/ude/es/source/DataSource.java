@@ -1,6 +1,6 @@
 package org.ude.es.source;
 
-import org.ude.es.twinBase.JavaTwin;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 
 /**
  * A simple template class for data sources. Can be used by
@@ -11,7 +11,7 @@ import org.ude.es.twinBase.JavaTwin;
  */
 public class DataSource<T> {
 
-    protected JavaTwin javaTwin;
+    protected LocalCommunicationEndpoint localCommunicationEndpoint;
 
     protected final String dataId;
 
@@ -19,11 +19,11 @@ public class DataSource<T> {
         this.dataId = dataId;
     }
 
-    public void bind(JavaTwin javaTwin) {
-        this.javaTwin = javaTwin;
+    public void bind(LocalCommunicationEndpoint localCommunicationEndpoint) {
+        this.localCommunicationEndpoint = localCommunicationEndpoint;
     }
 
     public void set(T data) {
-        javaTwin.publishData(dataId, "" + data);
+        localCommunicationEndpoint.publishData(dataId, "" + data);
     }
 }

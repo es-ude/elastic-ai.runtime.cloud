@@ -1,32 +1,33 @@
-package org.ude.es.protocol;
+package org.ude.es.protocol.requests;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class DataRequestHandler {
 
-    private static final HashMap<String, RequesterTwinStub> currentlyRequestingTwins =
+    private static final HashMap<String, RequesterRemoteCE> currentlyRequestingTwins =
         new HashMap<>();
 
     private final List<String> subscribers = new ArrayList<>();
 
-    private final List<TwinStub.Executor> startRequestingData =
+    private final List<RemoteCommunicationEndpoint.Executor> startRequestingData =
         new ArrayList<>();
-    private final List<TwinStub.Executor> stopRequestingData =
+    private final List<RemoteCommunicationEndpoint.Executor> stopRequestingData =
         new ArrayList<>();
 
     private final DataStopRequestReceiver dataStopRequestReceiver =
         new DataStopRequestReceiver();
 
     private final String dataID;
-    private final JavaTwin twinWithData;
+    private final LocalCommunicationEndpoint twinWithData;
 
-    public DataRequestHandler(JavaTwin twinWithData, String dataID) {
+    public DataRequestHandler(LocalCommunicationEndpoint twinWithData, String dataID) {
         this.twinWithData = twinWithData;
         this.dataID = dataID;
         DataStartRequestReceiver dataStartRequestReceiver =
@@ -50,11 +51,11 @@ public class DataRequestHandler {
         twinWithData.publishData(dataID, data);
     }
 
-    public void addWhenStartRequestingData(TwinStub.Executor function) {
+    public void addWhenStartRequestingData(RemoteCommunicationEndpoint.Executor function) {
         startRequestingData.add(function);
     }
 
-    public void addWhenStopRequestingData(TwinStub.Executor function) {
+    public void addWhenStopRequestingData(RemoteCommunicationEndpoint.Executor function) {
         stopRequestingData.add(function);
     }
 
@@ -77,7 +78,7 @@ public class DataRequestHandler {
         private void handleSubscribers(String requesterID) {
             subscribers.add(requesterID);
             if (subscribers.size() == 1) {
-                for (TwinStub.Executor executor : startRequestingData) {
+                for (RemoteCommunicationEndpoint.Executor executor : startRequestingData) {
                     executor.execute();
                 }
             }
@@ -85,7 +86,7 @@ public class DataRequestHandler {
 
         private void handleRequesterTwinStub(String requesterID) {
             if (!currentlyRequestingTwins.containsKey(requesterID)) {
-                RequesterTwinStub stub = new RequesterTwinStub(requesterID);
+                RequesterRemoteCE stub = new RequesterRemoteCE(requesterID);
                 twinWithData.bindStub(stub);
                 currentlyRequestingTwins.put(requesterID, stub);
             } else {
@@ -130,7 +131,7 @@ public class DataRequestHandler {
         private void handleSubscriber(String requesterID) {
             subscribers.remove(requesterID);
             if (subscribers.size() == 0) {
-                for (TwinStub.Executor executor : stopRequestingData) {
+                for (RemoteCommunicationEndpoint.Executor executor : stopRequestingData) {
                     executor.execute();
                 }
             }
