@@ -10,8 +10,10 @@ import org.ude.es.twinBase.TwinStub;
 
 public class DataRequestHandler {
 
-    private static final HashMap<String, RequesterTwinStub> currentlyRequestingTwins =
-        new HashMap<>();
+    private static final HashMap<
+        String,
+        RequesterTwinStub
+    > currentlyRequestingTwins = new HashMap<>();
 
     private final List<String> subscribers = new ArrayList<>();
 

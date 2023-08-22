@@ -4,14 +4,15 @@ import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @RequestMapping({ "/sensor" })
 public class EnV5Controller {
-
-    private record SensorData(String DEVICE_ID, String DATA_ID, float VALUE) {}
 
     @GetMapping("/{name}")
     public String enV5LandingPage(Model model, @PathVariable String name) {
@@ -26,28 +27,49 @@ public class EnV5Controller {
         return "env5";
     }
 
-    @GetMapping("/{name}/{dataId}")
+    @GetMapping("/{twinID}/{dataId}")
     @ResponseBody
     public SensorData requestPowerSensorData(
-        @PathVariable String name,
+        @PathVariable String twinID,
         @PathVariable String dataId
     ) {
-        if (MonitoringServiceApplication.getTwinList().getTwin(name) == null) {
+        if (
+            MonitoringServiceApplication.getTwinList().getTwin(twinID) == null
+        ) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Device not found"
             );
         }
 
-        if (name.contains("enV5")) {
+        if (twinID.contains("enV5")) {
             try {
+                TwinData twinData = MonitoringServiceApplication
+                    .getTwinList()
+                    .getTwin(twinID);
+
+                if (
+                    System.currentTimeMillis() -
+                        twinData.getLifeTime().get(dataId) >
+                    10000
+                ) {
+                    new Thread(() -> {
+                        try {
+                            twinData.stopDataRequest(dataId);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                        .start();
+                }
+                twinData.getLifeTime().put(dataId, System.currentTimeMillis());
+
                 float latest =
                     MonitoringServiceApplication.getLatestMeasurement(
-                        name,
-                        dataId
+                        twinData.getDataRequester().get(dataId)
                     );
 
-                return new SensorData(name, dataId, latest);
+                return new SensorData(twinID, dataId, latest);
             } catch (TimeoutException t) {
                 throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -58,4 +80,6 @@ public class EnV5Controller {
 
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    private record SensorData(String DEVICE_ID, String DATA_ID, float VALUE) {}
 }

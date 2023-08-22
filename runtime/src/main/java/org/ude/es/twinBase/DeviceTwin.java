@@ -9,8 +9,10 @@ public class DeviceTwin extends JavaTwin {
     protected TwinStub device;
     protected HashMap<String, DataRequester> availableDataRequester =
         new HashMap<>();
-    protected HashMap<String, DataRequestHandler> availableDataRequesterHandler =
-        new HashMap<>();
+    protected HashMap<
+        String,
+        DataRequestHandler
+    > availableDataRequesterHandler = new HashMap<>();
 
     public DeviceTwin(String identifier) {
         this(identifier, 0);
@@ -64,7 +66,7 @@ public class DeviceTwin extends JavaTwin {
             dataRequester::stopRequestingData
         );
 
-        dataRequester.addWhenNewDataReceived(
+        dataRequester.setDataReceiveFunction(
             dataRequestHandler::newDataToPublish
         );
 

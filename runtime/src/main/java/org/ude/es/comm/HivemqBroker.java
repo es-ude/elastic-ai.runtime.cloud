@@ -174,10 +174,8 @@ public class HivemqBroker implements CommunicationEndpoint {
             .topicFilter(topic)
             .send()
             .whenComplete(
-                (
-                    (unsubAck, throwable) ->
-                        onUnsubscribeComplete(throwable, topic)
-                )
+                ((unsubAck, throwable) ->
+                        onUnsubscribeComplete(throwable, topic))
             );
     }
 

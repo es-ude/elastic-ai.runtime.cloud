@@ -6,6 +6,7 @@ import com.google.common.primitives.UnsignedInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.ude.es.comm.CommunicationEndpoint;
 
 public class TwinList {
 
@@ -39,14 +40,26 @@ public class TwinList {
      * if twin already exists -> sets twin.active=true,
      * else -> adds new twin.
      */
-    public void addOrUpdateTwin(String ID, String[] measurements) {
+    public void addOrUpdateTwin(
+        String ID,
+        String[] measurements,
+        CommunicationEndpoint endpoint,
+        String requesterID
+    ) {
         if (getTwin(ID) == null) {
-            twins.add(new TwinData("Twin " + twinIdCounter.intValue(), ID));
+            twins.add(
+                new TwinData(
+                    "Twin " + twinIdCounter.intValue(),
+                    ID,
+                    endpoint,
+                    requesterID
+                )
+            );
             twinIdCounter = twinIdCounter.plus(ONE);
         } else {
             getTwin(ID).setActive();
         }
-        getTwin(ID).setAvailableSensors(measurements);
+        if (measurements != null) getTwin(ID).setAvailableSensors(measurements);
     }
 
     public List<TwinData> getActiveTwins() {

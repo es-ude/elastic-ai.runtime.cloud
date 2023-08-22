@@ -1,5 +1,6 @@
 package de.ude.es;
 
+import org.ude.es.comm.CommunicationEndpoint;
 import org.ude.es.comm.Posting;
 import org.ude.es.comm.Status;
 import org.ude.es.comm.Subscriber;
@@ -8,15 +9,39 @@ import org.ude.es.twinBase.TwinStub;
 
 public class MonitorTwin extends JavaTwin {
 
+    private StatusMonitor statusMonitor;
+    private volatile TwinList twins;
+
+    public MonitorTwin(String id) {
+        super(id);
+        this.twins = new TwinList();
+    }
+
+    @Override
+    protected void executeOnBind() {
+        statusMonitor = new StatusMonitor(this, twins, this);
+    }
+
+    public TwinList getTwinList() {
+        return this.twins;
+    }
+
     private static class StatusMonitor implements Subscriber {
 
-        private volatile TwinList twins;
         private final JavaTwin twin;
+        private volatile TwinList twins;
         private TwinStub stub;
+        private CommunicationEndpoint endpoint;
+        private MonitorTwin monitorTwin;
 
-        public StatusMonitor(JavaTwin twin, TwinList twinList) {
+        public StatusMonitor(
+            JavaTwin twin,
+            TwinList twinList,
+            MonitorTwin monitorTwin
+        ) {
             this.twins = twinList;
             this.twin = twin;
+            this.monitorTwin = monitorTwin;
             createTwinStubAndSubscribeForStatus();
         }
 
@@ -79,11 +104,21 @@ public class MonitorTwin extends JavaTwin {
                             1
                         );
                     measurements =
-                        measurements.substring(0, measurements.indexOf(";"));
+                    measurements.substring(0, measurements.indexOf(";"));
 
-                    twins.addOrUpdateTwin(twinID, measurements.split(","));
+                    twins.addOrUpdateTwin(
+                        twinID,
+                        measurements.split(","),
+                        monitorTwin.getEndpoint(),
+                        monitorTwin.getDomainAndIdentifier()
+                    );
                 } else {
-                    twins.addOrUpdateTwin(twinID, null);
+                    twins.addOrUpdateTwin(
+                        twinID,
+                        null,
+                        monitorTwin.getEndpoint(),
+                        monitorTwin.getDomainAndIdentifier()
+                    );
                 }
             } else {
                 TwinData twin = twins.getTwin(twinID);
@@ -94,22 +129,5 @@ public class MonitorTwin extends JavaTwin {
                 //                    no need to add inactive Twin
             }
         }
-    }
-
-    private StatusMonitor monitor;
-    private volatile TwinList twins;
-
-    public MonitorTwin(String id) {
-        super(id);
-        this.twins = new TwinList();
-    }
-
-    @Override
-    protected void executeOnBind() {
-        monitor = new StatusMonitor(this, twins);
-    }
-
-    public TwinList getTwinList() {
-        return this.twins;
     }
 }
