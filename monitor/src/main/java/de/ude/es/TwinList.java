@@ -9,7 +9,6 @@ import java.util.Objects;
 import org.ude.es.communicationEndpoints.CommunicationEndpoint;
 import org.ude.es.protocol.BrokerStub;
 
-
 public class TwinList {
 
     private volatile List<TwinData> twins;
