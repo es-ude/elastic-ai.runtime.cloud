@@ -6,7 +6,7 @@ import com.google.common.primitives.UnsignedInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.ude.es.protocol.BrokerStub;
+import org.ude.es.comm.CommunicationEndpoint;
 
 public class TwinList {
 
@@ -43,7 +43,7 @@ public class TwinList {
     public void addOrUpdateTwin(
         String ID,
         String[] measurements,
-        BrokerStub endpoint,
+        CommunicationEndpoint endpoint,
         String requesterID
     ) {
         if (getTwin(ID) == null) {

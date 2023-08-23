@@ -14,6 +14,15 @@ public class TestTwinData {
 
     @BeforeEach
     void setUp() {
+        CommunicationEndpoint CommunicationEndpointMock =
+            new CommunicationEndpointMock() {};
+        twinData =
+        new TwinData(
+            TWIN_NAME,
+            TWIN_ID,
+            CommunicationEndpointMock,
+            "requesterID"
+        );
         BrokerStub brokerStubMock = new BrokerStubMock() {};
         twinData =
         new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
