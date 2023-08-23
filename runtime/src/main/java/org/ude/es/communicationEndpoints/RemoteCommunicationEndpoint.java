@@ -1,7 +1,11 @@
 package org.ude.es.communicationEndpoints;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.PostingType;
 import org.ude.es.protocol.Status;
@@ -11,6 +15,7 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
     private final int deviceDelay;
     private boolean deviceOnline = false;
+    Lock lock = new ReentrantLock();
 
     List<DataExecutor> deviceGoesOnline = new ArrayList<>();
     List<DataExecutor> deviceGoesOffline = new ArrayList<>();
@@ -68,14 +73,6 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
         subscribeForStatus(statusReceiver);
     }
 
-    private void waitAfterPublish() {
-        try {
-            Thread.sleep(deviceDelay);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public boolean isOnline() {
         return deviceOnline;
     }
@@ -108,8 +105,23 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
     @Override
     protected void publish(Posting posting) {
-        super.publish(posting);
-        waitAfterPublish();
+        try {
+            if (lock.tryLock(deviceDelay * 10L, MILLISECONDS)) {
+                super.publish(posting);
+                waitAfterPublish();
+                lock.unlock();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void waitAfterPublish() {
+        try {
+            Thread.sleep(deviceDelay);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void publishDataStartRequest(String dataId, String receiver) {
