@@ -1,7 +1,5 @@
 package org.ude.es.communicationEndpoints.twinImplementations;
 
-import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;

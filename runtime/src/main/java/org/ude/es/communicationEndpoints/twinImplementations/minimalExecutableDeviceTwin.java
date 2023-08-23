@@ -1,7 +1,5 @@
 package org.ude.es.communicationEndpoints.twinImplementations;
 
-import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
-
 public class minimalExecutableDeviceTwin extends DeviceTwin {
 
     public minimalExecutableDeviceTwin(String identifier) {
