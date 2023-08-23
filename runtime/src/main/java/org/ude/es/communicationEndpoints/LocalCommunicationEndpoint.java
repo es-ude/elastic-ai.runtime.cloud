@@ -73,14 +73,13 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         stub.bindToCommunicationEndpoint(brokerStub);
     }
 
-
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
 
     public static void startCommunicationEndpoint(
-            CommunicationEndpoint communicationEndpoint,
-            String[] args
+        CommunicationEndpoint communicationEndpoint,
+        String[] args
     ) throws InterruptedException {
         try {
             Namespace arguments = parseArguments(args);
@@ -98,23 +97,23 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     private static Namespace parseArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-                .newFor("elastic-ai.runtime.demo")
-                .build()
-                .defaultHelp(true)
-                .description("Start a demo twin for the elastic-ai.runtime");
+            .newFor("elastic-ai.runtime.demo")
+            .build()
+            .defaultHelp(true)
+            .description("Start a demo twin for the elastic-ai.runtime");
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
         brokerSpecification
-                .addArgument("-b", "--broker-address")
-                .help("Broker Address")
-                .setDefault("localhost");
+            .addArgument("-b", "--broker-address")
+            .help("Broker Address")
+            .setDefault("localhost");
         brokerSpecification
-                .addArgument("-p", "--broker-port")
-                .help("Broker Port")
-                .setDefault(1883);
+            .addArgument("-p", "--broker-port")
+            .help("Broker Port")
+            .setDefault(1883);
 
         return parser.parseArgs(args);
     }
