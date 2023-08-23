@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -81,7 +80,8 @@ public class MonitoringServiceApplication {
     }
 
     private static MonitorCommunicationEndpoint createMonitorTwin() {
-        MonitorCommunicationEndpoint monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(TWIN_ID);
+        MonitorCommunicationEndpoint monitorCommunicationEndpoint =
+            new MonitorCommunicationEndpoint(TWIN_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
@@ -92,7 +92,8 @@ public class MonitoringServiceApplication {
         return monitorCommunicationEndpoint.getTwinList();
     }
 
-    public static float getLatestMeasurement(DataRequester dataRequester) throws TimeoutException {
+    public static float getLatestMeasurement(DataRequester dataRequester)
+        throws TimeoutException {
         UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
         dataRequester.setDataReceiveFunction(data ->
             handleNewData(latestValue, data)

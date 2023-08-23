@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
-import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 
 public class TestMonitorCommunicationEndpoint {
 
@@ -35,12 +35,18 @@ public class TestMonitorCommunicationEndpoint {
 
     @Test
     void testTwinListIsUpdatedOnEnter() {
-        assertEquals(1, monitorCommunicationEndpoint.getTwinList().getTwins().size());
+        assertEquals(
+            1,
+            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+        );
     }
 
     @Test
     void testTwinListIsUpdatedOnLeave() {
-        assertEquals(1, monitorCommunicationEndpoint.getTwinList().getTwins().size());
+        assertEquals(
+            1,
+            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+        );
         broker.publish(
             new Posting(
                 dummyTwin.getIdentifier() + "/STATUS",
@@ -48,12 +54,18 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertEquals(0, monitorCommunicationEndpoint.getTwinList().getActiveTwins().size());
+        assertEquals(
+            0,
+            monitorCommunicationEndpoint.getTwinList().getActiveTwins().size()
+        );
     }
 
     @Test
     void testTwinListIsUpdatedOnReenter() {
-        assertEquals(1, monitorCommunicationEndpoint.getTwinList().getTwins().size());
+        assertEquals(
+            1,
+            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+        );
         broker.publish(
             new Posting(
                 dummyTwin.getIdentifier() + "/STATUS",
@@ -61,13 +73,19 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertEquals(0, monitorCommunicationEndpoint.getTwinList().getActiveTwins().size());
+        assertEquals(
+            0,
+            monitorCommunicationEndpoint.getTwinList().getActiveTwins().size()
+        );
         dummyTwin.publishStatus(
             new Status(dummyTwin.getIdentifier())
                 .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
                 .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
         );
-        assertEquals(1, monitorCommunicationEndpoint.getTwinList().getTwins().size());
+        assertEquals(
+            1,
+            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+        );
     }
 
     private void createBroker() {
@@ -75,7 +93,8 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createMonitorTwin() {
-        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(MONITOR_ID);
+        monitorCommunicationEndpoint =
+        new MonitorCommunicationEndpoint(MONITOR_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(broker);
     }
 

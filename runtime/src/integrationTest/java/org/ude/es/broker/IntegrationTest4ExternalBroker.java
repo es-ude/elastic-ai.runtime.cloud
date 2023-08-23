@@ -9,12 +9,12 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
-import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
-import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Testcontainers
 public class IntegrationTest4ExternalBroker {
@@ -40,26 +40,24 @@ public class IntegrationTest4ExternalBroker {
     void setUp() throws InterruptedException {
         BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
         producer =
-            new TwinThatOffersTemperature(
-                createBrokerWithKeepAlive(PRODUCER_ID),
-                PRODUCER_ID
-            );
+        new TwinThatOffersTemperature(
+            createBrokerWithKeepAlive(PRODUCER_ID),
+            PRODUCER_ID
+        );
         consumer1 =
-            new TwinThatConsumesTemperature(
-                createBrokerWithKeepAlive(CONSUMER_BASE_ID + "1"),
-                CONSUMER_BASE_ID + "1",
-                PRODUCER_ID
-            );
+        new TwinThatConsumesTemperature(
+            createBrokerWithKeepAlive(CONSUMER_BASE_ID + "1"),
+            CONSUMER_BASE_ID + "1",
+            PRODUCER_ID
+        );
     }
 
-    private static class TwinThatOffersTemperature extends LocalCommunicationEndpoint {
+    private static class TwinThatOffersTemperature
+        extends LocalCommunicationEndpoint {
 
         private final TemperatureSource temperatureSource;
 
-        public TwinThatOffersTemperature(
-            BrokerStub broker,
-            String id
-        ) {
+        public TwinThatOffersTemperature(BrokerStub broker, String id) {
             super(id);
             this.bindToCommunicationEndpoint(broker);
 
@@ -82,7 +80,8 @@ public class IntegrationTest4ExternalBroker {
         }
     }
 
-    private static class TwinThatConsumesTemperature extends LocalCommunicationEndpoint {
+    private static class TwinThatConsumesTemperature
+        extends LocalCommunicationEndpoint {
 
         TemperatureSink temperatureSink;
 
@@ -93,7 +92,8 @@ public class IntegrationTest4ExternalBroker {
         ) {
             super(id);
             this.bindToCommunicationEndpoint(broker);
-            RemoteCommunicationEndpoint dataSource = new RemoteCommunicationEndpoint(resourceId);
+            RemoteCommunicationEndpoint dataSource =
+                new RemoteCommunicationEndpoint(resourceId);
             bindStub(dataSource);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
@@ -140,7 +140,8 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void communicationCanBeResumed() {
-        RemoteCommunicationEndpoint stub = consumer1.temperatureSink.getDataSource();
+        RemoteCommunicationEndpoint stub =
+            consumer1.temperatureSink.getDataSource();
 
         while (!producer.hasClients());
         consumer1.temperatureSink.disconnectDataSource();

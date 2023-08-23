@@ -16,9 +16,24 @@ public class TestTwinList {
     void setUp() {
         twinList = new TwinList();
 
-        twinList.addOrUpdateTwin("ID1", new String[] {}, brokerStubMock, "requesterID");
-        twinList.addOrUpdateTwin("ID2", new String[] {}, brokerStubMock, "requesterID");
-        twinList.addOrUpdateTwin("ID3", new String[] {}, brokerStubMock, "requesterID");
+        twinList.addOrUpdateTwin(
+            "ID1",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
+        twinList.addOrUpdateTwin(
+            "ID2",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
+        twinList.addOrUpdateTwin(
+            "ID3",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
     }
 
     @Test
@@ -35,9 +50,19 @@ public class TestTwinList {
         twinList.changeTwinName("ID3", "Twin_3_new_name");
 
         List<TwinData> expected = List.of(
-            new TwinData("Twin_1_new_name", "ID1", brokerStubMock, "requesterID"),
+            new TwinData(
+                "Twin_1_new_name",
+                "ID1",
+                brokerStubMock,
+                "requesterID"
+            ),
             new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID"),
-            new TwinData("Twin_3_new_name", "ID3", brokerStubMock, "requesterID")
+            new TwinData(
+                "Twin_3_new_name",
+                "ID3",
+                brokerStubMock,
+                "requesterID"
+            )
         );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
@@ -69,7 +94,8 @@ public class TestTwinList {
     @Test
     void testGetTwin() {
         assertEquals(
-            new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID").toString(),
+            new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID")
+                .toString(),
             twinList.getTwin("ID2").toString()
         );
         assertNull(twinList.getTwin("WRONG_ID"));
@@ -86,14 +112,19 @@ public class TestTwinList {
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
 
-        twinList.addOrUpdateTwin("ID4", new String[] {}, brokerStubMock, "requesterID");
+        twinList.addOrUpdateTwin(
+            "ID4",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
         expected =
-            List.of(
-                new TwinData("Twin 1", "ID1", brokerStubMock, "requesterID"),
-                new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID"),
-                new TwinData("Twin 3", "ID3", brokerStubMock, "requesterID"),
-                new TwinData("Twin 4", "ID4", brokerStubMock, "requesterID")
-            );
+        List.of(
+            new TwinData("Twin 1", "ID1", brokerStubMock, "requesterID"),
+            new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID"),
+            new TwinData("Twin 3", "ID3", brokerStubMock, "requesterID"),
+            new TwinData("Twin 4", "ID4", brokerStubMock, "requesterID")
+        );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
@@ -110,7 +141,12 @@ public class TestTwinList {
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
 
-        twinList.addOrUpdateTwin("ID2", new String[] {}, brokerStubMock, "requesterID");
+        twinList.addOrUpdateTwin(
+            "ID2",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());
     }
@@ -127,7 +163,12 @@ public class TestTwinList {
         assertEquals(expected.size(), twinList.getTwins().size());
         assertEquals(expected.size() - 1, twinList.getActiveTwins().size());
 
-        twinList.addOrUpdateTwin("ID2", new String[] {}, brokerStubMock, "requesterID");
+        twinList.addOrUpdateTwin(
+            "ID2",
+            new String[] {},
+            brokerStubMock,
+            "requesterID"
+        );
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getActiveTwins().size());
     }

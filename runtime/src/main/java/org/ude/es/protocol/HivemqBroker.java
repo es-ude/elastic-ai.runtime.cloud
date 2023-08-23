@@ -174,10 +174,8 @@ public class HivemqBroker implements BrokerStub {
             .topicFilter(topic)
             .send()
             .whenComplete(
-                (
-                    (unsubAck, throwable) ->
-                        onUnsubscribeComplete(throwable, topic)
-                )
+                ((unsubAck, throwable) ->
+                        onUnsubscribeComplete(throwable, topic))
             );
     }
 

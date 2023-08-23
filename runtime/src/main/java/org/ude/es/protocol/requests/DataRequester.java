@@ -15,24 +15,35 @@ public class DataRequester {
     private boolean requested = false;
     private boolean blocked = false;
 
-    public DataRequester(RemoteCommunicationEndpoint remoteCommunicationEndpoint, String dataID, String requesterID) {
+    public DataRequester(
+        RemoteCommunicationEndpoint remoteCommunicationEndpoint,
+        String dataID,
+        String requesterID
+    ) {
         this.remoteCommunicationEndpoint = remoteCommunicationEndpoint;
         this.dataID = dataID;
         this.requesterID = requesterID;
         valueReceiver = new ValueReceiver();
 
-        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(data -> getsOnline());
+        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(data -> getsOnline()
+        );
     }
 
     private void publishStartRequest() {
         if (remoteCommunicationEndpoint.isOnline() && !blocked) {
-            remoteCommunicationEndpoint.publishDataStartRequest(dataID, requesterID);
+            remoteCommunicationEndpoint.publishDataStartRequest(
+                dataID,
+                requesterID
+            );
         }
     }
 
     private void publishStopRequest() {
         if (remoteCommunicationEndpoint.isOnline() && !blocked) {
-            remoteCommunicationEndpoint.publishDataStopRequest(dataID, requesterID);
+            remoteCommunicationEndpoint.publishDataStopRequest(
+                dataID,
+                requesterID
+            );
         }
     }
 
@@ -65,7 +76,9 @@ public class DataRequester {
         blocked = true;
     }
 
-    public void setDataReceiveFunction(CommunicationEndpoint.DataExecutor function) {
+    public void setDataReceiveFunction(
+        CommunicationEndpoint.DataExecutor function
+    ) {
         dataExecutor = function;
     }
 

@@ -58,8 +58,11 @@ public class BitFile {
     }
 
     public static void uploadBitFile(String twinID, int size, String name) {
-        RemoteCommunicationEndpoint deviceStub = new RemoteCommunicationEndpoint(twinID);
-        deviceStub.bindToCommunicationEndpoint(monitorCommunicationEndpoint.getBrokerStub());
+        RemoteCommunicationEndpoint deviceStub =
+            new RemoteCommunicationEndpoint(twinID);
+        deviceStub.bindToCommunicationEndpoint(
+            monitorCommunicationEndpoint.getBrokerStub()
+        );
         deviceStub.publishCommand(
             "FLASH",
             String.format(

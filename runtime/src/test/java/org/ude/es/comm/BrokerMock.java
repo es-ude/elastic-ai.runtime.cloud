@@ -1,11 +1,10 @@
 package org.ude.es.comm;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Subscriber;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class BrokerMock implements BrokerStub {
 

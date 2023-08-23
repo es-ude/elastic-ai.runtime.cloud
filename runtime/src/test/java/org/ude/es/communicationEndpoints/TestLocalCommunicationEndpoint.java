@@ -88,7 +88,9 @@ public class TestLocalCommunicationEndpoint {
 
     @Test
     void stubIsBound() {
-        RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("stub");
+        RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
+            "stub"
+        );
         checker.twin.bindStub(stub);
         Assertions.assertNotNull(stub.getBrokerStub());
     }

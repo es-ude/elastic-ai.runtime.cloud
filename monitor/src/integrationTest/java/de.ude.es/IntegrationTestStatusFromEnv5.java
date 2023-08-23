@@ -9,9 +9,9 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import org.ude.es.communicationEndpoints.twinImplementations.IntegrationTestTwinForEnV5;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
-import org.ude.es.communicationEndpoints.twinImplementations.IntegrationTestTwinForEnV5;
 
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
@@ -38,7 +38,10 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOnlineCanBeReceived() throws InterruptedException {
         Thread.sleep(1000);
-        int activeTwins = monitorCommunicationEndpoint.getTwinList().getActiveTwins().size();
+        int activeTwins = monitorCommunicationEndpoint
+            .getTwinList()
+            .getActiveTwins()
+            .size();
         assertEquals(1, activeTwins);
     }
 
@@ -54,7 +57,10 @@ public class IntegrationTestStatusFromEnv5 {
                 true
             );
         Thread.sleep(1000);
-        int activeTwins = monitorCommunicationEndpoint.getTwinList().getActiveTwins().size();
+        int activeTwins = monitorCommunicationEndpoint
+            .getTwinList()
+            .getActiveTwins()
+            .size();
         assertEquals(0, activeTwins);
     }
 
@@ -64,7 +70,8 @@ public class IntegrationTestStatusFromEnv5 {
     }
 
     private void createMonitor() {
-        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint("monitor");
+        monitorCommunicationEndpoint =
+        new MonitorCommunicationEndpoint("monitor");
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             createBrokerWithKeepalive("monitor")
         );

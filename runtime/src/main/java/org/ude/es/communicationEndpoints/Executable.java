@@ -13,8 +13,10 @@ public class Executable {
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
 
-    public static void startCommunicationEndpoint(CommunicationEndpoint communicationEndpoint, String[] args)
-        throws InterruptedException {
+    public static void startCommunicationEndpoint(
+        CommunicationEndpoint communicationEndpoint,
+        String[] args
+    ) throws InterruptedException {
         try {
             Namespace arguments = parseArguments(args);
             BROKER_IP = arguments.getString("broker_address");

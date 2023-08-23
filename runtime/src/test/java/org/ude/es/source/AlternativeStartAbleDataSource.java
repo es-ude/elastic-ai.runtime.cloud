@@ -2,10 +2,10 @@ package org.ude.es.source;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.Subscriber;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
@@ -22,8 +22,11 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
             public Client(String id) {
                 this.id = id;
-                remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(id);
-                remoteCommunicationEndpoint.bindToCommunicationEndpoint(localCommunicationEndpoint.getBrokerStub());
+                remoteCommunicationEndpoint =
+                new RemoteCommunicationEndpoint(id);
+                remoteCommunicationEndpoint.bindToCommunicationEndpoint(
+                    localCommunicationEndpoint.getBrokerStub()
+                );
                 remoteCommunicationEndpoint.subscribeForStatus(this);
                 isActive = true;
             }

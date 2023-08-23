@@ -7,34 +7,22 @@ import org.ude.es.protocol.Subscriber;
 public abstract class BrokerStubMock implements BrokerStub {
 
     @Override
-    public void connect(String clientId, String lwtMessage) {
-
-    }
+    public void connect(String clientId, String lwtMessage) {}
 
     @Override
-    public void publish(Posting posting, boolean retain) {
-
-    }
+    public void publish(Posting posting, boolean retain) {}
 
     @Override
-    public void subscribe(String topic, Subscriber subscriber) {
-
-    }
+    public void subscribe(String topic, Subscriber subscriber) {}
 
     @Override
-    public void unsubscribe(String topic) {
-
-    }
+    public void unsubscribe(String topic) {}
 
     @Override
-    public void subscribeRaw(String topic, Subscriber subscriber) {
-
-    }
+    public void subscribeRaw(String topic, Subscriber subscriber) {}
 
     @Override
-    public void unsubscribeRaw(String topic) {
-
-    }
+    public void unsubscribeRaw(String topic) {}
 
     @Override
     public String getClientIdentifier() {
@@ -45,5 +33,4 @@ public abstract class BrokerStubMock implements BrokerStub {
     public String getDomain() {
         return null;
     }
-
 }

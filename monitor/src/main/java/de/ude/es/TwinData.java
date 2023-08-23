@@ -1,30 +1,40 @@
 package de.ude.es;
 
-import lombok.Getter;
-import org.ude.es.protocol.BrokerStub;
-import org.ude.es.protocol.requests.DataRequester;
-import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
-
 import java.util.HashMap;
 import java.util.List;
+import lombok.Getter;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.requests.DataRequester;
 
 public class TwinData {
 
     private final String ID;
+
     @Getter
     private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
+
     @Getter
     private String name;
+
     @Getter
     private boolean active;
+
     private String[] sensors;
     private final String requesterID;
+
     @Getter
     private HashMap<String, DataRequester> dataRequester;
+
     @Getter
     private final HashMap<String, Long> lifeTime;
 
-    public TwinData(String name, String ID, BrokerStub endpoint, String requesterID) {
+    public TwinData(
+        String name,
+        String ID,
+        BrokerStub endpoint,
+        String requesterID
+    ) {
         this.requesterID = requesterID;
         this.ID = ID;
         this.name = name;
@@ -74,7 +84,14 @@ public class TwinData {
 
         dataRequester = new HashMap<>();
         for (String sensor : sensors) {
-            dataRequester.put(sensor, new DataRequester(this.remoteCommunicationEndpoint, sensor, requesterID));
+            dataRequester.put(
+                sensor,
+                new DataRequester(
+                    this.remoteCommunicationEndpoint,
+                    sensor,
+                    requesterID
+                )
+            );
             lifeTime.put(sensor, 0L);
         }
     }

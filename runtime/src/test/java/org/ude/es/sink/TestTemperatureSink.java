@@ -6,14 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.comm.BrokerMock;
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.PostingType;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class TwinForDeviceWithTemperatureSensor extends LocalCommunicationEndpoint {
+    private static class TwinForDeviceWithTemperatureSensor
+        extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
@@ -141,12 +142,17 @@ class TestTemperatureSink {
     }
 
     private RemoteCommunicationEndpoint createDeviceTwin(String id) {
-        RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(id);
+        RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
+            id
+        );
         device.bindToCommunicationEndpoint(this.broker);
         return device;
     }
 
-    private TemperatureSink createTemperatureSink(RemoteCommunicationEndpoint device, String id) {
+    private TemperatureSink createTemperatureSink(
+        RemoteCommunicationEndpoint device,
+        String id
+    ) {
         TemperatureSink temperature = new TemperatureSink(id, DATA_ID);
         temperature.connectDataSource(device);
         return temperature;

@@ -1,16 +1,17 @@
 package de.ude.es;
 
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.Subscriber;
-import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
-import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
     private StatusMonitor statusMonitor;
     private volatile TwinList twins;
+
     public MonitorCommunicationEndpoint(String id) { //was MonitorTwin
         super(id);
         this.twins = new TwinList();
@@ -33,7 +34,11 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
         private BrokerStub endpoint;
         private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
 
-        public StatusMonitor(LocalCommunicationEndpoint twin, TwinList twinList, MonitorCommunicationEndpoint monitorCommunicationEndpoint) {
+        public StatusMonitor(
+            LocalCommunicationEndpoint twin,
+            TwinList twinList,
+            MonitorCommunicationEndpoint monitorCommunicationEndpoint
+        ) {
             this.twins = twinList;
             this.twin = twin;
             this.monitorCommunicationEndpoint = monitorCommunicationEndpoint;
@@ -49,32 +54,32 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
         @Override
         public void deliver(Posting posting) {
             String twinID = posting
-                    .data()
-                    .substring(
-                            posting.data().indexOf(Status.Parameter.ID.getKey()) +
-                                    Status.Parameter.ID.getKey().length() +
-                                    1
-                    );
+                .data()
+                .substring(
+                    posting.data().indexOf(Status.Parameter.ID.getKey()) +
+                    Status.Parameter.ID.getKey().length() +
+                    1
+                );
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
             String twinType = posting
-                    .data()
-                    .substring(
-                            posting.data().indexOf(Status.Parameter.TYPE.getKey()) +
-                                    Status.Parameter.TYPE.getKey().length() +
-                                    1
-                    );
+                .data()
+                .substring(
+                    posting.data().indexOf(Status.Parameter.TYPE.getKey()) +
+                    Status.Parameter.TYPE.getKey().length() +
+                    1
+                );
             twinType = twinType.substring(0, twinType.indexOf(";"));
 
             boolean twinActive = posting
-                    .data()
-                    .contains(Status.State.ONLINE.get());
+                .data()
+                .contains(Status.State.ONLINE.get());
 
             System.out.printf(
-                    "Device of type %s with id %s online: %b.%n",
-                    twinType,
-                    twinID,
-                    twinActive
+                "Device of type %s with id %s online: %b.%n",
+                twinType,
+                twinID,
+                twinActive
             );
 
             if (!twinType.equals(Status.Type.TWIN.get())) {
@@ -88,22 +93,32 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
             if (twinActive) {
                 int measurementsIndex = posting
-                        .data()
-                        .indexOf(Status.Parameter.MEASUREMENTS.get());
+                    .data()
+                    .indexOf(Status.Parameter.MEASUREMENTS.get());
                 if (measurementsIndex >= 0) {
                     String measurements = posting
-                            .data()
-                            .substring(
-                                    measurementsIndex +
-                                            Status.Parameter.MEASUREMENTS.get().length() +
-                                            1
-                            );
+                        .data()
+                        .substring(
+                            measurementsIndex +
+                            Status.Parameter.MEASUREMENTS.get().length() +
+                            1
+                        );
                     measurements =
-                            measurements.substring(0, measurements.indexOf(";"));
+                    measurements.substring(0, measurements.indexOf(";"));
 
-                    twins.addOrUpdateTwin(twinID, measurements.split(","), monitorCommunicationEndpoint.getBrokerStub(), monitorCommunicationEndpoint.getDomainAndIdentifier());
+                    twins.addOrUpdateTwin(
+                        twinID,
+                        measurements.split(","),
+                        monitorCommunicationEndpoint.getBrokerStub(),
+                        monitorCommunicationEndpoint.getDomainAndIdentifier()
+                    );
                 } else {
-                    twins.addOrUpdateTwin(twinID, null, monitorCommunicationEndpoint.getBrokerStub(), monitorCommunicationEndpoint.getDomainAndIdentifier());
+                    twins.addOrUpdateTwin(
+                        twinID,
+                        null,
+                        monitorCommunicationEndpoint.getBrokerStub(),
+                        monitorCommunicationEndpoint.getDomainAndIdentifier()
+                    );
                 }
             } else {
                 TwinData twin = twins.getTwin(twinID);

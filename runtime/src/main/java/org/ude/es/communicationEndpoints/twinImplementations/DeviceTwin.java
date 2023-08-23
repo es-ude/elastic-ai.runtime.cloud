@@ -1,7 +1,6 @@
 package org.ude.es.communicationEndpoints.twinImplementations;
 
 import java.util.HashMap;
-
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.requests.DataRequestHandler;
@@ -12,8 +11,10 @@ public class DeviceTwin extends LocalCommunicationEndpoint {
     protected RemoteCommunicationEndpoint device;
     protected HashMap<String, DataRequester> availableDataRequester =
         new HashMap<>();
-    protected HashMap<String, DataRequestHandler> availableDataRequesterHandler =
-        new HashMap<>();
+    protected HashMap<
+        String,
+        DataRequestHandler
+    > availableDataRequesterHandler = new HashMap<>();
 
     public DeviceTwin(String identifier) {
         this(identifier, 0);

@@ -3,7 +3,6 @@ package org.ude.es.protocol.requests;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.Posting;
@@ -11,15 +10,19 @@ import org.ude.es.protocol.Subscriber;
 
 public class DataRequestHandler {
 
-    private static final HashMap<String, RequesterRemoteCE> currentlyRequestingTwins =
-        new HashMap<>();
+    private static final HashMap<
+        String,
+        RequesterRemoteCE
+    > currentlyRequestingTwins = new HashMap<>();
 
     private final List<String> subscribers = new ArrayList<>();
 
-    private final List<RemoteCommunicationEndpoint.Executor> startRequestingData =
-        new ArrayList<>();
-    private final List<RemoteCommunicationEndpoint.Executor> stopRequestingData =
-        new ArrayList<>();
+    private final List<
+        RemoteCommunicationEndpoint.Executor
+    > startRequestingData = new ArrayList<>();
+    private final List<
+        RemoteCommunicationEndpoint.Executor
+    > stopRequestingData = new ArrayList<>();
 
     private final DataStopRequestReceiver dataStopRequestReceiver =
         new DataStopRequestReceiver();
@@ -27,7 +30,10 @@ public class DataRequestHandler {
     private final String dataID;
     private final LocalCommunicationEndpoint twinWithData;
 
-    public DataRequestHandler(LocalCommunicationEndpoint twinWithData, String dataID) {
+    public DataRequestHandler(
+        LocalCommunicationEndpoint twinWithData,
+        String dataID
+    ) {
         this.twinWithData = twinWithData;
         this.dataID = dataID;
         DataStartRequestReceiver dataStartRequestReceiver =
@@ -51,11 +57,15 @@ public class DataRequestHandler {
         twinWithData.publishData(dataID, data);
     }
 
-    public void addWhenStartRequestingData(RemoteCommunicationEndpoint.Executor function) {
+    public void addWhenStartRequestingData(
+        RemoteCommunicationEndpoint.Executor function
+    ) {
         startRequestingData.add(function);
     }
 
-    public void addWhenStopRequestingData(RemoteCommunicationEndpoint.Executor function) {
+    public void addWhenStopRequestingData(
+        RemoteCommunicationEndpoint.Executor function
+    ) {
         stopRequestingData.add(function);
     }
 

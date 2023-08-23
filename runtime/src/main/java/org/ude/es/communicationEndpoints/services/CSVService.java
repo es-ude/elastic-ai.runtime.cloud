@@ -6,9 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
-import org.ude.es.protocol.requests.DataRequester;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.requests.DataRequester;
 
 public class CSVService extends LocalCommunicationEndpoint {
 

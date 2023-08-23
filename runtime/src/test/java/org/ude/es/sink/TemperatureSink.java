@@ -1,9 +1,9 @@
 package org.ude.es.sink;
 
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.Subscriber;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 /**
  * A sink representing a temperature that is measured somewhere, e.g., by a

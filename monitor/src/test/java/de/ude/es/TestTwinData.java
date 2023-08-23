@@ -15,7 +15,8 @@ public class TestTwinData {
     @BeforeEach
     void setUp() {
         BrokerStub brokerStubMock = new BrokerStubMock() {};
-        twinData = new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
+        twinData =
+        new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
     }
 
     @Test

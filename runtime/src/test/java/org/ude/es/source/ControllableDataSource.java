@@ -2,10 +2,10 @@ package org.ude.es.source;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.Subscriber;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 /**
  * A simple template class for data sources. Can be used by twins that measure
@@ -31,8 +31,11 @@ public class ControllableDataSource<T> {
         public Client(String clientIdentifier) {
             this.clientIdentifier = clientIdentifier;
 
-            remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(clientIdentifier);
-            remoteCommunicationEndpoint.bindToCommunicationEndpoint(localCommunicationEndpoint.getBrokerStub());
+            remoteCommunicationEndpoint =
+            new RemoteCommunicationEndpoint(clientIdentifier);
+            remoteCommunicationEndpoint.bindToCommunicationEndpoint(
+                localCommunicationEndpoint.getBrokerStub()
+            );
             remoteCommunicationEndpoint.subscribeForStatus(this);
         }
 
@@ -64,7 +67,10 @@ public class ControllableDataSource<T> {
         }
     }
 
-    public ControllableDataSource(LocalCommunicationEndpoint twin, String dataId) {
+    public ControllableDataSource(
+        LocalCommunicationEndpoint twin,
+        String dataId
+    ) {
         this.dataId = dataId;
         this.localCommunicationEndpoint = twin;
 

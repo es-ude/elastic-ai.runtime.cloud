@@ -159,7 +159,8 @@ public class Checker {
         }
     }
 
-    public class LocalCommunicationEndpoint extends org.ude.es.communicationEndpoints.LocalCommunicationEndpoint {
+    public class LocalCommunicationEndpoint
+        extends org.ude.es.communicationEndpoints.LocalCommunicationEndpoint {
 
         public LocalCommunicationEndpoint(String identifier) {
             super(identifier);
