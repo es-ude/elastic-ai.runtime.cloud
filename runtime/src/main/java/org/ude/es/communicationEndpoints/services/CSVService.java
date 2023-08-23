@@ -1,7 +1,5 @@
 package org.ude.es.communicationEndpoints.services;
 
-import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
