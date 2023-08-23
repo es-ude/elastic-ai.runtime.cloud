@@ -1,18 +1,18 @@
 package de.ude.es;
 
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Status;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Status;
+import org.ude.es.protocol.Subscriber;
 
-public class MonitorTwin extends JavaTwin {
+public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
     private StatusMonitor statusMonitor;
     private volatile TwinList twins;
 
-    public MonitorTwin(String id) {
+    public MonitorCommunicationEndpoint(String id) { //was MonitorTwin
         super(id);
         this.twins = new TwinList();
     }
@@ -28,26 +28,26 @@ public class MonitorTwin extends JavaTwin {
 
     private static class StatusMonitor implements Subscriber {
 
-        private final JavaTwin twin;
+        private final LocalCommunicationEndpoint twin;
         private volatile TwinList twins;
-        private TwinStub stub;
-        private CommunicationEndpoint endpoint;
-        private MonitorTwin monitorTwin;
+        private RemoteCommunicationEndpoint stub;
+        private BrokerStub endpoint;
+        private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
 
         public StatusMonitor(
-            JavaTwin twin,
+            LocalCommunicationEndpoint twin,
             TwinList twinList,
-            MonitorTwin monitorTwin
+            MonitorCommunicationEndpoint monitorCommunicationEndpoint
         ) {
             this.twins = twinList;
             this.twin = twin;
-            this.monitorTwin = monitorTwin;
+            this.monitorCommunicationEndpoint = monitorCommunicationEndpoint;
             createTwinStubAndSubscribeForStatus();
         }
 
         private void createTwinStubAndSubscribeForStatus() {
-            this.stub = new TwinStub("+");
-            this.stub.bindToCommunicationEndpoint(this.twin.getEndpoint());
+            this.stub = new RemoteCommunicationEndpoint("+");
+            this.stub.bindToCommunicationEndpoint(this.twin.getBrokerStub());
             this.stub.subscribeForStatus(this);
         }
 
@@ -109,15 +109,15 @@ public class MonitorTwin extends JavaTwin {
                     twins.addOrUpdateTwin(
                         twinID,
                         measurements.split(","),
-                        monitorTwin.getEndpoint(),
-                        monitorTwin.getDomainAndIdentifier()
+                        monitorCommunicationEndpoint.getBrokerStub(),
+                        monitorCommunicationEndpoint.getDomainAndIdentifier()
                     );
                 } else {
                     twins.addOrUpdateTwin(
                         twinID,
                         null,
-                        monitorTwin.getEndpoint(),
-                        monitorTwin.getDomainAndIdentifier()
+                        monitorCommunicationEndpoint.getBrokerStub(),
+                        monitorCommunicationEndpoint.getDomainAndIdentifier()
                     );
                 }
             } else {

@@ -1,4 +1,4 @@
-package org.ude.es.comm;
+package org.ude.es.protocol;
 
 /**
  * An interface for clients that want to subscribe to postings

@@ -1,13 +1,13 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.PostingType;
-import org.ude.es.comm.Status;
-import org.ude.es.comm.Subscriber;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
+import org.ude.es.protocol.Status;
+import org.ude.es.protocol.Subscriber;
 
-public class TwinStub extends Twin {
+public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
     private final int deviceDelay;
     private boolean deviceOnline = false;
@@ -15,12 +15,12 @@ public class TwinStub extends Twin {
     List<DataExecutor> deviceGoesOnline = new ArrayList<>();
     List<DataExecutor> deviceGoesOffline = new ArrayList<>();
 
-    public TwinStub(String identifier, int deviceDelay) {
+    public RemoteCommunicationEndpoint(String identifier, int deviceDelay) {
         super(identifier);
         this.deviceDelay = deviceDelay;
     }
 
-    public TwinStub(String identifier) {
+    public RemoteCommunicationEndpoint(String identifier) {
         this(identifier, 0);
     }
 

@@ -3,7 +3,7 @@ package org.ude.es.source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
+import org.ude.es.protocol.Posting;
 
 class TestSimpleDataSource {
 

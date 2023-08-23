@@ -3,8 +3,8 @@ package org.ude.es;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class SubscriberMock implements Subscriber {
 

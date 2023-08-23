@@ -1,8 +1,6 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.communicationEndpoints.twinImplementations;
 
-import static org.ude.es.twinBase.Executable.startTwin;
-
-import org.ude.es.twinBase.DeviceTwin;
+import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
 
 public class minimalExecutableDeviceTwin extends DeviceTwin {
 
@@ -11,7 +9,7 @@ public class minimalExecutableDeviceTwin extends DeviceTwin {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        startTwin(new DeviceTwin("example"), args);
+        startCommunicationEndpoint(new DeviceTwin("example"), args);
     }
 
     // Example on how to forward data messages to the Device

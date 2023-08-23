@@ -2,10 +2,10 @@ package org.ude.es.source;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 /**
  * A simple template class for data sources. Can be used by twins that measure
@@ -19,21 +19,24 @@ import org.ude.es.twinBase.TwinStub;
 public class ControllableDataSource<T> {
 
     protected final List<Client> clients = new ArrayList<>();
-    protected JavaTwin javaTwin;
+    protected LocalCommunicationEndpoint localCommunicationEndpoint;
     protected final String dataId;
 
     protected class Client implements Subscriber {
 
         private final String clientIdentifier;
         private boolean isActive = true;
-        private final TwinStub twinStub;
+        private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
 
         public Client(String clientIdentifier) {
             this.clientIdentifier = clientIdentifier;
 
-            twinStub = new TwinStub(clientIdentifier);
-            twinStub.bindToCommunicationEndpoint(javaTwin.getEndpoint());
-            twinStub.subscribeForStatus(this);
+            remoteCommunicationEndpoint =
+            new RemoteCommunicationEndpoint(clientIdentifier);
+            remoteCommunicationEndpoint.bindToCommunicationEndpoint(
+                localCommunicationEndpoint.getBrokerStub()
+            );
+            remoteCommunicationEndpoint.subscribeForStatus(this);
         }
 
         @Override
@@ -56,7 +59,7 @@ public class ControllableDataSource<T> {
         private void deactivate() {
             isActive = false;
             clients.remove(this);
-            twinStub.unsubscribeFromStatus();
+            remoteCommunicationEndpoint.unsubscribeFromStatus();
         }
 
         public boolean hasIdentifier(String identifier) {
@@ -64,15 +67,18 @@ public class ControllableDataSource<T> {
         }
     }
 
-    public ControllableDataSource(JavaTwin twin, String dataId) {
+    public ControllableDataSource(
+        LocalCommunicationEndpoint twin,
+        String dataId
+    ) {
         this.dataId = dataId;
-        this.javaTwin = twin;
+        this.localCommunicationEndpoint = twin;
 
-        javaTwin.subscribeForDataStartRequest(
+        localCommunicationEndpoint.subscribeForDataStartRequest(
             this.dataId,
             this::handleNewClient
         );
-        javaTwin.subscribeForDataStopRequest(
+        localCommunicationEndpoint.subscribeForDataStopRequest(
             this.dataId,
             this::handleLeavingClient
         );
@@ -103,7 +109,7 @@ public class ControllableDataSource<T> {
 
     public void set(T data) {
         if (hasClients()) {
-            javaTwin.publishData(dataId, data.toString());
+            localCommunicationEndpoint.publishData(dataId, data.toString());
         }
     }
 }

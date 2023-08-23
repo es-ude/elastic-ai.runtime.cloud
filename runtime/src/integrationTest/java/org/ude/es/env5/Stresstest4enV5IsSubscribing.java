@@ -1,7 +1,7 @@
 package org.ude.es.env5;
 
-import org.ude.es.comm.HivemqBroker;
-import org.ude.es.twinImplementations.IntegrationTestTwinForEnV5;
+import org.ude.es.communicationEndpoints.twinImplementations.IntegrationTestTwinForEnV5;
+import org.ude.es.protocol.HivemqBroker;
 
 public class Stresstest4enV5IsSubscribing {
 

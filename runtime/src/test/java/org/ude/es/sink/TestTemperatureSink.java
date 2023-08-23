@@ -6,14 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.comm.BrokerMock;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.PostingType;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class TwinForDeviceWithTemperatureSensor extends JavaTwin {
+    private static class TwinForDeviceWithTemperatureSensor
+        extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
@@ -54,7 +55,7 @@ class TestTemperatureSink {
 
         @Override
         public String getDomainAndIdentifier() {
-            return endpoint.getDomain() + identifier;
+            return brokerStub.getDomain() + identifier;
         }
 
         private void deliver(Posting posting) {
@@ -86,7 +87,7 @@ class TestTemperatureSink {
     private BrokerMock broker;
     private TwinForDeviceWithTemperatureSensor remote;
 
-    private TwinStub device;
+    private RemoteCommunicationEndpoint device;
 
     @BeforeEach
     void setUp() {
@@ -140,13 +141,18 @@ class TestTemperatureSink {
         remote.deregistrationReceived();
     }
 
-    private TwinStub createDeviceTwin(String id) {
-        TwinStub device = new TwinStub(id);
+    private RemoteCommunicationEndpoint createDeviceTwin(String id) {
+        RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
+            id
+        );
         device.bindToCommunicationEndpoint(this.broker);
         return device;
     }
 
-    private TemperatureSink createTemperatureSink(TwinStub device, String id) {
+    private TemperatureSink createTemperatureSink(
+        RemoteCommunicationEndpoint device,
+        String id
+    ) {
         TemperatureSink temperature = new TemperatureSink(id, DATA_ID);
         temperature.connectDataSource(device);
         return temperature;

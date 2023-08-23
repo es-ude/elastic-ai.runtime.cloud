@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.requests.DataRequester;
 
 public class TestDataRequester {
 
     Checker checker;
     DataRequester dataRequester;
-    TwinStub stub;
+    RemoteCommunicationEndpoint stub;
 
     @BeforeEach
     void beforeEach() {
@@ -20,8 +20,8 @@ public class TestDataRequester {
         checker.givenBroker();
         checker.givenJavaTwin("test");
 
-        stub = new TwinStub("stub");
-        stub.bindToCommunicationEndpoint(checker.javaTwin.getEndpoint());
+        stub = new RemoteCommunicationEndpoint("stub");
+        stub.bindToCommunicationEndpoint(checker.javaTwin.getBrokerStub());
         dataRequester =
         new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
     }

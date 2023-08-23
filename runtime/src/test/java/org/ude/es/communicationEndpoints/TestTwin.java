@@ -1,4 +1,4 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,7 +64,7 @@ public class TestTwin {
     @Test
     void weCanReportId() {
         var broker = new BrokerMock("broker");
-        var twin = new Twin("twin");
+        var twin = new CommunicationEndpoint("twin");
         twin.bindToCommunicationEndpoint(broker);
         assertEquals("broker/twin", twin.getDomainAndIdentifier());
     }
@@ -72,6 +72,6 @@ public class TestTwin {
     @Test
     void canGetEndpoint() {
         checker.givenJavaTwin("twin");
-        Assertions.assertNotNull(checker.javaTwin.getEndpoint());
+        Assertions.assertNotNull(checker.javaTwin.getBrokerStub());
     }
 }

@@ -2,11 +2,11 @@ package de.ude.es.comm;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
-public class BrokerMock implements CommunicationEndpoint {
+public class BrokerMock implements BrokerStub {
 
     private record Subscription(
         List<String> topicFilter,

@@ -1,13 +1,13 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.Subscriber;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
-public class Twin {
+public class CommunicationEndpoint {
 
     protected final String identifier;
-    protected CommunicationEndpoint endpoint;
+    protected BrokerStub brokerStub;
 
     public interface DataExecutor {
         void execute(String data);
@@ -17,7 +17,7 @@ public class Twin {
         void execute();
     }
 
-    public Twin(String identifier) {
+    public CommunicationEndpoint(String identifier) {
         this.identifier = fixIdentifierIfNecessary(identifier);
     }
 
@@ -32,11 +32,11 @@ public class Twin {
     }
 
     protected void subscribe(String topic, Subscriber subscriber) {
-        endpoint.subscribe(identifier + topic, subscriber);
+        brokerStub.subscribe(identifier + topic, subscriber);
     }
 
     protected void unsubscribe(String topic) {
-        endpoint.unsubscribe(identifier + topic);
+        brokerStub.unsubscribe(identifier + topic);
     }
 
     protected void publish(Posting posting) {
@@ -45,7 +45,7 @@ public class Twin {
 
     protected void publish(Posting posting, boolean retain) {
         Posting toSend = posting.cloneWithTopicAffix(identifier);
-        endpoint.publish(toSend, retain);
+        brokerStub.publish(toSend, retain);
     }
 
     /**
@@ -65,8 +65,8 @@ public class Twin {
      *
      * @param channel Where you post messages or subscribe for them
      */
-    public void bindToCommunicationEndpoint(CommunicationEndpoint channel) {
-        this.endpoint = channel;
+    public void bindToCommunicationEndpoint(BrokerStub channel) {
+        this.brokerStub = channel;
         executeOnBindPrivate();
     }
 
@@ -82,7 +82,7 @@ public class Twin {
     }
 
     public String getDomain() {
-        return endpoint.getDomain();
+        return brokerStub.getDomain();
     }
 
     public String getIdentifier() {
@@ -93,7 +93,7 @@ public class Twin {
         return getDomain() + "/" + getIdentifier();
     }
 
-    public CommunicationEndpoint getEndpoint() {
-        return endpoint;
+    public BrokerStub getBrokerStub() {
+        return brokerStub;
     }
 }

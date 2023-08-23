@@ -3,6 +3,7 @@ package org.ude.es.comm;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.ude.es.protocol.Posting;
 
 public class TestPosting {
 

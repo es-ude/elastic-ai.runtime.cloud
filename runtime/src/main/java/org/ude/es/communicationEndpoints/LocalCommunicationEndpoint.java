@@ -1,10 +1,13 @@
-package org.ude.es.twinBase;
+package org.ude.es.communicationEndpoints;
 
-import org.ude.es.comm.*;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
+import org.ude.es.protocol.Status;
+import org.ude.es.protocol.Subscriber;
 
-public class JavaTwin extends Twin {
+public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
-    public JavaTwin(String identifier) {
+    public LocalCommunicationEndpoint(String identifier) {
         super(identifier);
     }
 
@@ -16,7 +19,7 @@ public class JavaTwin extends Twin {
         Status lwtMessage = new Status(this.identifier)
             .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
             .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
-        this.endpoint.connect(this.identifier, lwtMessage.get());
+        this.brokerStub.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
         super.executeOnBindPrivate();
     }
@@ -64,7 +67,7 @@ public class JavaTwin extends Twin {
         this.unsubscribe(PostingType.COMMAND.topic(dataId));
     }
 
-    public void bindStub(TwinStub stub) {
-        stub.bindToCommunicationEndpoint(endpoint);
+    public void bindStub(RemoteCommunicationEndpoint stub) {
+        stub.bindToCommunicationEndpoint(brokerStub);
     }
 }

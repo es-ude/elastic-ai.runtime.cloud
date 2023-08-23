@@ -1,11 +1,12 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.localCEImplementations;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.Checker;
-import org.ude.es.comm.Posting;
-import org.ude.es.comm.PostingType;
-import org.ude.es.comm.Status;
+import org.ude.es.communicationEndpoints.twinImplementations.enV5Twin;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.PostingType;
+import org.ude.es.protocol.Status;
 
 public class TestEnV5Twin {
 

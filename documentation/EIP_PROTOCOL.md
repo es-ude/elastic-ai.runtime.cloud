@@ -61,12 +61,12 @@ sequenceDiagram
   Note over b,d: ESTABLISH CONNECTION
   d ->> b: pub("eip://<broker_domain>/env5_1/STATUS","env5_1#59;1")
   b ->> m: ("eip://<broker_domain>/env5_1/STATUS","env5_1#59;1")
-  m -) t: start twin
+  m -) t: start communicationEndpoint
   activate t
   Note over m,d: ...
   Note over d: LOST CONNECTION
   b ->> m: ("eip://<broker_domain>/env5_1/STATUS","env5_1#59;0")
-  m -) t: stop twin
+  m -) t: stop communicationEndpoint
   deactivate t
 ```
 

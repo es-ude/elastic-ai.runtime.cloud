@@ -1,33 +1,33 @@
-package org.ude.es.twinImplementations;
+package org.ude.es.communicationEndpoints.services;
 
-import static org.ude.es.twinBase.Executable.startTwin;
+import static org.ude.es.communicationEndpoints.Executable.startCommunicationEndpoint;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
-import org.ude.es.protocol.DataRequester;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.requests.DataRequester;
 
-public class CSVService extends JavaTwin {
+public class CSVService extends LocalCommunicationEndpoint {
 
-    TwinStub enV5Twin;
+    RemoteCommunicationEndpoint enV5Twin;
 
     private final String PATH = "SensorValues";
 
     public static void main(String[] args) throws InterruptedException {
-        startTwin(new CSVService(), args);
+        startCommunicationEndpoint(new CSVService(), args);
     }
 
     public CSVService() {
         super("CSVService");
-        enV5Twin = new TwinStub("enV5Twin");
+        enV5Twin = new RemoteCommunicationEndpoint("enV5Twin");
     }
 
     @Override
     protected void executeOnBind() {
-        enV5Twin.bindToCommunicationEndpoint(endpoint);
+        enV5Twin.bindToCommunicationEndpoint(brokerStub);
 
         DataRequester dataRequester = new DataRequester(
             enV5Twin,

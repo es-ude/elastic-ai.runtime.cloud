@@ -1,19 +1,18 @@
 package de.ude.es;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
-import org.ude.es.comm.CommunicationEndpoint;
-import org.ude.es.protocol.DataRequester;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.requests.DataRequester;
 
 public class TwinData {
 
     private final String ID;
 
     @Getter
-    private final TwinStub twinStub;
+    private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
 
     @Getter
     private String name;
@@ -33,7 +32,7 @@ public class TwinData {
     public TwinData(
         String name,
         String ID,
-        CommunicationEndpoint endpoint,
+        BrokerStub endpoint,
         String requesterID
     ) {
         this.requesterID = requesterID;
@@ -41,9 +40,9 @@ public class TwinData {
         this.name = name;
         this.active = true;
         this.sensors = null;
-        this.twinStub = new TwinStub(ID);
+        this.remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(ID);
         this.lifeTime = new HashMap<>();
-        twinStub.bindToCommunicationEndpoint(endpoint);
+        remoteCommunicationEndpoint.bindToCommunicationEndpoint(endpoint);
     }
 
     public void stopDataRequest(String sensor) throws InterruptedException {
@@ -87,7 +86,11 @@ public class TwinData {
         for (String sensor : sensors) {
             dataRequester.put(
                 sensor,
-                new DataRequester(this.twinStub, sensor, requesterID)
+                new DataRequester(
+                    this.remoteCommunicationEndpoint,
+                    sensor,
+                    requesterID
+                )
             );
             lifeTime.put(sensor, 0L);
         }

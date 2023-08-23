@@ -5,10 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.comm.BrokerMock;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
 
 /**
  * This is an integration test class that is also meant to provide an example on
@@ -30,7 +30,7 @@ public class IntegrationTest4TwinInteraction {
      */
     private BrokerMock broker;
 
-    private class TwinThatOffersTemperature extends JavaTwin {
+    private class TwinThatOffersTemperature extends LocalCommunicationEndpoint {
 
         private final TemperatureSource temperatureSource;
 
@@ -51,7 +51,8 @@ public class IntegrationTest4TwinInteraction {
         private TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(String id, String resourceId) {
-            TwinStub dataSource = new TwinStub(resourceId);
+            RemoteCommunicationEndpoint dataSource =
+                new RemoteCommunicationEndpoint(resourceId);
             dataSource.bindToCommunicationEndpoint(broker);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
@@ -110,7 +111,8 @@ public class IntegrationTest4TwinInteraction {
             CONSUMER_ID,
             PRODUCER_ID
         );
-        TwinStub stub = consumer.temperatureSink.getDataSource();
+        RemoteCommunicationEndpoint stub =
+            consumer.temperatureSink.getDataSource();
 
         consumer.temperatureSink.disconnectDataSource();
         source.setNewTemperatureMeasured(11.4);

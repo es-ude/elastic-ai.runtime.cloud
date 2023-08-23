@@ -2,9 +2,10 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.comm.CommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
 
 public class TestTwinData {
 
@@ -14,15 +15,11 @@ public class TestTwinData {
 
     @BeforeEach
     void setUp() {
-        CommunicationEndpoint CommunicationEndpointMock =
-            new CommunicationEndpointMock() {};
+        BrokerStubMock brokerMock = new BrokerStubMock() {};
+        twinData = new TwinData(TWIN_NAME, TWIN_ID, brokerMock, "requesterID");
+        BrokerStub brokerStubMock = new BrokerStubMock() {};
         twinData =
-        new TwinData(
-            TWIN_NAME,
-            TWIN_ID,
-            CommunicationEndpointMock,
-            "requesterID"
-        );
+        new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
     }
 
     @Test

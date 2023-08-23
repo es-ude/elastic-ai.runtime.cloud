@@ -9,11 +9,12 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import org.ude.es.comm.*;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
+import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
-import org.ude.es.twinBase.JavaTwin;
-import org.ude.es.twinBase.TwinStub;
 
 @Testcontainers
 public class IntegrationTest4ExternalBroker {
@@ -51,14 +52,12 @@ public class IntegrationTest4ExternalBroker {
         );
     }
 
-    private static class TwinThatOffersTemperature extends JavaTwin {
+    private static class TwinThatOffersTemperature
+        extends LocalCommunicationEndpoint {
 
         private final TemperatureSource temperatureSource;
 
-        public TwinThatOffersTemperature(
-            CommunicationEndpoint broker,
-            String id
-        ) {
+        public TwinThatOffersTemperature(BrokerStub broker, String id) {
             super(id);
             this.bindToCommunicationEndpoint(broker);
 
@@ -81,18 +80,20 @@ public class IntegrationTest4ExternalBroker {
         }
     }
 
-    private static class TwinThatConsumesTemperature extends JavaTwin {
+    private static class TwinThatConsumesTemperature
+        extends LocalCommunicationEndpoint {
 
         TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(
-            CommunicationEndpoint broker,
+            BrokerStub broker,
             String id,
             String resourceId
         ) {
             super(id);
             this.bindToCommunicationEndpoint(broker);
-            TwinStub dataSource = new TwinStub(resourceId);
+            RemoteCommunicationEndpoint dataSource =
+                new RemoteCommunicationEndpoint(resourceId);
             bindStub(dataSource);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
@@ -139,7 +140,8 @@ public class IntegrationTest4ExternalBroker {
 
     @Test
     void communicationCanBeResumed() {
-        TwinStub stub = consumer1.temperatureSink.getDataSource();
+        RemoteCommunicationEndpoint stub =
+            consumer1.temperatureSink.getDataSource();
 
         while (!producer.hasClients());
         consumer1.temperatureSink.disconnectDataSource();

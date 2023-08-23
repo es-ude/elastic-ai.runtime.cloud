@@ -1,16 +1,14 @@
 package de.ude.es;
 
-import static de.ude.es.MonitoringServiceApplication.monitor;
+import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.ude.es.twinBase.TwinStub;
+import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Controller
 @RequestMapping({ "/getfile" })
@@ -60,8 +58,11 @@ public class BitFile {
     }
 
     public static void uploadBitFile(String twinID, int size, String name) {
-        TwinStub deviceStub = new TwinStub(twinID);
-        deviceStub.bindToCommunicationEndpoint(monitor.getEndpoint());
+        RemoteCommunicationEndpoint deviceStub =
+            new RemoteCommunicationEndpoint(twinID);
+        deviceStub.bindToCommunicationEndpoint(
+            monitorCommunicationEndpoint.getBrokerStub()
+        );
         deviceStub.publishCommand(
             "FLASH",
             String.format(
