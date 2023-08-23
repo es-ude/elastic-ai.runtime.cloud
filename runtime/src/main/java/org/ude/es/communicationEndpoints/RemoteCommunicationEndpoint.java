@@ -1,16 +1,15 @@
 package org.ude.es.communicationEndpoints;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.PostingType;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.Subscriber;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
