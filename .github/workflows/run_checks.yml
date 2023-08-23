@@ -44,7 +44,7 @@ jobs:
           # Apply Prettier to Java and Markdown files
           prettier_options: "--write **/*.{java,md}"
           # Use Commitlint based Commit Message
-          commit_message: "style: beautify ${{ github.head_ref }}"
+          commit_message: "refactor(style): beautify ${{ github.head_ref }}"
           # Set your custom token
           github_token: ${{ secrets.PUSH_TOKEN }}
       - name: Update SHA
@@ -85,7 +85,7 @@ jobs:
         with:
           ref: ${{ needs.prettier.outputs.new_sha }}
       - name: Setup Java Environment
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
