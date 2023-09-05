@@ -19,7 +19,7 @@ public class TestTwinData {
         twinData = new TwinData(TWIN_NAME, TWIN_ID, brokerMock, "requesterID");
         BrokerStub brokerStubMock = new BrokerStubMock() {};
         twinData =
-        new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
+            new TwinData(TWIN_NAME, TWIN_ID, brokerStubMock, "requesterID");
     }
 
     @Test

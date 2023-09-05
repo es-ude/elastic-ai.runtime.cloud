@@ -104,7 +104,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                             1
                         );
                     measurements =
-                    measurements.substring(0, measurements.indexOf(";"));
+                        measurements.substring(0, measurements.indexOf(";"));
 
                     twins.addOrUpdateTwin(
                         twinID,
