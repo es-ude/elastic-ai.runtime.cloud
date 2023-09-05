@@ -119,12 +119,12 @@ public class TestTwinList {
             "requesterID"
         );
         expected =
-        List.of(
-            new TwinData("Twin 1", "ID1", brokerStubMock, "requesterID"),
-            new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID"),
-            new TwinData("Twin 3", "ID3", brokerStubMock, "requesterID"),
-            new TwinData("Twin 4", "ID4", brokerStubMock, "requesterID")
-        );
+            List.of(
+                new TwinData("Twin 1", "ID1", brokerStubMock, "requesterID"),
+                new TwinData("Twin 2", "ID2", brokerStubMock, "requesterID"),
+                new TwinData("Twin 3", "ID3", brokerStubMock, "requesterID"),
+                new TwinData("Twin 4", "ID4", brokerStubMock, "requesterID")
+            );
 
         assertEquals(expected.toString(), twinList.getTwins().toString());
         assertEquals(expected.size(), twinList.getTwins().size());

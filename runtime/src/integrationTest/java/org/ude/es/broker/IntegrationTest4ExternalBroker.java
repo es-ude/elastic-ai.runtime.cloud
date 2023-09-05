@@ -40,16 +40,16 @@ public class IntegrationTest4ExternalBroker {
     void setUp() throws InterruptedException {
         BROKER_PORT = BROKER_CONTAINER.getFirstMappedPort();
         producer =
-        new TwinThatOffersTemperature(
-            createBrokerWithKeepAlive(PRODUCER_ID),
-            PRODUCER_ID
-        );
+            new TwinThatOffersTemperature(
+                createBrokerWithKeepAlive(PRODUCER_ID),
+                PRODUCER_ID
+            );
         consumer1 =
-        new TwinThatConsumesTemperature(
-            createBrokerWithKeepAlive(CONSUMER_BASE_ID + "1"),
-            CONSUMER_BASE_ID + "1",
-            PRODUCER_ID
-        );
+            new TwinThatConsumesTemperature(
+                createBrokerWithKeepAlive(CONSUMER_BASE_ID + "1"),
+                CONSUMER_BASE_ID + "1",
+                PRODUCER_ID
+            );
     }
 
     private static class TwinThatOffersTemperature

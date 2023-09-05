@@ -5,23 +5,27 @@ import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoin
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Controller
-@RequestMapping({ "/getfile" })
-public class BitFile {
+@RequestMapping({ "/bitfile" })
+public class BitFileController {
 
     public static final int BITFILE_CHUNK_SIZE = 1024;
     public static HashMap<String, byte[]> bitFiles = new HashMap<>();
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
 
     @GetMapping("/{name}/{dataId}")
     public ResponseEntity<byte[]> demo(
         @PathVariable String name,
         @PathVariable Integer dataId
-    ) throws IOException {
+    ) {
         if (!bitFiles.containsKey(name)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -79,5 +83,30 @@ public class BitFile {
                 deviceStub.unsubscribeFromDone("FLASH");
             }
         );
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> handleFileUpload(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("twinID") String twinID
+    ) throws IOException {
+        String fileName = Objects
+            .requireNonNull(file.getOriginalFilename())
+            .split("\\.")[0];
+        System.out.println(fileName);
+        BitFileController.bitFiles.put(fileName, file.getBytes());
+
+        System.out.println(
+            "BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET
+        );
+
+        try {
+            uploadBitFile(twinID, file.getBytes().length, fileName);
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
+        }
+        return ResponseEntity.ok("fileName");
     }
 }
