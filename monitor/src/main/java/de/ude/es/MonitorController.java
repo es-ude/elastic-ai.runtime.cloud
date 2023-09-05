@@ -1,6 +1,6 @@
 package de.ude.es;
 
-import static de.ude.es.BitFile.uploadBitFile;
+import static de.ude.es.BitFileController.uploadBitFile;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -15,9 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 public class MonitorController {
 
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_RESET = "\u001B[0m";
-
     @GetMapping({ "/", "/index", "/index.html" })
     public String index(Model model) {
         try {
@@ -26,33 +23,7 @@ public class MonitorController {
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return "index";
-    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<?> handleFileUpload(
-        @RequestParam("file") MultipartFile file,
-        @RequestParam("twinID") String twinID
-    ) throws IOException {
-        String fileName = Objects
-            .requireNonNull(file.getOriginalFilename())
-            .split("\\.")[0];
-        System.out.println(fileName);
-        BitFile.bitFiles.put(fileName, file.getBytes());
-
-        System.out.println(
-            "BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET
-        );
-
-        try {
-            uploadBitFile(twinID, file.getBytes().length, fileName);
-        } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build();
-        }
-        return ResponseEntity.ok("fileName");
     }
 
     @PostMapping("/changeName")
