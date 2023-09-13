@@ -7,7 +7,7 @@ import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.requests.DataRequester;
 
-public class GValueBatchService extends LocalCommunicationEndpoint{
+public class GValueBatchService extends LocalCommunicationEndpoint {
 
     RemoteCommunicationEndpoint enV5Twin;
     private final String PATH = "SensorValues";
@@ -16,26 +16,23 @@ public class GValueBatchService extends LocalCommunicationEndpoint{
         startCommunicationEndpoint(new GValueBatchService(), args);
     }
 
-    public GValueBatchService(){
+    public GValueBatchService() {
         super("GValueBatchService");
         enV5Twin = new RemoteCommunicationEndpoint("enV5Twin");
     }
-
 
     @Override
     protected void executeOnBind() {
         enV5Twin.bindToCommunicationEndpoint(brokerStub);
 
         DataRequester dataRequester = new DataRequester(
-                enV5Twin,
-                "g-value",
-                getDomainAndIdentifier()
+            enV5Twin,
+            "g-value",
+            getDomainAndIdentifier()
         );
-
 
         File sensorValueDir = new File(PATH);
         sensorValueDir.mkdir();
-
 
         dataRequester.setDataReceiveFunction(data -> {
             String fileName = PATH + "/" + data.substring(0, 3);
@@ -54,8 +51,8 @@ public class GValueBatchService extends LocalCommunicationEndpoint{
                 csvHeader.close();
 
                 FileWriter csvWriter = new FileWriter(fileName, true);
-                while(data.length() >= 30){
-                    csvWriter.append(data.substring(0,30));
+                while (data.length() >= 30) {
+                    csvWriter.append(data.substring(0, 30));
                     csvWriter.append("\n");
                     data = data.substring(30);
                 }
