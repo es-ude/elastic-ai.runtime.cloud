@@ -38,7 +38,7 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
         dataRequester.setDataReceiveFunction(data -> {
             int firstComma = data.indexOf(',');
             String fileName = PATH + "/" + data.substring(0, firstComma);
-            data = data.substring(firstComma+1);
+            data = data.substring(firstComma + 1);
 
             try {
                 FileWriter csvHeader = new FileWriter(fileName, false);
