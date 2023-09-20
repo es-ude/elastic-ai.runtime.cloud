@@ -11,6 +11,7 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
 
     RemoteCommunicationEndpoint enV5Twin;
     private final String PATH = "SensorValues";
+    private final int lengthXYZBatch = 30;
 
     public static void main(String[] args) throws InterruptedException {
         startCommunicationEndpoint(new GValueBatchService(), args);
@@ -35,9 +36,9 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
         sensorValueDir.mkdir();
 
         dataRequester.setDataReceiveFunction(data -> {
-            String fileName = PATH + "/" + data.substring(0, 3);
-
-            data = data.substring(5);
+            int firstComma = data.indexOf(',');
+            String fileName = PATH + "/" + data.substring(0, firstComma);
+            data = data.substring(firstComma + 1);
 
             try {
                 FileWriter csvHeader = new FileWriter(fileName, false);
@@ -51,10 +52,10 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
                 csvHeader.close();
 
                 FileWriter csvWriter = new FileWriter(fileName, true);
-                while (data.length() >= 30) {
-                    csvWriter.append(data.substring(0, 30));
+                while (data.length() >= lengthXYZBatch) {
+                    csvWriter.append(data.substring(0, lengthXYZBatch));
                     csvWriter.append("\n");
-                    data = data.substring(30);
+                    data = data.substring(lengthXYZBatch);
                 }
 
                 csvWriter.flush();
