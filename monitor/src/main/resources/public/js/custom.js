@@ -7,7 +7,7 @@ async function uploadFile(button) {
     formData.append("file", file.files[0]);
     formData.append("twinID", twinID);
 
-    let response = await fetch("/upload", {
+    let response = await fetch("/bitfile/upload", {
         method: "POST",
         body: formData,
     });
@@ -16,15 +16,16 @@ async function uploadFile(button) {
 
     switch (response.status) {
         case 200:
-            let fileName = file.value.split("\\")
+            //let fileName = file.value.split("\\")
             alert("BitFile received successfully.");
             break;
         case 400:
-            alert("No file selected.");
+            alert("Bitfile was not received by device.");
             break;
         default:
             alert("Unknown response status: " + response.status);
     }
+
 }
 
 async function changeName(button) {
@@ -61,7 +62,7 @@ function getRootUrl() {
 
 async function setValueUpdate(deviceId, sensorId, fieldId) {
     await getValueUpdate(deviceId, sensorId, fieldId)
-    const interval = setInterval(function() {
+    setInterval(function() {
         getValueUpdate(deviceId, sensorId, fieldId)
     }, 1000);
 }
