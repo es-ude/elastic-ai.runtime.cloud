@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,11 @@ public class BitFileController {
     public static HashMap<String, byte[]> bitFiles = new HashMap<>();
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
+
+    public static String receivedByDevice = "NULL";
+    public static volatile boolean statusIsUpdated;
+    public static ResponseEntity<?> response;
+    static CountDownLatch latch;
 
     @GetMapping("/{name}/{dataId}")
     public ResponseEntity<byte[]> demo(
@@ -70,17 +76,22 @@ public class BitFileController {
         deviceStub.publishCommand(
             "FLASH",
             String.format(
-                "URL:http://%s:8081/getfile/%s/;SIZE:%d;",
+                "URL:http://%s:8081/bitfile/%s/;SIZE:%d;",
                 MonitoringServiceApplication.IP_ADDRESS,
                 name,
                 size
             )
         );
+        statusIsUpdated = false;
+        latch = new CountDownLatch(1);
         deviceStub.subscribeForDone(
             "FLASH",
             posting -> {
                 System.out.println("FLASH DONE");
                 deviceStub.unsubscribeFromDone("FLASH");
+                receivedByDevice = posting.data();
+                statusIsUpdated = true;
+                latch.countDown();
             }
         );
     }
@@ -89,7 +100,7 @@ public class BitFileController {
     public ResponseEntity<?> handleFileUpload(
         @RequestParam("file") MultipartFile file,
         @RequestParam("twinID") String twinID
-    ) throws IOException {
+    ) throws IOException, InterruptedException {
         String fileName = Objects
             .requireNonNull(file.getOriginalFilename())
             .split("\\.")[0];
@@ -107,6 +118,17 @@ public class BitFileController {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
         }
-        return ResponseEntity.ok("fileName");
+
+        latch.await();
+        if (receivedByDevice.equals("SUCCESS")) {
+            System.out.println("success");
+            response = ResponseEntity.status(200).build();
+        } else {
+            System.out.println("failed");
+            response = ResponseEntity.status(400).build();
+        }
+
+        System.out.println(response);
+        return response;
     }
 }
