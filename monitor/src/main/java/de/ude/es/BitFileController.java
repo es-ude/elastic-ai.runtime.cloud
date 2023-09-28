@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,6 @@ public class BitFileController {
     public static volatile boolean statusIsUpdated;
     public static ResponseEntity<?> response;
     static CountDownLatch latch;
-
 
     @GetMapping("/{name}/{dataId}")
     public ResponseEntity<byte[]> demo(
@@ -96,7 +94,6 @@ public class BitFileController {
                 latch.countDown();
             }
         );
-
     }
 
     @PostMapping("/upload")
