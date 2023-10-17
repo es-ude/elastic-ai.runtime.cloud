@@ -123,7 +123,6 @@ public class MonitoringServiceApplication {
         } catch (Exception exception) {
             System.out.println("Unsupported data format.");
         }
-
     }
 
     private static class UpdatedValueStorage<Type> {
