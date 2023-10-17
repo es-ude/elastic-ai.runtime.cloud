@@ -27,9 +27,9 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
         enV5Twin.bindToCommunicationEndpoint(brokerStub);
 
         DataRequester dataRequester = new DataRequester(
-            enV5Twin,
+                enV5Twin,
             "g-value",
-            getDomainAndIdentifier()
+            getIdentifier()
         );
 
         File sensorValueDir = new File(PATH);
