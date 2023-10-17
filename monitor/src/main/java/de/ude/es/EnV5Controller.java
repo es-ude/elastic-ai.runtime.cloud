@@ -64,7 +64,7 @@ public class EnV5Controller {
                 }
                 twinData.getLifeTime().put(dataId, System.currentTimeMillis());
 
-                float latest =
+                String latest =
                     MonitoringServiceApplication.getLatestMeasurement(
                         twinData.getDataRequester().get(dataId)
                     );
@@ -81,5 +81,5 @@ public class EnV5Controller {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private record SensorData(String DEVICE_ID, String DATA_ID, float VALUE) {}
+    private record SensorData(String DEVICE_ID, String DATA_ID, String VALUE) {}
 }

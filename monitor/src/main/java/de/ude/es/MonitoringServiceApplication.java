@@ -92,9 +92,9 @@ public class MonitoringServiceApplication {
         return monitorCommunicationEndpoint.getTwinList();
     }
 
-    public static float getLatestMeasurement(DataRequester dataRequester)
+    public static String getLatestMeasurement(DataRequester dataRequester)
         throws TimeoutException {
-        UpdatedValueStorage<Float> latestValue = new UpdatedValueStorage<>();
+        UpdatedValueStorage<String> latestValue = new UpdatedValueStorage<>();
         dataRequester.setDataReceiveFunction(data ->
             handleNewData(latestValue, data)
         );
@@ -112,10 +112,17 @@ public class MonitoringServiceApplication {
     }
 
     private static void handleNewData(
-        UpdatedValueStorage<Float> latestValue,
+        UpdatedValueStorage<String> latestValue,
         String input
     ) {
-        latestValue.setValue(Float.parseFloat(input));
+        try {
+            if (input.contains(";")) {
+                input = input.split(";")[0];
+            }
+            latestValue.setValue(input);
+        } catch (Exception exception) {
+            System.out.println("Unsupported data format.");
+        }
     }
 
     private static class UpdatedValueStorage<Type> {
