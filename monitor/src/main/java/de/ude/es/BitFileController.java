@@ -17,7 +17,7 @@ import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 @RequestMapping({ "/bitfile" })
 public class BitFileController {
 
-    public static final int BITFILE_CHUNK_SIZE = 1024;
+    public static final int BITFILE_CHUNK_SIZE = 512;
     public static HashMap<String, byte[]> bitFiles = new HashMap<>();
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
