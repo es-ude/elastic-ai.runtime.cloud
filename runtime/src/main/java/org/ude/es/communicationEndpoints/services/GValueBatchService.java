@@ -29,7 +29,7 @@ public class GValueBatchService extends LocalCommunicationEndpoint {
         DataRequester dataRequester = new DataRequester(
             enV5Twin,
             "g-value",
-            getDomainAndIdentifier()
+            getIdentifier()
         );
 
         File sensorValueDir = new File(PATH);
