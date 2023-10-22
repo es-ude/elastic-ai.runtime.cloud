@@ -54,7 +54,7 @@
         </div>
     </div>
 </section>
-<section class="d-flex flex-column align-items-center pt-3">
+<section class="d-flex flex-column align-items-center pt-3" th:style="${communicationEndpoint.isActive() ? '' : 'visibility: hidden'}">
     <h4>FPGA</h4>
     <div class="text-secondary">
         <input id="bitFile" type="file" accept=".bit,.bin">
