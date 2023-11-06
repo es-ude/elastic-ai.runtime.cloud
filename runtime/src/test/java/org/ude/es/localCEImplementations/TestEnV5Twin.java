@@ -171,14 +171,14 @@ public class TestEnV5Twin {
         }
 
         public void whenFlashIsPublished() {
-            whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "");
+            whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "POSITION:1;");
             isExpecting(
                 new Posting(
                     DOMAIN +
                     "/" +
                     deviceID +
                     PostingType.COMMAND.topic("FLASH"),
-                    "POSITION:0;"
+                    "POSITION:1;"
                 )
             );
         }

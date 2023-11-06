@@ -7,7 +7,6 @@ import org.ude.es.protocol.Status;
 
 public class enV5Twin extends DeviceTwin {
 
-    private int bitfilePosition = 0;
     private String lastStatusMessage = "";
 
     public enV5Twin(String identifier) {
@@ -42,10 +41,7 @@ public class enV5Twin extends DeviceTwin {
             posting -> {
                 pauseDataRequests();
                 Thread.sleep(2500);
-                device.publishCommand(
-                    cmd,
-                    posting.data() + "POSITION:" + bitfilePosition + ";"
-                );
+                device.publishCommand(cmd, posting.data());
                 waitForDone(cmd);
             }
         );
