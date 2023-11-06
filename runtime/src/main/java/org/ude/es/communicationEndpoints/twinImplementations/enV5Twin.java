@@ -41,10 +41,7 @@ public class enV5Twin extends DeviceTwin {
             posting -> {
                 pauseDataRequests();
                 Thread.sleep(2500);
-                device.publishCommand(
-                    cmd,
-                    posting.data()
-                );
+                device.publishCommand(cmd, posting.data());
                 waitForDone(cmd);
             }
         );
