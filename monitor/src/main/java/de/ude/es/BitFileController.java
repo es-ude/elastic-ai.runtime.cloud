@@ -67,7 +67,7 @@ public class BitFileController {
             .body(Arrays.copyOfRange(bitFile, start, end));
     }
 
-    public static void uploadBitFile(String twinID, int size, String name) {
+    public static void uploadBitFile(String twinID, int size, String name, int startSectorID) {
         RemoteCommunicationEndpoint deviceStub =
             new RemoteCommunicationEndpoint(twinID);
         deviceStub.bindToCommunicationEndpoint(
@@ -76,10 +76,11 @@ public class BitFileController {
         deviceStub.publishCommand(
             "FLASH",
             String.format(
-                "URL:http://%s:8081/bitfile/%s/;SIZE:%d;",
+                "URL:http://%s:8081/bitfile/%s/;SIZE:%d;POSITION:%d",
                 MonitoringServiceApplication.IP_ADDRESS,
                 name,
-                size
+                size,
+                startSectorID
             )
         );
         statusIsUpdated = false;
@@ -99,7 +100,9 @@ public class BitFileController {
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(
         @RequestParam("file") MultipartFile file,
-        @RequestParam("twinID") String twinID
+        @RequestParam("twinID") String twinID,
+        @RequestParam("startSectorID") int startSectorID
+
     ) throws IOException, InterruptedException {
         String fileName = Objects
             .requireNonNull(file.getOriginalFilename())
@@ -112,7 +115,7 @@ public class BitFileController {
         );
 
         try {
-            uploadBitFile(twinID, file.getBytes().length, fileName);
+            uploadBitFile(twinID, file.getBytes().length, fileName, startSectorID);
         } catch (Exception e) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
