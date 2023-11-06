@@ -67,7 +67,12 @@ public class BitFileController {
             .body(Arrays.copyOfRange(bitFile, start, end));
     }
 
-    public static void uploadBitFile(String twinID, int size, String name, int startSectorID) {
+    public static void uploadBitFile(
+        String twinID,
+        int size,
+        String name,
+        int startSectorID
+    ) {
         RemoteCommunicationEndpoint deviceStub =
             new RemoteCommunicationEndpoint(twinID);
         deviceStub.bindToCommunicationEndpoint(
@@ -102,7 +107,6 @@ public class BitFileController {
         @RequestParam("file") MultipartFile file,
         @RequestParam("twinID") String twinID,
         @RequestParam("startSectorID") int startSectorID
-
     ) throws IOException, InterruptedException {
         String fileName = Objects
             .requireNonNull(file.getOriginalFilename())
@@ -115,7 +119,12 @@ public class BitFileController {
         );
 
         try {
-            uploadBitFile(twinID, file.getBytes().length, fileName, startSectorID);
+            uploadBitFile(
+                twinID,
+                file.getBytes().length,
+                fileName,
+                startSectorID
+            );
         } catch (Exception e) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
