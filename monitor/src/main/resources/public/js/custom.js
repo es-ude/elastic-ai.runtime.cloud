@@ -3,9 +3,11 @@ async function uploadFile(button) {
     let twinID = button.id.replace("-flash-button", "");
 
     let file = document.getElementById("bitFile")
+    let startSectorID = document.getElementById("startSectorID").value
 
     formData.append("file", file.files[0]);
     formData.append("twinID", twinID);
+    formData.append("startSectorID", startSectorID);
 
     let response = await fetch("/bitfile/upload", {
         method: "POST",
