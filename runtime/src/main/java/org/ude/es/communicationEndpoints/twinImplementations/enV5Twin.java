@@ -21,6 +21,7 @@ public class enV5Twin extends DeviceTwin {
     protected void executeOnBind() {
         setupDeviceStub();
         setupFlashCommand();
+        setupMeasurementCommand();
     }
 
     private void setupDeviceStub() {
@@ -44,6 +45,14 @@ public class enV5Twin extends DeviceTwin {
                 device.publishCommand(cmd, posting.data());
                 waitForDone(cmd);
             }
+        );
+    }
+
+    private void setupMeasurementCommand() {
+        String cmd = "MEASUREMENTS";
+        subscribeForCommand(
+                cmd,
+                posting -> device.publishCommand("MEASUREMENTS", "")
         );
     }
 
