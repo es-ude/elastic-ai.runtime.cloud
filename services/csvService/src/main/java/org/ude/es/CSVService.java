@@ -1,4 +1,4 @@
-package org.ude.es.communicationEndpoints.services;
+package org.ude.es;
 
 import java.io.File;
 import java.io.FileWriter;
