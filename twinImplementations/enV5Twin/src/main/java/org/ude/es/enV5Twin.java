@@ -1,9 +1,10 @@
-package org.ude.es.communicationEndpoints.twinImplementations;
+package org.ude.es;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.ude.es.protocol.Status;
+import org.ude.es.communicationEndpoints.twinImplementations.DeviceTwin;
 
 public class enV5Twin extends DeviceTwin {
 
