@@ -1,2 +1,5 @@
 rootProject.name = 'elastic-ai.runtime.cloud'
-include 'runtime', 'monitor'
+include 'runtime', 'monitor',
+        'twinImplementations:enV5Twin',
+        'services:csvService',
+        'services:gValueBatchService'
