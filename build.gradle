@@ -7,11 +7,10 @@ plugins {
 // Setup for all subprojects
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'application'
     apply plugin: 'jacoco'
     apply plugin: 'nebula.facet'
     apply plugin: 'com.adarshr.test-logger'
-    apply plugin: 'com.google.cloud.tools.jib'
+
     sourceCompatibility = '17'
 
     repositories {
