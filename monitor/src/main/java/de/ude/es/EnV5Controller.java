@@ -1,5 +1,7 @@
 package de.ude.es;
 
+import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
+
 import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
-import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
-
 @Controller
 @RequestMapping({ "/sensor" })
 public class EnV5Controller {
@@ -18,17 +18,13 @@ public class EnV5Controller {
     @PostMapping("/measurement/start/{name}")
     public ResponseEntity<Object> startMeasurement(@PathVariable String name) {
         RemoteCommunicationEndpoint deviceStub =
-                new RemoteCommunicationEndpoint(name);
+            new RemoteCommunicationEndpoint(name);
         deviceStub.bindToCommunicationEndpoint(
-                monitorCommunicationEndpoint.getBrokerStub()
+            monitorCommunicationEndpoint.getBrokerStub()
         );
-        deviceStub.publishCommand(
-                "MEASUREMENTS", "monitor"
-        );
+        deviceStub.publishCommand("MEASUREMENTS", "monitor");
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/{name}")

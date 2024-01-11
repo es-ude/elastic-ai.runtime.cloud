@@ -52,8 +52,8 @@ public class enV5Twin extends DeviceTwin {
     private void setupMeasurementCommand() {
         String cmd = "MEASUREMENTS";
         subscribeForCommand(
-                cmd,
-                posting -> device.publishCommand("MEASUREMENTS", "")
+            cmd,
+            posting -> device.publishCommand("MEASUREMENTS", "")
         );
     }
 
