@@ -1,12 +1,11 @@
 package org.ude.es;
 
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.Subscriber;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class Checker {
 

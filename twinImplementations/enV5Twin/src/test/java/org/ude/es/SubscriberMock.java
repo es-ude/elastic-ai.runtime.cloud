@@ -1,11 +1,10 @@
 package org.ude.es;
 
-import org.ude.es.protocol.Posting;
-import org.ude.es.protocol.Subscriber;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.ude.es.protocol.Posting;
+import org.ude.es.protocol.Subscriber;
 
 public class SubscriberMock implements Subscriber {
 
