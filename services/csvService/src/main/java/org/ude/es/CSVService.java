@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -44,7 +43,9 @@ public class CSVService extends LocalCommunicationEndpoint {
 
     private void savePicture(String filePath) {
         try (
-            InputStream in = new URL("http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg")
+            InputStream in = new URL(
+                "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
+            )
                 .openStream()
         ) {
             Files.copy(in, Paths.get(filePath + "/image.jpg"));
@@ -102,23 +103,23 @@ public class CSVService extends LocalCommunicationEndpoint {
     }
 
     private static Namespace parseArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-                .newFor("elastic-ai.runtime.CSVService")
-                .build()
-                .defaultHelp(true)
-                .description("Start a csv service for the elastic-ai.runtime");
+            .newFor("elastic-ai.runtime.CSVService")
+            .build()
+            .defaultHelp(true)
+            .description("Start a csv service for the elastic-ai.runtime");
         ArgumentGroup cameraSpecification = parser.addArgumentGroup(
-                "Camera Specification"
+            "Camera Specification"
         );
         cameraSpecification
-                .addArgument("--camera-address")
-                .help("Camera Address")
-                .setDefault("localhost");
+            .addArgument("--camera-address")
+            .help("Camera Address")
+            .setDefault("localhost");
         cameraSpecification
-                .addArgument("--camera-port")
-                .help("Camera Port")
-                .setDefault(8081);
+            .addArgument("--camera-port")
+            .help("Camera Port")
+            .setDefault(8081);
 
         return parser.parseKnownArgs(args, null);
     }
