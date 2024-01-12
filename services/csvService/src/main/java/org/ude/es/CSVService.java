@@ -43,6 +43,15 @@ public class CSVService extends LocalCommunicationEndpoint {
     }
 
     private void savePicture(String filePath) {
+        for (int i = 0; i < 10; i++) {
+            try (InputStream ignored = new URL("http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg")
+                         .openStream()){
+                Thread.sleep(10);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         try (
             InputStream in = new URL("http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg")
                 .openStream()
