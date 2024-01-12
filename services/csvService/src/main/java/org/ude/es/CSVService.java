@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.requests.DataRequester;
@@ -27,7 +26,10 @@ public class CSVService extends LocalCommunicationEndpoint {
     }
 
     private void savePicture(String filePath) {
-        try(InputStream in = new URL("http://192.168.203.24:8081/jpeg").openStream()){
+        try (
+            InputStream in = new URL("http://192.168.203.24:8081/jpeg")
+                .openStream()
+        ) {
             Files.copy(in, Paths.get(filePath + "/image.jpg"));
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
