@@ -38,8 +38,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push CSV Service to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.service.csv
-      - name: Push Batch Service to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.service.g-value-batch
       - name: Push enV5 Twin to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.twin.env5
       - name: Push Monitor to Github Container Registry

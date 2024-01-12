@@ -1,8 +1,10 @@
 package org.ude.es;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
@@ -23,18 +25,31 @@ public class CSVService extends LocalCommunicationEndpoint {
         enV5Twin = new RemoteCommunicationEndpoint("enV5Twin");
     }
 
+    private void savePicture(String filePath) {
+        try (
+            InputStream in = new URL("http://192.168.203.24:8081/jpeg")
+                .openStream()
+        ) {
+            Files.copy(in, Paths.get(filePath + "/image.jpg"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.out.println("NO PICTURE TAKEN!!!");
+        }
+    }
+
     @Override
     protected void executeOnBind() {
         enV5Twin.bindToCommunicationEndpoint(brokerStub);
+
+        File sensorValueDir = new File(PATH);
+        sensorValueDir.mkdir();
 
         DataRequester dataRequester = new DataRequester(
             enV5Twin,
             "g-value",
             getDomainAndIdentifier()
         );
-
-        File sensorValueDir = new File(PATH);
-        sensorValueDir.mkdir();
 
         dataRequester.setDataReceiveFunction(data -> {
             String fileName =
@@ -48,6 +63,7 @@ public class CSVService extends LocalCommunicationEndpoint {
                     fileName + "/measurement.csv",
                     false
                 );
+
                 csvWriter.append("x");
                 csvWriter.append(",");
                 csvWriter.append("y");
