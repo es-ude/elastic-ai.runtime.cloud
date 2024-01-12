@@ -51,15 +51,17 @@ public class CSVService extends LocalCommunicationEndpoint {
 
         dataRequester.setDataReceiveFunction(data -> {
             String fileName =
-                    PATH + "/" + new Timestamp(System.currentTimeMillis());
+                PATH + "/" + new Timestamp(System.currentTimeMillis());
             try {
                 System.out.println(fileName);
                 File csvDir = new File(fileName);
                 csvDir.mkdir();
 
-                savePicture(fileName);
+                FileWriter csvWriter = new FileWriter(
+                    fileName + "/measurement.csv",
+                    false
+                );
 
-                FileWriter csvWriter = new FileWriter(fileName + "/measurement.csv", false);
                 csvWriter.append("x");
                 csvWriter.append(",");
                 csvWriter.append("y");
