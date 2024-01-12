@@ -115,6 +115,6 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
             .help("Broker Port")
             .setDefault(1883);
 
-        return parser.parseArgs(args);
+        return parser.parseKnownArgs(args, null);
     }
 }
