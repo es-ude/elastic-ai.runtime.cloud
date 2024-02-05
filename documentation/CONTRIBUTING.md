@@ -202,3 +202,13 @@ classDiagram
   ENv5TwinStub --|> TwinStub
   IntegrationTestTwinForENv5 --|> JavaTwin
 ```
+
+# Recommendation
+
+We commit messages conventional. To ensure our guidelines we use Commitlint with [pre-commit](https://pre-commit.com/).  
+Please [install venv](<[this](https://python.land/virtual-environments/virtualenv#How_to_create_a_Python_venv)>)  
+You can activate a virtual environment with
+
+```bash
+source .venv/bin/activate
+```
