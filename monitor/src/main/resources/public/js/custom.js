@@ -1,11 +1,39 @@
+async function measurementStart(button) {
+    let formData = new FormData();
+    let twinID = button.id.replace("-measurement-start-button", "");
+
+    formData.append("twinID", twinID);
+
+    let response = await fetch("/sensor/measurement/start/" + twinID, {
+        method: "POST",
+    });
+
+    console.log(response.status)
+
+    // switch (response.status) {
+    //     case 200:
+    //         //let fileName = file.value.split("\\")
+    //         alert("BitFile received successfully.");
+    //         break;
+    //     case 400:
+    //         alert("Bitfile was not received by device.");
+    //         break;
+    //     default:
+    //         alert("Unknown response status: " + response.status);
+    // }
+
+}
+
 async function uploadFile(button) {
     let formData = new FormData();
     let twinID = button.id.replace("-flash-button", "");
 
     let file = document.getElementById("bitFile")
+    let startSectorID = document.getElementById("startSectorID").value
 
     formData.append("file", file.files[0]);
     formData.append("twinID", twinID);
+    formData.append("startSectorID", startSectorID);
 
     let response = await fetch("/bitfile/upload", {
         method: "POST",

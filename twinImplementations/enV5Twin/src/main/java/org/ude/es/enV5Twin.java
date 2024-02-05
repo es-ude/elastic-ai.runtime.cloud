@@ -1,13 +1,13 @@
-package org.ude.es.communicationEndpoints.twinImplementations;
+package org.ude.es;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import org.ude.es.communicationEndpoints.twinImplementations.DeviceTwin;
 import org.ude.es.protocol.Status;
 
 public class enV5Twin extends DeviceTwin {
 
-    private int bitfilePosition = 0;
     private String lastStatusMessage = "";
 
     public enV5Twin(String identifier) {
@@ -22,6 +22,7 @@ public class enV5Twin extends DeviceTwin {
     protected void executeOnBind() {
         setupDeviceStub();
         setupFlashCommand();
+        setupMeasurementCommand();
     }
 
     private void setupDeviceStub() {
@@ -42,12 +43,17 @@ public class enV5Twin extends DeviceTwin {
             posting -> {
                 pauseDataRequests();
                 Thread.sleep(2500);
-                device.publishCommand(
-                    cmd,
-                    posting.data() + "POSITION:" + bitfilePosition + ";"
-                );
+                device.publishCommand(cmd, posting.data());
                 waitForDone(cmd);
             }
+        );
+    }
+
+    private void setupMeasurementCommand() {
+        String cmd = "MEASUREMENTS";
+        subscribeForCommand(
+            cmd,
+            posting -> device.publishCommand("MEASUREMENTS", "")
         );
     }
 

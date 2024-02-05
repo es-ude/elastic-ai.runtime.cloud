@@ -58,8 +58,18 @@
     <h4>FPGA</h4>
     <div class="text-secondary">
         <input id="bitFile" type="file" accept=".bit,.bin">
+        <label for="startSectorID">startSectorID:</label>
+        <input type="number" id="startSectorID" min="1">
         <button th:id="${communicationEndpoint.getId() + '-flash-button'}" onclick=uploadFile(this)>Flash</button>
     </div>
 </section>
+
+<section class="d-flex flex-column align-items-center pt-3" th:style="${communicationEndpoint.isActive() ? '' : 'visibility: hidden'}">
+    <h2>Measurement</h2>
+    <div class="text-secondary">
+        <button th:id="${communicationEndpoint.getId() + '-measurement-start-button'}" style="width:600px;height:300px;" onclick=measurementStart(this)>Start Timer</button>
+    </div>
+</section>
+
 </body>
 </html>

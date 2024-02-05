@@ -1,13 +1,19 @@
 plugins {
-    id 'java-library'
+    id 'application'
+    id 'com.google.cloud.tools.jib'
+
 }
 
 group 'org.ude.es'
-version '1.0'
+version '1.0.0'
+mainClassName = "org.ude.es.CSVService"
 
 dependencies {
+    implementation project(':runtime')
+
     implementation 'com.hivemq:hivemq-mqtt-client:1.3.0'
     implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
+//    implementation 'org.opencv:opencv:4.9.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
@@ -24,5 +30,16 @@ integrationTest {
     useJUnitPlatform()
     testLogging {
         events 'passed', 'skipped', 'failed'
+    }
+}
+
+jib {
+    to {
+        image = 'ghcr.io/es-ude/elastic-ai.cloud.service.csv'
+        tags = ['latest', version]
+    }
+    container {
+        mainClass = mainClassName
+        creationTime = "USE_CURRENT_TIMESTAMP"
     }
 }

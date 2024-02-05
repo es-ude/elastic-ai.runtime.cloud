@@ -1,9 +1,7 @@
-package org.ude.es.localCEImplementations;
+package org.ude.es;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ude.es.Checker;
-import org.ude.es.communicationEndpoints.twinImplementations.enV5Twin;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.PostingType;
 import org.ude.es.protocol.Status;
@@ -171,14 +169,14 @@ public class TestEnV5Twin {
         }
 
         public void whenFlashIsPublished() {
-            whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "");
+            whenPostingIsPublishedAtBroker(twinID + "/DO/FLASH", "POSITION:1;");
             isExpecting(
                 new Posting(
                     DOMAIN +
                     "/" +
                     deviceID +
                     PostingType.COMMAND.topic("FLASH"),
-                    "POSITION:0;"
+                    "POSITION:1;"
                 )
             );
         }

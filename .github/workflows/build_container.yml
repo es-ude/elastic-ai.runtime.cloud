@@ -30,21 +30,15 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build Docker Image
         run: ./gradlew jibDockerBuild
-      - name: Tag Runtime
-        run: |
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime.cloud:latest
-          docker tag runtime:latest ghcr.io/es-ude/elastic-ai.runtime.cloud:${{ steps.release.outputs.tag }}
-      - name: Tag Monitor
-        run: |
-          docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor:latest
-          docker tag monitor:latest ghcr.io/es-ude/elastic-ai.monitor:${{ steps.release.outputs.tag }}
       - name: Login to Github Container Registry
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push Runtime to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.runtime.cloud
+      - name: Push CSV Service to Github Container Registry
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.service.csv
+      - name: Push enV5 Twin to Github Container Registry
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.twin.env5
       - name: Push Monitor to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.monitor
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.monitor
