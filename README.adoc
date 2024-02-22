@@ -1,0 +1,186 @@
+= elastic-AI.runtime.cloud
+:toc:
+:toclevels: 3
+:toc-placement!:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+image:https://github.com/es-ude/elastic-ai.runtime/actions/workflows/run_checks.yml/badge.svg[Tests,link=https://github.com/es-ude/elastic-ai.runtime/actions/workflows/run_checks.yml]
+image:https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml/badge.svg[Create Release,link=https://github.com/es-ude/elastic-ai.runtime/actions/workflows/push_to_main.yml]
+image:https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml/badge.svg[Build And Push Container,link=https://github.com/es-ude/elastic-ai.runtime/actions/workflows/build_container.yml]
+
+toc::[]
+
+This repository aims to provide the cloud backend for the Elastic-AI implementation.
+It uses MQTT as the backend for the pub-sub-based messaging protocol and is build to be used in combination with the link:https://github.com/es-ude/elastic-ai.runtime.enV5[Elastic-AI Node v5].
+
+== Setup
+
+For compiling the project, the required tools are:
+
+- Java Development Kit (JDK) version 17
+- Docker (Container Runtime)
+
+TIP: You can check if your local machine satisfies the required dependencies by executing link:test_setup.sh[test script in the root folder].
+
+We recommend using pre-commit to check that the commit messages align with the conventional commit message standard enforced by the merge workflows!
+
+TIP: link:documentation/SETUP_GUIDE.adoc[Setup Guide]
+
+[IMPORTANT]
+====
+.HOST_IP
+[#_host_ip]
+--
+The `elastic-AI.runtime.cloud:monitor` target requires the Host-IP to be addressed.
+The application will retrieve this information from a system environment variable called `HOST_IP`.
+Therefore, it is recommended that you execute
+
+[source,bash]
+----
+# MacOS
+export HOST_IP=127.0.0.1
+
+# Linux
+export HOST_IP=$(hostname -I)
+----
+
+before starting the monitor (with docker or locally).
+--
+====
+
+== Tests
+
+Unit tests and integration tests can be executed independently.
+Both use _jacoco_ to finalize the tests with a report that shows the test results and the code coverage.
+The reports can be found in the location `build/reports/` relative to the corresponding build file.
+
+=== Test execution
+
+|===
+| *Command* | *Task*
+
+| `./gradlew test`
+| Run ** all** unit tests
+
+| `./gradlew :subproject:test`
+| Run unit tests from ** specific** subproject +
+(i.g. `gradle :runtime:test`)
+
+| `./gradlew integrationTest`
+| Run ** all** Integration test
+
+| `./gradlew :subproject:integrationTest`
+| Run integration tests from ** specific** subproject +
+(i.g. `gradle: runtime:integrationTest`)
+|===
+
+== Runtime
+
+The runtime is meant to provide the necessary functions to implement a backend for the elastic-ai ecosystem.
+It provides the functionality to operate the ecosystem, like the implementation of the Twin concept or the MQTT Client implementation together with the necessary functions to handle the interactions with the MQTT Broker.
+
+== Clients
+
+The Elastic-AI ecosystem provides us with two different types of clients.
+
+- Services
+- Twins
+
+.Twins
+[NOTE]
+====
+The Twins are used to provide a persistent digital representation of the Elasitc-AI Nodes.
+====
+
+.Services
+[NOTE]
+====
+Services are meant to provide the user with services they need to accomplish certain aspects of the functionality.
+====
+
+To start a twin or service locally via Gradle run
+
+[source,bash]
+----
+./gradlew :<services|twinImplementations>:<target>:run
+----
+
+=== Exit Codes
+
+[cols=">,<"]
+|===
+| Exit Code | Description
+
+|         0 | No error
+|        10 | Argument Parser failed
+|===
+
+== Monitor
+
+The monitor is used to provide an external interface for the user to interact with the Elastic-AI ecosystem.
+This interface is provided via a SpringBoot web application, which can be accessed with your default browser like
+
+- Google Chrome
+- Firefox
+- Safari
+- …
+
+for example.
+To start the monitor locally via Gradle with the default parameter, execute
+
+[source,bash]
+----
+./gradlew :monitor:run
+----
+
+if you want to change the parameter for the broker ip and port you can pass these arguments by appending `--args"-b <broker_ip> -p <broker_port>"` to the run command.
+
+The monitor can then be accessed from your local machine at link:localhost.com:8081[http://localhost:8081].
+
+CAUTION: If you want to access the monitor from external devices, you have redirected your local endpoint to a port accessible through your firewall!
+
+== Distribution
+
+[#_build_docker_container]
+=== Build Docker Container
+
+A docker container for a subproject can be created with:
+
+[source,bash]
+----
+./gradlew  :<subproject>:jibDockerBuild
+----
+
+This container can then be used in a docker-compose file or started manually.
+
+=== Run Docker Container
+
+A Container should be run with:
+
+[source,bash]
+----
+docker run \
+    --rm \ #<1>
+    --network=runtime-network \ #<2>
+    --publish 8081:8081 \ #<3>
+    --name <subproject> \ #<4>
+    <subproject:tag>
+----
+
+<1> Remove the container after shutdown
+<2> Required to communicate with the docker container running the MQTT broker
+<3> Port mapping for the webserver port, which allows the webinterface to be accessible from your browser
+<4> Specify the name of the container
+
+[IMPORTANT]
+====
+.Monitor
+The Monitor requires the additional flag `--env "$HOST_IP"`.
+If the container is executed via docker-compose, the value needs to be set as an <<#_host_ip,environmental variable>>.
+====
