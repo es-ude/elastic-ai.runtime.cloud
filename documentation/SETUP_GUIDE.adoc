@@ -56,7 +56,8 @@ Can be installed via your local package manager like dnf, apt or brew.
 link:https://www.docker.com/[Docker]::
 -> Runtime for Container Execution +
 Can be installed based on the link:https://docs.docker.com/desktop[Docker Installation Guide]
-[#_pre_commit_optional]
+
+[#_pre_commit]
 === Pre-Commit [optional]
 
 To ensure our guidelines, we recommend using https://commitlint.js.org/#/[Commitlint] in combination with https://pre-commit.com/[Pre-Commit].
@@ -66,6 +67,9 @@ To assure you don't corrupt your system we recommend installing the dependencies
 1. Create and checkout virtual environment
 2. Install required packages from link:../requirements.txt[requirements.txt]
 3. Run `pre-commit install` to register the provided git hooks
+
+IMPORTANT: Pre-commit requires commitlint to be installed.
+To install commitlint run `npm install`.
 
 === Docker
 
@@ -88,6 +92,7 @@ docker run \
     --detach \ #<4>
     hivemq/hivemq-ce
 ----
+
 <1> Required to communicate with another Elastic-AI container
 <2> Default Port for unsecured MQTT Communication
 <3> Decrease the Log Level to prevent unnecessary logging
@@ -105,4 +110,4 @@ When IntelliJ IDEA has opened the project, it will download all required depende
 
 - link:../README.adoc[README]
 - link:EIP_PROTOCOL.adoc[EIP Protocol]
-- link:CONTRIBUTING.adoc[Contribution Guidlines]
+- link:CONTRIBUTING.adoc[Contribution Guidelines]
