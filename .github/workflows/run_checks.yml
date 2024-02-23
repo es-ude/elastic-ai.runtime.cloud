@@ -30,22 +30,26 @@ jobs:
       new_sha: ${{ steps.sha.outputs.SHA }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           persist-credentials: false
-      - name: Prettify code
-        uses: creyD/prettier_action@v4.3
+      - name: Setup NPM
+        uses: actions/setup-node@v4
         with:
-          # Use version 2.8.8 as prettier-plugin-java is currently not compatible with prettier v3. TODO: fix this
-          #prettier_version: "2.8.8"
-          # Install Java Plugin for Prettier
-          prettier_plugins: prettier-plugin-java
-          # Apply Prettier to Java and Markdown files
-          prettier_options: "--write **/*.{java,md}"
-          # Use Commitlint based Commit Message
-          commit_message: "refactor(style): beautify ${{ github.head_ref }}"
-          # Set your custom token
+          node-version: 21
+      - name: Install Prettier
+        run: npm ci
+      - name: Run Prettier
+        run: prettier --write ./**/*.{java,md}
+      - name: Commit Changes
+        run: |
+          git config --local user.email "noreply@github-action"
+          git config --local user.name "prettify-action"
+          git commit --all --message "refactor(style): beautify ${{ github.head_ref }}"
+      - name: Push Changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
           github_token: ${{ secrets.PUSH_TOKEN }}
       - name: Update SHA
         id: sha
@@ -55,7 +59,7 @@ jobs:
 
   unit-tests:
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - prettier
     steps:
       - name: Checkout Repository
