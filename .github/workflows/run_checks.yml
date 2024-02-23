@@ -54,7 +54,11 @@ jobs:
       - name: Update SHA
         id: sha
         run: |
-          new_sha="${{ steps.commit-and-push.outputs.commit_sha }}"
+          if [[ "${steps.commit-and-push.outputs.pushed" == "true" ]]; then
+            new_sha="${{ steps.commit-and-push.outputs.commit_long_sha }}"
+          else
+            new_sha="${{ github.head_ref }}"
+          fi
           echo "SHA=$new_sha" >> $GITHUB_OUTPUT
 
   unit-tests:
@@ -63,7 +67,7 @@ jobs:
     needs:
       - prettier
     steps:
-      - name: Output Commit
+      - name: Output Commit Ref
         run: |
           echo "Checking out: ${{ needs.prettier.outputs.new_sha }}"
       - name: Checkout Repository
