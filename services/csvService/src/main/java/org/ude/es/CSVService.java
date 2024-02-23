@@ -46,8 +46,7 @@ public class CSVService extends LocalCommunicationEndpoint {
             try (
                 InputStream ignored = new URL(
                     "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
-                )
-                    .openStream()
+                ).openStream()
             ) {
                 Thread.sleep(10);
             } catch (IOException | InterruptedException e) {
@@ -58,8 +57,7 @@ public class CSVService extends LocalCommunicationEndpoint {
         try (
             InputStream in = new URL(
                 "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
-            )
-                .openStream()
+            ).openStream()
         ) {
             Files.copy(in, Paths.get(filePath + "/image.jpg"));
         } catch (MalformedURLException e) {
@@ -117,8 +115,9 @@ public class CSVService extends LocalCommunicationEndpoint {
 
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers
-            .newFor("elastic-ai.runtime.CSVService")
+        ArgumentParser parser = ArgumentParsers.newFor(
+            "elastic-ai.runtime.CSVService"
+        )
             .build()
             .defaultHelp(true)
             .description("Start a csv service for the elastic-ai.runtime");

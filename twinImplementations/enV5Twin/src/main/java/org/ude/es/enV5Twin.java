@@ -26,27 +26,30 @@ public class enV5Twin extends DeviceTwin {
     }
 
     private void setupDeviceStub() {
-        device.addWhenDeviceGoesOnline(data ->
-            System.out.println("Device " + device.getIdentifier() + " online.")
+        device.addWhenDeviceGoesOnline(
+            data ->
+                System.out.println(
+                    "Device " + device.getIdentifier() + " online."
+                )
         );
         device.addWhenDeviceGoesOnline(this::publishAvailableMeasurements);
 
-        device.addWhenDeviceGoesOffline(data ->
-            System.out.println("Device " + device.getIdentifier() + " offline.")
+        device.addWhenDeviceGoesOffline(
+            data ->
+                System.out.println(
+                    "Device " + device.getIdentifier() + " offline."
+                )
         );
     }
 
     private void setupFlashCommand() {
         String cmd = "FLASH";
-        subscribeForCommand(
-            cmd,
-            posting -> {
-                pauseDataRequests();
-                Thread.sleep(2500);
-                device.publishCommand(cmd, posting.data());
-                waitForDone(cmd);
-            }
-        );
+        subscribeForCommand(cmd, posting -> {
+            pauseDataRequests();
+            Thread.sleep(2500);
+            device.publishCommand(cmd, posting.data());
+            waitForDone(cmd);
+        });
     }
 
     private void setupMeasurementCommand() {
@@ -58,14 +61,11 @@ public class enV5Twin extends DeviceTwin {
     }
 
     private void waitForDone(String cmd) {
-        device.subscribeForDone(
-            cmd,
-            posting -> {
-                publishDone(cmd, posting.data());
-                device.unsubscribeFromDone(cmd);
-                resumeDataRequests();
-            }
-        );
+        device.subscribeForDone(cmd, posting -> {
+            publishDone(cmd, posting.data());
+            device.unsubscribeFromDone(cmd);
+            resumeDataRequests();
+        });
     }
 
     private void publishAvailableMeasurements(String data) {
@@ -85,8 +85,9 @@ public class enV5Twin extends DeviceTwin {
         measurements = measurements.substring(0, measurements.indexOf(";"));
 
         this.publishStatus(
-                new Status(minimalStatus)
-                    .append(Status.Parameter.MEASUREMENTS.value(measurements))
+                new Status(minimalStatus).append(
+                    Status.Parameter.MEASUREMENTS.value(measurements)
+                )
             );
 
         List<String> measurementValues = Arrays.asList(measurements.split(","));

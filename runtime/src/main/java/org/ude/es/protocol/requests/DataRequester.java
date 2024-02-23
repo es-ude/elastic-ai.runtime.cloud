@@ -25,7 +25,8 @@ public class DataRequester {
         this.requesterID = requesterID;
         valueReceiver = new ValueReceiver();
 
-        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(data -> getsOnline()
+        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(
+            data -> getsOnline()
         );
     }
 

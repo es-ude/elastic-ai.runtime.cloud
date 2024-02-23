@@ -22,8 +22,9 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
 
             public Client(String id) {
                 this.id = id;
-                remoteCommunicationEndpoint =
-                    new RemoteCommunicationEndpoint(id);
+                remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(
+                    id
+                );
                 remoteCommunicationEndpoint.bindToCommunicationEndpoint(
                     localCommunicationEndpoint.getBrokerStub()
                 );
