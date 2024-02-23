@@ -53,8 +53,9 @@ public class MonitoringServiceApplication {
 
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers
-            .newFor("elastic-ai.runtime.monitor")
+        ArgumentParser parser = ArgumentParsers.newFor(
+            "elastic-ai.runtime.monitor"
+        )
             .build()
             .defaultHelp(true)
             .description(
@@ -95,8 +96,8 @@ public class MonitoringServiceApplication {
     public static String getLatestMeasurement(DataRequester dataRequester)
         throws TimeoutException {
         UpdatedValueStorage<String> latestValue = new UpdatedValueStorage<>();
-        dataRequester.setDataReceiveFunction(data ->
-            handleNewData(latestValue, data)
+        dataRequester.setDataReceiveFunction(
+            data -> handleNewData(latestValue, data)
         );
         dataRequester.startRequestingData();
 

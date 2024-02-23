@@ -108,8 +108,11 @@ public class DataRequestHandler {
     private void stopWhenDeviceGoesOffline(String requesterID) {
         currentlyRequestingTwins
             .get(requesterID)
-            .addWhenDeviceGoesOffline(data ->
-                dataStopRequestReceiver.deliver(new Posting("", requesterID))
+            .addWhenDeviceGoesOffline(
+                data ->
+                    dataStopRequestReceiver.deliver(
+                        new Posting("", requesterID)
+                    )
             );
     }
 

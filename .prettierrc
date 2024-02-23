@@ -4,5 +4,6 @@
   "printWidth": 80,
   "endOfLine": "lf",
   "semi": true,
-  "bracketSpacing": true
+  "bracketSpacing": true,
+  "plugins": ["prettier-plugin-java"]
 }

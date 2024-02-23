@@ -22,8 +22,11 @@ public class TestDataRequester {
 
         stub = new RemoteCommunicationEndpoint("stub");
         stub.bindToCommunicationEndpoint(checker.javaTwin.getBrokerStub());
-        dataRequester =
-            new DataRequester(stub, "data", checker.javaTwin.getIdentifier());
+        dataRequester = new DataRequester(
+            stub,
+            "data",
+            checker.javaTwin.getIdentifier()
+        );
     }
 
     @Test

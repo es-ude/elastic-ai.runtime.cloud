@@ -98,8 +98,9 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers
-            .newFor("elastic-ai.runtime.demo")
+        ArgumentParser parser = ArgumentParsers.newFor(
+            "elastic-ai.runtime.demo"
+        )
             .build()
             .defaultHelp(true)
             .description("Start a demo twin for the elastic-ai.runtime");

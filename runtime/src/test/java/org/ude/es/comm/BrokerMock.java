@@ -17,13 +17,14 @@ public class BrokerMock implements BrokerStub {
         }
 
         public boolean matches(String msgTopic) {
-            return new Matcher(getTokensWithCollection(msgTopic), topicFilter)
-                .check();
+            return new Matcher(
+                getTokensWithCollection(msgTopic),
+                topicFilter
+            ).check();
         }
 
         private static List<String> getTokensWithCollection(String str) {
-            return Collections
-                .list(new StringTokenizer(str, "/"))
+            return Collections.list(new StringTokenizer(str, "/"))
                 .stream()
                 .map(token -> (String) token)
                 .collect(Collectors.toList());

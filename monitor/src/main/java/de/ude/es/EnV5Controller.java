@@ -29,8 +29,7 @@ public class EnV5Controller {
 
     @GetMapping("/{name}")
     public String enV5LandingPage(Model model, @PathVariable String name) {
-        TwinData twin = MonitoringServiceApplication
-            .getTwinList()
+        TwinData twin = MonitoringServiceApplication.getTwinList()
             .getTwin(name);
         if (twin == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -57,8 +56,7 @@ public class EnV5Controller {
 
         if (twinID.contains("enV5")) {
             try {
-                TwinData twinData = MonitoringServiceApplication
-                    .getTwinList()
+                TwinData twinData = MonitoringServiceApplication.getTwinList()
                     .getTwin(twinID);
 
                 if (
@@ -72,8 +70,7 @@ public class EnV5Controller {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                    })
-                        .start();
+                    }).start();
                 }
                 twinData.getLifeTime().put(dataId, System.currentTimeMillis());
 

@@ -1,21 +1,41 @@
-# DEMO
+= DEMO
+:toc:
+:toclevels: 3
+:toc-placement!:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
-For running the DEMO, four components are needed. An MQTT Broker, the Monitor, the EnV5 Twin, and a EnV5 Device.
+toc::[]
 
-The three software components can be started together by using the docker compose file.
-For this the Twin and Monitor docker images need to be built beforehand (See [README](../README.md#docker-container)).
+For running the DEMO, four parts are needed.
+An MQTT Broker, the Monitor, the EnV5 Twin, and an EnV5 Device.
 
-```bash
+The three software parts can be started together by using the provided link:../compose.yaml[docker compose file].
+For this, the Twin and Monitor docker images need to be built beforehand (See link:../README.adoc#_build_docker_container[README]).
+
+[source,bash]
+----
 docker compose up
-```
+----
 
-## Communication
+== Communication
 
 The diagrams show simplified, how the parties communicate with each other in the DEMO.
 
-### Status
+=== Status
 
-```mermaid
+ifdef::env-github[]
+[source,mermaid]
+endif::[]
+ifndef::env-github[]
+[mermaid]
+endif::[]
+....
 sequenceDiagram
     participant communicationEndpoint as enV5Twin
     participant device as enV5
@@ -31,13 +51,19 @@ sequenceDiagram
     communicationEndpoint ->> broker: UPDATED STATUS
 
     broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
-```
+....
 
-### DATA
+=== DATA
 
-Broker removed for simplicity
+NOTE: Broker removed for simplicity
 
-```mermaid
+ifdef::env-github[]
+[source,mermaid]
+endif::[]
+ifndef::env-github[]
+[mermaid]
+endif::[]
+....
 sequenceDiagram
     participant monitorCommunicationEndpoint as Monitor
     participant communicationEndpoint as enV5Twin
@@ -51,13 +77,19 @@ sequenceDiagram
 
     monitorCommunicationEndpoint ->> communicationEndpoint: STOP
     communicationEndpoint ->> device: STOP
-```
+....
 
-### FLASH
+=== FLASH
 
-Broker removed for simplicity
+NOTE: Broker removed for simplicity
 
-```mermaid
+ifdef::env-github[]
+[source,mermaid]
+endif::[]
+ifndef::env-github[]
+[mermaid]
+endif::[]
+....
 sequenceDiagram
     participant monitorCommunicationEndpoint as Monitor
     participant communicationEndpoint as enV5Twin
@@ -71,4 +103,4 @@ sequenceDiagram
 
     device ->> communicationEndpoint: DONE
     communicationEndpoint ->> monitorCommunicationEndpoint: DONE
-```
+....

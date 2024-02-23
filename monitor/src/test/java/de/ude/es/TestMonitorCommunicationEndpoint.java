@@ -93,8 +93,9 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createMonitorTwin() {
-        monitorCommunicationEndpoint =
-            new MonitorCommunicationEndpoint(MONITOR_ID);
+        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(
+            MONITOR_ID
+        );
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(broker);
     }
 

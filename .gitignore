@@ -4,6 +4,8 @@
 .classpath
 .settings
 .venv
+.envrc
+node_modules/
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,intellij,gradle
