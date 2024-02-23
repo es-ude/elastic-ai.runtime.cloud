@@ -54,7 +54,7 @@ jobs:
       - name: Update SHA
         id: sha
         run: |
-          if [[ "${steps.commit-and-push.outputs.pushed" == "true" ]]; then
+          if [[ "${{ steps.commit-and-push.outputs.pushed }}" == "true" ]]; then
             new_sha="${{ steps.commit-and-push.outputs.commit_long_sha }}"
           else
             new_sha="${{ github.head_ref }}"
