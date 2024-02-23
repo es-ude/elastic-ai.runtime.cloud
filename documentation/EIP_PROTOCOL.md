@@ -44,16 +44,15 @@ or the Sender and the `<message_type>/<type_dependant>` is defined as in the par
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/STATUS","twin1;1")
-("eip://uni-due.de/es/twin1/STATUS","twin1;0")
+("eip://uni-due.de/es/device0/STATUS","device0;1")
+("eip://uni-due.de/es/device1/STATUS","device1;0")
 ```
 
 Communication Specification:
 
 ```mermaid
 sequenceDiagram
-  participant m as MonitorTwin
-  participant t as Twin for Device
+  participant m as Monitor
   participant b as Broker
   participant d as Device
 
@@ -78,7 +77,7 @@ sequenceDiagram
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/START/light","eip://uni-due.de/es/twin2")
+("eip://uni-due.de/es/twin1/device/light","eip://uni-due.de/es/twin2")
 ```
 
 #### STOP
@@ -89,7 +88,7 @@ Example message:
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/STOP/light","eip://uni-due.de/es/twin2")
+("eip://uni-due.de/es/device/STOP/light","eip://uni-due.de/es/twin2")
 ```
 
 #### DATA
@@ -102,15 +101,13 @@ Example message:
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/DATA/light","30.7")
+("eip://uni-due.de/es/device/DATA/light","30.7")
 ```
 
 Communication specification for data that is published **continuously**:
 
 ```mermaid
 sequenceDiagram
-  participant t1 as Twin 1
-  participant t2 as Twin 2
   participant b as Broker
   participant d as Device
 
@@ -126,8 +123,6 @@ Communication for data that has to be **requested**:
 
 ```mermaid
 sequenceDiagram
-  participant t1 as Twin 1
-  participant t2 as Twin 2
   participant b as Broker
   participant d as Device
 
@@ -159,15 +154,13 @@ sequenceDiagram
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/DO/SET/led/1","1")
+("eip://uni-due.de/es/device/DO/SET/led/1","1")
 ```
 
 Communication specification for a command **without** response:
 
 ```mermaid
 sequenceDiagram
-  participant t1 as Twin 1
-  participant t2 as Twin 2
   participant b as Broker
   participant d as Device
 
@@ -185,15 +178,13 @@ sequenceDiagram
 Example message:
 
 ```text
-("eip://uni-due.de/es/twin1/DONE/SET/led/1","1")
+("eip://uni-due.de/es/device/DONE/SET/led/1","1")
 ```
 
 Communication specification for a command **with** response:
 
 ```mermaid
 sequenceDiagram
-  participant t1 as Twin 1
-  participant t2 as Twin 2
   participant b as Broker
   participant d as Device
 

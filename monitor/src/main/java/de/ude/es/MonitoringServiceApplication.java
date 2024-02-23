@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
+
+import lombok.Getter;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -19,7 +21,7 @@ import org.ude.es.protocol.requests.DataRequester;
 public class MonitoringServiceApplication {
 
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
-    private static final String TWIN_ID = "monitor";
+    private static final String CLIENT_ID = "monitor";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
     static MonitorCommunicationEndpoint monitorCommunicationEndpoint = null;
@@ -58,7 +60,7 @@ public class MonitoringServiceApplication {
             .build()
             .defaultHelp(true)
             .description(
-                "Service for monitoring digital twins in the elastic-ai.runtime"
+                "Service for monitoring clients in the elastic-ai.runtime"
             );
         defineBrokerArgumentGroup(parser);
         return parser.parseArgs(args);
@@ -71,7 +73,7 @@ public class MonitoringServiceApplication {
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("localhost");
+            .setDefault("192.168.203.18");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .type(Integer.class)
@@ -81,15 +83,15 @@ public class MonitoringServiceApplication {
 
     private static MonitorCommunicationEndpoint createMonitorTwin() {
         MonitorCommunicationEndpoint monitorCommunicationEndpoint =
-            new MonitorCommunicationEndpoint(TWIN_ID);
+            new MonitorCommunicationEndpoint(CLIENT_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
         return monitorCommunicationEndpoint;
     }
 
-    public static TwinList getTwinList() {
-        return monitorCommunicationEndpoint.getTwinList();
+    public static ClientList getClientList() {
+        return monitorCommunicationEndpoint.getClientList();
     }
 
     public static String getLatestMeasurement(DataRequester dataRequester)
@@ -125,6 +127,7 @@ public class MonitoringServiceApplication {
         }
     }
 
+    @Getter
     private static class UpdatedValueStorage<Type> {
 
         private volatile Type value;
@@ -132,14 +135,6 @@ public class MonitoringServiceApplication {
 
         public UpdatedValueStorage() {
             updated = false;
-        }
-
-        public boolean isUpdated() {
-            return updated;
-        }
-
-        public Type getValue() {
-            return value;
         }
 
         public void setValue(Type value) {

@@ -16,17 +16,17 @@ public class TestMonitorCommunicationEndpoint {
     private static final String DUMMY_ID = "dummy";
     private BrokerMock broker;
     private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
-    private LocalCommunicationEndpoint dummyTwin;
+    private LocalCommunicationEndpoint dummyClient;
 
     @BeforeEach
     void setUp() {
         createBroker();
-        createMonitorTwin();
-        createDummyTwin();
+        createMonitorClient();
+        createDummyClient();
     }
 
     @Test
-    void testTwinCanReportItsId() {
+    void testClientCanReportItsId() {
         assertEquals(
             DOMAIN + "/" + MONITOR_ID,
             monitorCommunicationEndpoint.getDomainAndIdentifier()
@@ -34,57 +34,56 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     @Test
-    void testTwinListIsUpdatedOnEnter() {
+    void testClientListIsUpdatedOnEnter() {
         assertEquals(
             1,
-            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+            monitorCommunicationEndpoint.getClientList().getClients().size()
         );
     }
 
     @Test
-    void testTwinListIsUpdatedOnLeave() {
+    void testClientListIsUpdatedOnLeave() {
         assertEquals(
             1,
-            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+            monitorCommunicationEndpoint.getClientList().getClients().size()
         );
         broker.publish(
             new Posting(
-                dummyTwin.getIdentifier() + "/STATUS",
-                "ID:" + dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"
+                dummyClient.getIdentifier() + "/STATUS",
+                "ID:" + dummyClient.getIdentifier() + ";STATE:OFFLINE;"
             ),
             true
         );
         assertEquals(
             0,
-            monitorCommunicationEndpoint.getTwinList().getActiveTwins().size()
+            monitorCommunicationEndpoint.getClientList().getActiveClients().size()
         );
     }
 
     @Test
-    void testTwinListIsUpdatedOnReenter() {
+    void testClientListIsUpdatedOnReenter() {
         assertEquals(
             1,
-            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+            monitorCommunicationEndpoint.getClientList().getClients().size()
         );
         broker.publish(
             new Posting(
-                dummyTwin.getIdentifier() + "/STATUS",
-                "ID:" + dummyTwin.getIdentifier() + ";TYPE:TWIN;STATE:OFFLINE;"
+                dummyClient.getIdentifier() + "/STATUS",
+                "ID:" + dummyClient.getIdentifier() + ";STATE:OFFLINE;"
             ),
             true
         );
         assertEquals(
             0,
-            monitorCommunicationEndpoint.getTwinList().getActiveTwins().size()
+            monitorCommunicationEndpoint.getClientList().getActiveClients().size()
         );
-        dummyTwin.publishStatus(
-            new Status(dummyTwin.getIdentifier())
-                .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
+        dummyClient.publishStatus(
+            new Status(dummyClient.getIdentifier())
                 .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
         );
         assertEquals(
             1,
-            monitorCommunicationEndpoint.getTwinList().getTwins().size()
+            monitorCommunicationEndpoint.getClientList().getClients().size()
         );
     }
 
@@ -92,14 +91,14 @@ public class TestMonitorCommunicationEndpoint {
         this.broker = new BrokerMock(DOMAIN);
     }
 
-    private void createMonitorTwin() {
+    private void createMonitorClient() {
         monitorCommunicationEndpoint =
             new MonitorCommunicationEndpoint(MONITOR_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(broker);
     }
 
-    private void createDummyTwin() {
-        dummyTwin = new LocalCommunicationEndpoint(DUMMY_ID);
-        dummyTwin.bindToCommunicationEndpoint(broker);
+    private void createDummyClient() {
+        dummyClient = new LocalCommunicationEndpoint(DUMMY_ID);
+        dummyClient.bindToCommunicationEndpoint(broker);
     }
 }

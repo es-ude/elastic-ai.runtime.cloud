@@ -1,38 +1,25 @@
 async function measurementStart(button) {
     let formData = new FormData();
-    let twinID = button.id.replace("-measurement-start-button", "");
+    let clientID = button.id.replace("-measurement-start-button", "");
 
-    formData.append("twinID", twinID);
+    formData.append("clientID", clientID);
 
-    let response = await fetch("/sensor/measurement/start/" + twinID, {
+    let response = await fetch("/sensor/measurement/start/" + clientID, {
         method: "POST",
     });
 
     console.log(response.status)
-
-    // switch (response.status) {
-    //     case 200:
-    //         //let fileName = file.value.split("\\")
-    //         alert("BitFile received successfully.");
-    //         break;
-    //     case 400:
-    //         alert("Bitfile was not received by device.");
-    //         break;
-    //     default:
-    //         alert("Unknown response status: " + response.status);
-    // }
-
 }
 
 async function uploadFile(button) {
     let formData = new FormData();
-    let twinID = button.id.replace("-flash-button", "");
+    let clientID = button.id.replace("-flash-button", "");
 
     let file = document.getElementById("bitFile")
     let startSectorID = document.getElementById("startSectorID").value
 
     formData.append("file", file.files[0]);
-    formData.append("twinID", twinID);
+    formData.append("clientID", clientID);
     formData.append("startSectorID", startSectorID);
 
     let response = await fetch("/bitfile/upload", {
@@ -44,11 +31,10 @@ async function uploadFile(button) {
 
     switch (response.status) {
         case 200:
-            //let fileName = file.value.split("\\")
             alert("BitFile received successfully.");
             break;
         case 400:
-            alert("Bitfile was not received by device.");
+            alert("Bitfile was not received by client.");
             break;
         default:
             alert("Unknown response status: " + response.status);
@@ -88,17 +74,17 @@ function getRootUrl() {
         : window.location.protocol + "/" + window.location.host + "/";
 }
 
-async function setValueUpdate(deviceId, sensorId, fieldId) {
-    await getValueUpdate(deviceId, sensorId, fieldId)
+async function setValueUpdate(clientId, sensorId, fieldId) {
+    await getValueUpdate(clientId, sensorId, fieldId)
     setInterval(function() {
-        getValueUpdate(deviceId, sensorId, fieldId)
+        getValueUpdate(clientId, sensorId, fieldId)
     }, 1000);
 }
 
-async function getValueUpdate(deviceId, sensorId, fieldId) {
-    console.log("value Update", deviceId);
+async function getValueUpdate(clientId, sensorId, fieldId) {
+    console.log("value Update", clientId);
 
-    const response = await fetch(getRootUrl() + "sensor/" + deviceId + "/" + sensorId);
+    const response = await fetch(getRootUrl() + "sensor/" + clientId + "/" + sensorId);
 
     if (response.status === 200) {
         const result = await response.json();

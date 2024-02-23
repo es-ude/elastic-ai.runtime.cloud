@@ -10,12 +10,12 @@ import org.ude.es.protocol.PostingType;
 
 public class TestRemoteCommunicationEndpoint {
 
-    private static final String twinID = "test";
-    private TwinStubChecker checker;
+    private static final String remoteID = "test";
+    private RemoteStubChecker checker;
 
     @BeforeEach
     public void setUp() {
-        checker = new TwinStubChecker();
+        checker = new RemoteStubChecker();
         checker.givenBroker();
         checker.givenDevice();
     }
@@ -23,7 +23,7 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void weCanSubscribeForData() {
         checker.whenSubscribingForData("/light");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/DATA/light", "33");
         checker.thenPostingIsDelivered();
     }
 
@@ -31,14 +31,14 @@ public class TestRemoteCommunicationEndpoint {
     void weCanUnsubscribeFromData() {
         checker.whenSubscribingForData("light");
         checker.whenUnsubscribingFromData("light");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DATA/light", "33");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/DATA/light", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanSubscribeForStatus() {
         checker.whenSubscribingForStatus();
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "");
         checker.thenPostingIsDelivered();
     }
 
@@ -46,14 +46,14 @@ public class TestRemoteCommunicationEndpoint {
     void weCanUnsubscribeFromStatus() {
         checker.whenSubscribingForStatus();
         checker.whenUnsubscribingFromStatus();
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STATUS", "33");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanSubscribeForDone() {
         checker.whenSubscribingForDone("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DONE/data", "");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/DONE/data", "");
         checker.thenPostingIsDelivered();
     }
 
@@ -61,27 +61,27 @@ public class TestRemoteCommunicationEndpoint {
     void weCanUnsubscribeFromDone() {
         checker.whenSubscribingForDone("data");
         checker.whenUnsubscribingFromDone("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DONE/data", "33");
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/DONE/data", "33");
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanPublishDataStartRequest() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/START/data");
+        checker.givenSubscriptionAtBrokerFor(remoteID + "/START/data");
         checker.whenAskingForDataStart("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanAskToStopSendingData() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/STOP/data");
+        checker.givenSubscriptionAtBrokerFor(remoteID + "/STOP/data");
         checker.whenAskingForDataStop("data", "me");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanSendACommand() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/DO/led");
+        checker.givenSubscriptionAtBrokerFor(remoteID + "/DO/led");
         checker.whenSendingCommand("led", "on");
         checker.thenPostingIsDelivered();
     }
@@ -89,9 +89,9 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void deviceGoesOnline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.device.addWhenDeviceGoesOnline(data -> received.set(true));
+        checker.remoteEndpoint.addWhenDeviceGoesOnline(data -> received.set(true));
         checker.whenPostingIsPublishedAtBroker(
-            twinID + "/STATUS",
+            remoteID + "/STATUS",
             "STATUS:ONLINE"
         );
         Assertions.assertTrue(received.get());
@@ -100,9 +100,9 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void deviceGoesOffline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.device.addWhenDeviceGoesOffline(data -> received.set(true));
+        checker.remoteEndpoint.addWhenDeviceGoesOffline(data -> received.set(true));
         checker.whenPostingIsPublishedAtBroker(
-            twinID + "/STATUS",
+            remoteID + "/STATUS",
             "STATUS:OFFLINE"
         );
         Assertions.assertTrue(received.get());
@@ -110,72 +110,72 @@ public class TestRemoteCommunicationEndpoint {
 
     @Test
     void isOnline() {
-        Assertions.assertFalse(checker.device.isOnline());
+        Assertions.assertFalse(checker.remoteEndpoint.isOnline());
         checker.whenPostingIsPublishedAtBroker(
-            twinID + "/STATUS",
+            remoteID + "/STATUS",
             "STATUS:ONLINE"
         );
-        Assertions.assertTrue(checker.device.isOnline());
+        Assertions.assertTrue(checker.remoteEndpoint.isOnline());
         checker.whenPostingIsPublishedAtBroker(
-            twinID + "/STATUS",
+            remoteID + "/STATUS",
             "STATUS:OFFLINE"
         );
-        Assertions.assertFalse(checker.device.isOnline());
+        Assertions.assertFalse(checker.remoteEndpoint.isOnline());
     }
 
-    private static class TwinStubChecker extends Checker {
+    private static class RemoteStubChecker extends Checker {
 
-        public RemoteCommunicationEndpoint device;
+        public RemoteCommunicationEndpoint remoteEndpoint;
 
         public void givenDevice() {
-            device = new RemoteCommunicationEndpoint("test");
-            device.bindToCommunicationEndpoint(broker);
+            remoteEndpoint = new RemoteCommunicationEndpoint("test");
+            remoteEndpoint.bindToCommunicationEndpoint(broker);
         }
 
         public void whenSubscribingForData(String dataId) {
-            device.subscribeForData(dataId, subscriber);
+            remoteEndpoint.subscribeForData(dataId, subscriber);
         }
 
         public void whenUnsubscribingFromData(String dataId) {
-            device.unsubscribeFromData(dataId);
+            remoteEndpoint.unsubscribeFromData(dataId);
         }
 
         public void whenSubscribingForStatus() {
-            device.subscribeForStatus(subscriber);
+            remoteEndpoint.subscribeForStatus(subscriber);
         }
 
         public void whenUnsubscribingFromStatus() {
-            device.unsubscribeFromStatus();
+            remoteEndpoint.unsubscribeFromStatus();
         }
 
         public void whenSubscribingForDone(String dataId) {
-            device.subscribeForDone(dataId, subscriber);
+            remoteEndpoint.subscribeForDone(dataId, subscriber);
         }
 
         public void whenUnsubscribingFromDone(String dataId) {
-            device.unsubscribeFromDone(dataId);
+            remoteEndpoint.unsubscribeFromDone(dataId);
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
             String topic =
-                device.getDomainAndIdentifier() + PostingType.START.topic(data);
+                remoteEndpoint.getDomainAndIdentifier() + PostingType.START.topic(data);
             isExpecting(new Posting(topic, receiver));
-            device.publishDataStartRequest(data, receiver);
+            remoteEndpoint.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
             String topic =
-                device.getDomainAndIdentifier() + PostingType.STOP.topic(data);
+                remoteEndpoint.getDomainAndIdentifier() + PostingType.STOP.topic(data);
             isExpecting(new Posting(topic, receiver));
-            device.publishDataStopRequest(data, receiver);
+            remoteEndpoint.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
             String topic =
-                device.getDomainAndIdentifier() +
+                remoteEndpoint.getDomainAndIdentifier() +
                 PostingType.COMMAND.topic(service);
             isExpecting(new Posting(topic, cmd));
-            device.publishCommand(service, cmd);
+            remoteEndpoint.publishCommand(service, cmd);
         }
     }
 }

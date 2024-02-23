@@ -2,53 +2,49 @@ package de.ude.es;
 
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
-import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.Subscriber;
 
 public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
-    private StatusMonitor statusMonitor;
-    private volatile TwinList twins;
+    private final ClientList clients;
 
-    public MonitorCommunicationEndpoint(String id) { //was MonitorTwin
+    public MonitorCommunicationEndpoint(String id) {
         super(id);
-        this.twins = new TwinList();
+        this.clients = new ClientList();
     }
 
     @Override
     protected void executeOnBind() {
-        statusMonitor = new StatusMonitor(this, twins, this);
+        new StatusMonitor(this, clients, this);
     }
 
-    public TwinList getTwinList() {
-        return this.twins;
+    public ClientList getClientList() {
+        return this.clients;
     }
 
     private static class StatusMonitor implements Subscriber {
 
-        private final LocalCommunicationEndpoint twin;
-        private volatile TwinList twins;
-        private RemoteCommunicationEndpoint stub;
-        private BrokerStub endpoint;
-        private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
+        private final LocalCommunicationEndpoint client;
+        private final ClientList clients;
+        private final MonitorCommunicationEndpoint monitorCommunicationEndpoint;
 
         public StatusMonitor(
-            LocalCommunicationEndpoint twin,
-            TwinList twinList,
+            LocalCommunicationEndpoint client,
+            ClientList clientList,
             MonitorCommunicationEndpoint monitorCommunicationEndpoint
         ) {
-            this.twins = twinList;
-            this.twin = twin;
+            this.clients = clientList;
+            this.client = client;
             this.monitorCommunicationEndpoint = monitorCommunicationEndpoint;
             createTwinStubAndSubscribeForStatus();
         }
 
         private void createTwinStubAndSubscribeForStatus() {
-            this.stub = new RemoteCommunicationEndpoint("+");
-            this.stub.bindToCommunicationEndpoint(this.twin.getBrokerStub());
-            this.stub.subscribeForStatus(this);
+            RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("+");
+            stub.bindToCommunicationEndpoint(this.client.getBrokerStub());
+            stub.subscribeForStatus(this);
         }
 
         @Override
@@ -62,32 +58,17 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                 );
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            String twinType = posting
-                .data()
-                .substring(
-                    posting.data().indexOf(Status.Parameter.TYPE.getKey()) +
-                    Status.Parameter.TYPE.getKey().length() +
-                    1
-                );
-            twinType = twinType.substring(0, twinType.indexOf(";"));
-
             boolean twinActive = posting
                 .data()
                 .contains(Status.State.ONLINE.get());
 
             System.out.printf(
-                "Device of type %s with id %s online: %b.%n",
-                twinType,
+                "Client with id %s online: %b.%n",
                 twinID,
                 twinActive
             );
 
-            if (!twinType.equals(Status.Type.TWIN.get())) {
-                // DEVICES not handled by monitor
-                return;
-            }
-
-            if (this.twin.getDomainAndIdentifier().contains(twinID)) {
+            if (this.client.getDomainAndIdentifier().contains(twinID)) {
                 return;
             }
 
@@ -106,14 +87,14 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                     measurements =
                         measurements.substring(0, measurements.indexOf(";"));
 
-                    twins.addOrUpdateTwin(
+                    clients.addOrUpdateClient(
                         twinID,
                         measurements.split(","),
                         monitorCommunicationEndpoint.getBrokerStub(),
                         monitorCommunicationEndpoint.getDomainAndIdentifier()
                     );
                 } else {
-                    twins.addOrUpdateTwin(
+                    clients.addOrUpdateClient(
                         twinID,
                         null,
                         monitorCommunicationEndpoint.getBrokerStub(),
@@ -121,7 +102,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                     );
                 }
             } else {
-                TwinData twin = twins.getTwin(twinID);
+                ClientData twin = clients.getClient(twinID);
                 if (twin != null) {
                     twin.setInactive();
                 }

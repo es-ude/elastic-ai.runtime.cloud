@@ -28,33 +28,33 @@ public class DataRequestHandler {
         new DataStopRequestReceiver();
 
     private final String dataID;
-    private final LocalCommunicationEndpoint twinWithData;
+    private final LocalCommunicationEndpoint endpointWithData;
 
     public DataRequestHandler(
-        LocalCommunicationEndpoint twinWithData,
+        LocalCommunicationEndpoint endpointWithData,
         String dataID
     ) {
-        this.twinWithData = twinWithData;
+        this.endpointWithData = endpointWithData;
         this.dataID = dataID;
         DataStartRequestReceiver dataStartRequestReceiver =
             new DataStartRequestReceiver();
-        twinWithData.subscribeForDataStartRequest(
+        endpointWithData.subscribeForDataStartRequest(
             dataID,
             dataStartRequestReceiver
         );
-        twinWithData.subscribeForDataStopRequest(
+        endpointWithData.subscribeForDataStopRequest(
             dataID,
             dataStopRequestReceiver
         );
     }
 
     public void stop() {
-        twinWithData.unsubscribeFromDataStartRequest(dataID);
-        twinWithData.unsubscribeFromDataStopRequest(dataID);
+        endpointWithData.unsubscribeFromDataStartRequest(dataID);
+        endpointWithData.unsubscribeFromDataStopRequest(dataID);
     }
 
     public void newDataToPublish(String data) {
-        twinWithData.publishData(dataID, data);
+        endpointWithData.publishData(dataID, data);
     }
 
     public void addWhenStartRequestingData(
@@ -97,7 +97,7 @@ public class DataRequestHandler {
         private void handleRequesterTwinStub(String requesterID) {
             if (!currentlyRequestingTwins.containsKey(requesterID)) {
                 RequesterRemoteCE stub = new RequesterRemoteCE(requesterID);
-                twinWithData.bindStub(stub);
+                endpointWithData.bindStub(stub);
                 currentlyRequestingTwins.put(requesterID, stub);
             } else {
                 currentlyRequestingTwins.get(requesterID).newSubscriber();
@@ -140,7 +140,7 @@ public class DataRequestHandler {
 
         private void handleSubscriber(String requesterID) {
             subscribers.remove(requesterID);
-            if (subscribers.size() == 0) {
+            if (subscribers.isEmpty()) {
                 for (RemoteCommunicationEndpoint.Executor executor : stopRequestingData) {
                     executor.execute();
                 }

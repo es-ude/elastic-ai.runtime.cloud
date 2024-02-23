@@ -17,76 +17,60 @@ public class EnV5Controller {
 
     @PostMapping("/measurement/start/{name}")
     public ResponseEntity<Object> startMeasurement(@PathVariable String name) {
-        RemoteCommunicationEndpoint deviceStub =
+        RemoteCommunicationEndpoint clientStub =
             new RemoteCommunicationEndpoint(name);
-        deviceStub.bindToCommunicationEndpoint(
+        clientStub.bindToCommunicationEndpoint(
             monitorCommunicationEndpoint.getBrokerStub()
         );
-        deviceStub.publishCommand("MEASUREMENTS", "monitor");
+        clientStub.publishCommand("MEASUREMENTS", "monitor");
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/{name}")
     public String enV5LandingPage(Model model, @PathVariable String name) {
-        TwinData twin = MonitoringServiceApplication
-            .getTwinList()
-            .getTwin(name);
-        if (twin == null) {
+        ClientData client = MonitoringServiceApplication
+            .getClientList()
+            .getClient(name);
+        if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        model.addAttribute("communicationEndpoint", twin);
+        model.addAttribute("communicationEndpoint", client);
         return "env5";
     }
 
-    @GetMapping("/{twinID}/{dataId}")
+    @GetMapping("/{clientID}/{dataId}")
     @ResponseBody
     public SensorData requestPowerSensorData(
-        @PathVariable String twinID,
+        @PathVariable String clientID,
         @PathVariable String dataId
     ) {
         if (
-            MonitoringServiceApplication.getTwinList().getTwin(twinID) == null
+            MonitoringServiceApplication.getClientList().getClient(clientID) == null
         ) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
-                "Device not found"
+                "Client not found"
             );
         }
 
-        if (twinID.contains("enV5")) {
+        if (clientID.contains("enV5")) {
             try {
-                TwinData twinData = MonitoringServiceApplication
-                    .getTwinList()
-                    .getTwin(twinID);
-
-                if (
-                    System.currentTimeMillis() -
-                        twinData.getLifeTime().get(dataId) >
-                    10000
-                ) {
-                    new Thread(() -> {
-                        try {
-                            twinData.stopDataRequest(dataId);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                        .start();
-                }
-                twinData.getLifeTime().put(dataId, System.currentTimeMillis());
-
+                ClientData clientData = MonitoringServiceApplication
+                    .getClientList()
+                    .getClient(clientID);
+                
                 String latest =
                     MonitoringServiceApplication.getLatestMeasurement(
-                        twinData.getDataRequester().get(dataId)
+                        clientData.getDataRequester().get(dataId)
                     );
 
-                return new SensorData(twinID, dataId, latest);
+                return new SensorData(clientID, dataId, latest);
             } catch (TimeoutException t) {
                 throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Device not reachable"
+                    "Client not reachable"
                 );
             }
         }
@@ -94,5 +78,5 @@ public class EnV5Controller {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private record SensorData(String DEVICE_ID, String DATA_ID, String VALUE) {}
+    private record SensorData(String CLIENT_ID, String DATA_ID, String VALUE) {}
 }

@@ -14,7 +14,7 @@ import org.ude.es.protocol.Subscriber;
 public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
     private final int deviceDelay;
-    private boolean deviceOnline = false;
+    private boolean clientOnline = false;
     Lock lock = new ReentrantLock();
 
     List<DataExecutor> deviceGoesOnline = new ArrayList<>();
@@ -50,12 +50,12 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
             String data = posting.data();
             List<DataExecutor> tmpExecutor = new ArrayList<>();
             if (data.contains(Status.State.ONLINE.get())) {
-                deviceOnline = true;
+                clientOnline = true;
                 tmpExecutor = new ArrayList<>(deviceGoesOnline);
             }
 
             if (data.contains(Status.State.OFFLINE.get())) {
-                deviceOnline = false;
+                clientOnline = false;
                 tmpExecutor = new ArrayList<>(deviceGoesOffline);
             }
 
@@ -74,7 +74,7 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     public boolean isOnline() {
-        return deviceOnline;
+        return clientOnline;
     }
 
     public void subscribeForData(String dataId, Subscriber subscriber) {

@@ -1,4 +1,3 @@
 rootProject.name = 'elastic-ai.runtime.cloud'
 include 'runtime', 'monitor',
-        'twinImplementations:enV5Twin',
         'services:csvService'

@@ -3,10 +3,9 @@
 This file aims to provide a broad overview of commonly used terms in this project
 
 |                          Term | Scope | Description                                                             |
-| ----------------------------: | :---: | :---------------------------------------------------------------------- |
-|                       Monitor |  --   | Twin with web-frontend to show all active devices/twins                 |
+| ----------------------------: | :---: |:------------------------------------------------------------------------|
+|                       Monitor |  --   | Web-frontend to show all active devices                                 |
 |                       Runtime |  --   | Basic infrastructure to run Twins                                       |
-|                          Twin |  --   | Digital Representation of a real world device                           |
 |                        Broker | MQTT  | MQTT User Implementation, used to publish and subscribe to topics       |
 |                           EIP | MQTT  | Protocol that defines the mqtt based communication between participants |
 |        Communication Endpoint | MQTT  | ??                                                                      |

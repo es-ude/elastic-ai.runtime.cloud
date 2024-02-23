@@ -23,24 +23,8 @@ public class Status {
         }
     }
 
-    public enum Type {
-        TWIN("TWIN"),
-        DEVICE("DEVICE");
-
-        private final String type;
-
-        Type(String type) {
-            this.type = type;
-        }
-
-        public String get() {
-            return type;
-        }
-    }
-
     public enum Parameter {
         ID("ID"),
-        TYPE("TYPE"),
         MEASUREMENTS("MEASUREMENTS"),
         STATE("STATE");
 
