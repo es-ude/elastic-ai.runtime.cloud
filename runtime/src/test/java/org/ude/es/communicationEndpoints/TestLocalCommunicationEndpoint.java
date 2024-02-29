@@ -44,7 +44,10 @@ public class TestLocalCommunicationEndpoint {
     @Test
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(localID + "/START/data", localID);
+        checker.whenPostingIsPublishedAtBroker(
+            localID + "/START/data",
+            localID
+        );
         checker.thenPostingIsDelivered();
     }
 
@@ -52,7 +55,10 @@ public class TestLocalCommunicationEndpoint {
     void weCanUnsubscribeFromDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenUnsubscribingFromDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(localID + "/START/data", localID);
+        checker.whenPostingIsPublishedAtBroker(
+            localID + "/START/data",
+            localID
+        );
         checker.thenPostingIsNotDelivered();
     }
 
@@ -106,21 +112,24 @@ public class TestLocalCommunicationEndpoint {
 
         public void whenPublishingData(String dataId, String value) {
             String topic =
-                localEndpoint.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.DATA.topic(dataId);
             isExpecting(new Posting(topic, value));
             localEndpoint.publishData(dataId, value);
         }
 
         public void whenPublishingDone(String dataId, String value) {
             String topic =
-                localEndpoint.getDomainAndIdentifier() + PostingType.DONE.topic(dataId);
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.DONE.topic(dataId);
             isExpecting(new Posting(topic, value));
             localEndpoint.publishDone(dataId, value);
         }
 
         public void whenPublishingStatus() {
             String topic =
-                localEndpoint.getDomainAndIdentifier() + PostingType.STATUS.topic("");
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.STATUS.topic("");
             isExpecting(
                 new Posting(
                     topic,
@@ -128,10 +137,9 @@ public class TestLocalCommunicationEndpoint {
                 )
             );
             localEndpoint.publishStatus(
-                new Status(localEndpoint.getIdentifier())
-                    .append(
-                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
-                    )
+                new Status(localEndpoint.getIdentifier()).append(
+                    Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                )
             );
         }
 

@@ -11,10 +11,13 @@ public class StressTestForEnV5IsPublishing {
     private static final String TEST_ID = "integTestTwin";
 
     public static void main(String[] args) {
+        RemoteCommunicationEndpoint endpoint = new RemoteCommunicationEndpoint(
+            TEST_ID
+        );
 
-        RemoteCommunicationEndpoint endpoint = new RemoteCommunicationEndpoint(TEST_ID);
-
-        endpoint.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
+        endpoint.bindToCommunicationEndpoint(
+            new HivemqBroker(DOMAIN, IP, PORT)
+        );
         endpoint.subscribeForData("stresstestPub", System.out::println);
     }
 }

@@ -89,7 +89,9 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void deviceGoesOnline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.remoteEndpoint.addWhenDeviceGoesOnline(data -> received.set(true));
+        checker.remoteEndpoint.addWhenDeviceGoesOnline(
+            data -> received.set(true)
+        );
         checker.whenPostingIsPublishedAtBroker(
             remoteID + "/STATUS",
             "STATUS:ONLINE"
@@ -100,7 +102,9 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void deviceGoesOffline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.remoteEndpoint.addWhenDeviceGoesOffline(data -> received.set(true));
+        checker.remoteEndpoint.addWhenDeviceGoesOffline(
+            data -> received.set(true)
+        );
         checker.whenPostingIsPublishedAtBroker(
             remoteID + "/STATUS",
             "STATUS:OFFLINE"
@@ -158,14 +162,16 @@ public class TestRemoteCommunicationEndpoint {
 
         public void whenAskingForDataStart(String data, String receiver) {
             String topic =
-                remoteEndpoint.getDomainAndIdentifier() + PostingType.START.topic(data);
+                remoteEndpoint.getDomainAndIdentifier() +
+                PostingType.START.topic(data);
             isExpecting(new Posting(topic, receiver));
             remoteEndpoint.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
             String topic =
-                remoteEndpoint.getDomainAndIdentifier() + PostingType.STOP.topic(data);
+                remoteEndpoint.getDomainAndIdentifier() +
+                PostingType.STOP.topic(data);
             isExpecting(new Posting(topic, receiver));
             remoteEndpoint.publishDataStopRequest(data, receiver);
         }

@@ -75,7 +75,7 @@ public class CSVService extends LocalCommunicationEndpoint {
         sensorValueDir.mkdir();
 
         DataRequester dataRequester = new DataRequester(
-                enV5,
+            enV5,
             "g-value",
             getDomainAndIdentifier()
         );

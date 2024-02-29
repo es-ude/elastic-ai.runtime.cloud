@@ -2,10 +2,9 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import de.ude.es.Clients.ClientData;
 import de.ude.es.Clients.ClientList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.protocol.BrokerStub;
@@ -91,14 +90,21 @@ public class TestClientList {
         );
         clientList.getClient("ID2").setInactive();
 
-        assertEquals(expected.toString(), clientList.getActiveClients().toString());
+        assertEquals(
+            expected.toString(),
+            clientList.getActiveClients().toString()
+        );
     }
 
     @Test
     void testGetClient() {
         assertEquals(
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID")
-                .toString(),
+            new ClientData(
+                "Client 2",
+                "ID2",
+                brokerStubMock,
+                "requesterID"
+            ).toString(),
             clientList.getClient("ID2").toString()
         );
         assertNull(clientList.getClient("WRONG_ID"));
@@ -121,13 +127,12 @@ public class TestClientList {
             brokerStubMock,
             "requesterID"
         );
-        expected =
-            List.of(
-                new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-                new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-                new ClientData("Client 3", "ID3", brokerStubMock, "requesterID"),
-                new ClientData("Client 4", "ID4", brokerStubMock, "requesterID")
-            );
+        expected = List.of(
+            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
+            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
+            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID"),
+            new ClientData("Client 4", "ID4", brokerStubMock, "requesterID")
+        );
 
         assertEquals(expected.toString(), clientList.getClients().toString());
         assertEquals(expected.size(), clientList.getClients().size());

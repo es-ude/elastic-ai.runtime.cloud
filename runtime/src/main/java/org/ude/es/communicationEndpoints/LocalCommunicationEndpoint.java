@@ -13,12 +13,14 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         super(identifier);
     }
 
-    protected final Status minimalStatus = new Status(this.identifier)
-        .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
+    protected final Status minimalStatus = new Status(this.identifier).append(
+        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+    );
 
     protected void executeOnBindPrivate() {
-        Status lwtMessage = new Status(this.identifier)
-            .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
+        Status lwtMessage = new Status(this.identifier).append(
+            Status.Parameter.STATE.value(Status.State.OFFLINE.get())
+        );
         this.brokerStub.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
         super.executeOnBindPrivate();
@@ -96,10 +98,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers
-            .newFor(
-                    "elastic-ai.runtime"
-            )
+        ArgumentParser parser = ArgumentParsers.newFor("elastic-ai.runtime")
             .build()
             .defaultHelp(true)
             .description("Start a client for the elastic-ai.runtime");

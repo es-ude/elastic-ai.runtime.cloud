@@ -123,7 +123,10 @@ public class Checker {
         this.whenPostingIsPublishedAtLocalEndpoint(topic, "");
     }
 
-    public void whenPostingIsPublishedAtLocalEndpoint(String topic, String data) {
+    public void whenPostingIsPublishedAtLocalEndpoint(
+        String topic,
+        String data
+    ) {
         String fullTopic = localEndpoint.getDomainAndIdentifier() + topic;
         expected = new Posting(fullTopic, data);
 

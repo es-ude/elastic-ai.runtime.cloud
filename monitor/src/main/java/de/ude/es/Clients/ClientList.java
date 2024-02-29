@@ -6,7 +6,6 @@ import com.google.common.primitives.UnsignedInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.Getter;
 import org.ude.es.protocol.BrokerStub;
 
@@ -14,6 +13,7 @@ public class ClientList {
 
     @Getter
     private final List<ClientData> clients;
+
     private UnsignedInteger clientIdCounter = ONE;
 
     public ClientList() {
@@ -62,7 +62,9 @@ public class ClientList {
         } else {
             getClient(ID).setActive();
         }
-        if (measurements != null) getClient(ID).setAvailableSensors(measurements);
+        if (measurements != null) getClient(ID).setAvailableSensors(
+            measurements
+        );
     }
 
     public List<ClientData> getActiveClients() {

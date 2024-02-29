@@ -42,7 +42,9 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
         }
 
         private void createTwinStubAndSubscribeForStatus() {
-            RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("+");
+            RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
+                "+"
+            );
             stub.bindToCommunicationEndpoint(this.client.getBrokerStub());
             stub.subscribeForStatus(this);
         }

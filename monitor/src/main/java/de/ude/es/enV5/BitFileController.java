@@ -2,13 +2,12 @@ package de.ude.es.enV5;
 
 import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
+import de.ude.es.MonitoringServiceApplication;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-
-import de.ude.es.MonitoringServiceApplication;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -91,13 +90,12 @@ public class BitFileController {
         statusIsUpdated = false;
         latch = new CountDownLatch(1);
         clientStub.subscribeForDone("FLASH", posting -> {
-                System.out.println("FLASH DONE");
-                clientStub.unsubscribeFromDone("FLASH");
-                receivedByClient = posting.data();
-                statusIsUpdated = true;
-                latch.countDown();
-            }
-        );
+            System.out.println("FLASH DONE");
+            clientStub.unsubscribeFromDone("FLASH");
+            receivedByClient = posting.data();
+            statusIsUpdated = true;
+            latch.countDown();
+        });
     }
 
     @PostMapping("/upload")

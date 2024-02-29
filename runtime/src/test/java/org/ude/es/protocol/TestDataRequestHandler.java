@@ -18,7 +18,10 @@ public class TestDataRequestHandler {
         checker = new Checker();
         checker.givenBroker();
         checker.givenLocalEndpoint("test");
-        dataRequestHandler = new DataRequestHandler(checker.localEndpoint, "data");
+        dataRequestHandler = new DataRequestHandler(
+            checker.localEndpoint,
+            "data"
+        );
     }
 
     @AfterEach

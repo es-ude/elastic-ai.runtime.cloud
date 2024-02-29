@@ -16,10 +16,19 @@ public class TestClientData {
     @BeforeEach
     void setUp() {
         BrokerStubMock brokerMock = new BrokerStubMock() {};
-        clientData = new ClientData(CLIENT_NAME, CLIENT_ID, brokerMock, "requesterID");
+        clientData = new ClientData(
+            CLIENT_NAME,
+            CLIENT_ID,
+            brokerMock,
+            "requesterID"
+        );
         BrokerStub brokerStubMock = new BrokerStubMock() {};
-        clientData =
-            new ClientData(CLIENT_NAME, CLIENT_ID, brokerStubMock, "requesterID");
+        clientData = new ClientData(
+            CLIENT_NAME,
+            CLIENT_ID,
+            brokerStubMock,
+            "requesterID"
+        );
     }
 
     @Test

@@ -57,7 +57,10 @@ public class TestMonitorCommunicationEndpoint {
         );
         assertEquals(
             0,
-            monitorCommunicationEndpoint.getClientList().getActiveClients().size()
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getActiveClients()
+                .size()
         );
     }
 
@@ -76,11 +79,15 @@ public class TestMonitorCommunicationEndpoint {
         );
         assertEquals(
             0,
-            monitorCommunicationEndpoint.getClientList().getActiveClients().size()
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getActiveClients()
+                .size()
         );
         dummyClient.publishStatus(
-            new Status(dummyClient.getIdentifier())
-                .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()))
+            new Status(dummyClient.getIdentifier()).append(
+                Status.Parameter.STATE.value(Status.State.ONLINE.get())
+            )
         );
         assertEquals(
             1,

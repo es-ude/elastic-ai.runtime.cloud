@@ -1,9 +1,9 @@
 package org.ude.es.env5;
 
+import static java.lang.Thread.sleep;
+
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
-
-import static java.lang.Thread.sleep;
 
 public class StressTestForEnV5IsSubscribing {
 
@@ -13,8 +13,12 @@ public class StressTestForEnV5IsSubscribing {
     private static final String TEST_ID = "integTestTwin";
 
     public static void main(String[] args) throws InterruptedException {
-        LocalCommunicationEndpoint endpoint = new LocalCommunicationEndpoint(TEST_ID);
-        endpoint.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
+        LocalCommunicationEndpoint endpoint = new LocalCommunicationEndpoint(
+            TEST_ID
+        );
+        endpoint.bindToCommunicationEndpoint(
+            new HivemqBroker(DOMAIN, IP, PORT)
+        );
 
         int i = 0;
         while (true) {

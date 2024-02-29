@@ -2,10 +2,9 @@ package de.ude.es.enV5;
 
 import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
-import java.util.concurrent.TimeoutException;
-
 import de.ude.es.Clients.ClientData;
 import de.ude.es.MonitoringServiceApplication;
+import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -49,7 +48,8 @@ public class EnV5Controller {
         @PathVariable String dataId
     ) {
         if (
-            MonitoringServiceApplication.getClientList().getClient(clientID) == null
+            MonitoringServiceApplication.getClientList().getClient(clientID) ==
+            null
         ) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
@@ -59,10 +59,10 @@ public class EnV5Controller {
 
         if (clientID.contains("enV5")) {
             try {
-                ClientData clientData = MonitoringServiceApplication
-                    .getClientList()
-                    .getClient(clientID);
-                
+                ClientData clientData =
+                    MonitoringServiceApplication.getClientList()
+                        .getClient(clientID);
+
                 String latest =
                     MonitoringServiceApplication.getLatestMeasurement(
                         clientData.getDataRequester().get(dataId)
