@@ -37,19 +37,11 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant communicationEndpoint as enV5Twin
     participant device as enV5
     participant monitorCommunicationEndpoint as Monitor
     participant broker as Broker
 
-    communicationEndpoint ->> broker: STATUS
     device ->> broker: STATUS
-    monitorCommunicationEndpoint ->> broker: STATUS
-    broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
-
-    broker ->> communicationEndpoint: Env5 STATUS
-    communicationEndpoint ->> broker: UPDATED STATUS
-
     broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
 ....
 
@@ -66,17 +58,13 @@ endif::[]
 ....
 sequenceDiagram
     participant monitorCommunicationEndpoint as Monitor
-    participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: START
-    communicationEndpoint ->> device: START
+    monitorCommunicationEndpoint ->> device: START
 
-    device ->> communicationEndpoint: DATA
-    communicationEndpoint ->> monitorCommunicationEndpoint: DATA
+    device ->> monitorCommunicationEndpoint: DATA
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: STOP
-    communicationEndpoint ->> device: STOP
+    monitorCommunicationEndpoint ->> device: STOP
 ....
 
 === FLASH
@@ -95,12 +83,9 @@ sequenceDiagram
     participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: FLASH
-    communicationEndpoint ->> device: FLASH
+    monitorCommunicationEndpoint ->> device: FLASH
 
-    device ->> monitorCommunicationEndpoint: REQUEST
-    monitorCommunicationEndpoint ->> device: BITFILE
+    device ->> device: REQUEST BITFILE
 
-    device ->> communicationEndpoint: DONE
-    communicationEndpoint ->> monitorCommunicationEndpoint: DONE
+    device ->> monitorCommunicationEndpoint: DONE
 ....

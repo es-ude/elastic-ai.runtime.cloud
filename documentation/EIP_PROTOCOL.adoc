@@ -82,14 +82,14 @@ Data::
 Information::
     * The retain-flag of this message should be set to assure status discovery for newly entered participants!
     * The offline message should be automatically sent by the broker after a connection loss (LWT message).
-    * The online message should only be sent by a new hardware device or Application Twin.
+    * The online message should only be sent by a new hardware device or Application client.
 
 Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/STATUS","twin1;1") <1>
-msg("eip://uni-due.de/es/twin1/STATUS","twin1;0") <2>
+msg("eip://uni-due.de/es/client1/STATUS","client1;1") <1>
+msg("eip://uni-due.de/es/client1/STATUS","client1;0") <2>
 ----
 <1> Online Message
 <2> Offline Message (LWT)
@@ -104,8 +104,8 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant m as MonitorTwin
-    participant t as Twin for Device
+    participant m as Monitorclient
+    participant t as client for Device
     participant b as Broker
     participant d as Device
 
@@ -134,7 +134,7 @@ Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/START/light","eip://uni-due.de/es/twin2")
+msg("eip://uni-due.de/es/client1/START/light","eip://uni-due.de/es/client2")
 ----
 --
 
@@ -150,7 +150,7 @@ Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/STOP/light","eip://uni-due.de/es/twin2")
+msg("eip://uni-due.de/es/client1/STOP/light","eip://uni-due.de/es/client2")
 ----
 --
 
@@ -169,7 +169,7 @@ Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/DATA/light","30.7")
+msg("eip://uni-due.de/es/client1/DATA/light","30.7")
 ----
 --
 
@@ -182,17 +182,17 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant t1 as Twin 1
-    participant t2 as Twin 2
+    participant t1 as client 1
+    participant t2 as client 2
     participant b as Broker
     participant d as Device
 
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
-    t1 ->> b: sub("eip://<broker_domain>/twin2/DATA/d1")
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
-    b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1", "<val>")
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1", "<val>")
-    b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1", "<val>")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DATA/d1", "<val>")
+    t1 ->> b: sub("eip://<broker_domain>/client2/DATA/d1")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DATA/d1", "<val>")
+    b ->> t1: ("eip://<broker_domain>/client2/DATA/d1", "<val>")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DATA/d1", "<val>")
+    b ->> t1: ("eip://<broker_domain>/client2/DATA/d1", "<val>")
 ....
 
 .Communication for data that has to be *requested*
@@ -204,29 +204,29 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant t1 as Twin 1
-    participant t2 as Twin 2
+    participant t1 as client 1
+    participant t2 as client 2
     participant b as Broker
     participant d as Device
 
-      t1 ->> b: sub("eip://<broker_domain>/twin2/DATA/d1")
-    t1 ->> b: pub("eip://<broker_domain>/twin2/START/d1","eip://<broker_domain>/twin1")
-    b ->> t2: ("eip://<broker_domain>/twin2/START/d1","eip://<broker_domain>/twin1")
-    t2 ->> b: sub("eip://<broker_domain>/twin1/STATUS")
+      t1 ->> b: sub("eip://<broker_domain>/client2/DATA/d1")
+    t1 ->> b: pub("eip://<broker_domain>/client2/START/d1","eip://<broker_domain>/client1")
+    b ->> t2: ("eip://<broker_domain>/client2/START/d1","eip://<broker_domain>/client1")
+    t2 ->> b: sub("eip://<broker_domain>/client1/STATUS")
     Note over t2,d: REQUEST DATA FROM DEVICE
     Note over t2: START SENDING DATA
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DATA/d1","<val>")
-    b ->> t1: ("eip://<broker_domain>/twin2/DATA/d1","<val>")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DATA/d1","<val>")
+    b ->> t1: ("eip://<broker_domain>/client2/DATA/d1","<val>")
     Note over t1,b: ...
-    alt Twin 1 send STOP
-    t1 ->> b: pub("eip://<broker_domain>/twin2/STOP/d1","eip://<broker_domain>/twin1")
-    b ->> t2: ("eip://<broker_domain>/twin2/STOP/d1","eip://<broker_domain>/twin1")
-    else Twin 1 lost connection
+    alt client 1 send STOP
+    t1 ->> b: pub("eip://<broker_domain>/client2/STOP/d1","eip://<broker_domain>/client1")
+    b ->> t2: ("eip://<broker_domain>/client2/STOP/d1","eip://<broker_domain>/client1")
+    else client 1 lost connection
     Note over t1: LOST CONNECTION
-    b ->> t2: ("eip://<broker_domain>/twin1/STATUS","0")
+    b ->> t2: ("eip://<broker_domain>/client1/STATUS","0")
     end
     Note over t2: STOP SENDING DATA
-    t2 ->> b: unsub("eip://<broker_domain>/twin1/STATUS")
+    t2 ->> b: unsub("eip://<broker_domain>/client1/STATUS")
 ....
 
 ==== DO
@@ -241,7 +241,7 @@ Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/DO/SET/led/1","1")
+msg("eip://uni-due.de/es/client1/DO/SET/led/1","1")
 ----
 --
 
@@ -254,14 +254,14 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant t1 as Twin 1
-    participant t2 as Twin 2
+    participant t1 as client 1
+    participant t2 as client 2
     participant b as Broker
     participant d as Device
 
-    t2 ->> b: sub("eip://<broker_domain>/twin2/DO/<cmd1>")
-    t1 ->> b: pub("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
-    b ->> t2: ("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+    t2 ->> b: sub("eip://<broker_domain>/client2/DO/<cmd1>")
+    t1 ->> b: pub("eip://<broker_domain>/client2/DO/<cmd1>","<val>")
+    b ->> t2: ("eip://<broker_domain>/client2/DO/<cmd1>","<val>")
     Note over t2,d: EXECUTE COMMAND
 ....
 
@@ -277,7 +277,7 @@ Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/twin1/DONE/SET/led/1","1")
+msg("eip://uni-due.de/es/client1/DONE/SET/led/1","1")
 ----
 --
 
@@ -290,21 +290,21 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant t1 as Twin 1
-    participant t2 as Twin 2
+    participant t1 as client 1
+    participant t2 as client 2
     participant b as Broker
     participant d as Device
 
-    t2 ->> b: sub("eip://<broker_domain>/twin2/DO/<cmd1>")
-    t1 ->> b: sub("eip://<broker_domain>/twin2/DONE/<cmd1>")
-    t1 ->> b: pub("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
-    b ->> t2: ("eip://<broker_domain>/twin2/DO/<cmd1>","<val>")
+    t2 ->> b: sub("eip://<broker_domain>/client2/DO/<cmd1>")
+    t1 ->> b: sub("eip://<broker_domain>/client2/DONE/<cmd1>")
+    t1 ->> b: pub("eip://<broker_domain>/client2/DO/<cmd1>","<val>")
+    b ->> t2: ("eip://<broker_domain>/client2/DO/<cmd1>","<val>")
     Note over t2,d: EXECUTE COMMAND
     alt successful
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DONE/<cmd1>","<success>")
-    b ->> t1: ("eip://<broker_domain>/twin2/DONE/<cmd1>","<success>")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DONE/<cmd1>","<success>")
+    b ->> t1: ("eip://<broker_domain>/client2/DONE/<cmd1>","<success>")
     else unsuccessful
-    t2 ->> b: pub("eip://<broker_domain>/twin2/DONE/<cmd1>","<failed>")
-    b ->> t1: ("eip://<broker_domain>/twin2/DONE/<cmd1>","<failed>")
+    t2 ->> b: pub("eip://<broker_domain>/client2/DONE/<cmd1>","<failed>")
+    b ->> t1: ("eip://<broker_domain>/client2/DONE/<cmd1>","<failed>")
     end
 ....

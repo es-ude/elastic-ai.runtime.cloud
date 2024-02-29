@@ -10,15 +10,11 @@ This file aims to provide a broad overview of commonly used terms in this projec
 
 | Monitor
 | --
-| Twin with web-frontend to show all active devices/twins
+| Monitor with web-frontend to show all active participants.
 
 | Runtime
 | --
-| Basic infrastructure to run Twins
-
-| Twin
-| --
-| Digital Representation of a real world device
+| Basic infrastructure to run Clients
 
 | Broker
 | MQTT
@@ -34,7 +30,7 @@ This file aims to provide a broad overview of commonly used terms in this projec
 
 | Local Communication Endpoint
 | MQTT
-| Extends the CE Class. It can be used to implement communication participants, e.g. Device Twins or Services.
+| Extends the CE Class. It can be used to implement communication participants, e.g. Devices or Services.
 
 | Remote Communication Endpoint
 | MQTT
@@ -42,34 +38,20 @@ This file aims to provide a broad overview of commonly used terms in this projec
 
 | Service
 | --
-| Twin that provides a service to the outside world
+| Provides a service to the outside world
 
 | Bitfile
 | --
 | Binary File used to configure the FPGA of the enV5
 |===
 
-== Digital Twin Concept
-
-.Inheritance
-image::https://mermaid.ink/img/pako:eNqNkjFPwzAQhf9K5LkdYYiiLi0DEl0IKhLycrKvYBHfRbZThEr-O06cNKg0ap0hvve-d7GjOwrFGkUuVAXebwy8O7CSsrjWbG1DRkEwTA-kazYUsuJnucye0XLAi8DV7BMrqGaiKTxPpA4bPBiFL19m4F-d8eGRAro9KExMr03IFEk20u5ucsfqX3QufLj_6187b4mua-ATPVbJW5e7Qbjk9kc5-bd-b8tkArvb4GjV7E3A8UbnT9ekH46z_3xMVreK4qSuVkluJYmFsOgsGB3Hq6elCB9oUYo8bjW4TykktZGDJnD5TUrkwTW4EE2tIeAwjaNYA70xx3IPlY816u6W22F8u1f7CwL2-LQ?type=png[link=https://mermaid.live/edit#pako:eNqNkjFPwzAQhf9K5LkdYYiiLi0DEl0IKhLycrKvYBHfRbZThEr-O06cNKg0ap0hvve-d7GjOwrFGkUuVAXebwy8O7CSsrjWbG1DRkEwTA-kazYUsuJnucye0XLAi8DV7BMrqGaiKTxPpA4bPBiFL19m4F-d8eGRAro9KExMr03IFEk20u5ucsfqX3QufLj_6187b4mua-ATPVbJW5e7Qbjk9kc5-bd-b8tkArvb4GjV7E3A8UbnT9ekH46z_3xMVreK4qSuVkluJYmFsOgsGB3Hq6elCB9oUYo8bjW4TykktZGDJnD5TUrkwTW4EE2tIeAwjaNYA70xx3IPlY816u6W22F8u1f7CwL2-LQ]
-
-.Communication Paths
-image::https://mermaid.ink/img/pako:eNptTzsPgkAM_iukM4wuxDjhpouIJuaWhqtykeuRcvgI4b975ysOdur3TDtC7TRBDifBrklWG8VJGOLdrKCLqWmeZYu9mN5vr4Zf4hdGbe3YeCd_lCcoSWKL-o2-uehZ3jwJY1v1FCogBUti0ehw0BgTCnxDlhTkYdUoZwWKp-DDwbvyzjXkXgZKYeg0eioMhj_sh-yQD84FeMS2p-kBhltQSg?type=png[link=https://mermaid.live/edit#pako:eNptTzsPgkAM_iukM4wuxDjhpouIJuaWhqtykeuRcvgI4b975ysOdur3TDtC7TRBDifBrklWG8VJGOLdrKCLqWmeZYu9mN5vr4Zf4hdGbe3YeCd_lCcoSWKL-o2-uehZ3jwJY1v1FCogBUti0ehw0BgTCnxDlhTkYdUoZwWKp-DDwbvyzjXkXgZKYeg0eioMhj_sh-yQD84FeMS2p-kBhltQSg]
-
 === Types of Communication Endpoints
-
-Device Twin::
-Implements a Twin for an actual device.
 
 Services::
 Services are the interface external users would use.
 Inside a service, any given functionality can be implemented e.g. a service called 'WristService' could implement necessary functionalities for a that specific use case, like storing g-values.
 
 Monitor::
-The monitor has a wildcard to the status of all device twins, meaning the monitor is subscribed to the status of every device.
+The monitor has a wildcard to the status of all participants, meaning the monitor is subscribed to the status of every device.
 Therefore, it is used to check which devices are available for communication.
 Furthermore, it can implement device specific functionalities e.g. flashing bit files.
-
-CompositeTwin::
-Composite Twins are made up of multiple twins and combine them into one CE e.g. multiple devices in a room could be part of a composite twin 'room', that would contain all devices inside that room.
