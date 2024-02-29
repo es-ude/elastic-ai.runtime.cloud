@@ -1,4 +1,4 @@
-package de.ude.es;
+package de.ude.es.enV5;
 
 import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+
+import de.ude.es.MonitoringServiceApplication;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

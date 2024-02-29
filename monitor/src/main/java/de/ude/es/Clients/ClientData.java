@@ -1,4 +1,4 @@
-package de.ude.es;
+package de.ude.es.Clients;
 
 import java.util.HashMap;
 import java.util.List;

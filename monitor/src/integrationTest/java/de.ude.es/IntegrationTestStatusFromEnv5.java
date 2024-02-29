@@ -2,6 +2,7 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;

@@ -1,4 +1,4 @@
-package de.ude.es;
+package de.ude.es.Clients;
 
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;

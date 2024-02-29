@@ -6,6 +6,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
+import de.ude.es.Clients.ClientList;
+import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import lombok.Getter;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
@@ -24,7 +26,7 @@ public class MonitoringServiceApplication {
     private static final String CLIENT_ID = "monitor";
     private static String BROKER_IP = null;
     private static Integer BROKER_PORT = null;
-    static MonitorCommunicationEndpoint monitorCommunicationEndpoint = null;
+    public static MonitorCommunicationEndpoint monitorCommunicationEndpoint = null;
     public static String IP_ADDRESS;
 
     public static void main(String[] args) {
@@ -74,7 +76,7 @@ public class MonitoringServiceApplication {
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("192.168.203.18");
+            .setDefault("127.0.0.1");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .type(Integer.class)

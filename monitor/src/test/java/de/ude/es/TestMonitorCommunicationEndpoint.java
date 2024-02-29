@@ -2,6 +2,7 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

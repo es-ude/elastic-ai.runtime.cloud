@@ -1,8 +1,11 @@
-package de.ude.es;
+package de.ude.es.enV5;
 
 import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
 import java.util.concurrent.TimeoutException;
+
+import de.ude.es.Clients.ClientData;
+import de.ude.es.MonitoringServiceApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
