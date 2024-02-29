@@ -17,7 +17,7 @@ repos:
             stages: [ commit, manual ]
         -   id: no-commit-to-branch
             stages: [ commit, manual ]
-            
+
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.4.0
     hooks:

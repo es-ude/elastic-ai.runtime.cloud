@@ -31,8 +31,9 @@ public class ControllableDataSource<T> {
         public Client(String clientIdentifier) {
             this.clientIdentifier = clientIdentifier;
 
-            remoteCommunicationEndpoint =
-                new RemoteCommunicationEndpoint(clientIdentifier);
+            remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(
+                clientIdentifier
+            );
             remoteCommunicationEndpoint.bindToCommunicationEndpoint(
                 localCommunicationEndpoint.getBrokerStub()
             );

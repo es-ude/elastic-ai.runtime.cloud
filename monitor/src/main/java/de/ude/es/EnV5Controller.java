@@ -29,8 +29,7 @@ public class EnV5Controller {
 
     @GetMapping("/{name}")
     public String enV5LandingPage(Model model, @PathVariable String name) {
-        ClientData client = MonitoringServiceApplication
-            .getClientList()
+        ClientData client = MonitoringServiceApplication.getClientList()
             .getClient(name);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

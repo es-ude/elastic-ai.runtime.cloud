@@ -113,7 +113,8 @@ public class TestDataRequestHandler {
             "data1"
         );
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        dataRequestHandler1.addWhenStartRequestingData(() -> received.set(true)
+        dataRequestHandler1.addWhenStartRequestingData(
+            () -> received.set(true)
         );
 
         checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");

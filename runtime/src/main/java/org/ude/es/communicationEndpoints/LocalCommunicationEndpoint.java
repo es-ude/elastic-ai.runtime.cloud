@@ -97,7 +97,9 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers
-            .newFor("elastic-ai.runtime")
+            .newFor(
+                    "elastic-ai.runtime"
+            )
             .build()
             .defaultHelp(true)
             .description("Start a client for the elastic-ai.runtime");

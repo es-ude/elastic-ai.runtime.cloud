@@ -1,0 +1,113 @@
+= Setup Guide
+:toc:
+:toclevels: 3
+:toc-placement!:
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+toc::[]
+
+This guide aims to provide a detailed description on how to setup your development environment and contribute to this code base.
+
+IMPORTANT: This Guide assumes you are using a UNIX-like System and have `git` already installed!
+
+[#_get_the_source_code]
+== Get the Source Code
+
+At first, you have to download the source code from GitHub.
+This can be archived by running
+
+[source,bash]
+----
+git clone https://github.com/es-ude/elastic-ai.runtime.cloud.git cloud #<1>
+cd cloud #<2>
+----
+
+in your terminal.
+
+<1> Download the Repository
+<2> Move inside the repository
+
+[#_system_requirements]
+== System Requirements
+
+To determine if all required tools are installed, it is recommended to run
+
+[source,bash]
+----
+./test_setup.sh
+----
+
+in your terminal.
+If you have missing dependencies, this script will show which are missing.
+
+[#_dependencies]
+=== Dependencies
+
+link:https://openjdk.org/projects/jdk/17[Java Development Kit (JDK) version 17]::
+-> Java Compiler and Runtime Environment +
+Can be installed via your local package manager like dnf, apt or brew.
+
+link:https://www.docker.com/[Docker]::
+-> Runtime for Container Execution +
+Can be installed based on the link:https://docs.docker.com/desktop[Docker Installation Guide]
+
+[#_pre_commit]
+=== Pre-Commit [optional]
+
+To ensure our guidelines, we recommend using https://commitlint.js.org/#/[Commitlint] in combination with https://pre-commit.com/[Pre-Commit].
+To assure you don't corrupt your system we recommend installing the dependencies inside a https://python.land/virtual-environments/virtualenv#How_to_create_a_Python_venv[virtual environment].
+
+.Installation
+1. Create and checkout virtual environment
+2. Install required packages from link:../requirements.txt[requirements.txt]
+3. Run `pre-commit install` to register the provided git hooks
+
+IMPORTANT: Pre-commit requires commitlint to be installed.
+To install commitlint run `npm install`.
+
+=== Docker
+
+The project depends on the https://www.docker.com/[Docker]-CLI to run the integration tests, because a local MQTT Broker is required.
+
+TIP: To ease your access to the docker-daemon, we recommend using a link:https://docs.docker.com/engine/security/rootless/[rootless docker instance].
+
+==== MQTT Broker
+
+We use the link:https://github.com/hivemq/hivemq-community-edition[HiveMQ-CE] Broker for our Examples.
+A link:https://hub.docker.com/r/hivemq/hivemq-ce[HiveMQ-CE Broker instance] can be started locally via Docker:
+
+[source,bash]
+----
+docker run \
+    --network=runtime-network \ #<1>
+    --publish 1883:1883 \ #<2>
+    --name hivemq-ce \
+    --env HIVEMQ_LOG_LEVEL=INFO \ #<3>
+    --detach \ #<4>
+    hivemq/hivemq-ce
+----
+
+<1> Required to communicate with another Elastic-AI container
+<2> Default Port for unsecured MQTT Communication
+<3> Decrease the Log Level to prevent unnecessary logging
+<4> Run the Container in the background
+
+[#_ide]
+== IDE
+
+We recommend using link:https://www.jetbrains.com/idea/[IntelliJ IDEA] as your IDE, because this is our standard IDE and all necessary configurations are distributed with this repository.
+
+Start IntelliJ IDEA and import the repository folder as a new project.
+When IntelliJ IDEA has opened the project, it will download all required dependencies from Gradle.
+
+== Further Reading
+
+- link:../README.adoc[README]
+- link:EIP_PROTOCOL.adoc[EIP Protocol]
+- link:CONTRIBUTING.adoc[Contribution Guidelines]

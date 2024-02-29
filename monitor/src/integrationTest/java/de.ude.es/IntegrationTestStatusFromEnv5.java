@@ -70,8 +70,9 @@ public class IntegrationTestStatusFromEnv5 {
     }
 
     private void createMonitor() {
-        monitorCommunicationEndpoint =
-            new MonitorCommunicationEndpoint("monitor");
+        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(
+            "monitor"
+        );
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
             createBrokerWithKeepalive("monitor")
         );

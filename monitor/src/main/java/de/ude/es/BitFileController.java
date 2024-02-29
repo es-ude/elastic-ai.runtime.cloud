@@ -55,14 +55,12 @@ public class BitFileController {
         );
         httpHeaders.set(
             HttpHeaders.CONTENT_DISPOSITION,
-            ContentDisposition
-                .attachment()
+            ContentDisposition.attachment()
                 .filename("bitFile.bit")
                 .build()
                 .toString()
         );
-        return ResponseEntity
-            .ok()
+        return ResponseEntity.ok()
             .headers(httpHeaders)
             .body(Arrays.copyOfRange(bitFile, start, end));
     }
@@ -90,9 +88,7 @@ public class BitFileController {
         );
         statusIsUpdated = false;
         latch = new CountDownLatch(1);
-        clientStub.subscribeForDone(
-            "FLASH",
-            posting -> {
+        clientStub.subscribeForDone("FLASH", posting -> {
                 System.out.println("FLASH DONE");
                 clientStub.unsubscribeFromDone("FLASH");
                 receivedByClient = posting.data();
@@ -108,9 +104,9 @@ public class BitFileController {
         @RequestParam("clientID") String clientID,
         @RequestParam("startSectorID") int startSectorID
     ) throws IOException, InterruptedException {
-        String fileName = Objects
-            .requireNonNull(file.getOriginalFilename())
-            .split("\\.")[0];
+        String fileName = Objects.requireNonNull(
+            file.getOriginalFilename()
+        ).split("\\.")[0];
         System.out.println(fileName);
         BitFileController.bitFiles.put(fileName, file.getBytes());
 
@@ -126,9 +122,9 @@ public class BitFileController {
                 startSectorID
             );
         } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build();
+            return ResponseEntity.status(
+                HttpStatus.INTERNAL_SERVER_ERROR
+            ).build();
         }
 
         latch.await();

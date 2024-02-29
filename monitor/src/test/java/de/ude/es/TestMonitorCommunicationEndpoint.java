@@ -92,8 +92,9 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createMonitorClient() {
-        monitorCommunicationEndpoint =
-            new MonitorCommunicationEndpoint(MONITOR_ID);
+        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(
+            MONITOR_ID
+        );
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(broker);
     }
 

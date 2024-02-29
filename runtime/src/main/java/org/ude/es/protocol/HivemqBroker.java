@@ -25,8 +25,7 @@ public class HivemqBroker implements BrokerStub {
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
 
-        Mqtt5BlockingClient blockingClient = MqttClient
-            .builder()
+        Mqtt5BlockingClient blockingClient = MqttClient.builder()
             .useMqttVersion5()
             .identifier(domainIdentifier)
             .serverHost(this.brokerIp)
