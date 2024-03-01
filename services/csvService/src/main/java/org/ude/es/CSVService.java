@@ -81,18 +81,21 @@ public class CSVService extends LocalCommunicationEndpoint {
         );
 
         dataRequester.setDataReceiveFunction(data -> {
-            String fileName =
-                PATH + "/" + new Timestamp(System.currentTimeMillis());
+            String timeStamp = new Timestamp(System.currentTimeMillis())
+                .toString()
+                .split("\\.")[0].replace(":", "-")
+                .replace(" ", "_");
+            String folderName = PATH + "/" + timeStamp;
             try {
-                System.out.println("Saving throw to: " + fileName);
+                System.out.println("Saving throw to: " + folderName);
 
-                File csvDir = new File(fileName);
+                File csvDir = new File(folderName);
                 csvDir.mkdir();
 
-                savePicture(fileName);
+                savePicture(folderName);
 
                 FileWriter csvWriter = new FileWriter(
-                    fileName + "/measurement.csv",
+                    folderName + "/measurement.csv",
                     false
                 );
 
