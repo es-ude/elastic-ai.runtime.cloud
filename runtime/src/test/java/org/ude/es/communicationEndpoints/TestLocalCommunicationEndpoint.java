@@ -10,33 +10,33 @@ import org.ude.es.protocol.Status;
 
 public class TestLocalCommunicationEndpoint {
 
-    private static final String twinID = "test";
-    private JavaTwinChecker checker;
+    private static final String localID = "test";
+    private localChecker checker;
 
     @BeforeEach
     public void setUp() {
-        checker = new JavaTwinChecker();
+        checker = new localChecker();
         checker.givenBroker();
-        checker.givenDevice();
+        checker.givenLocalEndpoint();
     }
 
     @Test
     void weCanPublishData() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/DATA/temperature");
+        checker.givenSubscriptionAtBrokerFor(localID + "/DATA/temperature");
         checker.whenPublishingData("temperature", "13.5");
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanPublishStatus() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/STATUS");
+        checker.givenSubscriptionAtBrokerFor(localID + "/STATUS");
         checker.whenPublishingStatus();
         checker.thenPostingIsDelivered();
     }
 
     @Test
     void weCanPublishDone() {
-        checker.givenSubscriptionAtBrokerFor(twinID + "/DONE/cmd");
+        checker.givenSubscriptionAtBrokerFor(localID + "/DONE/cmd");
         checker.whenPublishingDone("cmd", "test");
         checker.thenPostingIsDelivered();
     }
@@ -44,7 +44,10 @@ public class TestLocalCommunicationEndpoint {
     @Test
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data", twinID);
+        checker.whenPostingIsPublishedAtBroker(
+            localID + "/START/data",
+            localID
+        );
         checker.thenPostingIsDelivered();
     }
 
@@ -52,14 +55,17 @@ public class TestLocalCommunicationEndpoint {
     void weCanUnsubscribeFromDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenUnsubscribingFromDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/START/data", twinID);
+        checker.whenPostingIsPublishedAtBroker(
+            localID + "/START/data",
+            localID
+        );
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanSubscribeForDataStopRequest() {
         checker.whenSubscribingForDataStop("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STOP/data", twinID);
+        checker.whenPostingIsPublishedAtBroker(localID + "/STOP/data", localID);
         checker.thenPostingIsDelivered();
     }
 
@@ -67,14 +73,14 @@ public class TestLocalCommunicationEndpoint {
     void weCanUnsubscribeFromDataStopRequest() {
         checker.whenSubscribingForDataStop("data");
         checker.whenUnsubscribingFromDataStop("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/STOP/data", twinID);
+        checker.whenPostingIsPublishedAtBroker(localID + "/STOP/data", localID);
         checker.thenPostingIsNotDelivered();
     }
 
     @Test
     void weCanSubscribeForCommand() {
         checker.whenSubscribingForCommand("cmd");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/DO/cmd", twinID);
+        checker.whenPostingIsPublishedAtBroker(localID + "/DO/cmd", localID);
         checker.thenPostingIsDelivered();
     }
 
@@ -82,7 +88,7 @@ public class TestLocalCommunicationEndpoint {
     void weCanUnsubscribeFromCommand() {
         checker.whenSubscribingForCommand("data");
         checker.whenUnsubscribingFromCommand("data");
-        checker.whenPostingIsPublishedAtBroker(twinID + "/SET/data", twinID);
+        checker.whenPostingIsPublishedAtBroker(localID + "/SET/data", localID);
         checker.thenPostingIsNotDelivered();
     }
 
@@ -91,73 +97,74 @@ public class TestLocalCommunicationEndpoint {
         RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
             "stub"
         );
-        checker.twin.bindStub(stub);
+        checker.localEndpoint.bindStub(stub);
         Assertions.assertNotNull(stub.getBrokerStub());
     }
 
-    private static class JavaTwinChecker extends Checker {
+    private static class localChecker extends Checker {
 
-        public LocalCommunicationEndpoint twin;
+        public LocalCommunicationEndpoint localEndpoint;
 
-        public void givenDevice() {
-            twin = new LocalCommunicationEndpoint(twinID);
-            twin.bindToCommunicationEndpoint(broker);
+        public void givenLocalEndpoint() {
+            localEndpoint = new LocalCommunicationEndpoint(localID);
+            localEndpoint.bindToCommunicationEndpoint(broker);
         }
 
         public void whenPublishingData(String dataId, String value) {
             String topic =
-                twin.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.DATA.topic(dataId);
             isExpecting(new Posting(topic, value));
-            twin.publishData(dataId, value);
+            localEndpoint.publishData(dataId, value);
         }
 
         public void whenPublishingDone(String dataId, String value) {
             String topic =
-                twin.getDomainAndIdentifier() + PostingType.DONE.topic(dataId);
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.DONE.topic(dataId);
             isExpecting(new Posting(topic, value));
-            twin.publishDone(dataId, value);
+            localEndpoint.publishDone(dataId, value);
         }
 
         public void whenPublishingStatus() {
             String topic =
-                twin.getDomainAndIdentifier() + PostingType.STATUS.topic("");
+                localEndpoint.getDomainAndIdentifier() +
+                PostingType.STATUS.topic("");
             isExpecting(
                 new Posting(
                     topic,
-                    "ID:" + twin.identifier + ";TYPE:TWIN;STATE:ONLINE;"
+                    "ID:" + localEndpoint.identifier + ";STATE:ONLINE;"
                 )
             );
-            twin.publishStatus(
-                new Status(twin.getIdentifier())
-                    .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-                    .append(
-                        Status.Parameter.STATE.value(Status.State.ONLINE.get())
-                    )
+            localEndpoint.publishStatus(
+                new Status(localEndpoint.getIdentifier()).append(
+                    Status.Parameter.STATE.value(Status.State.ONLINE.get())
+                )
             );
         }
 
         public void whenSubscribingForDataStart(String dataId) {
-            twin.subscribeForDataStartRequest(dataId, subscriber);
+            localEndpoint.subscribeForDataStartRequest(dataId, subscriber);
         }
 
         public void whenUnsubscribingFromDataStart(String dataId) {
-            twin.unsubscribeFromDataStartRequest(dataId);
+            localEndpoint.unsubscribeFromDataStartRequest(dataId);
         }
 
         public void whenSubscribingForDataStop(String dataId) {
-            twin.subscribeForDataStopRequest(dataId, subscriber);
+            localEndpoint.subscribeForDataStopRequest(dataId, subscriber);
         }
 
         public void whenUnsubscribingFromDataStop(String dataId) {
-            twin.unsubscribeFromDataStopRequest(dataId);
+            localEndpoint.unsubscribeFromDataStopRequest(dataId);
         }
 
         public void whenSubscribingForCommand(String dataId) {
-            twin.subscribeForCommand(dataId, subscriber);
+            localEndpoint.subscribeForCommand(dataId, subscriber);
         }
 
         public void whenUnsubscribingFromCommand(String dataId) {
-            twin.unsubscribeFromCommand(dataId);
+            localEndpoint.unsubscribeFromCommand(dataId);
         }
     }
 }

@@ -13,12 +13,12 @@ import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class TwinForDeviceWithTemperatureSensor
+    private static class dviceWithTemperatureSensor
         extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
-        public TwinForDeviceWithTemperatureSensor(String id) {
+        public dviceWithTemperatureSensor(String id) {
             super(id);
         }
 
@@ -35,7 +35,7 @@ class TestTemperatureSink {
             assertEquals(
                 CONSUMER_ID,
                 deliveredPosting.data(),
-                "should have received twin identifier to check for its aliveness"
+                "should have received device identifier to check for its aliveness"
             );
         }
 
@@ -62,7 +62,7 @@ class TestTemperatureSink {
             deliveredPosting = posting;
         }
 
-        public void deregistrationReceived() {
+        public void deRegistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
                 DOMAIN +
@@ -75,7 +75,7 @@ class TestTemperatureSink {
             assertEquals(
                 CONSUMER_ID,
                 deliveredPosting.data(),
-                "should have received twin identifier to deregister it as a client"
+                "should have received device identifier to deregister it as a client"
             );
         }
     }
@@ -85,34 +85,34 @@ class TestTemperatureSink {
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String DATA_ID = "temp";
     private BrokerMock broker;
-    private TwinForDeviceWithTemperatureSensor remote;
+    private dviceWithTemperatureSensor remote;
 
     private RemoteCommunicationEndpoint device;
 
     @BeforeEach
     void setUp() {
         broker = new BrokerMock(DOMAIN);
-        device = createDeviceTwin(SENSOR_ID);
-        remote = createRemoteTwin();
+        device = createDeviceDevice(SENSOR_ID);
+        remote = createRemoteDevice();
     }
 
     @Test
     void temperatureSinkGetsUpdate() {
-        var temperatureTwin = createTemperatureSink(device, CONSUMER_ID);
+        var temperatureDevice = createTemperatureSink(device, CONSUMER_ID);
 
         remote.sendUpdate(13.4);
-        assertEquals(13.4, temperatureTwin.getCurrentTemperature());
+        assertEquals(13.4, temperatureDevice.getCurrentTemperature());
     }
 
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
-        var tempTwin1 = createTemperatureSink(device, CONSUMER_ID + "1");
-        var device2 = createDeviceTwin("twin4321");
-        var tempTwin2 = createTemperatureSink(device2, CONSUMER_ID + "2");
+        var tempDevice1 = createTemperatureSink(device, CONSUMER_ID + "1");
+        var device2 = createDeviceDevice("Device4321");
+        var tempDevice2 = createTemperatureSink(device2, CONSUMER_ID + "2");
 
         remote.sendUpdate(13.7);
-        assertEquals(13.7, tempTwin1.getCurrentTemperature());
-        assertEquals(0.0, tempTwin2.getCurrentTemperature());
+        assertEquals(13.7, tempDevice1.getCurrentTemperature());
+        assertEquals(0.0, tempDevice2.getCurrentTemperature());
     }
 
     @Test
@@ -138,10 +138,10 @@ class TestTemperatureSink {
         var temperature = createTemperatureSink(device, CONSUMER_ID);
         temperature.disconnectDataSource();
 
-        remote.deregistrationReceived();
+        remote.deRegistrationReceived();
     }
 
-    private RemoteCommunicationEndpoint createDeviceTwin(String id) {
+    private RemoteCommunicationEndpoint createDeviceDevice(String id) {
         RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
             id
         );
@@ -158,10 +158,10 @@ class TestTemperatureSink {
         return temperature;
     }
 
-    private TwinForDeviceWithTemperatureSensor createRemoteTwin() {
-        TwinForDeviceWithTemperatureSensor remoteTwin =
-            new TwinForDeviceWithTemperatureSensor(SENSOR_ID);
-        remoteTwin.bindToCommunicationEndpoint(broker);
-        return remoteTwin;
+    private dviceWithTemperatureSensor createRemoteDevice() {
+        dviceWithTemperatureSensor remoteDevice =
+            new dviceWithTemperatureSensor(SENSOR_ID);
+        remoteDevice.bindToCommunicationEndpoint(broker);
+        return remoteDevice;
     }
 }

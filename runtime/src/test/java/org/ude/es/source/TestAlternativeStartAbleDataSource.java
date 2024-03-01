@@ -20,7 +20,7 @@ class TestAlternativeStartAbleDataSource {
 
         public void givenDataSource() {
             dataSource = new AlternativeStartAbleDataSource<>(DATA_ID);
-            dataSource.bind(javaTwin);
+            dataSource.bind(localEndpoint);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
@@ -29,7 +29,7 @@ class TestAlternativeStartAbleDataSource {
         }
 
         public void givenJavaTwin() {
-            givenJavaTwin(SOURCE_ID);
+            givenLocalEndpoint(SOURCE_ID);
         }
 
         public void thenDataSourceHasClients() {
@@ -91,7 +91,7 @@ class TestAlternativeStartAbleDataSource {
     @Test
     void whenReceivingStartRequestThenTemperatureSourceSubscribesForLost() {
         checker.givenBroker();
-        checker.givenJavaTwin(SOURCE_ID);
+        checker.givenLocalEndpoint(SOURCE_ID);
         checker.givenDataSource();
 
         checker.whenPostingIsPublishedAtBroker(
@@ -106,7 +106,7 @@ class TestAlternativeStartAbleDataSource {
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesFromLost() {
         checker.givenBroker();
-        checker.givenJavaTwin(SOURCE_ID);
+        checker.givenLocalEndpoint(SOURCE_ID);
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy(CONSUMER_ID);
 
@@ -123,7 +123,7 @@ class TestAlternativeStartAbleDataSource {
     @Test
     void whenReceivingStopRequestThenTemperatureSourceUnsubscribesForCorrectLost() {
         checker.givenBroker();
-        checker.givenJavaTwin(SOURCE_ID);
+        checker.givenLocalEndpoint(SOURCE_ID);
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy(CONSUMER_ID + "1");
         checker.givenDataStartPostPublishedBy(CONSUMER_ID + "2");
@@ -140,7 +140,7 @@ class TestAlternativeStartAbleDataSource {
     @Test
     void whenReceivingStartAfterStopRequestThenTemperatureSourceStartsSendingAgain() {
         checker.givenBroker();
-        checker.givenJavaTwin(SOURCE_ID);
+        checker.givenLocalEndpoint(SOURCE_ID);
         checker.givenDataSource();
         checker.givenDataStartPostPublishedBy(CONSUMER_ID);
 

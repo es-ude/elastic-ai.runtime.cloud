@@ -13,14 +13,14 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         super(identifier);
     }
 
-    protected final Status minimalStatus = new Status(this.identifier)
-        .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-        .append(Status.Parameter.STATE.value(Status.State.ONLINE.get()));
+    protected final Status minimalStatus = new Status(this.identifier).append(
+        Status.Parameter.STATE.value(Status.State.ONLINE.get())
+    );
 
     protected void executeOnBindPrivate() {
-        Status lwtMessage = new Status(this.identifier)
-            .append(Status.Parameter.TYPE.value(Status.Type.TWIN.get()))
-            .append(Status.Parameter.STATE.value(Status.State.OFFLINE.get()));
+        Status lwtMessage = new Status(this.identifier).append(
+            Status.Parameter.STATE.value(Status.State.OFFLINE.get())
+        );
         this.brokerStub.connect(this.identifier, lwtMessage.get());
         publishStatus(minimalStatus);
         super.executeOnBindPrivate();
@@ -98,19 +98,17 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers.newFor(
-            "elastic-ai.runtime.demo"
-        )
+        ArgumentParser parser = ArgumentParsers.newFor("elastic-ai.runtime")
             .build()
             .defaultHelp(true)
-            .description("Start a demo twin for the elastic-ai.runtime");
+            .description("Start a client for the elastic-ai.runtime");
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
             "MQTT Broker Specification"
         );
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("localhost");
+            .setDefault("192.168.203.18");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .help("Broker Port")

@@ -13,7 +13,7 @@ endif::[]
 toc::[]
 
 For running the DEMO, four parts are needed.
-An MQTT Broker, the Monitor, the EnV5 Twin, and an EnV5 Device.
+An MQTT Broker, the Monitor, and an EnV5 Device.
 
 The three software parts can be started together by using the provided link:../compose.yaml[docker compose file].
 For this, the Twin and Monitor docker images need to be built beforehand (See link:../README.adoc#_build_docker_container[README]).
@@ -37,20 +37,11 @@ ifndef::env-github[]
 endif::[]
 ....
 sequenceDiagram
-    participant communicationEndpoint as enV5Twin
-    participant device as enV5
     participant monitorCommunicationEndpoint as Monitor
     participant broker as Broker
 
-    communicationEndpoint ->> broker: STATUS
     device ->> broker: STATUS
-    monitorCommunicationEndpoint ->> broker: STATUS
-    broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
-
-    broker ->> communicationEndpoint: Env5 STATUS
-    communicationEndpoint ->> broker: UPDATED STATUS
-
-    broker ->> monitorCommunicationEndpoint: EnV5Twin STATUS
+    broker ->> monitorCommunicationEndpoint: enV5 STATUS
 ....
 
 === DATA
@@ -66,17 +57,13 @@ endif::[]
 ....
 sequenceDiagram
     participant monitorCommunicationEndpoint as Monitor
-    participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: START
-    communicationEndpoint ->> device: START
+    monitorCommunicationEndpoint ->> device: START
 
-    device ->> communicationEndpoint: DATA
-    communicationEndpoint ->> monitorCommunicationEndpoint: DATA
+    device ->> monitorCommunicationEndpoint: DATA
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: STOP
-    communicationEndpoint ->> device: STOP
+    monitorCommunicationEndpoint ->> device: STOP
 ....
 
 === FLASH
@@ -92,15 +79,11 @@ endif::[]
 ....
 sequenceDiagram
     participant monitorCommunicationEndpoint as Monitor
-    participant communicationEndpoint as enV5Twin
     participant device as enV5
 
-    monitorCommunicationEndpoint ->> communicationEndpoint: FLASH
-    communicationEndpoint ->> device: FLASH
+    monitorCommunicationEndpoint ->> device: FLASH
 
-    device ->> monitorCommunicationEndpoint: REQUEST
-    monitorCommunicationEndpoint ->> device: BITFILE
+    device ->> monitorCommunicationEndpoint: REQUEST BITFILE
 
-    device ->> communicationEndpoint: DONE
-    communicationEndpoint ->> monitorCommunicationEndpoint: DONE
+    device ->> monitorCommunicationEndpoint: DONE
 ....

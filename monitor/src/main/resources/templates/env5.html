@@ -7,14 +7,14 @@
 <header th:replace="~{fragments/layout :: header}"></header>
 
 <section class="d-flex flex-column align-items-center pt-3">
-    <h4>Twin Data</h4>
+    <h4>Client Data</h4>
     <div class="container grid gap-2">
         <div class="row">
             <div class="col text-end fw-bold">
                 Name
             </div>
             <div class="col" th:text="${communicationEndpoint.getName()}">
-                Twin Name
+                Client Name
             </div>
         </div>
         <div class="row">
@@ -22,7 +22,7 @@
                 ID
             </div>
             <div class="col" th:text="${communicationEndpoint.getId()}">
-                Twin ID
+                Client ID
             </div>
         </div>
         <div class="row">
@@ -30,7 +30,7 @@
                 Status
             </div>
             <div class="col" th:text="${communicationEndpoint.isActive() ? 'ONLINE' : 'OFFLINE'}">
-                Twin Status
+                Client Status
             </div>
         </div>
     </div>

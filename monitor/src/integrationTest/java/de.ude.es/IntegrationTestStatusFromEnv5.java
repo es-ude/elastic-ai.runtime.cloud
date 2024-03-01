@@ -2,6 +2,7 @@ package de.ude.es;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -9,7 +10,7 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-import org.ude.es.communicationEndpoints.twinImplementations.IntegrationTestTwinForEnV5;
+import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
 
@@ -18,7 +19,7 @@ public class IntegrationTestStatusFromEnv5 {
 
     private int BROKER_PORT = 1883;
     private MonitorCommunicationEndpoint monitorCommunicationEndpoint;
-    private IntegrationTestTwinForEnV5 enV5;
+    private LocalCommunicationEndpoint enV5Mock;
 
     @Container
     public HiveMQContainer BROKER_CONTAINER = new HiveMQContainer(
@@ -39,34 +40,34 @@ public class IntegrationTestStatusFromEnv5 {
     void testOnlineCanBeReceived() throws InterruptedException {
         Thread.sleep(1000);
         int activeTwins = monitorCommunicationEndpoint
-            .getTwinList()
-            .getActiveTwins()
+            .getClientList()
+            .getActiveClients()
             .size();
         assertEquals(1, activeTwins);
     }
 
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
-        enV5
+        enV5Mock
             .getBrokerStub()
             .publish(
                 new Posting(
-                    enV5.getIdentifier() + "/STATUS",
-                    "ID:" + enV5.getIdentifier() + ";TYPE:TWIN;STATUS:OFFLINE;"
+                    enV5Mock.getIdentifier() + "/STATUS",
+                    "ID:" + enV5Mock.getIdentifier() + ";STATUS:OFFLINE;"
                 ),
                 true
             );
         Thread.sleep(1000);
         int activeTwins = monitorCommunicationEndpoint
-            .getTwinList()
-            .getActiveTwins()
+            .getClientList()
+            .getActiveClients()
             .size();
         assertEquals(0, activeTwins);
     }
 
     private void createEnv5Twin() {
-        enV5 = new IntegrationTestTwinForEnV5("env5");
-        enV5.bindToCommunicationEndpoint(createBrokerWithKeepalive("env5"));
+        enV5Mock = new LocalCommunicationEndpoint("env5");
+        enV5Mock.bindToCommunicationEndpoint(createBrokerWithKeepalive("env5"));
     }
 
     private void createMonitor() {

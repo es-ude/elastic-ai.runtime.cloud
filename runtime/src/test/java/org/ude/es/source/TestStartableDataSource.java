@@ -19,7 +19,7 @@ class TestStartableDataSource {
         public ControllableDataSource<Double> dataSource;
 
         public void givenDataSource() {
-            dataSource = new ControllableDataSource<>(javaTwin, DATA_ID);
+            dataSource = new ControllableDataSource<>(localEndpoint, DATA_ID);
         }
 
         public void givenDataStartPostPublishedBy(String sink) {
@@ -42,7 +42,7 @@ class TestStartableDataSource {
     public void SetUp() {
         checker = new DataSourceChecker();
         checker.givenBroker();
-        checker.givenJavaTwin(SOURCE_ID);
+        checker.givenLocalEndpoint(SOURCE_ID);
         checker.givenDataSource();
     }
 

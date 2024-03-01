@@ -17,7 +17,7 @@ import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
 
 @Testcontainers
-public class IntegrationTest4ExternalBroker {
+public class IntegrationTestForExternalBroker {
 
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
     private static final String BROKER_IP = "localhost";

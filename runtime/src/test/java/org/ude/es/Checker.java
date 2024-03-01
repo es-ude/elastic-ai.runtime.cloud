@@ -12,7 +12,7 @@ public class Checker {
 
     public final String DOMAIN = "eip://uni-due.de/es";
     public TestBroker broker;
-    public LocalCommunicationEndpoint javaTwin;
+    public LocalCommunicationEndpoint localEndpoint;
     public SubscriberMock subscriber = new SubscriberMock();
     private Posting expected;
     public List<String> subscriptions = new ArrayList<>();
@@ -102,33 +102,36 @@ public class Checker {
         );
     }
 
-    public void givenJavaTwin(String id) {
-        javaTwin = new LocalCommunicationEndpoint(id);
-        javaTwin.bindToCommunicationEndpoint(broker);
+    public void givenLocalEndpoint(String id) {
+        localEndpoint = new LocalCommunicationEndpoint(id);
+        localEndpoint.bindToCommunicationEndpoint(broker);
     }
 
     //endregion testing with broker
 
-    //region testing with JavaTwin
+    //region testing with LocalEndpoint
 
-    public void givenSubscriptionAtJavaTwinFor(String topic) {
-        javaTwin.subscribe(topic, subscriber);
+    public void givenSubscriptionAtLocalEndpoint(String topic) {
+        localEndpoint.subscribe(topic, subscriber);
     }
 
-    public void givenUnsubscriptionAtJavaTwinFor(String topic) {
-        javaTwin.unsubscribe(topic);
+    public void givenUnsubscriptionAtLocalEndpointFor(String topic) {
+        localEndpoint.unsubscribe(topic);
     }
 
-    public void whenPostingIsPublishedAtJavaTwin(String topic) {
-        this.whenPostingIsPublishedAtJavaTwin(topic, "");
+    public void whenPostingIsPublishedAtLocalEndpoint(String topic) {
+        this.whenPostingIsPublishedAtLocalEndpoint(topic, "");
     }
 
-    public void whenPostingIsPublishedAtJavaTwin(String topic, String data) {
-        String fullTopic = javaTwin.getDomainAndIdentifier() + topic;
+    public void whenPostingIsPublishedAtLocalEndpoint(
+        String topic,
+        String data
+    ) {
+        String fullTopic = localEndpoint.getDomainAndIdentifier() + topic;
         expected = new Posting(fullTopic, data);
 
         Posting posting = new Posting(topic, data);
-        javaTwin.publish(posting, false);
+        localEndpoint.publish(posting, false);
     }
 
     public void isExpecting(Posting posting) {
@@ -183,5 +186,5 @@ public class Checker {
             super.publish(posting, retain);
         }
     }
-    //endregion testing with JavaTwin
+    //endregion testing with LocalEndpoint
 }

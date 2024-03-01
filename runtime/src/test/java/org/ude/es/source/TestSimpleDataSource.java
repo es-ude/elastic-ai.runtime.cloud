@@ -17,9 +17,9 @@ class TestSimpleDataSource {
     @Test
     void whenDataIsSetThenPostingIsSent() {
         checker.givenBroker();
-        checker.givenJavaTwin("twin1234");
+        checker.givenLocalEndpoint("twin1234");
         checker.givenDataSource();
-        checker.givenSubscriptionAtJavaTwinFor("/#");
+        checker.givenSubscriptionAtLocalEndpoint("/#");
         checker.whenDataIsSetTo(3);
         checker.thenPostingIsDelivered();
     }
@@ -30,13 +30,13 @@ class TestSimpleDataSource {
 
         public void givenDataSource() {
             dataSource = new DataSource<>("data");
-            dataSource.bind(javaTwin);
+            dataSource.bind(localEndpoint);
         }
 
         public void whenDataIsSetTo(int value) {
             isExpecting(
                 new Posting(
-                    javaTwin.getDomainAndIdentifier() + "/DATA/data",
+                    localEndpoint.getDomainAndIdentifier() + "/DATA/data",
                     String.valueOf(value)
                 )
             );

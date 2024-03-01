@@ -15,7 +15,7 @@ import org.ude.es.source.TemperatureSource;
  * how to use the provided API to implement twins that measure temperature and
  * twin that access temperature as data.
  */
-public class IntegrationTest4TwinInteraction {
+public class IntegrationTestForTwinInteraction {
 
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String PRODUCER_ID = "producer";

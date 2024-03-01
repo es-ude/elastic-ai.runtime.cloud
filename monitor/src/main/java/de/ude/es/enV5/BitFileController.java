@@ -1,7 +1,8 @@
-package de.ude.es;
+package de.ude.es.enV5;
 
 import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
 
+import de.ude.es.MonitoringServiceApplication;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class BitFileController {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
 
-    public static String receivedByDevice = "NULL";
+    public static String receivedByClient = "NULL";
     public static volatile boolean statusIsUpdated;
     public static ResponseEntity<?> response;
     static CountDownLatch latch;
@@ -66,17 +67,17 @@ public class BitFileController {
     }
 
     public static void uploadBitFile(
-        String twinID,
+        String clientID,
         int size,
         String name,
         int startSectorID
     ) {
-        RemoteCommunicationEndpoint deviceStub =
-            new RemoteCommunicationEndpoint(twinID);
-        deviceStub.bindToCommunicationEndpoint(
+        RemoteCommunicationEndpoint clientStub =
+            new RemoteCommunicationEndpoint(clientID);
+        clientStub.bindToCommunicationEndpoint(
             monitorCommunicationEndpoint.getBrokerStub()
         );
-        deviceStub.publishCommand(
+        clientStub.publishCommand(
             "FLASH",
             String.format(
                 "URL:http://%s:8081/bitfile/%s/;SIZE:%d;POSITION:%d",
@@ -88,10 +89,10 @@ public class BitFileController {
         );
         statusIsUpdated = false;
         latch = new CountDownLatch(1);
-        deviceStub.subscribeForDone("FLASH", posting -> {
+        clientStub.subscribeForDone("FLASH", posting -> {
             System.out.println("FLASH DONE");
-            deviceStub.unsubscribeFromDone("FLASH");
-            receivedByDevice = posting.data();
+            clientStub.unsubscribeFromDone("FLASH");
+            receivedByClient = posting.data();
             statusIsUpdated = true;
             latch.countDown();
         });
@@ -100,7 +101,7 @@ public class BitFileController {
     @PostMapping("/upload")
     public ResponseEntity<?> handleFileUpload(
         @RequestParam("file") MultipartFile file,
-        @RequestParam("twinID") String twinID,
+        @RequestParam("clientID") String clientID,
         @RequestParam("startSectorID") int startSectorID
     ) throws IOException, InterruptedException {
         String fileName = Objects.requireNonNull(
@@ -115,7 +116,7 @@ public class BitFileController {
 
         try {
             uploadBitFile(
-                twinID,
+                clientID,
                 file.getBytes().length,
                 fileName,
                 startSectorID
@@ -127,7 +128,7 @@ public class BitFileController {
         }
 
         latch.await();
-        if (receivedByDevice.equals("SUCCESS")) {
+        if (receivedByClient.equals("SUCCESS")) {
             System.out.println("success");
             response = ResponseEntity.status(200).build();
         } else {

@@ -18,14 +18,14 @@ public class TestDataRequester {
     void beforeEach() {
         checker = new Checker();
         checker.givenBroker();
-        checker.givenJavaTwin("test");
+        checker.givenLocalEndpoint("test");
 
         stub = new RemoteCommunicationEndpoint("stub");
-        stub.bindToCommunicationEndpoint(checker.javaTwin.getBrokerStub());
+        stub.bindToCommunicationEndpoint(checker.localEndpoint.getBrokerStub());
         dataRequester = new DataRequester(
             stub,
             "data",
-            checker.javaTwin.getIdentifier()
+            checker.localEndpoint.getIdentifier()
         );
     }
 

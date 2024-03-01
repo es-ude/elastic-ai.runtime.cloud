@@ -17,8 +17,11 @@ public class TestDataRequestHandler {
     void beforeEach() {
         checker = new Checker();
         checker.givenBroker();
-        checker.givenJavaTwin("test");
-        dataRequestHandler = new DataRequestHandler(checker.javaTwin, "data");
+        checker.givenLocalEndpoint("test");
+        dataRequestHandler = new DataRequestHandler(
+            checker.localEndpoint,
+            "data"
+        );
     }
 
     @AfterEach
@@ -109,7 +112,7 @@ public class TestDataRequestHandler {
     @Test
     void multipleValuesAreRequestedBySameRequester() {
         DataRequestHandler dataRequestHandler1 = new DataRequestHandler(
-            checker.javaTwin,
+            checker.localEndpoint,
             "data1"
         );
         AtomicReference<Boolean> received = new AtomicReference<>(false);

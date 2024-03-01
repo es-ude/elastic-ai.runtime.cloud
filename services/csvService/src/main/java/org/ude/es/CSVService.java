@@ -19,7 +19,7 @@ public class CSVService extends LocalCommunicationEndpoint {
 
     private static String CAMERA_IP = null;
     private static Integer CAMERA_PORT = null;
-    RemoteCommunicationEndpoint enV5Twin;
+    RemoteCommunicationEndpoint enV5;
 
     private final String PATH = "SensorValues";
 
@@ -38,7 +38,7 @@ public class CSVService extends LocalCommunicationEndpoint {
 
     public CSVService() {
         super("CSVService");
-        enV5Twin = new RemoteCommunicationEndpoint("enV5Twin");
+        enV5 = new RemoteCommunicationEndpoint("enV5");
     }
 
     private void savePicture(String filePath) {
@@ -69,13 +69,13 @@ public class CSVService extends LocalCommunicationEndpoint {
 
     @Override
     protected void executeOnBind() {
-        enV5Twin.bindToCommunicationEndpoint(brokerStub);
+        enV5.bindToCommunicationEndpoint(brokerStub);
 
         File sensorValueDir = new File(PATH);
         sensorValueDir.mkdir();
 
         DataRequester dataRequester = new DataRequester(
-            enV5Twin,
+            enV5,
             "g-value",
             getDomainAndIdentifier()
         );

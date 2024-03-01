@@ -6,7 +6,7 @@
 <body>
 <header th:replace="~{fragments/layout :: header}"></header>
 <section class="d-flex flex-column align-items-center pt-3">
-    <table id="twinTable" class="container table table-sm align-middle text-center">
+    <table id="clientTable" class="container table table-sm align-middle text-center">
         <thead>
         <tr class="table-success">
             <th style="width: 10%">#</th>
@@ -17,16 +17,16 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="communicationEndpoint,iState: ${twins.getTwins()}">
+        <tr th:each="communicationEndpoint,iState: ${clients.getClients()}">
             <th th:text="${iState.index + 1}">
                 Table Index
             </th>
             <td>
                 <div th:id="${communicationEndpoint.getId() + '-name'}" th:text="${communicationEndpoint.getName()}">
-                    Twin Name
+                    Client Name
                 </div>
             </td>
-            <td th:text="${communicationEndpoint.getId()}">TWIN ID</td>
+            <td th:text="${communicationEndpoint.getId()}">CLIENT ID</td>
             <td>
                 <a class="btn btn-primary" th:href="${'/sensor/' + communicationEndpoint.getId()}" title="Info">
                     <i class="fa-solid fa-circle-info"></i>
@@ -38,7 +38,7 @@
             </td>
         </tr>
         </tbody>
-    </table> <!--twinTable-->
+    </table> <!--clientTable-->
 </section>
 <section>
 </section>
