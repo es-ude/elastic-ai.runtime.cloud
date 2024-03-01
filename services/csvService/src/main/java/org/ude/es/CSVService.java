@@ -81,13 +81,11 @@ public class CSVService extends LocalCommunicationEndpoint {
         );
 
         dataRequester.setDataReceiveFunction(data -> {
-            String timeStamp =
-                    new Timestamp(System.currentTimeMillis()).toString()
-                            .split("\\.")[0]
-                            .replace(":", "-")
-                            .replace(" ", "_");
-            String folderName =
-                PATH + "/" + timeStamp;
+            String timeStamp = new Timestamp(System.currentTimeMillis())
+                .toString()
+                .split("\\.")[0].replace(":", "-")
+                .replace(" ", "_");
+            String folderName = PATH + "/" + timeStamp;
             try {
                 System.out.println("Saving throw to: " + folderName);
 
