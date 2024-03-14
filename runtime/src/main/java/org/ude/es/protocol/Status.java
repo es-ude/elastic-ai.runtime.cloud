@@ -3,7 +3,6 @@ package org.ude.es.protocol;
 public class Status {
 
     public enum State {
-
         ONLINE("ONLINE"),
         OFFLINE("OFFLINE");
 
@@ -21,9 +20,7 @@ public class Status {
     private String FPGA = null;
     private String VERSION = null;
 
-    public Status(){
-
-    };
+    public Status() {}
 
     public Status(Status status) {
         this.ID = status.ID;
@@ -90,13 +87,15 @@ public class Status {
             STATE = "NULL";
             System.out.println("WARNING: NO STATE SET IN STATUS!!!");
         }
-        String status = String.format("ID:%s;TYPE:%s;STATE:%s;", ID, TYPE, STATE);
-        if (DATA != null)
-            status += String.format("DATA:%s;", DATA);
-        if (FPGA != null)
-            status += String.format("FPGA:%s;", FPGA);
-        if (VERSION != null)
-            status += String.format("DATA:%s;", VERSION);
+        String status = String.format(
+            "ID:%s;TYPE:%s;STATE:%s;",
+            ID,
+            TYPE,
+            STATE
+        );
+        if (DATA != null) status += String.format("DATA:%s;", DATA);
+        if (FPGA != null) status += String.format("FPGA:%s;", FPGA);
+        if (VERSION != null) status += String.format("DATA:%s;", VERSION);
         return status;
     }
 }

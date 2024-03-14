@@ -85,7 +85,9 @@ public class TestMonitorCommunicationEndpoint {
                 .size()
         );
         dummyClient.publishStatus(
-            new Status().ID(dummyClient.getIdentifier()).STATE(Status.State.ONLINE)
+            new Status()
+                .ID(dummyClient.getIdentifier())
+                .STATE(Status.State.ONLINE)
         );
         assertEquals(
             1,

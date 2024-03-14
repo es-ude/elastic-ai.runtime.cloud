@@ -133,11 +133,15 @@ public class TestLocalCommunicationEndpoint {
             isExpecting(
                 new Posting(
                     topic,
-                    "ID:" + localEndpoint.identifier + ";TYPE:NULL;STATE:ONLINE;"
+                    "ID:" +
+                    localEndpoint.identifier +
+                    ";TYPE:NULL;STATE:ONLINE;"
                 )
             );
             localEndpoint.publishStatus(
-                    new Status().ID(localEndpoint.getIdentifier()).STATE(Status.State.ONLINE)
+                new Status()
+                    .ID(localEndpoint.getIdentifier())
+                    .STATE(Status.State.ONLINE)
             );
         }
 

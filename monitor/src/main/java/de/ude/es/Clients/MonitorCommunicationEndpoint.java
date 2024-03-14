@@ -53,11 +53,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
         public void deliver(Posting posting) {
             String twinID = posting
                 .data()
-                .substring(
-                    posting.data().indexOf("ID") +
-                            ("ID").length() +
-                    1
-                );
+                .substring(posting.data().indexOf("ID") + ("ID").length() + 1);
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
             boolean twinActive = posting
@@ -75,17 +71,11 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             }
 
             if (twinActive) {
-                int measurementsIndex = posting
-                    .data()
-                    .indexOf("DATA");
+                int measurementsIndex = posting.data().indexOf("DATA");
                 if (measurementsIndex >= 0) {
                     String measurements = posting
                         .data()
-                        .substring(
-                            measurementsIndex +
-                           "DATA".length() +
-                            1
-                        );
+                        .substring(measurementsIndex + "DATA".length() + 1);
                     measurements = measurements.substring(
                         0,
                         measurements.indexOf(";")

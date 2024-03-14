@@ -11,6 +11,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
     private final String clientType;
     protected Status status;
+
     public LocalCommunicationEndpoint(String identifier, String clientType) {
         super(identifier);
         this.clientType = clientType;
@@ -30,7 +31,10 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     public void publishStatus(Status status) {
-        this.publish(Posting.createStatus(status.ID(this.identifier).get()), true);
+        this.publish(
+                Posting.createStatus(status.ID(this.identifier).get()),
+                true
+            );
     }
 
     public void publishDone(String command, String value) {
