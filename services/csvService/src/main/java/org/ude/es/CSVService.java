@@ -37,7 +37,7 @@ public class CSVService extends LocalCommunicationEndpoint {
     }
 
     public CSVService() {
-        super("CSVService");
+        super("CSVService", "SERVICE");
         enV5 = new RemoteCommunicationEndpoint("enV5");
     }
 

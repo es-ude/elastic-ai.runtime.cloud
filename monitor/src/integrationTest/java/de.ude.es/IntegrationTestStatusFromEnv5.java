@@ -66,7 +66,7 @@ public class IntegrationTestStatusFromEnv5 {
     }
 
     private void createEnv5Twin() {
-        enV5Mock = new LocalCommunicationEndpoint("env5");
+        enV5Mock = new LocalCommunicationEndpoint("env5", "localCE");
         enV5Mock.bindToCommunicationEndpoint(createBrokerWithKeepalive("env5"));
     }
 

@@ -166,7 +166,7 @@ public class Checker {
         extends org.ude.es.communicationEndpoints.LocalCommunicationEndpoint {
 
         public LocalCommunicationEndpoint(String identifier) {
-            super(identifier);
+            super(identifier, "localCE");
         }
 
         @Override

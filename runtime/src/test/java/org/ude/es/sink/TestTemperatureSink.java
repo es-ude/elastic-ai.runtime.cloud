@@ -19,7 +19,7 @@ class TestTemperatureSink {
         private Posting deliveredPosting = null;
 
         public dviceWithTemperatureSensor(String id) {
-            super(id);
+            super(id, "localCE");
         }
 
         public void registrationReceived() {
@@ -92,7 +92,7 @@ class TestTemperatureSink {
     @BeforeEach
     void setUp() {
         broker = new BrokerMock(DOMAIN);
-        device = createDeviceDevice(SENSOR_ID);
+        device = createDevice(SENSOR_ID);
         remote = createRemoteDevice();
     }
 
@@ -107,7 +107,7 @@ class TestTemperatureSink {
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
         var tempDevice1 = createTemperatureSink(device, CONSUMER_ID + "1");
-        var device2 = createDeviceDevice("Device4321");
+        var device2 = createDevice("Device4321");
         var tempDevice2 = createTemperatureSink(device2, CONSUMER_ID + "2");
 
         remote.sendUpdate(13.7);
@@ -141,7 +141,7 @@ class TestTemperatureSink {
         remote.deRegistrationReceived();
     }
 
-    private RemoteCommunicationEndpoint createDeviceDevice(String id) {
+    private RemoteCommunicationEndpoint createDevice(String id) {
         RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
             id
         );
