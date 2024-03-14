@@ -14,8 +14,8 @@ public class IntegrationTestForEnV5Subscribes {
 
     public static void main(String[] args) throws InterruptedException {
         LocalCommunicationEndpoint endpoint = new LocalCommunicationEndpoint(
-            TEST_ID
-        );
+            TEST_ID,
+                "localCE");
         endpoint.bindToCommunicationEndpoint(
             new HivemqBroker(DOMAIN, IP, PORT)
         );

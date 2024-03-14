@@ -49,12 +49,12 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
         public void deliver(Posting posting) {
             String data = posting.data();
             List<DataExecutor> tmpExecutor = new ArrayList<>();
-            if (data.contains(Status.State.ONLINE.get())) {
+            if (data.contains(Status.State.ONLINE.toString())) {
                 clientOnline = true;
                 tmpExecutor = new ArrayList<>(deviceGoesOnline);
             }
 
-            if (data.contains(Status.State.OFFLINE.get())) {
+            if (data.contains(Status.State.OFFLINE.toString())) {
                 clientOnline = false;
                 tmpExecutor = new ArrayList<>(deviceGoesOffline);
             }

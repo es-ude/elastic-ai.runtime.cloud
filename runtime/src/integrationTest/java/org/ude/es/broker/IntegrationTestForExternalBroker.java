@@ -56,7 +56,7 @@ public class IntegrationTestForExternalBroker {
         private final TemperatureSource temperatureSource;
 
         public TwinThatOffersTemperature(BrokerStub broker, String id) {
-            super(id);
+            super(id, "localCE");
             this.bindToCommunicationEndpoint(broker);
 
             this.temperatureSource = new TemperatureSource(this, DATA_ID);
@@ -88,7 +88,7 @@ public class IntegrationTestForExternalBroker {
             String id,
             String resourceId
         ) {
-            super(id);
+            super(id, "localCE");
             this.bindToCommunicationEndpoint(broker);
             RemoteCommunicationEndpoint dataSource =
                 new RemoteCommunicationEndpoint(resourceId);

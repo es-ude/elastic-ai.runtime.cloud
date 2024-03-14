@@ -29,7 +29,7 @@ public class TemperatureSink extends LocalCommunicationEndpoint {
     private RemoteCommunicationEndpoint dataSource;
 
     public TemperatureSink(String deviceID, String dataId) {
-        super(deviceID);
+        super(deviceID, "localCE");
         this.dataId = dataId;
     }
 

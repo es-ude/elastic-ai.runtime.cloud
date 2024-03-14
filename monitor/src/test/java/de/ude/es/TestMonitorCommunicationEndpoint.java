@@ -85,9 +85,7 @@ public class TestMonitorCommunicationEndpoint {
                 .size()
         );
         dummyClient.publishStatus(
-            new Status(dummyClient.getIdentifier()).append(
-                Status.Parameter.STATE.value(Status.State.ONLINE.get())
-            )
+            new Status().ID(dummyClient.getIdentifier()).STATE(Status.State.ONLINE)
         );
         assertEquals(
             1,
@@ -107,7 +105,7 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createDummyClient() {
-        dummyClient = new LocalCommunicationEndpoint(DUMMY_ID);
+        dummyClient = new LocalCommunicationEndpoint(DUMMY_ID, "localCE");
         dummyClient.bindToCommunicationEndpoint(broker);
     }
 }

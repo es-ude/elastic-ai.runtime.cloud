@@ -11,7 +11,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
     private final ClientList clients;
 
     public MonitorCommunicationEndpoint(String id) {
-        super(id);
+        super(id, "MONITOR");
         this.clients = new ClientList();
     }
 
@@ -54,16 +54,16 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             String twinID = posting
                 .data()
                 .substring(
-                    posting.data().indexOf(Status.Parameter.ID.getKey()) +
-                    Status.Parameter.ID.getKey().length() +
+                    posting.data().indexOf("ID") +
+                            ("ID").length() +
                     1
                 );
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
             boolean twinActive = posting
                 .data()
-                .contains(Status.State.ONLINE.get());
-
+                .contains(Status.State.ONLINE.toString());
+            System.out.println(Status.State.ONLINE.toString());
             System.out.printf(
                 "Client with id %s online: %b.%n",
                 twinID,
@@ -77,13 +77,13 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             if (twinActive) {
                 int measurementsIndex = posting
                     .data()
-                    .indexOf(Status.Parameter.MEASUREMENTS.get());
+                    .indexOf("DATA");
                 if (measurementsIndex >= 0) {
                     String measurements = posting
                         .data()
                         .substring(
                             measurementsIndex +
-                            Status.Parameter.MEASUREMENTS.get().length() +
+                           "DATA".length() +
                             1
                         );
                     measurements = measurements.substring(
