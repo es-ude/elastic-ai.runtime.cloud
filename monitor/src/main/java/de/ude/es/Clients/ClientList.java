@@ -4,9 +4,7 @@ import static com.google.common.primitives.UnsignedInteger.ONE;
 import static org.ude.es.protocol.Status.extractFromStatus;
 
 import com.google.common.primitives.UnsignedInteger;
-
 import java.util.*;
-
 import lombok.Getter;
 import org.ude.es.protocol.BrokerStub;
 
@@ -45,7 +43,7 @@ public class ClientList {
      * else -> adds new client.
      */
     public void addOrUpdateClient(
-            String ID,
+        String ID,
         String posting,
         BrokerStub endpoint
     ) {
@@ -57,7 +55,7 @@ public class ClientList {
             }
 
             clients.add(
-                    new ClientData("Client " + clientIdCounter, ID, endpoint)
+                new ClientData("Client " + clientIdCounter, ID, endpoint)
             );
             clientIdCounter = clientIdCounter.plus(ONE);
         }

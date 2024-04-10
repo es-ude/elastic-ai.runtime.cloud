@@ -13,36 +13,38 @@ import org.springframework.web.server.ResponseStatusException;
 @Controller
 @RequestMapping({ "/client" })
 public class ClientRequests {
+
     @GetMapping("/{clientID}/{dataId}")
     @ResponseBody
     public DataValue requestData(
-            @PathVariable String clientID,
-            @PathVariable String dataId
+        @PathVariable String clientID,
+        @PathVariable String dataId
     ) {
         if (
-                MonitoringServiceApplication.getClientList().getClient(clientID) ==
-                        null
+            MonitoringServiceApplication.getClientList().getClient(clientID) ==
+            null
         ) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Client not found"
+                HttpStatus.NOT_FOUND,
+                "Client not found"
             );
         }
 
-        ClientData clientData =
-                MonitoringServiceApplication.getClientList()
-                        .getClient(clientID);
+        ClientData clientData = MonitoringServiceApplication.getClientList()
+            .getClient(clientID);
 
         String latest = clientData.getLastDataValues().get(dataId);
 
         return new DataValue(clientID, dataId, latest);
-
     }
 
     @GetMapping("/{clientID}")
-    public String enV5ClientLandingPage(Model model, @PathVariable String clientID) {
+    public String enV5ClientLandingPage(
+        Model model,
+        @PathVariable String clientID
+    ) {
         ClientData client = MonitoringServiceApplication.getClientList()
-                .getClient(clientID);
+            .getClient(clientID);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

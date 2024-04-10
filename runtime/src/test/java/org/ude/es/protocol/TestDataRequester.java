@@ -60,10 +60,7 @@ public class TestDataRequester {
         dataRequester.startRequestingData();
 
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");
-        checker.whenPostingIsPublishedAtBroker(
-            "stub/STATUS",
-            "STATE:OFFLINE;"
-        );
+        checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:OFFLINE;");
 
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");

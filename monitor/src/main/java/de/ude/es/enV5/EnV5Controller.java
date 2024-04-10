@@ -17,9 +17,12 @@ import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 public class EnV5Controller {
 
     @GetMapping("/{name}")
-    public String enV5ClientLandingPage(Model model, @PathVariable String name) {
+    public String enV5ClientLandingPage(
+        Model model,
+        @PathVariable String name
+    ) {
         ClientData client = MonitoringServiceApplication.getClientList()
-                .getClient(name);
+            .getClient(name);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -31,9 +34,9 @@ public class EnV5Controller {
     @PostMapping("/measurement/start/{name}")
     public ResponseEntity<Object> startMeasurement(@PathVariable String name) {
         RemoteCommunicationEndpoint clientStub =
-                new RemoteCommunicationEndpoint(name);
+            new RemoteCommunicationEndpoint(name);
         clientStub.bindToCommunicationEndpoint(
-                monitorCommunicationEndpoint.getBrokerStub()
+            monitorCommunicationEndpoint.getBrokerStub()
         );
         clientStub.publishCommand("MEASUREMENTS", "monitor");
 

@@ -1,5 +1,7 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.es.Clients.ClientData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +13,6 @@ import org.testcontainers.utility.DockerImageName;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
@@ -40,7 +40,8 @@ public class IntegrationTestStatusFromEnv5 {
     void testOnlineCanBeReceived() throws InterruptedException {
         Thread.sleep(1000);
         ClientData client = monitorCommunicationEndpoint
-            .getClientList().getClient(enV5Mock.getIdentifier());
+            .getClientList()
+            .getClient(enV5Mock.getIdentifier());
         assertTrue(client.isActive());
     }
 
@@ -57,7 +58,8 @@ public class IntegrationTestStatusFromEnv5 {
             );
         Thread.sleep(1000);
         ClientData client = monitorCommunicationEndpoint
-                .getClientList().getClient(enV5Mock.getIdentifier());
+            .getClientList()
+            .getClient(enV5Mock.getIdentifier());
         assertFalse(client.isActive());
     }
 

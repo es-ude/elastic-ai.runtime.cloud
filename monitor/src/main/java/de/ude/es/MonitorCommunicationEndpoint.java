@@ -1,15 +1,14 @@
 package de.ude.es;
 
+import static org.ude.es.protocol.Status.State.ONLINE;
+
 import de.ude.es.Clients.ClientList;
+import java.util.Arrays;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.Subscriber;
-
-import java.util.Arrays;
-
-import static org.ude.es.protocol.Status.State.ONLINE;
 
 public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
@@ -63,16 +62,23 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                 .substring(posting.data().indexOf("ID") + ("ID").length() + 1);
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
-            String twinIDFromTopic = posting.topic().split("/")[Arrays.asList(posting.topic().split("/")).indexOf("STATUS")-1];
+            String twinIDFromTopic = posting
+                .topic()
+                .split("/")[Arrays.asList(posting.topic().split("/")).indexOf(
+                    "STATUS"
+                ) -
+                1];
 
             if (!twinID.equals(twinIDFromTopic)) {
-                System.out.printf("Topic ID '%s' and ID '%s' in Status differ! Ignoring!%n", twinIDFromTopic, twinID);
+                System.out.printf(
+                    "Topic ID '%s' and ID '%s' in Status differ! Ignoring!%n",
+                    twinIDFromTopic,
+                    twinID
+                );
                 return;
             }
 
-            boolean twinActive = posting
-                .data()
-                .contains(ONLINE.toString());
+            boolean twinActive = posting.data().contains(ONLINE.toString());
 
             System.out.printf(
                 "Client with ID '%s' online: %b.%n",
@@ -81,8 +87,8 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             );
 
             clients.addOrUpdateClient(
-                    twinID,
-                    posting.data(),
+                twinID,
+                posting.data(),
                 monitorCommunicationEndpoint.getBrokerStub()
             );
         }

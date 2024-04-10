@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.ude.es.Clients.ClientData;
 import de.ude.es.Clients.ClientList;
-
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,21 +18,9 @@ public class TestClientList {
     void setUp() {
         clientList = new ClientList();
 
-        clientList.addOrUpdateClient(
-            "ID1",
-            "",
-            brokerStubMock
-        );
-        clientList.addOrUpdateClient(
-            "ID2",
-                "",
-            brokerStubMock
-        );
-        clientList.addOrUpdateClient(
-            "ID3",
-                "",
-            brokerStubMock
-        );
+        clientList.addOrUpdateClient("ID1", "", brokerStubMock);
+        clientList.addOrUpdateClient("ID2", "", brokerStubMock);
+        clientList.addOrUpdateClient("ID3", "", brokerStubMock);
     }
 
     @Test
@@ -50,17 +37,9 @@ public class TestClientList {
         clientList.changeClientName("ID3", "Client_3_new_name");
 
         List<ClientData> expected = List.of(
-            new ClientData(
-                "Client_1_new_name",
-                "ID1",
-                    brokerStubMock
-            ),
+            new ClientData("Client_1_new_name", "ID1", brokerStubMock),
             new ClientData("Client 2", "ID2", brokerStubMock),
-            new ClientData(
-                "Client_3_new_name",
-                "ID3",
-                    brokerStubMock
-            )
+            new ClientData("Client_3_new_name", "ID3", brokerStubMock)
         );
 
         assertEquals(expected.toString(), clientList.getClients().toString());
@@ -81,11 +60,7 @@ public class TestClientList {
     @Test
     void testGetClient() {
         assertEquals(
-            new ClientData(
-                "Client 2",
-                "ID2",
-                    brokerStubMock
-            ).toString(),
+            new ClientData("Client 2", "ID2", brokerStubMock).toString(),
             clientList.getClient("ID2").toString()
         );
         assertNull(clientList.getClient("WRONG_ID"));
@@ -102,11 +77,7 @@ public class TestClientList {
         assertEquals(expected.toString(), clientList.getClients().toString());
         assertEquals(expected.size(), clientList.getClients().size());
 
-        clientList.addOrUpdateClient(
-            "ID4",
-            "",
-            brokerStubMock
-        );
+        clientList.addOrUpdateClient("ID4", "", brokerStubMock);
         expected = List.of(
             new ClientData("Client 1", "ID1", brokerStubMock),
             new ClientData("Client 2", "ID2", brokerStubMock),
@@ -129,11 +100,7 @@ public class TestClientList {
         assertEquals(expected.toString(), clientList.getClients().toString());
         assertEquals(expected.size(), clientList.getClients().size());
 
-        clientList.addOrUpdateClient(
-            "ID2",
-            "",
-            brokerStubMock
-        );
+        clientList.addOrUpdateClient("ID2", "", brokerStubMock);
         assertEquals(expected.toString(), clientList.getClients().toString());
         assertEquals(expected.size(), clientList.getClients().size());
     }

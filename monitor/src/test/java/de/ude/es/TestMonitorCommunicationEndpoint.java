@@ -1,13 +1,13 @@
 package de.ude.es;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TestMonitorCommunicationEndpoint {
 
@@ -43,8 +43,12 @@ public class TestMonitorCommunicationEndpoint {
 
     @Test
     void testClientListIsUpdatedOnLeave() {
-        assertTrue(monitorCommunicationEndpoint
-                .getClientList().getClient(dummyClient.getIdentifier()).isActive());
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
+        );
         broker.publish(
             new Posting(
                 dummyClient.getIdentifier() + "/STATUS",
@@ -52,14 +56,22 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertFalse(monitorCommunicationEndpoint
-                .getClientList().getClient(dummyClient.getIdentifier()).isActive());
+        assertFalse(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
+        );
     }
 
     @Test
     void testClientListIsUpdatedOnReenter() {
-        assertTrue(monitorCommunicationEndpoint
-                .getClientList().getClient(dummyClient.getIdentifier()).isActive());
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
+        );
         broker.publish(
             new Posting(
                 dummyClient.getIdentifier() + "/STATUS",
@@ -67,15 +79,23 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertFalse(monitorCommunicationEndpoint
-                .getClientList().getClient(dummyClient.getIdentifier()).isActive());
+        assertFalse(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
+        );
         dummyClient.publishStatus(
             new Status()
                 .ID(dummyClient.getIdentifier())
                 .STATE(Status.State.ONLINE)
         );
-        assertTrue(monitorCommunicationEndpoint
-                .getClientList().getClient(dummyClient.getIdentifier()).isActive());
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
+        );
     }
 
     private void createBroker() {

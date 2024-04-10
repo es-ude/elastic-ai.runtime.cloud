@@ -26,7 +26,7 @@ public class Status {
         this.TYPE = status.TYPE;
         this.STATE = status.STATE;
         this.DATA = status.DATA;
-      this.OPTIONALS = status.OPTIONALS;
+        this.OPTIONALS = status.OPTIONALS;
     }
 
     public Status ID(String id) {
@@ -97,14 +97,11 @@ public class Status {
     }
 
     public static String extractFromStatus(String posting, String TYPE) {
-        if (!posting.contains(TYPE))
-            return "";
-        String type = posting
-                .substring(posting.indexOf(TYPE) + TYPE.length() + 1);
-        type = type.substring(
-                0,
-                type.indexOf(";")
+        if (!posting.contains(TYPE)) return "";
+        String type = posting.substring(
+            posting.indexOf(TYPE) + TYPE.length() + 1
         );
+        type = type.substring(0, type.indexOf(";"));
         return type;
     }
 }

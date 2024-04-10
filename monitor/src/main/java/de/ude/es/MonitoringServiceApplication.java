@@ -1,13 +1,11 @@
 package de.ude.es;
 
 import de.ude.es.Clients.ClientList;
-
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -41,7 +39,9 @@ public class MonitoringServiceApplication {
         IP_ADDRESS = IP_ADDRESS.strip();
 
         try {
-            Namespace arguments = MonitoringServiceApplication.parseArguments(args);
+            Namespace arguments = MonitoringServiceApplication.parseArguments(
+                args
+            );
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
         } catch (ArgumentParserException exception) {

@@ -1,10 +1,11 @@
 package de.ude.es.Clients;
 
+import static org.ude.es.protocol.Status.State.ONLINE;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
@@ -12,30 +13,35 @@ import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.requests.DataRequester;
 
-import static org.ude.es.protocol.Status.State.ONLINE;
-
 public class ClientData {
+
     @Setter
     @Getter
     private String name;
+
     @Getter
     private final String ID;
+
     @Getter
     private String type;
+
     @Getter
     private boolean active;
+
     private String[] dataValues;
 
     @Getter
     private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
+
     @Getter
     private final HashMap<String, DataRequester> dataRequester;
+
     @Getter
     private final HashMap<String, String> lastDataValues;
+
     private final HashMap<String, String> optionalValues;
 
-    public ClientData(String name, String ID,
-                      BrokerStub endpoint) {
+    public ClientData(String name, String ID, BrokerStub endpoint) {
         this.name = name;
         this.ID = ID;
 
@@ -74,26 +80,24 @@ public class ClientData {
         dataRequester.clear();
         for (String sensor : sensors) {
             DataRequester requester = new DataRequester(
-                    this.remoteCommunicationEndpoint,
-                    sensor,
-                    "monitor"
+                this.remoteCommunicationEndpoint,
+                sensor,
+                "monitor"
             );
             requester.listenToData(true);
-            requester.setDataReceiveFunction(data -> lastDataValues.put(sensor, data));
-            dataRequester.put(
-                    sensor, requester
-
+            requester.setDataReceiveFunction(
+                data -> lastDataValues.put(sensor, data)
             );
+            dataRequester.put(sensor, requester);
             lastDataValues.put(sensor, "");
         }
     }
 
     public void updateValues(String posting) {
         optionalValues.clear();
-        setAvailableData(new String[]{});
+        setAvailableData(new String[] {});
         for (String post : posting.split(";")) {
-            if (post.split(":").length != 2)
-                continue;
+            if (post.split(":").length != 2) continue;
             String key = post.split(":")[0];
             String value = post.split(":")[1];
             if (Objects.equals(key, "TYPE")) {
@@ -102,7 +106,7 @@ public class ClientData {
                 active = Objects.equals(value, ONLINE.toString());
             } else if (Objects.equals(key, "DATA")) {
                 setAvailableData(value.split(","));
-            } else if (!Objects.equals(key, "ID")){
+            } else if (!Objects.equals(key, "ID")) {
                 optionalValues.put(key, value);
             }
         }
@@ -110,14 +114,26 @@ public class ClientData {
 
     @Override
     public String toString() {
-        return "ClientData{" +
-                "name='" + name + '\'' +
-                ", ID='" + ID + '\'' +
-                ", type='" + type + '\'' +
-                ", active=" + active +
-                ", dataValues=" + Arrays.toString(dataValues) +
-                ", optionalValues=" + optionalValues +
-                ", dataValue=" + lastDataValues +
-                '}';
+        return (
+            "ClientData{" +
+            "name='" +
+            name +
+            '\'' +
+            ", ID='" +
+            ID +
+            '\'' +
+            ", type='" +
+            type +
+            '\'' +
+            ", active=" +
+            active +
+            ", dataValues=" +
+            Arrays.toString(dataValues) +
+            ", optionalValues=" +
+            optionalValues +
+            ", dataValue=" +
+            lastDataValues +
+            '}'
+        );
     }
 }
