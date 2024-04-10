@@ -9,20 +9,18 @@ import org.ude.es.protocol.*;
 
 public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
-    public LocalCommunicationEndpoint(String identifier) {
+    protected Status status;
+
+    public LocalCommunicationEndpoint(String identifier, String clientType) {
         super(identifier);
+        status = new Status().ID(this.getIdentifier()).TYPE(clientType);
     }
 
-    protected final Status minimalStatus = new Status(this.identifier).append(
-        Status.Parameter.STATE.value(Status.State.ONLINE.get())
-    );
-
     protected void executeOnBindPrivate() {
-        Status lwtMessage = new Status(this.identifier).append(
-            Status.Parameter.STATE.value(Status.State.OFFLINE.get())
-        );
+        Status lwtMessage = status.STATE(Status.State.ONLINE).copy();
+
         this.brokerStub.connect(this.identifier, lwtMessage.get());
-        publishStatus(minimalStatus);
+        publishStatus(status.STATE(Status.State.ONLINE));
         super.executeOnBindPrivate();
     }
 
@@ -31,7 +29,10 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     public void publishStatus(Status status) {
-        this.publish(Posting.createStatus(status.get()), true);
+        this.publish(
+                Posting.createStatus(status.ID(this.identifier).get()),
+                true
+            );
     }
 
     public void publishDone(String command, String value) {
@@ -108,7 +109,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("192.168.203.18");
+            .setDefault("localhost");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .help("Broker Port")

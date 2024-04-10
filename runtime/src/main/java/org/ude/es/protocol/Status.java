@@ -2,68 +2,106 @@ package org.ude.es.protocol;
 
 public class Status {
 
-    private String status;
-
-    private static String getParameter(String parameterType, String value) {
-        return parameterType + ":" + value + ";";
-    }
-
     public enum State {
         ONLINE("ONLINE"),
         OFFLINE("OFFLINE");
 
-        private final String state;
+        final String state;
 
         State(String state) {
             this.state = state;
         }
-
-        public String get() {
-            return state;
-        }
     }
 
-    public enum Parameter {
-        ID("ID"),
-        MEASUREMENTS("MEASUREMENTS"),
-        STATE("STATE");
+    private String ID = null;
+    private String TYPE = null;
+    private String STATE = null;
+    private String DATA = null;
+    private String OPTIONALS = "";
 
-        private final String parameter;
-        private String value = null;
-
-        Parameter(String parameterType) {
-            parameter = parameterType;
-        }
-
-        public Parameter value(String value) {
-            this.value = value;
-            return this;
-        }
-
-        public String getKey() {
-            return parameter;
-        }
-
-        public String get() {
-            if (value == null) return parameter;
-            return getParameter(parameter, value);
-        }
-    }
+    public Status() {}
 
     public Status(Status status) {
-        this.status = status.status;
+        this.ID = status.ID;
+        this.TYPE = status.TYPE;
+        this.STATE = status.STATE;
+        this.DATA = status.DATA;
+        this.OPTIONALS = status.OPTIONALS;
     }
 
-    public Status(String ID) {
-        status = Parameter.ID.value(ID).get();
-    }
-
-    public Status append(Parameter parameter) {
-        status += parameter.get();
+    public Status ID(String id) {
+        ID = id;
         return this;
     }
 
+    public Status TYPE(String type) {
+        TYPE = type;
+        return this;
+    }
+
+    public Status STATE(State state) {
+        STATE = state.toString();
+        return this;
+    }
+
+    public Status ADD_DATA(String data) {
+        if (DATA == null) {
+            DATA = data;
+        } else {
+            DATA += "," + data;
+        }
+        return this;
+    }
+
+    public Status SET_DATA(String data) {
+        DATA = data;
+        return this;
+    }
+
+    public Status ADD_OPTIONAL(String key, String value) {
+        OPTIONALS += key + ":" + value + ";";
+        return this;
+    }
+
+    public Status SET_OPTIONAL(String optionals) {
+        OPTIONALS = optionals;
+        return this;
+    }
+
+    public Status copy() {
+        return new Status(this);
+    }
+
     public String get() {
+        if (ID == null) {
+            ID = "NULL";
+            System.out.println("WARNING: NO ID SET IN STATUS!!!");
+        }
+        if (TYPE == null) {
+            TYPE = "NULL";
+            System.out.println("WARNING: NO TYPE SET IN STATUS!!!");
+        }
+        if (STATE == null) {
+            STATE = "NULL";
+            System.out.println("WARNING: NO STATE SET IN STATUS!!!");
+        }
+        String status = String.format(
+            "ID:%s;TYPE:%s;STATE:%s;",
+            ID,
+            TYPE,
+            STATE
+        );
+        if (DATA != null) status += String.format("DATA:%s;", DATA);
+        status += OPTIONALS;
         return status;
+    }
+
+    public static String extractFromStatus(String posting, String TYPE) {
+        if (!posting.contains(TYPE)) return "";
+        String type = posting.substring(
+            posting.indexOf(TYPE) + TYPE.length() + 1
+        );
+        type = type.substring(0, type.indexOf(";"));
+        return type;
     }
 }

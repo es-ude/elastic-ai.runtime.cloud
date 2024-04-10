@@ -1,8 +1,7 @@
 package de.ude.es;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import de.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,9 +43,11 @@ public class TestMonitorCommunicationEndpoint {
 
     @Test
     void testClientListIsUpdatedOnLeave() {
-        assertEquals(
-            1,
-            monitorCommunicationEndpoint.getClientList().getClients().size()
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
         );
         broker.publish(
             new Posting(
@@ -55,20 +56,21 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertEquals(
-            0,
+        assertFalse(
             monitorCommunicationEndpoint
                 .getClientList()
-                .getActiveClients()
-                .size()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
         );
     }
 
     @Test
     void testClientListIsUpdatedOnReenter() {
-        assertEquals(
-            1,
-            monitorCommunicationEndpoint.getClientList().getClients().size()
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
         );
         broker.publish(
             new Posting(
@@ -77,21 +79,22 @@ public class TestMonitorCommunicationEndpoint {
             ),
             true
         );
-        assertEquals(
-            0,
+        assertFalse(
             monitorCommunicationEndpoint
                 .getClientList()
-                .getActiveClients()
-                .size()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
         );
         dummyClient.publishStatus(
-            new Status(dummyClient.getIdentifier()).append(
-                Status.Parameter.STATE.value(Status.State.ONLINE.get())
-            )
+            new Status()
+                .ID(dummyClient.getIdentifier())
+                .STATE(Status.State.ONLINE)
         );
-        assertEquals(
-            1,
-            monitorCommunicationEndpoint.getClientList().getClients().size()
+        assertTrue(
+            monitorCommunicationEndpoint
+                .getClientList()
+                .getClient(dummyClient.getIdentifier())
+                .isActive()
         );
     }
 
@@ -107,7 +110,7 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createDummyClient() {
-        dummyClient = new LocalCommunicationEndpoint(DUMMY_ID);
+        dummyClient = new LocalCommunicationEndpoint(DUMMY_ID, "localCE");
         dummyClient.bindToCommunicationEndpoint(broker);
     }
 }

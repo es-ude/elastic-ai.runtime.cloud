@@ -29,7 +29,7 @@ public class BitFileController {
     static CountDownLatch latch;
 
     @GetMapping("/{name}/{dataId}")
-    public ResponseEntity<byte[]> demo(
+    public ResponseEntity<byte[]> getBitFileChunk(
         @PathVariable String name,
         @PathVariable Integer dataId
     ) {

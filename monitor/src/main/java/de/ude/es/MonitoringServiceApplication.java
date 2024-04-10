@@ -1,13 +1,11 @@
 package de.ude.es;
 
 import de.ude.es.Clients.ClientList;
-import de.ude.es.Clients.MonitorCommunicationEndpoint;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.concurrent.TimeoutException;
-import lombok.Getter;
+import java.util.Arrays;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -16,15 +14,14 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.ude.es.protocol.HivemqBroker;
-import org.ude.es.protocol.requests.DataRequester;
 
 @SpringBootApplication
 public class MonitoringServiceApplication {
 
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
     private static final String CLIENT_ID = "monitor";
-    private static String BROKER_IP = null;
-    private static Integer BROKER_PORT = null;
+    public static String BROKER_IP = null;
+    public static Integer BROKER_PORT = null;
     public static MonitorCommunicationEndpoint monitorCommunicationEndpoint =
         null;
     public static String IP_ADDRESS;
@@ -42,7 +39,9 @@ public class MonitoringServiceApplication {
         IP_ADDRESS = IP_ADDRESS.strip();
 
         try {
-            Namespace arguments = parseArguments(args);
+            Namespace arguments = MonitoringServiceApplication.parseArguments(
+                args
+            );
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
         } catch (ArgumentParserException exception) {
@@ -55,7 +54,7 @@ public class MonitoringServiceApplication {
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
 
-    private static Namespace parseArguments(String[] args)
+    static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers.newFor(
             "elastic-ai.runtime.monitor"
@@ -73,10 +72,11 @@ public class MonitoringServiceApplication {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
             "MQTT Broker Specification"
         );
+
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("127.0.0.1");
+            .setDefault("localhost");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .type(Integer.class)
@@ -84,65 +84,17 @@ public class MonitoringServiceApplication {
             .setDefault(1883);
     }
 
-    private static MonitorCommunicationEndpoint createMonitorTwin() {
+    static MonitorCommunicationEndpoint createMonitorTwin() {
+        System.out.println("Creating MonitorTwin");
         MonitorCommunicationEndpoint monitorCommunicationEndpoint =
             new MonitorCommunicationEndpoint(CLIENT_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
-            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
+            new HivemqBroker(MQTT_DOMAIN, IP_ADDRESS, BROKER_PORT)
         );
         return monitorCommunicationEndpoint;
     }
 
     public static ClientList getClientList() {
         return monitorCommunicationEndpoint.getClientList();
-    }
-
-    public static String getLatestMeasurement(DataRequester dataRequester)
-        throws TimeoutException {
-        UpdatedValueStorage<String> latestValue = new UpdatedValueStorage<>();
-        dataRequester.setDataReceiveFunction(
-            data -> handleNewData(latestValue, data)
-        );
-        dataRequester.startRequestingData();
-
-        long start = System.currentTimeMillis();
-        long end = start + 5000;
-        while (!latestValue.isUpdated()) {
-            if (System.currentTimeMillis() >= end) {
-                throw new TimeoutException("No Message Received");
-            }
-        }
-
-        return latestValue.getValue();
-    }
-
-    private static void handleNewData(
-        UpdatedValueStorage<String> latestValue,
-        String input
-    ) {
-        try {
-            if (input.contains(";")) {
-                input = input.split(";")[0];
-            }
-            latestValue.setValue(input);
-        } catch (Exception exception) {
-            System.out.println("Unsupported data format.");
-        }
-    }
-
-    @Getter
-    private static class UpdatedValueStorage<Type> {
-
-        private volatile Type value;
-        private volatile boolean updated;
-
-        public UpdatedValueStorage() {
-            updated = false;
-        }
-
-        public void setValue(Type value) {
-            this.value = value;
-            this.updated = true;
-        }
     }
 }

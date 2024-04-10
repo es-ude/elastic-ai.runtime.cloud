@@ -10,10 +10,9 @@ public class DataRequester {
     private final RemoteCommunicationEndpoint remoteCommunicationEndpoint;
     private final String dataID;
     private final String requesterID;
-    private final ValueReceiver valueReceiver;
     CommunicationEndpoint.DataExecutor dataExecutor;
     private boolean requested = false;
-    private boolean blocked = false;
+    private boolean listening = false;
 
     public DataRequester(
         RemoteCommunicationEndpoint remoteCommunicationEndpoint,
@@ -23,7 +22,9 @@ public class DataRequester {
         this.remoteCommunicationEndpoint = remoteCommunicationEndpoint;
         this.dataID = dataID;
         this.requesterID = requesterID;
-        valueReceiver = new ValueReceiver();
+        ValueReceiver valueReceiver = new ValueReceiver();
+
+        remoteCommunicationEndpoint.subscribeForData(dataID, valueReceiver);
 
         remoteCommunicationEndpoint.addWhenDeviceGoesOnline(
             data -> getsOnline()
@@ -31,7 +32,7 @@ public class DataRequester {
     }
 
     private void publishStartRequest() {
-        if (remoteCommunicationEndpoint.isOnline() && !blocked) {
+        if (remoteCommunicationEndpoint.isOnline()) {
             remoteCommunicationEndpoint.publishDataStartRequest(
                 dataID,
                 requesterID
@@ -40,7 +41,7 @@ public class DataRequester {
     }
 
     private void publishStopRequest() {
-        if (remoteCommunicationEndpoint.isOnline() && !blocked) {
+        if (remoteCommunicationEndpoint.isOnline()) {
             remoteCommunicationEndpoint.publishDataStopRequest(
                 dataID,
                 requesterID
@@ -51,30 +52,15 @@ public class DataRequester {
     public void startRequestingData() {
         if (requested) return;
         requested = true;
-        remoteCommunicationEndpoint.subscribeForData(dataID, valueReceiver);
         publishStartRequest();
+        listenToData(true);
     }
 
     public void stopRequestingData() {
         if (!requested) return;
         requested = false;
-        remoteCommunicationEndpoint.unsubscribeFromData(dataID);
         publishStopRequest();
-    }
-
-    public void resumeDataRequests() {
-        if (!blocked) return;
-        blocked = false;
-        if (requested) {
-            publishStartRequest();
-        }
-    }
-
-    public void pauseDataRequests() {
-        if (requested) {
-            publishStopRequest();
-        }
-        blocked = true;
+        listenToData(false);
     }
 
     public void setDataReceiveFunction(
@@ -89,11 +75,17 @@ public class DataRequester {
         }
     }
 
+    public void listenToData(boolean listen) {
+        this.listening = listen;
+    }
+
     private class ValueReceiver implements Subscriber {
 
         @Override
         public void deliver(Posting posting) {
-            dataExecutor.execute(posting.data());
+            if (listening) {
+                dataExecutor.execute(posting.data());
+            }
         }
     }
 }

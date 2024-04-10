@@ -13,13 +13,13 @@ import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class dviceWithTemperatureSensor
+    private static class deviceWithTemperatureSensor
         extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
-        public dviceWithTemperatureSensor(String id) {
-            super(id);
+        public deviceWithTemperatureSensor(String id) {
+            super(id, "localCE");
         }
 
         public void registrationReceived() {
@@ -85,14 +85,14 @@ class TestTemperatureSink {
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String DATA_ID = "temp";
     private BrokerMock broker;
-    private dviceWithTemperatureSensor remote;
+    private deviceWithTemperatureSensor remote;
 
     private RemoteCommunicationEndpoint device;
 
     @BeforeEach
     void setUp() {
         broker = new BrokerMock(DOMAIN);
-        device = createDeviceDevice(SENSOR_ID);
+        device = createDevice(SENSOR_ID);
         remote = createRemoteDevice();
     }
 
@@ -107,7 +107,7 @@ class TestTemperatureSink {
     @Test
     void weDoNotGetUpdateFromWrongDevice() {
         var tempDevice1 = createTemperatureSink(device, CONSUMER_ID + "1");
-        var device2 = createDeviceDevice("Device4321");
+        var device2 = createDevice("Device4321");
         var tempDevice2 = createTemperatureSink(device2, CONSUMER_ID + "2");
 
         remote.sendUpdate(13.7);
@@ -141,7 +141,7 @@ class TestTemperatureSink {
         remote.deRegistrationReceived();
     }
 
-    private RemoteCommunicationEndpoint createDeviceDevice(String id) {
+    private RemoteCommunicationEndpoint createDevice(String id) {
         RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
             id
         );
@@ -158,9 +158,9 @@ class TestTemperatureSink {
         return temperature;
     }
 
-    private dviceWithTemperatureSensor createRemoteDevice() {
-        dviceWithTemperatureSensor remoteDevice =
-            new dviceWithTemperatureSensor(SENSOR_ID);
+    private deviceWithTemperatureSensor createRemoteDevice() {
+        deviceWithTemperatureSensor remoteDevice =
+            new deviceWithTemperatureSensor(SENSOR_ID);
         remoteDevice.bindToCommunicationEndpoint(broker);
         return remoteDevice;
     }

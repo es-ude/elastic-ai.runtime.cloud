@@ -1,11 +1,10 @@
 package de.ude.es.Clients;
 
 import static com.google.common.primitives.UnsignedInteger.ONE;
+import static org.ude.es.protocol.Status.extractFromStatus;
 
 import com.google.common.primitives.UnsignedInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import lombok.Getter;
 import org.ude.es.protocol.BrokerStub;
 
@@ -32,7 +31,7 @@ public class ClientList {
 
     public ClientData getClient(String ID) {
         for (ClientData client : clients) {
-            if (Objects.equals(client.getId(), ID)) {
+            if (Objects.equals(client.getID(), ID)) {
                 return client;
             }
         }
@@ -45,35 +44,21 @@ public class ClientList {
      */
     public void addOrUpdateClient(
         String ID,
-        String[] measurements,
-        BrokerStub endpoint,
-        String requesterID
+        String posting,
+        BrokerStub endpoint
     ) {
         if (getClient(ID) == null) {
+            String type = extractFromStatus(posting, "TYPE");
+            // if monitor
+            if (type.equals("MONITOR")) {
+                return;
+            }
+
             clients.add(
-                new ClientData(
-                    "Client " + clientIdCounter.intValue(),
-                    ID,
-                    endpoint,
-                    requesterID
-                )
+                new ClientData("Client " + clientIdCounter, ID, endpoint)
             );
             clientIdCounter = clientIdCounter.plus(ONE);
-        } else {
-            getClient(ID).setActive();
         }
-        if (measurements != null) getClient(ID).setAvailableSensors(
-            measurements
-        );
-    }
-
-    public List<ClientData> getActiveClients() {
-        List<ClientData> activeClients = new ArrayList<>();
-        for (ClientData client : clients) {
-            if (client.isActive()) {
-                activeClients.add(client);
-            }
-        }
-        return activeClients;
+        getClient(ID).updateValues(posting);
     }
 }

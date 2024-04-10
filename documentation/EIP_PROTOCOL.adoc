@@ -77,19 +77,29 @@ Topic::
     `eip://<broker_domain>/<object_id>/STATUS`
 
 Data::
-    `<object_id>` AND 0 (offline) OR 1 (online)
+    <key>:<value>;<key>:<value>;...
+
+Mandatory Data::
+    * ID:<object_id>;
+    * TYPE:<object_type>;
+    * STATE:<ONLINE/OFFLINE>;
+
+Optional Data::
+    * DATA:<List of Data that can be requested, seperated by ",">;
+    * Other optional information with '<key>:<value>;', example: 'VERSION:<Software version on the client>;'
 
 Information::
     * The retain-flag of this message should be set to assure status discovery for newly entered participants!
     * The offline message should be automatically sent by the broker after a connection loss (LWT message).
     * The online message should only be sent by a new hardware device or Application client.
+    * Each part of the data consists of `<DATA-TYP>:<DATA>;`, the order is arbitrary
 
 Example message::
 --
 [source,text]
 ----
-msg("eip://uni-due.de/es/client1/STATUS","client1;1") <1>
-msg("eip://uni-due.de/es/client1/STATUS","client1;0") <2>
+msg("eip://uni-due.de/es/client1/STATUS","ID:client1;TYPE:enV5;STATE:ONLINE") <1>
+msg("eip://uni-due.de/es/client1/STATUS","ID:client1;TYPE:enV5;STATE:OFFLINE") <2>
 ----
 <1> Online Message
 <2> Offline Message (LWT)

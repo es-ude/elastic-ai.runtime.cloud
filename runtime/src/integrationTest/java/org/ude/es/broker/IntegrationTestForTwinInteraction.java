@@ -35,7 +35,7 @@ public class IntegrationTestForTwinInteraction {
         private final TemperatureSource temperatureSource;
 
         public TwinThatOffersTemperature(String id) {
-            super(id);
+            super(id, "localCE");
             this.bindToCommunicationEndpoint(broker);
 
             temperatureSource = new TemperatureSource(this, DATA_ID);

@@ -128,7 +128,7 @@ public class HivemqBroker implements BrokerStub {
                 try {
                     subscriber.deliver(
                         new Posting(
-                            topic,
+                            publish.getTopic().toString(),
                             unwrapPayload(publish.getPayload().get())
                         )
                     );

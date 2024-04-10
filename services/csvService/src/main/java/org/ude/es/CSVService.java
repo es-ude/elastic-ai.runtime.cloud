@@ -37,7 +37,7 @@ public class CSVService extends LocalCommunicationEndpoint {
     }
 
     public CSVService() {
-        super("CSVService");
+        super("CSVService", "SERVICE");
         enV5 = new RemoteCommunicationEndpoint("enV5");
     }
 
@@ -80,7 +80,12 @@ public class CSVService extends LocalCommunicationEndpoint {
             getDomainAndIdentifier()
         );
 
-        dataRequester.setDataReceiveFunction(data -> {
+        dataRequester.setDataReceiveFunction(getDataExecutor());
+        dataRequester.startRequestingData();
+    }
+
+    private DataExecutor getDataExecutor() {
+        return data -> {
             String timeStamp = new Timestamp(System.currentTimeMillis())
                 .toString()
                 .split("\\.")[0].replace(":", "-")
@@ -112,8 +117,7 @@ public class CSVService extends LocalCommunicationEndpoint {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
-        dataRequester.startRequestingData();
+        };
     }
 
     private static Namespace parseArguments(String[] args)
