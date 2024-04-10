@@ -9,12 +9,10 @@ import org.ude.es.protocol.*;
 
 public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 
-    private final String clientType;
     protected Status status;
 
     public LocalCommunicationEndpoint(String identifier, String clientType) {
         super(identifier);
-        this.clientType = clientType;
         status = new Status().ID(this.getIdentifier()).TYPE(clientType);
     }
 
@@ -111,7 +109,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
-            .setDefault("192.168.203.18");
+            .setDefault("localhost");
         brokerSpecification
             .addArgument("-p", "--broker-port")
             .help("Broker Port")

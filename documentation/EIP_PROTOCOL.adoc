@@ -76,6 +76,9 @@ type_dependent::
 Topic::
     `eip://<broker_domain>/<object_id>/STATUS`
 
+Data::
+    <key>:<value>;<key>:<value>;...
+
 Mandatory Data::
     * ID:<object_id>;
     * TYPE:<object_type>;
@@ -83,8 +86,7 @@ Mandatory Data::
 
 Optional Data::
     * DATA:<List of Data that can be requested, seperated by ",">;
-    * FPGA:<FPGA-Type>;
-    * VERSION:<Software version on the client>;
+    * Other optional information with '<key>:<value>;', example: 'VERSION:<Software version on the client>;'
 
 Information::
     * The retain-flag of this message should be set to assure status discovery for newly entered participants!

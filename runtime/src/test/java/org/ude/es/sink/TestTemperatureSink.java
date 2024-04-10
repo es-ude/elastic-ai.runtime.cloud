@@ -13,12 +13,12 @@ import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class dviceWithTemperatureSensor
+    private static class deviceWithTemperatureSensor
         extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
-        public dviceWithTemperatureSensor(String id) {
+        public deviceWithTemperatureSensor(String id) {
             super(id, "localCE");
         }
 
@@ -85,7 +85,7 @@ class TestTemperatureSink {
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String DATA_ID = "temp";
     private BrokerMock broker;
-    private dviceWithTemperatureSensor remote;
+    private deviceWithTemperatureSensor remote;
 
     private RemoteCommunicationEndpoint device;
 
@@ -158,9 +158,9 @@ class TestTemperatureSink {
         return temperature;
     }
 
-    private dviceWithTemperatureSensor createRemoteDevice() {
-        dviceWithTemperatureSensor remoteDevice =
-            new dviceWithTemperatureSensor(SENSOR_ID);
+    private deviceWithTemperatureSensor createRemoteDevice() {
+        deviceWithTemperatureSensor remoteDevice =
+            new deviceWithTemperatureSensor(SENSOR_ID);
         remoteDevice.bindToCommunicationEndpoint(broker);
         return remoteDevice;
     }

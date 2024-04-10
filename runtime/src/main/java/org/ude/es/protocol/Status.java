@@ -17,8 +17,7 @@ public class Status {
     private String TYPE = null;
     private String STATE = null;
     private String DATA = null;
-    private String FPGA = null;
-    private String VERSION = null;
+    private String OPTIONALS = "";
 
     public Status() {}
 
@@ -27,8 +26,7 @@ public class Status {
         this.TYPE = status.TYPE;
         this.STATE = status.STATE;
         this.DATA = status.DATA;
-        this.FPGA = status.FPGA;
-        this.VERSION = status.VERSION;
+      this.OPTIONALS = status.OPTIONALS;
     }
 
     public Status ID(String id) {
@@ -50,7 +48,7 @@ public class Status {
         if (DATA == null) {
             DATA = data;
         } else {
-            DATA += "," + DATA;
+            DATA += "," + data;
         }
         return this;
     }
@@ -60,13 +58,13 @@ public class Status {
         return this;
     }
 
-    public Status FPGA(String fpga) {
-        FPGA = fpga;
+    public Status ADD_OPTIONAL(String key, String value) {
+        OPTIONALS += key + ":" + value + ";";
         return this;
     }
 
-    public Status VERSION(String version) {
-        VERSION = version;
+    public Status SET_OPTIONAL(String optionals) {
+        OPTIONALS = optionals;
         return this;
     }
 
@@ -94,8 +92,19 @@ public class Status {
             STATE
         );
         if (DATA != null) status += String.format("DATA:%s;", DATA);
-        if (FPGA != null) status += String.format("FPGA:%s;", FPGA);
-        if (VERSION != null) status += String.format("DATA:%s;", VERSION);
+        status += OPTIONALS;
         return status;
+    }
+
+    public static String extractFromStatus(String posting, String TYPE) {
+        if (!posting.contains(TYPE))
+            return "";
+        String type = posting
+                .substring(posting.indexOf(TYPE) + TYPE.length() + 1);
+        type = type.substring(
+                0,
+                type.indexOf(";")
+        );
+        return type;
     }
 }

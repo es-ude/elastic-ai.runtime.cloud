@@ -4,11 +4,9 @@ async function measurementStart(button) {
 
     formData.append("clientID", clientID);
 
-    let response = await fetch("/sensor/measurement/start/" + clientID, {
+    await fetch("/client/enV5/measurement/start/" + clientID, {
         method: "POST",
     });
-
-    console.log(response.status)
 }
 
 async function uploadFile(button) {
@@ -78,13 +76,11 @@ async function setValueUpdate(clientId, sensorId, fieldId) {
     await getValueUpdate(clientId, sensorId, fieldId)
     setInterval(function() {
         getValueUpdate(clientId, sensorId, fieldId)
-    }, 1000);
+    }, 500);
 }
 
 async function getValueUpdate(clientId, sensorId, fieldId) {
-    console.log("value Update", clientId);
-
-    const response = await fetch(getRootUrl() + "sensor/" + clientId + "/" + sensorId);
+    const response = await fetch(getRootUrl() + "client/" + clientId + "/" + sensorId);
 
     if (response.status === 200) {
         const result = await response.json();

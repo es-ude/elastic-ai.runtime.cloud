@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.ude.es.Clients.ClientData;
 import de.ude.es.Clients.ClientList;
+
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,21 +21,18 @@ public class TestClientList {
 
         clientList.addOrUpdateClient(
             "ID1",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
+            "",
+            brokerStubMock
         );
         clientList.addOrUpdateClient(
             "ID2",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
+                "",
+            brokerStubMock
         );
         clientList.addOrUpdateClient(
             "ID3",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
+                "",
+            brokerStubMock
         );
     }
 
@@ -55,15 +53,13 @@ public class TestClientList {
             new ClientData(
                 "Client_1_new_name",
                 "ID1",
-                brokerStubMock,
-                "requesterID"
+                    brokerStubMock
             ),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
+            new ClientData("Client 2", "ID2", brokerStubMock),
             new ClientData(
                 "Client_3_new_name",
                 "ID3",
-                brokerStubMock,
-                "requesterID"
+                    brokerStubMock
             )
         );
 
@@ -74,26 +70,12 @@ public class TestClientList {
     @Test
     void testGetClients() {
         List<ClientData> Clients = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID")
+            new ClientData("Client 1", "ID1", brokerStubMock),
+            new ClientData("Client 2", "ID2", brokerStubMock),
+            new ClientData("Client 3", "ID3", brokerStubMock)
         );
 
         assertEquals(Clients.toString(), clientList.getClients().toString());
-    }
-
-    @Test
-    void testGetActiveClients() {
-        List<ClientData> expected = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID")
-        );
-        clientList.getClient("ID2").setInactive();
-
-        assertEquals(
-            expected.toString(),
-            clientList.getActiveClients().toString()
-        );
     }
 
     @Test
@@ -102,8 +84,7 @@ public class TestClientList {
             new ClientData(
                 "Client 2",
                 "ID2",
-                brokerStubMock,
-                "requesterID"
+                    brokerStubMock
             ).toString(),
             clientList.getClient("ID2").toString()
         );
@@ -113,9 +94,9 @@ public class TestClientList {
     @Test
     void testAddClient() {
         List<ClientData> expected = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID")
+            new ClientData("Client 1", "ID1", brokerStubMock),
+            new ClientData("Client 2", "ID2", brokerStubMock),
+            new ClientData("Client 3", "ID3", brokerStubMock)
         );
 
         assertEquals(expected.toString(), clientList.getClients().toString());
@@ -123,15 +104,14 @@ public class TestClientList {
 
         clientList.addOrUpdateClient(
             "ID4",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
+            "",
+            brokerStubMock
         );
         expected = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID"),
-            new ClientData("Client 4", "ID4", brokerStubMock, "requesterID")
+            new ClientData("Client 1", "ID1", brokerStubMock),
+            new ClientData("Client 2", "ID2", brokerStubMock),
+            new ClientData("Client 3", "ID3", brokerStubMock),
+            new ClientData("Client 4", "ID4", brokerStubMock)
         );
 
         assertEquals(expected.toString(), clientList.getClients().toString());
@@ -141,9 +121,9 @@ public class TestClientList {
     @Test
     void testAddClientDuplicate() {
         List<ClientData> expected = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID")
+            new ClientData("Client 1", "ID1", brokerStubMock),
+            new ClientData("Client 2", "ID2", brokerStubMock),
+            new ClientData("Client 3", "ID3", brokerStubMock)
         );
 
         assertEquals(expected.toString(), clientList.getClients().toString());
@@ -151,33 +131,10 @@ public class TestClientList {
 
         clientList.addOrUpdateClient(
             "ID2",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
+            "",
+            brokerStubMock
         );
         assertEquals(expected.toString(), clientList.getClients().toString());
         assertEquals(expected.size(), clientList.getClients().size());
-    }
-
-    @Test
-    void testAddClientDuplicateSetsClientActive() {
-        List<ClientData> expected = List.of(
-            new ClientData("Client 1", "ID1", brokerStubMock, "requesterID"),
-            new ClientData("Client 2", "ID2", brokerStubMock, "requesterID"),
-            new ClientData("Client 3", "ID3", brokerStubMock, "requesterID")
-        );
-        clientList.getClient("ID2").setInactive();
-        assertEquals(expected.toString(), clientList.getClients().toString());
-        assertEquals(expected.size(), clientList.getClients().size());
-        assertEquals(expected.size() - 1, clientList.getActiveClients().size());
-
-        clientList.addOrUpdateClient(
-            "ID2",
-            new String[] {},
-            brokerStubMock,
-            "requesterID"
-        );
-        assertEquals(expected.toString(), clientList.getClients().toString());
-        assertEquals(expected.size(), clientList.getActiveClients().size());
     }
 }

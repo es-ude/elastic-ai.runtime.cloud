@@ -4,7 +4,6 @@ import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoin
 
 import de.ude.es.Clients.ClientData;
 import de.ude.es.MonitoringServiceApplication;
-import java.util.concurrent.TimeoutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,71 +13,30 @@ import org.springframework.web.server.ResponseStatusException;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Controller
-@RequestMapping({ "/sensor" })
+@RequestMapping({ "/client/enV5" })
 public class EnV5Controller {
+
+    @GetMapping("/{name}")
+    public String enV5ClientLandingPage(Model model, @PathVariable String name) {
+        ClientData client = MonitoringServiceApplication.getClientList()
+                .getClient(name);
+        if (client == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        model.addAttribute("client", client);
+        return "enV5";
+    }
 
     @PostMapping("/measurement/start/{name}")
     public ResponseEntity<Object> startMeasurement(@PathVariable String name) {
         RemoteCommunicationEndpoint clientStub =
-            new RemoteCommunicationEndpoint(name);
+                new RemoteCommunicationEndpoint(name);
         clientStub.bindToCommunicationEndpoint(
-            monitorCommunicationEndpoint.getBrokerStub()
+                monitorCommunicationEndpoint.getBrokerStub()
         );
         clientStub.publishCommand("MEASUREMENTS", "monitor");
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
-    @GetMapping("/{name}")
-    public String enV5LandingPage(Model model, @PathVariable String name) {
-        ClientData client = MonitoringServiceApplication.getClientList()
-            .getClient(name);
-        if (client == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-
-        model.addAttribute("communicationEndpoint", client);
-        return "env5";
-    }
-
-    @GetMapping("/{clientID}/{dataId}")
-    @ResponseBody
-    public SensorData requestPowerSensorData(
-        @PathVariable String clientID,
-        @PathVariable String dataId
-    ) {
-        if (
-            MonitoringServiceApplication.getClientList().getClient(clientID) ==
-            null
-        ) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Client not found"
-            );
-        }
-
-        if (clientID.contains("enV5")) {
-            try {
-                ClientData clientData =
-                    MonitoringServiceApplication.getClientList()
-                        .getClient(clientID);
-
-                String latest =
-                    MonitoringServiceApplication.getLatestMeasurement(
-                        clientData.getDataRequester().get(dataId)
-                    );
-
-                return new SensorData(clientID, dataId, latest);
-            } catch (TimeoutException t) {
-                throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Client not reachable"
-                );
-            }
-        }
-
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    private record SensorData(String CLIENT_ID, String DATA_ID, String VALUE) {}
 }

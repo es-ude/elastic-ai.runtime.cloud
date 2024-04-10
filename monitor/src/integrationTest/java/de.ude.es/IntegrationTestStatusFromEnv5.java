@@ -1,8 +1,6 @@
 package de.ude.es;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import de.ude.es.Clients.MonitorCommunicationEndpoint;
+import de.ude.es.Clients.ClientData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -13,6 +11,8 @@ import org.testcontainers.utility.DockerImageName;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
@@ -39,11 +39,9 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOnlineCanBeReceived() throws InterruptedException {
         Thread.sleep(1000);
-        int activeTwins = monitorCommunicationEndpoint
-            .getClientList()
-            .getActiveClients()
-            .size();
-        assertEquals(1, activeTwins);
+        ClientData client = monitorCommunicationEndpoint
+            .getClientList().getClient(enV5Mock.getIdentifier());
+        assertTrue(client.isActive());
     }
 
     @Test
@@ -53,16 +51,14 @@ public class IntegrationTestStatusFromEnv5 {
             .publish(
                 new Posting(
                     enV5Mock.getIdentifier() + "/STATUS",
-                    "ID:" + enV5Mock.getIdentifier() + ";STATUS:OFFLINE;"
+                    "ID:" + enV5Mock.getIdentifier() + ";STATE:OFFLINE;"
                 ),
                 true
             );
         Thread.sleep(1000);
-        int activeTwins = monitorCommunicationEndpoint
-            .getClientList()
-            .getActiveClients()
-            .size();
-        assertEquals(0, activeTwins);
+        ClientData client = monitorCommunicationEndpoint
+                .getClientList().getClient(enV5Mock.getIdentifier());
+        assertFalse(client.isActive());
     }
 
     private void createEnv5Twin() {
@@ -79,7 +75,7 @@ public class IntegrationTestStatusFromEnv5 {
         );
     }
 
-    private HivemqBroker createBrokerWithKeepalive(String clientId) {
+    private HivemqBroker createBrokerWithKeepalive(String clientID) {
         String BROKER_IP = "localhost";
         String MQTT_DOMAIN = "eip://uni-due.de/es";
         return new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT);

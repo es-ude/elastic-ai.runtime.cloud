@@ -80,11 +80,16 @@ public class CSVService extends LocalCommunicationEndpoint {
             getDomainAndIdentifier()
         );
 
-        dataRequester.setDataReceiveFunction(data -> {
+        dataRequester.setDataReceiveFunction(getDataExecutor());
+        dataRequester.startRequestingData();
+    }
+
+    private DataExecutor getDataExecutor() {
+        return data -> {
             String timeStamp = new Timestamp(System.currentTimeMillis())
-                .toString()
-                .split("\\.")[0].replace(":", "-")
-                .replace(" ", "_");
+                    .toString()
+                    .split("\\.")[0].replace(":", "-")
+                    .replace(" ", "_");
             String folderName = PATH + "/" + timeStamp;
             try {
                 System.out.println("Saving throw to: " + folderName);
@@ -95,8 +100,8 @@ public class CSVService extends LocalCommunicationEndpoint {
                 savePicture(folderName);
 
                 FileWriter csvWriter = new FileWriter(
-                    folderName + "/measurement.csv",
-                    false
+                        folderName + "/measurement.csv",
+                        false
                 );
 
                 csvWriter.append("x");
@@ -112,8 +117,7 @@ public class CSVService extends LocalCommunicationEndpoint {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
-        dataRequester.startRequestingData();
+        };
     }
 
     private static Namespace parseArguments(String[] args)

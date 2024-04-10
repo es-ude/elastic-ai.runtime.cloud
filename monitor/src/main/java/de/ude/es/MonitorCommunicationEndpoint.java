@@ -1,10 +1,15 @@
-package de.ude.es.Clients;
+package de.ude.es;
 
+import de.ude.es.Clients.ClientList;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.Posting;
 import org.ude.es.protocol.Status;
 import org.ude.es.protocol.Subscriber;
+
+import java.util.Arrays;
+
+import static org.ude.es.protocol.Status.State.ONLINE;
 
 public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
@@ -35,6 +40,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             ClientList clientList,
             MonitorCommunicationEndpoint monitorCommunicationEndpoint
         ) {
+            System.out.println("StatusMonitor");
             this.clients = clientList;
             this.client = client;
             this.monitorCommunicationEndpoint = monitorCommunicationEndpoint;
@@ -42,6 +48,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
         }
 
         private void createTwinStubAndSubscribeForStatus() {
+            System.out.println("Creating TwinStubAndSubscribeForStatus");
             RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
                 "+"
             );
@@ -56,53 +63,28 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
                 .substring(posting.data().indexOf("ID") + ("ID").length() + 1);
             twinID = twinID.substring(0, twinID.indexOf(";"));
 
+            String twinIDFromTopic = posting.topic().split("/")[Arrays.asList(posting.topic().split("/")).indexOf("STATUS")-1];
+
+            if (!twinID.equals(twinIDFromTopic)) {
+                System.out.printf("Topic ID '%s' and ID '%s' in Status differ! Ignoring!%n", twinIDFromTopic, twinID);
+                return;
+            }
+
             boolean twinActive = posting
                 .data()
-                .contains(Status.State.ONLINE.toString());
-            System.out.println(Status.State.ONLINE.toString());
+                .contains(ONLINE.toString());
+
             System.out.printf(
-                "Client with id %s online: %b.%n",
+                "Client with ID '%s' online: %b.%n",
                 twinID,
                 twinActive
             );
 
-            if (this.client.getDomainAndIdentifier().contains(twinID)) {
-                return;
-            }
-
-            if (twinActive) {
-                int measurementsIndex = posting.data().indexOf("DATA");
-                if (measurementsIndex >= 0) {
-                    String measurements = posting
-                        .data()
-                        .substring(measurementsIndex + "DATA".length() + 1);
-                    measurements = measurements.substring(
-                        0,
-                        measurements.indexOf(";")
-                    );
-
-                    clients.addOrUpdateClient(
-                        twinID,
-                        measurements.split(","),
-                        monitorCommunicationEndpoint.getBrokerStub(),
-                        monitorCommunicationEndpoint.getDomainAndIdentifier()
-                    );
-                } else {
-                    clients.addOrUpdateClient(
-                        twinID,
-                        null,
-                        monitorCommunicationEndpoint.getBrokerStub(),
-                        monitorCommunicationEndpoint.getDomainAndIdentifier()
-                    );
-                }
-            } else {
-                ClientData twin = clients.getClient(twinID);
-                if (twin != null) {
-                    twin.setInactive();
-                }
-                // if twin == null -> ignore status message,
-                //                    no need to add inactive Twin
-            }
+            clients.addOrUpdateClient(
+                    twinID,
+                    posting.data(),
+                monitorCommunicationEndpoint.getBrokerStub()
+            );
         }
     }
 }
