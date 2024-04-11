@@ -15,16 +15,21 @@
     <title th:text="'Elastic AI Monitor - ' + ${status}">Monitor</title>
 </head>
 <body class="bg-info text-black">
-<div class="position-absolute top-50 start-50 translate-middle container">
+<div class="position-absolute top-50 start-50 translate-middle container" th:align="center">
     <div class="row">
         <h1 class="text-center display-2 text-uppercase" th:text="${status}">Error</h1>
     </div>
     <div class="row pt-5">
-        <p class="text-center fs-4">
-            This page doesn't exist.
-            <br/>
-            Would you like to go <a href="/" class="link-danger hidden-link">home</a>?
-        </p>
+        <p id="page" class="text-center fs-4">
+        <script>
+            document.getElementById("page").innerHTML =
+                "Can not find URL:<br>" + window.location.href;
+        </script>
+
+        <br/>
+            <h1>
+                <a href="/" class="link-danger hidden-link">GO HOME</a>
+            </h1>
     </div>
 </div>
 </body>

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.BrokerStub;
-import org.ude.es.protocol.Status;
 import org.ude.es.protocol.requests.DataRequester;
 
 public class ClientData {

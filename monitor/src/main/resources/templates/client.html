@@ -52,7 +52,7 @@
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors"
-         th:if="${client.getAvailableData() != null}">
+         th:if="${client.getAvailableData().size() != 0}"}>
     <h4>Measurements</h4>
     <div class="d-grid container gap-2" id="sensors">
         <div class="row text-center" th:each="sensor: ${client.getAvailableData()}">
@@ -62,7 +62,7 @@
                 <input class="form-control" th:id="${sensor.toLowerCase()}" th:attr="aria-label=${sensor.toLowerCase()}"
                        type="text" readonly>
                 <script th:inline="javascript">
-                    setValueUpdate([[${client.getID()}]], [[${sensor}]], [[${sensor}]]);
+                    setValueUpdate([[${client.getID()}]], [[${sensor}]]);
                 </script>
             </div>
         </div>
@@ -71,17 +71,7 @@
 
 <div id="PLACE"></div>
 <script>
-    function httpGet()
-    {
-        if (document.getElementById("CLIENT-TYPE").innerText === "enV5") {
-            const xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("GET", "enV5/" + document.getElementById("CLIENT-ID").innerText, false);
-            xmlHttp.send(null);
-            const div = document.getElementById("PLACE");
-            div.innerHTML = xmlHttp.responseText
-        }
-    }
-    httpGet()
+    includeEnV5()
 </script>
 
 </body>
