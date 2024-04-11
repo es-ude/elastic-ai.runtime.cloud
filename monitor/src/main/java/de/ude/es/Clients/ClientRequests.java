@@ -39,7 +39,7 @@ public class ClientRequests {
     }
 
     @GetMapping("/{clientID}")
-    public String enV5ClientLandingPage(
+    public String clientLandingPage(
         Model model,
         @PathVariable String clientID
     ) {
