@@ -24,8 +24,6 @@ public class HivemqBroker implements BrokerStub {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
 
-
-
     public void connect(String clientId, String lwtMessage) {
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
@@ -51,8 +49,7 @@ public class HivemqBroker implements BrokerStub {
                 if (connAck.getReasonCode() == Mqtt5ConnAckReasonCode.SUCCESS) {
                     break;
                 }
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
