@@ -4,14 +4,12 @@ import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
-import com.hivemq.client.mqtt.mqtt5.message.Mqtt5ReasonCode;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAckReasonCode;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import java.nio.ByteBuffer;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Objects;
 
 public class HivemqBroker implements BrokerStub {
 
@@ -24,9 +22,9 @@ public class HivemqBroker implements BrokerStub {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
 
-
-
     public void connect(String clientId, String lwtMessage) {
+        System.out.println("Connecting to " + this.brokerIp + ":" + this.brokerPort + "...");
+
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
 
@@ -35,6 +33,7 @@ public class HivemqBroker implements BrokerStub {
             .identifier(domainIdentifier)
             .serverHost(this.brokerIp)
             .serverPort(this.brokerPort)
+            .automaticReconnectWithDefaultConfig()
             //region LWT message
             .willPublish()
             .topic(domainIdentifier + PostingType.STATUS.topic(""))
@@ -59,8 +58,8 @@ public class HivemqBroker implements BrokerStub {
                 throw new RuntimeException(e);
             }
         }
-
         client = blockingClient.toAsync();
+        System.out.println("Connected to " + this.brokerIp + ":" + this.brokerPort);
     }
 
     public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort) {
@@ -104,11 +103,11 @@ public class HivemqBroker implements BrokerStub {
         Mqtt5PublishResult pubAck,
         Throwable throwable
     ) {
-        if (throwable != null) {
+        if (pubAck == null) {
             System.out.println(
-                "Publishing failed for\t" +
+                "Publishing failed:\t" +
                 ANSI_RED +
-                pubAck.getPublish().getTopic() +
+                throwable.getMessage() +
                 ANSI_RESET
             );
         } else {
