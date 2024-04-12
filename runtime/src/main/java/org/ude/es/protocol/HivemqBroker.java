@@ -23,7 +23,9 @@ public class HivemqBroker implements BrokerStub {
     public static final String ANSI_RED = "\u001B[31m";
 
     public void connect(String clientId, String lwtMessage) {
-        System.out.println("Connecting to " + this.brokerIp + ":" + this.brokerPort + "...");
+        System.out.println(
+            "Connecting to " + this.brokerIp + ":" + this.brokerPort + "..."
+        );
 
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
@@ -50,8 +52,7 @@ public class HivemqBroker implements BrokerStub {
                 if (connAck.getReasonCode() == Mqtt5ConnAckReasonCode.SUCCESS) {
                     break;
                 }
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
@@ -59,7 +60,9 @@ public class HivemqBroker implements BrokerStub {
             }
         }
         client = blockingClient.toAsync();
-        System.out.println("Connected to " + this.brokerIp + ":" + this.brokerPort);
+        System.out.println(
+            "Connected to " + this.brokerIp + ":" + this.brokerPort
+        );
     }
 
     public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort) {
