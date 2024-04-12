@@ -5,6 +5,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -23,19 +24,19 @@ public class MonitoringServiceApplication {
     public static Integer BROKER_PORT = null;
     public static MonitorCommunicationEndpoint monitorCommunicationEndpoint =
         null;
-    public static String IP_ADDRESS;
+    public static String HOST_IP;
 
     public static void main(String[] args) {
-        IP_ADDRESS = System.getenv("HOST_IP");
-        if (IP_ADDRESS == null) {
+        HOST_IP = System.getenv("HOST_IP");
+        if (HOST_IP == null) {
             try (final DatagramSocket socket = new DatagramSocket()) {
                 socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-                IP_ADDRESS = socket.getLocalAddress().getHostAddress();
+                HOST_IP = socket.getLocalAddress().getHostAddress();
             } catch (UnknownHostException | SocketException e) {
                 throw new RuntimeException(e);
             }
         }
-        IP_ADDRESS = IP_ADDRESS.strip();
+        HOST_IP = HOST_IP.strip();
 
         try {
             Namespace arguments = MonitoringServiceApplication.parseArguments(
@@ -88,7 +89,7 @@ public class MonitoringServiceApplication {
         MonitorCommunicationEndpoint monitorCommunicationEndpoint =
             new MonitorCommunicationEndpoint(CLIENT_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(
-            new HivemqBroker(MQTT_DOMAIN, IP_ADDRESS, BROKER_PORT)
+            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
         );
         return monitorCommunicationEndpoint;
     }

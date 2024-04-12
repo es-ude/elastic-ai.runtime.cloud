@@ -81,7 +81,7 @@ public class BitFileController {
             "FLASH",
             String.format(
                 "URL:http://%s:8081/bitfile/%s/;SIZE:%d;POSITION:%d",
-                MonitoringServiceApplication.IP_ADDRESS,
+                MonitoringServiceApplication.HOST_IP,
                 name,
                 size,
                 startSectorID
