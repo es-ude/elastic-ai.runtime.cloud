@@ -4,11 +4,14 @@ import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import com.hivemq.client.mqtt.mqtt5.message.Mqtt5ReasonCode;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
+import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAckReasonCode;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import java.nio.ByteBuffer;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Objects;
 
 public class HivemqBroker implements BrokerStub {
 
@@ -20,6 +23,8 @@ public class HivemqBroker implements BrokerStub {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
+
+
 
     public void connect(String clientId, String lwtMessage) {
         this.clientId = fixClientId(clientId);
@@ -39,7 +44,22 @@ public class HivemqBroker implements BrokerStub {
             .applyWillPublish()
             //endregion
             .buildBlocking();
-        Mqtt5ConnAck connAck = blockingClient.connect();
+
+        while (true) {
+            try {
+                Mqtt5ConnAck connAck = blockingClient.connect();
+                if (connAck.getReasonCode() == Mqtt5ConnAckReasonCode.SUCCESS) {
+                    break;
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         client = blockingClient.toAsync();
     }
 
