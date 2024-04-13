@@ -15,7 +15,7 @@ import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.requests.DataRequester;
 
-public class CSVService extends LocalCommunicationEndpoint {
+public class ballChallenge extends LocalCommunicationEndpoint {
 
     private static String CAMERA_IP = null;
     private static Integer CAMERA_PORT = null;
@@ -33,10 +33,10 @@ public class CSVService extends LocalCommunicationEndpoint {
             System.out.println(exception.getMessage());
             System.exit(10);
         }
-        startCommunicationEndpoint(new CSVService(), args);
+        startCommunicationEndpoint(new ballChallenge(), args);
     }
 
-    public CSVService() {
+    public ballChallenge() {
         super("CSVService", "SERVICE");
         enV5 = new RemoteCommunicationEndpoint("enV5");
     }
@@ -123,7 +123,7 @@ public class CSVService extends LocalCommunicationEndpoint {
     private static Namespace parseArguments(String[] args)
         throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers.newFor(
-            "elastic-ai.runtime.CSVService"
+            "elastic-ai.runtime.applications.ballChallenge"
         )
             .build()
             .defaultHelp(true)

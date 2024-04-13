@@ -1,7 +1,6 @@
 plugins {
     id 'application'
     id 'com.google.cloud.tools.jib'
-
 }
 
 group 'org.ude.es'
@@ -34,7 +33,7 @@ integrationTest {
 
 jib {
     to {
-        image = 'ghcr.io/es-ude/elastic-ai.cloud.service.csv'
+        image = 'ghcr.io/es-ude/elastic-ai.cloud.applications.ballChallenge'
         tags = ['latest', version]
     }
     container {

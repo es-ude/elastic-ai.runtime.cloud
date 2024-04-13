@@ -36,7 +36,7 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push CSV Service to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.service.csv
+      - name: Push Applications Github Container Registry
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.applications.ballChallenge
       - name: Push Monitor to Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.monitor
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.applications.monitor
