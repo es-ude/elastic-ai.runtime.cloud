@@ -1,13 +1,14 @@
-package de.ude.es.enV5;
+package de.ude.es.fpga;
 
-import static de.ude.es.MonitoringServiceApplication.monitorCommunicationEndpoint;
+import static de.ude.es.Monitor.monitorCommunicationEndpoint;
 
-import de.ude.es.MonitoringServiceApplication;
+import de.ude.es.Monitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -81,7 +82,7 @@ public class BitFileController {
             "FLASH",
             String.format(
                 "URL:http://%s:8081/bitfile/%s/;SIZE:%d;POSITION:%d",
-                MonitoringServiceApplication.HOST_IP,
+                Monitor.HOST_IP,
                 name,
                 size,
                 startSectorID

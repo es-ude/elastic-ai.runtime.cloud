@@ -28,13 +28,3 @@ async function uploadFile(button) {
     }
 }
 
-async function measurementStart(button) {
-    let formData = new FormData();
-    let clientID = button.id.replace("-measurement-start-button", "");
-
-    formData.append("clientID", clientID);
-
-    await fetch("/client/enV5/measurement/start/" + clientID, {
-        method: "POST",
-    });
-}

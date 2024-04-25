@@ -13,12 +13,12 @@
             <th>Name</th>
             <th>ID</th>
             <th>Type</th>
-            <th style="width: 10%"></th>
-            <th style="width: 10%"></th>
+            <th>Information</th>
+            <th>Change Name</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="client,iState: ${clients.getClients()}">
+        <tr th:each="client, iState: ${clients.getClients()}">
             <th th:text="${iState.index + 1}">
                 Table Index
             </th>
@@ -41,8 +41,6 @@
         </tr>
         </tbody>
     </table> <!--clientTable-->
-</section>
-<section>
 </section>
 </body>
 </html>

@@ -47,6 +47,7 @@ public class HivemqBroker implements BrokerStub {
             .buildBlocking();
 
         while (true) {
+            System.out.println("Waiting for connection to MQTT Broker...");
             try {
                 Mqtt5ConnAck connAck = blockingClient.connect();
                 if (connAck.getReasonCode() == Mqtt5ConnAckReasonCode.SUCCESS) {
@@ -54,14 +55,14 @@ public class HivemqBroker implements BrokerStub {
                 }
             } catch (Exception ignored) {}
             try {
-                Thread.sleep(5000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
         client = blockingClient.toAsync();
         System.out.println(
-            "Connected to " + this.brokerIp + ":" + this.brokerPort
+            "Connected to MQTT Broker: " + this.brokerIp + ":" + this.brokerPort
         );
     }
 

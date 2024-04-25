@@ -1,6 +1,6 @@
 package de.ude.es.Clients;
 
-import de.ude.es.MonitoringServiceApplication;
+import de.ude.es.Monitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,7 +21,7 @@ public class ClientRequests {
         @PathVariable String dataId
     ) {
         if (
-            MonitoringServiceApplication.getClientList().getClient(clientID) ==
+            Monitor.getClientList().getClient(clientID) ==
             null
         ) {
             throw new ResponseStatusException(
@@ -30,7 +30,7 @@ public class ClientRequests {
             );
         }
 
-        ClientData clientData = MonitoringServiceApplication.getClientList()
+        ClientData clientData = Monitor.getClientList()
             .getClient(clientID);
 
         String latest = clientData.getLastDataValues().get(dataId);
@@ -43,7 +43,7 @@ public class ClientRequests {
         Model model,
         @PathVariable String clientID
     ) {
-        ClientData client = MonitoringServiceApplication.getClientList()
+        ClientData client = Monitor.getClientList()
             .getClient(clientID);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

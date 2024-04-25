@@ -15,7 +15,7 @@ public class MonitorController {
     public String index(Model model) {
         try {
             ClientList clientList =
-                MonitoringServiceApplication.getClientList();
+                Monitor.getClientList();
             model.addAttribute("clients", clientList);
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -30,7 +30,7 @@ public class MonitorController {
         @RequestParam("ID") String ID
     ) {
         try {
-            MonitoringServiceApplication.getClientList()
+            Monitor.getClientList()
                 .changeClientName(ID, name);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

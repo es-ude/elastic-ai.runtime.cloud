@@ -46,13 +46,31 @@ async function getValueUpdate(clientId, sensorId) {
     }
 }
 
-function includeEnV5()
+function includeFPGA()
 {
-    if (document.getElementById("CLIENT-TYPE").innerText === "enV5") {
+    console.log(document.getElementById("optionals").innerText)
+    if (document.getElementById("optionals").innerText.includes("FPGA")) {
         const xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", "enV5/" + document.getElementById("CLIENT-ID").innerText, false);
+        xmlHttp.open("GET", "fpga/" + document.getElementById("CLIENT-ID").innerText, false);
         xmlHttp.send(null);
         const div = document.getElementById("PLACE");
         div.innerHTML = xmlHttp.responseText
+    }
+}
+
+function isIpAddress(text) {
+    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+    console.log(text.split("/")[0])
+    return ipPattern.test(text.split("/")[0]);
+}
+
+function checkIfIPAddress() {
+    const childDivs = document.getElementById("optionals").getElementsByTagName("div");
+    for (i = 0; i < childDivs.length; i++) {
+        const childDiv = childDivs[i];
+        const textContent = childDiv.textContent.trim();
+        if (isIpAddress(textContent)) {
+            childDiv.innerHTML = `<a href="http://${textContent}">${textContent}</a>`;
+        }
     }
 }

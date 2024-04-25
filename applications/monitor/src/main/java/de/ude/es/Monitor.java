@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.ude.es.protocol.HivemqBroker;
 
 @SpringBootApplication
-public class MonitoringServiceApplication {
+public class Monitor {
 
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
     private static final String CLIENT_ID = "monitor";
@@ -38,7 +38,7 @@ public class MonitoringServiceApplication {
         HOST_IP = HOST_IP.strip();
 
         try {
-            Namespace arguments = MonitoringServiceApplication.parseArguments(
+            Namespace arguments = Monitor.parseArguments(
                 args
             );
             BROKER_IP = arguments.getString("broker_address");
@@ -50,7 +50,7 @@ public class MonitoringServiceApplication {
 
         monitorCommunicationEndpoint = createMonitorTwin();
 
-        SpringApplication.run(MonitoringServiceApplication.class, args);
+        SpringApplication.run(Monitor.class, args);
     }
 
     static Namespace parseArguments(String[] args)

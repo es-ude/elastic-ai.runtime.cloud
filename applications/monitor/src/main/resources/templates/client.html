@@ -41,18 +41,19 @@
                 Client Status
             </div>
         </div>
-        <div th:each="key: ${client.getAvailableOptionalStatus()}">
-            <div class="row">
+
+        <div id="optionals">
+            <div   class="row" th:each="key: ${client.getAvailableOptionalStatus()}">
                 <div class="col text-end fw-bold" th:text="${key.toUpperCase()}">
                 </div>
-                <div class="col" th:text="${client.getOptionalStatusValue(key)}">
+                <div  class="col" th:text="${client.getOptionalStatusValue(key)}">
                 </div>
             </div>
         </div>
     </div>
 </section>
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors"
-         th:if="${client.getAvailableData().size() != 0}"}>
+         th:if="${client.getAvailableData().size() != 0}">
     <h4>Measurements</h4>
     <div class="d-grid container gap-2" id="sensors">
         <div class="row text-center" th:each="sensor: ${client.getAvailableData()}">
@@ -71,7 +72,8 @@
 
 <div id="PLACE"></div>
 <script>
-    includeEnV5()
+    checkIfIPAddress();
+    includeFPGA()
 </script>
 
 </body>
