@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class Requests {
 
     @GetMapping({ "/", "/index", "/index.html" })
-    public String clientLandingPage(
-            Model model
-    ) {
+    public String clientLandingPage(Model model) {
         model.addAttribute("abc", BallChallenge.ballChallengeEndpoint);
         return "index";
     }
@@ -39,7 +37,9 @@ public class Requests {
     @GetMapping("/requestGValueUpdate")
     @ResponseBody
     public DataValue requestData() {
-        return new DataValue(BallChallenge.ballChallengeEndpoint.getLastGValue());
+        return new DataValue(
+            BallChallenge.ballChallengeEndpoint.getLastGValue()
+        );
     }
 
     public record DataValue(String VALUE) {}

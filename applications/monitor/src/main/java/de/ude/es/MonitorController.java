@@ -14,8 +14,7 @@ public class MonitorController {
     @GetMapping({ "/", "/index", "/index.html" })
     public String index(Model model) {
         try {
-            ClientList clientList =
-                Monitor.getClientList();
+            ClientList clientList = Monitor.getClientList();
             model.addAttribute("clients", clientList);
         } catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -30,8 +29,7 @@ public class MonitorController {
         @RequestParam("ID") String ID
     ) {
         try {
-            Monitor.getClientList()
-                .changeClientName(ID, name);
+            Monitor.getClientList().changeClientName(ID, name);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collections;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -38,9 +37,7 @@ public class BallChallenge {
         HOST_IP = HOST_IP.strip();
 
         try {
-            Namespace arguments = BallChallenge.parseArguments(
-                    args
-            );
+            Namespace arguments = BallChallenge.parseArguments(args);
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
             PORT = arguments.getInt("port");
@@ -61,25 +58,29 @@ public class BallChallenge {
             System.exit(10);
         }
 
-        ballChallengeEndpoint = new BallChallengeEndpoint(CAMERA_IP, CAMERA_PORT);
-        ballChallengeEndpoint.bindToCommunicationEndpoint(new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT));
+        ballChallengeEndpoint = new BallChallengeEndpoint(
+            CAMERA_IP,
+            CAMERA_PORT
+        );
+        ballChallengeEndpoint.bindToCommunicationEndpoint(
+            new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT)
+        );
 
         SpringApplication app = new SpringApplication(BallChallenge.class);
-        app.setDefaultProperties(Collections
-                .singletonMap("server.port", PORT));
+        app.setDefaultProperties(Collections.singletonMap("server.port", PORT));
         app.run(args);
     }
 
     static Namespace parseArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers.newFor(
-                        "elastic-ai.runtime.monitor"
-                )
-                .build()
-                .defaultHelp(true)
-                .description(
-                        "Service for monitoring clients in the elastic-ai.runtime"
-                );
+            "elastic-ai.runtime.monitor"
+        )
+            .build()
+            .defaultHelp(true)
+            .description(
+                "Service for monitoring clients in the elastic-ai.runtime"
+            );
         parseBrokerArguments(parser);
         parsePort(parser);
         return parser.parseArgs(args);
@@ -87,51 +88,53 @@ public class BallChallenge {
 
     private static void parsePort(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
 
         brokerSpecification
-                .addArgument("--port")
-                .type(Integer.class)
-                .help("Website Port")
-                .setDefault(80);
+            .addArgument("--port")
+            .type(Integer.class)
+            .help("Website Port")
+            .setDefault(80);
     }
 
     private static void parseBrokerArguments(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
 
         brokerSpecification
-                .addArgument("--broker-address")
-                .help("Broker Address")
-                .setDefault("localhost");
+            .addArgument("--broker-address")
+            .help("Broker Address")
+            .setDefault("localhost");
         brokerSpecification
-                .addArgument("--broker-port")
-                .type(Integer.class)
-                .help("Broker Port")
-                .setDefault(1883);
+            .addArgument("--broker-port")
+            .type(Integer.class)
+            .help("Broker Port")
+            .setDefault(1883);
     }
 
     private static Namespace parseCameraArguments(String[] args)
-            throws ArgumentParserException {
+        throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers.newFor(
-                        "elastic-ai.runtime.applications.ballChallenge"
-                )
-                .build()
-                .defaultHelp(true)
-                .description("Start a BallChallenge Application for the elastic-ai.runtime");
+            "elastic-ai.runtime.applications.ballChallenge"
+        )
+            .build()
+            .defaultHelp(true)
+            .description(
+                "Start a BallChallenge Application for the elastic-ai.runtime"
+            );
         ArgumentGroup cameraSpecification = parser.addArgumentGroup(
-                "Camera Specification"
+            "Camera Specification"
         );
         cameraSpecification
-                .addArgument("--camera-address")
-                .help("Camera Address")
-                .setDefault("localhost");
+            .addArgument("--camera-address")
+            .help("Camera Address")
+            .setDefault("localhost");
         cameraSpecification
-                .addArgument("--camera-port")
-                .help("Camera Port")
-                .setDefault(8081);
+            .addArgument("--camera-port")
+            .help("Camera Port")
+            .setDefault(8081);
 
         return parser.parseKnownArgs(args, null);
     }

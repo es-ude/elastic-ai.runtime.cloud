@@ -20,18 +20,14 @@ public class ClientRequests {
         @PathVariable String clientID,
         @PathVariable String dataId
     ) {
-        if (
-            Monitor.getClientList().getClient(clientID) ==
-            null
-        ) {
+        if (Monitor.getClientList().getClient(clientID) == null) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Client not found"
             );
         }
 
-        ClientData clientData = Monitor.getClientList()
-            .getClient(clientID);
+        ClientData clientData = Monitor.getClientList().getClient(clientID);
 
         String latest = clientData.getLastDataValues().get(dataId);
 
@@ -43,8 +39,7 @@ public class ClientRequests {
         Model model,
         @PathVariable String clientID
     ) {
-        ClientData client = Monitor.getClientList()
-            .getClient(clientID);
+        ClientData client = Monitor.getClientList().getClient(clientID);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

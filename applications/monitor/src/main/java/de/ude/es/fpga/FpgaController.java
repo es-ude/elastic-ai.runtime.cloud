@@ -17,8 +17,7 @@ public class FpgaController {
         Model model,
         @PathVariable String name
     ) {
-        ClientData client = Monitor.getClientList()
-            .getClient(name);
+        ClientData client = Monitor.getClientList().getClient(name);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

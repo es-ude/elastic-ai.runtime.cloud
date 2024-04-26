@@ -100,9 +100,7 @@ public class Status {
         if (!posting.contains(key)) return null;
         int valueStart = posting.indexOf(key) + key.length() + 1;
         if (valueStart > posting.length()) return null;
-        String value = posting.substring(
-                valueStart
-        );
+        String value = posting.substring(valueStart);
         if (!value.contains(";")) return null;
         value = value.substring(0, value.indexOf(";"));
         return value;

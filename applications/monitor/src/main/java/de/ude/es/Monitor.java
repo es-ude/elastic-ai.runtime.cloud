@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collections;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -41,9 +40,7 @@ public class Monitor {
         HOST_IP = HOST_IP.strip();
 
         try {
-            Namespace arguments = Monitor.parseArguments(
-                args
-            );
+            Namespace arguments = Monitor.parseArguments(args);
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
             PORT = arguments.getInt("port");
@@ -54,8 +51,7 @@ public class Monitor {
 
         monitorCommunicationEndpoint = createMonitorTwin();
         SpringApplication app = new SpringApplication(Monitor.class);
-        app.setDefaultProperties(Collections
-                .singletonMap("server.port", PORT));
+        app.setDefaultProperties(Collections.singletonMap("server.port", PORT));
         app.run(args);
     }
 
@@ -76,14 +72,14 @@ public class Monitor {
 
     private static void parsePort(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-                "MQTT Broker Specification"
+            "MQTT Broker Specification"
         );
 
         brokerSpecification
-                .addArgument("--port")
-                .type(Integer.class)
-                .help("Website Port")
-                .setDefault(80);
+            .addArgument("--port")
+            .type(Integer.class)
+            .help("Website Port")
+            .setDefault(80);
     }
 
     private static void parseBrokerArguments(ArgumentParser parser) {
