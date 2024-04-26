@@ -48,7 +48,6 @@ async function getValueUpdate(clientId, sensorId) {
 
 function includeFPGA()
 {
-    console.log(document.getElementById("optionals").innerText)
     if (document.getElementById("optionals").innerText.includes("FPGA")) {
         const xmlHttp = new XMLHttpRequest();
         xmlHttp.open("GET", "fpga/" + document.getElementById("CLIENT-ID").innerText, false);
@@ -59,8 +58,7 @@ function includeFPGA()
 }
 
 function isIpAddress(text) {
-    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
-    console.log(text.split("/")[0])
+    const ipPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(.*)$/;
     return ipPattern.test(text.split("/")[0]);
 }
 

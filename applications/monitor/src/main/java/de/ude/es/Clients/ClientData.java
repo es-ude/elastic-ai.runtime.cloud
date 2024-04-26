@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 import org.ude.es.protocol.BrokerStub;
+import org.ude.es.protocol.Status;
 import org.ude.es.protocol.requests.DataRequester;
 
 public class ClientData {
@@ -96,9 +97,9 @@ public class ClientData {
         optionalValues.clear();
         setAvailableData(new String[] {});
         for (String post : posting.split(";")) {
-            if (post.split(":").length != 2) continue;
+            if (post.split(":").length < 2) continue;
             String key = post.split(":")[0];
-            String value = post.split(":")[1];
+            String value = Status.extractFromStatus(posting, key);
             if (Objects.equals(key, "TYPE")) {
                 type = value;
             } else if (Objects.equals(key, "STATE")) {

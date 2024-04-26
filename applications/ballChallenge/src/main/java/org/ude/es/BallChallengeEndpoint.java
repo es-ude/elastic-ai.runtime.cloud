@@ -1,10 +1,9 @@
 package org.ude.es;
 
 import java.io.*;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -37,7 +36,7 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
         try(final DatagramSocket socket = new DatagramSocket()){
             socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
             String ip = socket.getLocalAddress().getHostAddress();
-            this.status.ADD_OPTIONAL("WEBSITE", ip);
+            this.status.ADD_OPTIONAL("WEBSITE", ip + ":" + BallChallenge.PORT);
         } catch (SocketException | UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -121,30 +120,30 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
     private void savePicture(String filePath) {
         // Clear camera buffer
-//        for (int i = 0; i < 10; i++) {
-//            try (
-//                InputStream ignored = new URL(
-//                    "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
-//                ).openStream()
-//            ) {
-//                Thread.sleep(10);
-//            } catch (IOException | InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//
-//        // Take picture
-//        try (
-//            InputStream in = new URL(
-//                "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
-//            ).openStream()
-//        ) {
-//            Files.copy(in, Paths.get(filePath + "/image.jpg"));
-//        } catch (MalformedURLException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            System.out.println("NO PICTURE TAKEN!!!");
-//        }
+        for (int i = 0; i < 10; i++) {
+            try (
+                InputStream ignored = new URL(
+                    "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
+                ).openStream()
+            ) {
+                Thread.sleep(10);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // Take picture
+        try (
+            InputStream in = new URL(
+                "http://" + CAMERA_IP + ":" + CAMERA_PORT + "/jpeg"
+            ).openStream()
+        ) {
+            Files.copy(in, Paths.get(filePath + "/image.jpg"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.out.println("NO PICTURE TAKEN!!!");
+        }
     }
 
     private DataExecutor handleThrowData() {

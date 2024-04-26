@@ -100,11 +100,11 @@ public class Status {
         if (!posting.contains(key)) return null;
         int valueStart = posting.indexOf(key) + key.length() + 1;
         if (valueStart > posting.length()) return null;
-        String type = posting.substring(
+        String value = posting.substring(
                 valueStart
         );
-        if (!type.contains(";")) return null;
-        type = type.substring(0, type.indexOf(";"));
-        return type;
+        if (!value.contains(";")) return null;
+        value = value.substring(0, value.indexOf(";"));
+        return value;
     }
 }

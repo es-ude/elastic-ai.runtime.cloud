@@ -4,6 +4,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -20,6 +22,7 @@ public class BallChallenge {
     public static String BROKER_IP = null;
     public static Integer BROKER_PORT = null;
     public static String HOST_IP;
+    public static Integer PORT;
     public static BallChallengeEndpoint ballChallengeEndpoint = null;
 
     public static void main(String[] args) {
@@ -40,6 +43,7 @@ public class BallChallenge {
             );
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
+            PORT = arguments.getInt("port");
         } catch (ArgumentParserException exception) {
             System.out.println(exception.getMessage());
             System.exit(10);
@@ -60,7 +64,10 @@ public class BallChallenge {
         ballChallengeEndpoint = new BallChallengeEndpoint(CAMERA_IP, CAMERA_PORT);
         ballChallengeEndpoint.bindToCommunicationEndpoint(new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT));
 
-        SpringApplication.run(BallChallenge.class, args);
+        SpringApplication app = new SpringApplication(BallChallenge.class);
+        app.setDefaultProperties(Collections
+                .singletonMap("server.port", PORT));
+        app.run(args);
     }
 
     static Namespace parseArguments(String[] args)
@@ -73,21 +80,34 @@ public class BallChallenge {
                 .description(
                         "Service for monitoring clients in the elastic-ai.runtime"
                 );
-        defineBrokerArgumentGroup(parser);
+        parseBrokerArguments(parser);
+        parsePort(parser);
         return parser.parseArgs(args);
     }
 
-    private static void defineBrokerArgumentGroup(ArgumentParser parser) {
+    private static void parsePort(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
                 "MQTT Broker Specification"
         );
 
         brokerSpecification
-                .addArgument("-b", "--broker-address")
+                .addArgument("--port")
+                .type(Integer.class)
+                .help("Website Port")
+                .setDefault(80);
+    }
+
+    private static void parseBrokerArguments(ArgumentParser parser) {
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
+                "MQTT Broker Specification"
+        );
+
+        brokerSpecification
+                .addArgument("--broker-address")
                 .help("Broker Address")
                 .setDefault("localhost");
         brokerSpecification
-                .addArgument("-p", "--broker-port")
+                .addArgument("--broker-port")
                 .type(Integer.class)
                 .help("Broker Port")
                 .setDefault(1883);
@@ -100,7 +120,7 @@ public class BallChallenge {
                 )
                 .build()
                 .defaultHelp(true)
-                .description("Start a csv service for the elastic-ai.runtime");
+                .description("Start a BallChallenge Application for the elastic-ai.runtime");
         ArgumentGroup cameraSpecification = parser.addArgumentGroup(
                 "Camera Specification"
         );

@@ -5,6 +5,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -24,6 +26,7 @@ public class Monitor {
     public static MonitorCommunicationEndpoint monitorCommunicationEndpoint =
         null;
     public static String HOST_IP;
+    public static Integer PORT;
 
     public static void main(String[] args) {
         HOST_IP = System.getenv("HOST_IP");
@@ -43,14 +46,17 @@ public class Monitor {
             );
             BROKER_IP = arguments.getString("broker_address");
             BROKER_PORT = arguments.getInt("broker_port");
+            PORT = arguments.getInt("port");
         } catch (ArgumentParserException exception) {
             System.out.println(exception.getMessage());
             System.exit(10);
         }
 
         monitorCommunicationEndpoint = createMonitorTwin();
-
-        SpringApplication.run(Monitor.class, args);
+        SpringApplication app = new SpringApplication(Monitor.class);
+        app.setDefaultProperties(Collections
+                .singletonMap("server.port", PORT));
+        app.run(args);
     }
 
     static Namespace parseArguments(String[] args)
@@ -63,11 +69,24 @@ public class Monitor {
             .description(
                 "Service for monitoring clients in the elastic-ai.runtime"
             );
-        defineBrokerArgumentGroup(parser);
+        parseBrokerArguments(parser);
+        parsePort(parser);
         return parser.parseArgs(args);
     }
 
-    private static void defineBrokerArgumentGroup(ArgumentParser parser) {
+    private static void parsePort(ArgumentParser parser) {
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
+                "MQTT Broker Specification"
+        );
+
+        brokerSpecification
+                .addArgument("--port")
+                .type(Integer.class)
+                .help("Website Port")
+                .setDefault(80);
+    }
+
+    private static void parseBrokerArguments(ArgumentParser parser) {
         ArgumentGroup brokerSpecification = parser.addArgumentGroup(
             "MQTT Broker Specification"
         );
