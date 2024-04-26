@@ -39,7 +39,8 @@ public class TestClientData {
             ";DATA:" +
             CLIENT_DATA +
             ";" +
-            CLIENT_OPTIONAL
+            CLIENT_OPTIONAL +
+            ";"
         );
     }
 

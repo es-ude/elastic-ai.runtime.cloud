@@ -50,7 +50,7 @@ public class ClientList {
         if (getClient(ID) == null) {
             String type = extractFromStatus(posting, "TYPE");
             // if monitor
-            if (type.equals("MONITOR")) {
+            if (type != null && type.equals("MONITOR")) {
                 return;
             }
 
