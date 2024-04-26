@@ -17,7 +17,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     protected void executeOnBindPrivate() {
-        Status lwtMessage = status.STATE(Status.State.ONLINE).copy();
+        Status lwtMessage = status.STATE(Status.State.OFFLINE).copy();
 
         this.brokerStub.connect(this.identifier, lwtMessage.get());
         publishStatus(status.STATE(Status.State.ONLINE));

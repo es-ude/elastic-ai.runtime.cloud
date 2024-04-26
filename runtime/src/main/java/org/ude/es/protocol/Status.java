@@ -96,12 +96,13 @@ public class Status {
         return status;
     }
 
-    public static String extractFromStatus(String posting, String TYPE) {
-        if (!posting.contains(TYPE)) return "";
-        String type = posting.substring(
-            posting.indexOf(TYPE) + TYPE.length() + 1
-        );
-        type = type.substring(0, type.indexOf(";"));
-        return type;
+    public static String extractFromStatus(String posting, String key) {
+        if (!posting.contains(key)) return null;
+        int valueStart = posting.indexOf(key) + key.length() + 1;
+        if (valueStart > posting.length()) return null;
+        String value = posting.substring(valueStart);
+        if (!value.contains(";")) return null;
+        value = value.substring(0, value.indexOf(";"));
+        return value;
     }
 }

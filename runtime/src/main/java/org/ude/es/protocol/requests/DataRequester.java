@@ -25,7 +25,6 @@ public class DataRequester {
         ValueReceiver valueReceiver = new ValueReceiver();
 
         remoteCommunicationEndpoint.subscribeForData(dataID, valueReceiver);
-
         remoteCommunicationEndpoint.addWhenDeviceGoesOnline(
             data -> getsOnline()
         );
