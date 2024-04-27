@@ -1,8 +1,7 @@
-package de.ude.es.fpga;
+package org.ude.es.fpga;
 
-import static de.ude.es.Monitor.monitorCommunicationEndpoint;
+import static org.ude.es.Monitor.monitorCommunicationEndpoint;
 
-import de.ude.es.Monitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.ude.es.Monitor;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Controller
@@ -80,8 +80,9 @@ public class BitFileController {
         clientStub.publishCommand(
             "FLASH",
             String.format(
-                "URL:http://%s:8081/bitfile/%s/;SIZE:%d;POSITION:%d",
+                "URL:http://%s:%s/bitfile/%s/;SIZE:%d;POSITION:%d",
                 Monitor.HOST_IP,
+                Monitor.PORT,
                 name,
                 size,
                 startSectorID

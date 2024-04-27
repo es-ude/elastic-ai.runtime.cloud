@@ -1,4 +1,4 @@
-package de.ude.es.Clients;
+package org.ude.es.Clients;
 
 import static org.ude.es.protocol.Status.State.ONLINE;
 

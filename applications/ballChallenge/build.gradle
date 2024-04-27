@@ -6,10 +6,9 @@ plugins {
     id 'com.google.cloud.tools.jib'
 }
 
-
 group 'org.ude.es'
 version '1.0.0'
-mainClassName = "org.ude.es.applications.ballChallenge"
+mainClassName = "org.ude.es.BallChallenge"
 
 dependencies {
     implementation project(':runtime')
@@ -27,7 +26,7 @@ dependencies {
     implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
     implementation 'com.google.guava:guava:33.0.0-jre'
 
-    compileOnly 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.30'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -35,27 +34,26 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 }
 
-facets {
-    integrationTest {
-        parentSourceSet = 'test'
-        testTaskName = 'integrationTest'
-    }
-}
-
-integrationTest {
-    useJUnitPlatform()
-    testLogging {
-        events 'passed', 'skipped', 'failed'
-    }
-}
-
 jib {
     to {
-        image = 'ghcr.io/es-ude/elastic-ai.cloud.applications.ballChallenge'
+        image = 'ghcr.io/es-ude/elastic-ai.cloud.applications.ball_challenge'
         tags = ['latest', version]
     }
     container {
         mainClass = mainClassName
         creationTime = "USE_CURRENT_TIMESTAMP"
     }
+    extraDirectories {
+        paths {
+            path {
+                from = file('src/main/resources')
+                into = '/src/main/resources'
+            }
+        }
+    }
 }
+
+tasks.register('wrapper') {}
+
+tasks.register('prepareKotlinBuildScriptModel') {}
+

@@ -1,6 +1,5 @@
-package de.ude.es;
+package org.ude.es;
 
-import de.ude.es.Clients.ClientList;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -13,6 +12,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.ude.es.Clients.ClientList;
 import org.ude.es.protocol.HivemqBroker;
 
 @SpringBootApplication

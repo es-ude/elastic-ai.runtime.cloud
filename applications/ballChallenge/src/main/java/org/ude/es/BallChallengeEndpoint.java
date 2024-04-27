@@ -35,13 +35,10 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
     public BallChallengeEndpoint(String CAMERA_IP, Integer CAMERA_PORT) {
         super("ballChallengeApplication", "APPLICATION");
-        try (final DatagramSocket socket = new DatagramSocket()) {
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            String ip = socket.getLocalAddress().getHostAddress();
-            this.status.ADD_OPTIONAL("WEBSITE", ip + ":" + BallChallenge.PORT);
-        } catch (SocketException | UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        this.status.ADD_OPTIONAL(
+                "WEBSITE",
+                BallChallenge.HOST_IP + ":" + BallChallenge.PORT
+            );
 
         this.CAMERA_IP = CAMERA_IP;
         this.CAMERA_PORT = CAMERA_PORT;

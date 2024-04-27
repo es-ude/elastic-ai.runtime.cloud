@@ -1,6 +1,5 @@
-package de.ude.es.Clients;
+package org.ude.es.Clients;
 
-import de.ude.es.Monitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
+import org.ude.es.Monitor;
 
 @Controller
 @RequestMapping({ "/client" })

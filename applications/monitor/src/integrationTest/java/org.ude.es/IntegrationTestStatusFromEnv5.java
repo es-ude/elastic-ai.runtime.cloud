@@ -1,8 +1,7 @@
-package de.ude.es;
+package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.ude.es.Clients.ClientData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -10,6 +9,7 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+import org.ude.es.Clients.ClientData;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;

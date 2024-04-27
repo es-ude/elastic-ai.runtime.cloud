@@ -1,4 +1,4 @@
-package de.ude.es;
+package org.ude.es;
 
 import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.Posting;

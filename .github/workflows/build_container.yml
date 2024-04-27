@@ -7,7 +7,7 @@ on:
   release:
     types:
       - released
-      
+
 jobs:
   docker_image:
     name: Generate Docker Image
@@ -37,6 +37,6 @@ jobs:
           username: ${{ secrets.GHCR_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Push Applications Github Container Registry
-        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.applications.ballChallenge
+        run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.applications.ball_challenge
       - name: Push Monitor to Github Container Registry
         run: docker push --all-tags ghcr.io/es-ude/elastic-ai.cloud.applications.monitor
