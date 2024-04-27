@@ -2,7 +2,6 @@ package org.ude.es.fpga;
 
 import static org.ude.es.Monitor.monitorCommunicationEndpoint;
 
-import org.ude.es.Monitor;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.ude.es.Monitor;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 
 @Controller

@@ -2,12 +2,12 @@ package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.ude.es.Clients.ClientData;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ude.es.Clients.ClientData;
 
 public class TestClientData {
 

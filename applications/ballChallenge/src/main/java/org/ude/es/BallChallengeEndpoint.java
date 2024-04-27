@@ -35,8 +35,10 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
     public BallChallengeEndpoint(String CAMERA_IP, Integer CAMERA_PORT) {
         super("ballChallengeApplication", "APPLICATION");
-
-        this.status.ADD_OPTIONAL("WEBSITE", BallChallenge.HOST_IP + ":" + BallChallenge.PORT);
+        this.status.ADD_OPTIONAL(
+                "WEBSITE",
+                BallChallenge.HOST_IP + ":" + BallChallenge.PORT
+            );
 
         this.CAMERA_IP = CAMERA_IP;
         this.CAMERA_PORT = CAMERA_PORT;
