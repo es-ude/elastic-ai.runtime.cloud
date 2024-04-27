@@ -1,6 +1,6 @@
-package de.ude.es.Clients;
+package org.ude.es.Clients;
 
-import de.ude.es.Monitor;
+import org.ude.es.Monitor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

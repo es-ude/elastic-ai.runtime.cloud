@@ -1,8 +1,8 @@
-package de.ude.es;
+package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.ude.es.comm.BrokerMock;
+import org.ude.es.comm.BrokerMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;

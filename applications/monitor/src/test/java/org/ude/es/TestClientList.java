@@ -1,9 +1,9 @@
-package de.ude.es;
+package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.ude.es.Clients.ClientData;
-import de.ude.es.Clients.ClientList;
+import org.ude.es.Clients.ClientData;
+import org.ude.es.Clients.ClientList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

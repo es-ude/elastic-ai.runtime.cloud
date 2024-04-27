@@ -1,4 +1,4 @@
-package de.ude.es.comm;
+package org.ude.es.comm;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
-package de.ude.es;
+package org.ude.es;
 
-import de.ude.es.Clients.ClientList;
+import org.ude.es.Clients.ClientList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

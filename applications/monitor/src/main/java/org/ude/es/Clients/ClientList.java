@@ -1,4 +1,4 @@
-package de.ude.es.Clients;
+package org.ude.es.Clients;
 
 import static com.google.common.primitives.UnsignedInteger.ONE;
 import static org.ude.es.protocol.Status.extractFromStatus;

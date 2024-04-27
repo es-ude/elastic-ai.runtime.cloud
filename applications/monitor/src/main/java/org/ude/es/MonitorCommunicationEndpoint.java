@@ -1,8 +1,8 @@
-package de.ude.es;
+package org.ude.es;
 
 import static org.ude.es.protocol.Status.State.ONLINE;
 
-import de.ude.es.Clients.ClientList;
+import org.ude.es.Clients.ClientList;
 import java.util.Arrays;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;

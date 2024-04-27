@@ -1,8 +1,8 @@
-package de.ude.es;
+package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.ude.es.Clients.ClientData;
+import org.ude.es.Clients.ClientData;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;

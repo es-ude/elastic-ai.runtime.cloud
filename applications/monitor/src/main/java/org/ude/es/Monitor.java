@@ -1,6 +1,6 @@
-package de.ude.es;
+package org.ude.es;
 
-import de.ude.es.Clients.ClientList;
+import org.ude.es.Clients.ClientList;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
