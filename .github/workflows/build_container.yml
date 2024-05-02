@@ -4,6 +4,7 @@
 
 name: "Build And Push Container"
 on:
+  workflow_dispatch:
   release:
     types:
       - released
