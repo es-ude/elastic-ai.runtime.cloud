@@ -79,11 +79,11 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
             boolean twinActive = posting.data().contains(ONLINE.toString());
 
-            System.out.printf(
-                "Client with ID '%s' online: %b.%n",
-                twinID,
-                twinActive
-            );
+//            System.out.printf(
+//                "Client with ID '%s' online: %b.%n",
+//                twinID,
+//                twinActive
+//            );
 
             clients.addOrUpdateClient(
                 twinID,

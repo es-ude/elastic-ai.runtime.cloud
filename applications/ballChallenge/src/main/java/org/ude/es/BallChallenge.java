@@ -83,7 +83,7 @@ public class BallChallenge {
             );
         parseBrokerArguments(parser);
         parsePort(parser);
-        return parser.parseArgs(args);
+        return parser.parseKnownArgs(args, null);
     }
 
     private static void parsePort(ArgumentParser parser) {
