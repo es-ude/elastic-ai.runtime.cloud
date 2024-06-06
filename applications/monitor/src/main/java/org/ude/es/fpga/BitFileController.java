@@ -33,7 +33,6 @@ public class BitFileController {
         @RequestParam Integer chunkNumber,
         @RequestParam(defaultValue = "256") Integer chunkMaxSize
     ) {
-
         if (!bitFiles.containsKey(name)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
