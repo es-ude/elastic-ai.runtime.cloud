@@ -18,7 +18,6 @@ import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
 @RequestMapping({ "/bitfile" })
 public class BitFileController {
 
-    public static final int BITFILE_CHUNK_SIZE = 512;
     public static HashMap<String, byte[]> bitFiles = new HashMap<>();
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -28,20 +27,21 @@ public class BitFileController {
     public static ResponseEntity<?> response;
     static CountDownLatch latch;
 
-    @GetMapping("/{name}/{dataId}")
+    @GetMapping("/{name}")
     public ResponseEntity<byte[]> getBitFileChunk(
         @PathVariable String name,
-        @PathVariable Integer dataId
+        @RequestParam Integer chunkNumber,
+        @RequestParam(defaultValue = "256") Integer chunkMaxSize
     ) {
         if (!bitFiles.containsKey(name)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         byte[] bitFile = bitFiles.get(name);
-        int start = dataId * BITFILE_CHUNK_SIZE;
-        int end = dataId * BITFILE_CHUNK_SIZE + BITFILE_CHUNK_SIZE;
+        int start = chunkNumber * chunkMaxSize;
+        int end = chunkNumber * chunkMaxSize + chunkMaxSize;
 
-        if (dataId * BITFILE_CHUNK_SIZE > bitFile.length) {
+        if (chunkNumber * chunkMaxSize > bitFile.length) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
