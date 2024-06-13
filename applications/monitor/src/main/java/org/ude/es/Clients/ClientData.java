@@ -105,6 +105,7 @@ public class ClientData {
             } else if (Objects.equals(key, "STATE")) {
                 active = Objects.equals(value, ONLINE.toString());
             } else if (Objects.equals(key, "DATA")) {
+                assert value != null;
                 setAvailableData(value.split(","));
             } else if (!Objects.equals(key, "ID")) {
                 optionalValues.put(key, value);
