@@ -70,6 +70,7 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
         StatusReceiver statusReceiver = new StatusReceiver(
             getDomainAndIdentifier()
         );
+        this.brokerStub.connect(this.identifier, null);
         subscribeForStatus(statusReceiver);
     }
 
