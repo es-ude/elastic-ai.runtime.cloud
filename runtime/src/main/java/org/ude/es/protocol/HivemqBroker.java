@@ -36,19 +36,20 @@ public class HivemqBroker implements BrokerStub {
 
         Mqtt5BlockingClient blockingClient;
         Mqtt5ClientBuilder clientBuilder = MqttClient.builder()
-                .useMqttVersion5()
-                .identifier(domainIdentifier)
-                .serverHost(this.brokerIp)
-                .serverPort(this.brokerPort)
-                .automaticReconnectWithDefaultConfig();
+            .useMqttVersion5()
+            .identifier(domainIdentifier)
+            .serverHost(this.brokerIp)
+            .serverPort(this.brokerPort)
+            .automaticReconnectWithDefaultConfig();
 
         if (lwtMessage != null) {
-            clientBuilder = clientBuilder.willPublish()
-                    .topic(domainIdentifier + PostingType.STATUS.topic(""))
-                    .payload((lwtMessage).getBytes())
-                    .qos(MqttQos.AT_MOST_ONCE)
-                    .retain(true)
-                    .applyWillPublish();
+            clientBuilder = clientBuilder
+                .willPublish()
+                .topic(domainIdentifier + PostingType.STATUS.topic(""))
+                .payload((lwtMessage).getBytes())
+                .qos(MqttQos.AT_MOST_ONCE)
+                .retain(true)
+                .applyWillPublish();
         }
 
         blockingClient = clientBuilder.buildBlocking();

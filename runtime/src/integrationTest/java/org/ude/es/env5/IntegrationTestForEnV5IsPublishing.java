@@ -17,9 +17,10 @@ public class IntegrationTestForEnV5IsPublishing {
 
         HivemqBroker broker = new HivemqBroker(DOMAIN, IP, PORT);
 
-        endpoint.bindToCommunicationEndpoint(
-            broker
+        endpoint.bindToCommunicationEndpoint(broker);
+        endpoint.subscribeForData(
+            "testPub",
+            posting -> System.out.println(posting.data())
         );
-        endpoint.subscribeForData("testPub", posting -> System.out.println(posting.data()));
     }
 }

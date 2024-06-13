@@ -20,7 +20,7 @@ import org.ude.es.source.TemperatureSource;
 public class IntegrationTestForExternalBroker {
 
     private static final String MQTT_DOMAIN = "eip://uni-due.de/es";
-    private static final String BROKER_IP = "BROKER_IP";
+    private static final String BROKER_IP = "localhost";
     private int BROKER_PORT = 1883;
     private static final String PRODUCER_ID = "producer";
     private static final String CONSUMER_BASE_ID = "consumer";
