@@ -2,6 +2,7 @@ package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -13,8 +14,6 @@ import org.ude.es.Clients.ClientData;
 import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
-
-import java.time.Duration;
 
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {

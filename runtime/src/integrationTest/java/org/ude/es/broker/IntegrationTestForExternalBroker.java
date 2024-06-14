@@ -2,6 +2,7 @@ package org.ude.es.broker;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -15,8 +16,6 @@ import org.ude.es.protocol.BrokerStub;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
-
-import java.time.Duration;
 
 @Testcontainers
 public class IntegrationTestForExternalBroker {
