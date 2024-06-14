@@ -98,7 +98,7 @@ public class TestLocalCommunicationEndpoint {
             "stub"
         );
         checker.localEndpoint.bindStub(stub);
-        Assertions.assertNotNull(stub.getBrokerStub());
+        Assertions.assertNotNull(stub.getBroker());
     }
 
     private static class localChecker extends Checker {

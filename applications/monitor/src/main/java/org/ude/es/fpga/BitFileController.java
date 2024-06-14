@@ -75,7 +75,7 @@ public class BitFileController {
         RemoteCommunicationEndpoint clientStub =
             new RemoteCommunicationEndpoint(clientID);
         clientStub.bindToCommunicationEndpoint(
-            monitorCommunicationEndpoint.getBrokerStub()
+            monitorCommunicationEndpoint.getBroker()
         );
         clientStub.publishCommand(
             "FLASH",

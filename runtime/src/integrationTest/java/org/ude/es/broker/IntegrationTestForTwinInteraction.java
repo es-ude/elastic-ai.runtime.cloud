@@ -28,7 +28,7 @@ public class IntegrationTestForTwinInteraction {
      * instance, whereas the real CommunicationEndpoint implementation has to
      * have its own instance for every Twin.
      */
-    private BrokerMock broker;
+    private BrokerMock brokerMock;
 
     private class TwinThatOffersTemperature extends LocalCommunicationEndpoint {
 
@@ -36,7 +36,7 @@ public class IntegrationTestForTwinInteraction {
 
         public TwinThatOffersTemperature(String id) {
             super(id, "localCE");
-            this.bindToCommunicationEndpoint(broker);
+            this.bindToCommunicationEndpoint(brokerMock);
 
             temperatureSource = new TemperatureSource(this, DATA_ID);
         }
@@ -53,7 +53,7 @@ public class IntegrationTestForTwinInteraction {
         public TwinThatConsumesTemperature(String id, String resourceId) {
             RemoteCommunicationEndpoint dataSource =
                 new RemoteCommunicationEndpoint(resourceId);
-            dataSource.bindToCommunicationEndpoint(broker);
+            dataSource.bindToCommunicationEndpoint(brokerMock);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
             temperatureSink.connectDataSource(dataSource);
@@ -66,7 +66,7 @@ public class IntegrationTestForTwinInteraction {
 
     @BeforeEach
     void setUpTest() {
-        broker = new BrokerMock(DOMAIN);
+        brokerMock = new BrokerMock(DOMAIN);
     }
 
     /**

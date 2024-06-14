@@ -21,7 +21,7 @@ public class TestDataRequester {
         checker.givenLocalEndpoint("test");
 
         stub = new RemoteCommunicationEndpoint("stub");
-        stub.bindToCommunicationEndpoint(checker.localEndpoint.getBrokerStub());
+        stub.bindToCommunicationEndpoint(checker.localEndpoint.getBroker());
         dataRequester = new DataRequester(
             stub,
             "data",

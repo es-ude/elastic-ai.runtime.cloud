@@ -2,6 +2,7 @@ package org.ude.es;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -27,7 +28,8 @@ public class IntegrationTestStatusFromEnv5 {
     )
         .withLogLevel(Level.INFO)
         .withExposedPorts(BROKER_PORT)
-        .withReuse(false);
+        .withReuse(false)
+        .withStartupTimeout(Duration.ofMinutes(3));
 
     @BeforeEach
     void setUp() {
@@ -48,7 +50,7 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
         enV5Mock
-            .getBrokerStub()
+            .getBroker()
             .publish(
                 new Posting(
                     enV5Mock.getIdentifier() + "/STATUS",

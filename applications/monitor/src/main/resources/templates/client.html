@@ -58,9 +58,9 @@
     <div class="d-grid container gap-2" id="sensors">
         <div class="row text-center" th:each="sensor: ${client.getAvailableData()}">
             <div class="input-group">
-                <span class="input-group-text" th:id="${'label-' + sensor.toLowerCase()}"
-                      th:text="${sensor.toUpperCase()}"></span>
-                <input class="form-control" th:id="${sensor.toLowerCase()}" th:attr="aria-label=${sensor.toLowerCase()}"
+                <span class="input-group-text" th:id="${'label-' + sensor}"
+                      th:text="${sensor}"></span>
+                <input class="form-control" th:id="${sensor}" th:attr="aria-label=${sensor}"
                        type="text" readonly>
                 <script th:inline="javascript">
                     setValueUpdate([[${client.getID()}]], [[${sensor}]]);

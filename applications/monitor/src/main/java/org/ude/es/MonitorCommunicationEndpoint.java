@@ -50,7 +50,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
                 "+"
             );
-            stub.bindToCommunicationEndpoint(this.client.getBrokerStub());
+            stub.bindToCommunicationEndpoint(this.client.getBroker());
             stub.subscribeForStatus(this);
         }
 
@@ -88,7 +88,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
             clients.addOrUpdateClient(
                 twinID,
                 posting.data(),
-                monitorCommunicationEndpoint.getBrokerStub()
+                monitorCommunicationEndpoint.getBroker()
             );
         }
     }

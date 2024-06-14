@@ -18,6 +18,8 @@ package org.ude.es.protocol;
 public interface BrokerStub {
     void connect(String clientId, String lwtMessage);
 
+    boolean isConnected();
+
     void publish(Posting posting, boolean retain);
 
     /**

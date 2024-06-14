@@ -2,6 +2,7 @@ package org.ude.es.broker;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
@@ -34,7 +35,8 @@ public class IntegrationTestForExternalBroker {
     )
         .withLogLevel(Level.INFO)
         .withExposedPorts(BROKER_PORT)
-        .withReuse(false);
+        .withReuse(false)
+        .withStartupTimeout(Duration.ofMinutes(3));
 
     @BeforeEach
     void setUp() throws InterruptedException {
