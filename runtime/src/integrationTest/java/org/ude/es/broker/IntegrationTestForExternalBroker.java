@@ -16,6 +16,8 @@ import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.sink.TemperatureSink;
 import org.ude.es.source.TemperatureSource;
 
+import java.time.Duration;
+
 @Testcontainers
 public class IntegrationTestForExternalBroker {
 
@@ -34,7 +36,8 @@ public class IntegrationTestForExternalBroker {
     )
         .withLogLevel(Level.INFO)
         .withExposedPorts(BROKER_PORT)
-        .withReuse(false);
+        .withReuse(false)
+        .withStartupTimeout(Duration.ofMinutes(3));
 
     @BeforeEach
     void setUp() throws InterruptedException {

@@ -14,6 +14,8 @@ import org.ude.es.communicationEndpoints.LocalCommunicationEndpoint;
 import org.ude.es.protocol.HivemqBroker;
 import org.ude.es.protocol.Posting;
 
+import java.time.Duration;
+
 @Testcontainers
 public class IntegrationTestStatusFromEnv5 {
 
@@ -27,7 +29,8 @@ public class IntegrationTestStatusFromEnv5 {
     )
         .withLogLevel(Level.INFO)
         .withExposedPorts(BROKER_PORT)
-        .withReuse(false);
+        .withReuse(false)
+        .withStartupTimeout(Duration.ofMinutes(3));
 
     @BeforeEach
     void setUp() {
