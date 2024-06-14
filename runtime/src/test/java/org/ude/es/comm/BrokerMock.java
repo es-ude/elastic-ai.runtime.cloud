@@ -8,6 +8,8 @@ import org.ude.es.protocol.Subscriber;
 
 public class BrokerMock implements BrokerStub {
 
+    private boolean connected = false;
+
     private record Subscription(
         List<String> topicFilter,
         Subscriber subscriber
@@ -143,7 +145,14 @@ public class BrokerMock implements BrokerStub {
     }
 
     @Override
-    public void connect(String clientId, String lwtMessage) {}
+    public void connect(String clientId, String lwtMessage) {
+        connected = true;
+    }
+
+    @Override
+    public boolean isConnected() {
+        return connected;
+    }
 
     @Override
     public void publish(Posting posting, boolean retain) {

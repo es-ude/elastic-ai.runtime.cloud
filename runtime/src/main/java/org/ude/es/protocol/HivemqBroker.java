@@ -4,6 +4,7 @@ import com.hivemq.client.mqtt.MqttClient;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5ClientBuilder;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAckReasonCode;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
@@ -18,6 +19,8 @@ public class HivemqBroker implements BrokerStub {
     private final String brokerIp;
     private final int brokerPort;
     private Mqtt5AsyncClient client;
+    private boolean connected;
+
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -30,21 +33,24 @@ public class HivemqBroker implements BrokerStub {
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
 
-        Mqtt5BlockingClient blockingClient = MqttClient.builder()
-            .useMqttVersion5()
-            .identifier(domainIdentifier)
-            .serverHost(this.brokerIp)
-            .serverPort(this.brokerPort)
-            .automaticReconnectWithDefaultConfig()
-            //region LWT message
-            .willPublish()
-            .topic(domainIdentifier + PostingType.STATUS.topic(""))
-            .payload((lwtMessage).getBytes())
-            .qos(MqttQos.AT_MOST_ONCE)
-            .retain(true)
-            .applyWillPublish()
-            //endregion
-            .buildBlocking();
+        Mqtt5BlockingClient blockingClient;
+        Mqtt5ClientBuilder clientBuilder = MqttClient.builder()
+                .useMqttVersion5()
+                .identifier(domainIdentifier)
+                .serverHost(this.brokerIp)
+                .serverPort(this.brokerPort)
+                .automaticReconnectWithDefaultConfig();
+
+        if (lwtMessage != null) {
+            clientBuilder = clientBuilder.willPublish()
+                    .topic(domainIdentifier + PostingType.STATUS.topic(""))
+                    .payload((lwtMessage).getBytes())
+                    .qos(MqttQos.AT_MOST_ONCE)
+                    .retain(true)
+                    .applyWillPublish();
+        }
+
+        blockingClient = clientBuilder.buildBlocking();
 
         while (true) {
             System.out.println("Waiting for connection to MQTT Broker...");
@@ -61,9 +67,15 @@ public class HivemqBroker implements BrokerStub {
             }
         }
         client = blockingClient.toAsync();
+        connected = true;
         System.out.println(
             "Connected to MQTT Broker: " + this.brokerIp + ":" + this.brokerPort
         );
+    }
+
+    @Override
+    public boolean isConnected() {
+        return connected;
     }
 
     public HivemqBroker(String mqttDomain, String brokerIp, int brokerPort) {

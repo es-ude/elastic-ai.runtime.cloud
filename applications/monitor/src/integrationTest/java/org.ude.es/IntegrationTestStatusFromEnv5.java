@@ -48,7 +48,7 @@ public class IntegrationTestStatusFromEnv5 {
     @Test
     void testOfflineCanBeReceived() throws InterruptedException {
         enV5Mock
-            .getBrokerStub()
+            .getBroker()
             .publish(
                 new Posting(
                     enV5Mock.getIdentifier() + "/STATUS",

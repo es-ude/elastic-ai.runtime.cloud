@@ -26,7 +26,7 @@ public class AlternativeStartAbleDataSource<T> extends DataSource<T> {
                     id
                 );
                 remoteCommunicationEndpoint.bindToCommunicationEndpoint(
-                    localCommunicationEndpoint.getBrokerStub()
+                    localCommunicationEndpoint.getBroker()
                 );
                 remoteCommunicationEndpoint.subscribeForStatus(this);
                 isActive = true;

@@ -8,7 +8,7 @@ public class StressTestForEnV5IsPublishing {
     private static final String DOMAIN = "eip://uni-due.de/es";
     private static final String IP = "localhost";
     private static final int PORT = 1883;
-    private static final String TEST_ID = "integTestTwin";
+    private static final String TEST_ID = "enV5";
 
     public static void main(String[] args) {
         RemoteCommunicationEndpoint endpoint = new RemoteCommunicationEndpoint(

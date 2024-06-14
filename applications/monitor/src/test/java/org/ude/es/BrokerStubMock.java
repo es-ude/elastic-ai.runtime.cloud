@@ -10,6 +10,11 @@ public abstract class BrokerStubMock implements BrokerStub {
     public void connect(String clientId, String lwtMessage) {}
 
     @Override
+    public boolean isConnected() {
+        return false;
+    }
+
+    @Override
     public void publish(Posting posting, boolean retain) {}
 
     @Override

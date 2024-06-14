@@ -7,7 +7,7 @@ import org.ude.es.protocol.Subscriber;
 public class CommunicationEndpoint {
 
     protected final String identifier;
-    protected BrokerStub brokerStub;
+    protected BrokerStub broker;
 
     public interface DataExecutor {
         void execute(String data);
@@ -32,11 +32,11 @@ public class CommunicationEndpoint {
     }
 
     protected void subscribe(String topic, Subscriber subscriber) {
-        brokerStub.subscribe(identifier + topic, subscriber);
+        broker.subscribe(identifier + topic, subscriber);
     }
 
     protected void unsubscribe(String topic) {
-        brokerStub.unsubscribe(identifier + topic);
+        broker.unsubscribe(identifier + topic);
     }
 
     protected void publish(Posting posting) {
@@ -45,7 +45,7 @@ public class CommunicationEndpoint {
 
     protected void publish(Posting posting, boolean retain) {
         Posting toSend = posting.cloneWithTopicAffix(identifier);
-        brokerStub.publish(toSend, retain);
+        broker.publish(toSend, retain);
     }
 
     /**
@@ -66,7 +66,7 @@ public class CommunicationEndpoint {
      * @param channel Where you post messages or subscribe for them
      */
     public void bindToCommunicationEndpoint(BrokerStub channel) {
-        this.brokerStub = channel;
+        this.broker = channel;
         executeOnBindPrivate();
     }
 
@@ -82,7 +82,7 @@ public class CommunicationEndpoint {
     }
 
     public String getDomain() {
-        return brokerStub.getDomain();
+        return broker.getDomain();
     }
 
     public String getIdentifier() {
@@ -93,7 +93,7 @@ public class CommunicationEndpoint {
         return getDomain() + "/" + getIdentifier();
     }
 
-    public BrokerStub getBrokerStub() {
-        return brokerStub;
+    public BrokerStub getBroker() {
+        return broker;
     }
 }

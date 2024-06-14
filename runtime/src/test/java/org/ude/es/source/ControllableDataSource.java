@@ -35,7 +35,7 @@ public class ControllableDataSource<T> {
                 clientIdentifier
             );
             remoteCommunicationEndpoint.bindToCommunicationEndpoint(
-                localCommunicationEndpoint.getBrokerStub()
+                localCommunicationEndpoint.getBroker()
             );
             remoteCommunicationEndpoint.subscribeForStatus(this);
         }

@@ -19,7 +19,10 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     protected void executeOnBindPrivate() {
         Status lwtMessage = status.STATE(Status.State.OFFLINE).copy();
 
-        this.brokerStub.connect(this.identifier, lwtMessage.get());
+        if (!this.broker.isConnected()) {
+            this.broker.connect(this.identifier, lwtMessage.get());
+        }
+
         publishStatus(status.STATE(Status.State.ONLINE));
         super.executeOnBindPrivate();
     }
@@ -71,7 +74,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     public void bindStub(RemoteCommunicationEndpoint stub) {
-        stub.bindToCommunicationEndpoint(brokerStub);
+        stub.bindToCommunicationEndpoint(broker);
     }
 
     private static final String DOMAIN = "eip://uni-due.de/es";

@@ -55,7 +55,7 @@ class TestTemperatureSink {
 
         @Override
         public String getDomainAndIdentifier() {
-            return brokerStub.getDomain() + identifier;
+            return broker.getDomain() + identifier;
         }
 
         private void deliver(Posting posting) {

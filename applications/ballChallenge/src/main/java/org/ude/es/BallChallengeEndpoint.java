@@ -51,7 +51,7 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
     protected void executeOnBind() {
         RemoteCommunicationEndpoint statusReceiver =
             new RemoteCommunicationEndpoint("+");
-        statusReceiver.bindToCommunicationEndpoint(brokerStub);
+        statusReceiver.bindToCommunicationEndpoint(broker);
         statusReceiver.subscribeForStatus(posting -> {
             if (
                 Objects.equals(
@@ -91,7 +91,7 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
     private void createStub(String id) {
         enV5 = new RemoteCommunicationEndpoint(id);
-        enV5.bindToCommunicationEndpoint(brokerStub);
+        enV5.bindToCommunicationEndpoint(broker);
         dataRequesterGValue = new DataRequester(
             enV5,
             "g-value",
