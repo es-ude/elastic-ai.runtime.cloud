@@ -67,6 +67,10 @@ public class ClientData {
         return List.of(dataValues);
     }
 
+    public List<String> getStoredApplications() {
+        return List.of();
+    }
+
     public String getOptionalStatusValue(String key) {
         return optionalValues.get(key);
     }

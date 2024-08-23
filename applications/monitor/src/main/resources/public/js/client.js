@@ -52,7 +52,7 @@ function includeFPGA()
         const xmlHttp = new XMLHttpRequest();
         xmlHttp.open("GET", "fpga/" + document.getElementById("CLIENT-ID").innerText, false);
         xmlHttp.send(null);
-        const div = document.getElementById("PLACE");
+        const div = document.getElementById("FPGA-PLACE-HOLDER");
         div.innerHTML = xmlHttp.responseText
     }
 }

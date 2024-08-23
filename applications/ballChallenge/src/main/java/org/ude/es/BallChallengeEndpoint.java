@@ -52,25 +52,29 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
         RemoteCommunicationEndpoint statusReceiver =
             new RemoteCommunicationEndpoint("+");
         statusReceiver.bindToCommunicationEndpoint(broker);
+
         statusReceiver.subscribeForStatus(posting -> {
+
+
+            System.out.println(posting);
             if (
                 Objects.equals(
                     Status.extractFromStatus(posting.data(), "TYPE"),
                     "enV5"
                 )
             ) {
-                if (
-                    Objects.equals(
-                        Status.extractFromStatus(posting.data(), "STATE"),
-                        ONLINE.toString()
-                    )
-                ) {
+//                if (
+//                    Objects.equals(
+//                        Status.extractFromStatus(posting.data(), "STATE"),
+//                        ONLINE.toString()
+//                    )
+//                ) {
                     enV5IDs.add(Status.extractFromStatus(posting.data(), "ID"));
                 } else {
                     enV5IDs.remove(
                         Status.extractFromStatus(posting.data(), "ID")
                     );
-                }
+//                }
             }
         });
     }
@@ -108,6 +112,9 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
         dataRequesterTime.setDataReceiveFunction(data -> lastTime = data);
         dataRequesterTime.listenToData(true);
     }
+
+
+
 
     private void resetStub() {
         enV5 = null;

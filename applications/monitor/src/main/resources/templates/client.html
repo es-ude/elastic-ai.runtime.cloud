@@ -52,6 +52,20 @@
         </div>
     </div>
 </section>
+
+<section class="d-flex flex-column align-items-center pt-3" id="section-apps"
+         th:if="${client.getOptionalStatusValue('STORED_APPS') != null}" th:style="${client.isActive() ? '' : 'visibility: hidden'}">
+    <h4>APPS</h4>
+    <div class="text-secondary">
+    <input id="hexFile" type="file" accept=".hex">
+    <label for="sector">sector:</label>
+    <input type="number" id="sector" min="1">
+    <button th:id="${client.getID() + '-app-button'}" onclick=uploadApplication(this)>Upload</button>
+        <button th:id="${client.getID() + '-app-button'}" onclick=rebootToPosition(this)>Reboot to position</button>
+    </div>
+
+</section>
+
 <section class="d-flex flex-column align-items-center pt-3" id="section-sensors"
          th:if="${client.getAvailableData().size() != 0}">
     <h4>Measurements</h4>
@@ -70,7 +84,7 @@
     </div>
 </section>
 
-<div id="PLACE"></div>
+<div id="FPGA-PLACE-HOLDER"></div>
 <script>
     checkIfIPAddress();
     includeFPGA()
