@@ -3,25 +3,23 @@ async function uploadApplication(button) {
     let clientID = button.id.replace("-app-button", "");
 
     let file = document.getElementById("hexFile")
-    let appID = document.getElementById("appPos").value
+    let sector = document.getElementById("sector").value
 
     formData.append("file", file.files[0]);
     formData.append("clientID", clientID);
-    formData.append("appID", appID);
+    formData.append("sector", sector);
 
     let response = await fetch("/app/upload", {
         method: "POST",
         body: formData,
     });
 
-    console.log(response.status)
-
     switch (response.status) {
         case 200:
-            alert("BitFile received successfully.");
+            alert("Application received successfully.");
             break;
         case 400:
-            alert("Bitfile was not received by client.");
+            alert("Application was not received by client.");
             break;
         default:
             alert("Unknown response status: " + response.status);
@@ -30,9 +28,9 @@ async function uploadApplication(button) {
 
 async function rebootToPosition(button) {
     let formData = new FormData();
-    let clientID = button.id.replace("-app-button", "");
+    let clientID = button.id.split("-app-button-")[0]
 
-    let sector = document.getElementById("sector").value
+    let sector = button.id.split("-app-button-")[1]
 
     formData.append("clientID", clientID);
     formData.append("sector", sector);
@@ -42,14 +40,12 @@ async function rebootToPosition(button) {
         body: formData,
     });
 
-    console.log(response.status)
-
     switch (response.status) {
         case 200:
-            // alert("BitFile received successfully.");
+            // alert("Command send successfully.");
             break;
         case 400:
-            alert("not received by client.");
+            alert("Command not received by client.");
             break;
         default:
             alert("Unknown response status: " + response.status);

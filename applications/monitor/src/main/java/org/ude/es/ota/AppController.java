@@ -29,7 +29,7 @@ public class AppController {
     static CountDownLatch latch;
 
     @GetMapping("/{name}")
-    public ResponseEntity<byte[]> getBitFileChunk(
+    public ResponseEntity<byte[]> getHexAppChunk(
         @PathVariable String name,
         @RequestParam Integer chunkNumber,
         @RequestParam(defaultValue = "1024") Integer chunkMaxSize
@@ -104,14 +104,14 @@ public class AppController {
     @PostMapping("/reboot")
     public ResponseEntity<?> handleReboot(
             @RequestParam("clientID") String clientID,
-            @RequestParam("appID") String appID) {
+            @RequestParam("sector") String sector) {
 
         RemoteCommunicationEndpoint clientStub =
                 new RemoteCommunicationEndpoint(clientID);
         clientStub.bindToCommunicationEndpoint(
                 monitorCommunicationEndpoint.getBroker()
         );
-        clientStub.publishCommand("FlashImage", appID);
+        clientStub.publishCommand("FlashImage", sector);
 
         return  response = ResponseEntity.status(200).build();
     }

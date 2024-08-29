@@ -2,10 +2,8 @@ package org.ude.es.Clients;
 
 import static org.ude.es.protocol.Status.State.ONLINE;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.ude.es.communicationEndpoints.RemoteCommunicationEndpoint;
@@ -39,6 +37,9 @@ public class ClientData {
     @Getter
     private final HashMap<String, String> lastDataValues;
 
+    @Getter
+    private List<String> applications;
+
     private final HashMap<String, String> optionalValues;
 
     public ClientData(String name, String ID, BrokerStub endpoint) {
@@ -51,6 +52,7 @@ public class ClientData {
         dataRequester = new HashMap<>();
         lastDataValues = new HashMap<>();
         optionalValues = new HashMap<>();
+        applications = new ArrayList<>();
 
         this.dataValues = new String[0];
     }
@@ -110,6 +112,8 @@ public class ClientData {
                 active = Objects.equals(value, ONLINE.toString());
             } else if (Objects.equals(key, "DATA")) {
                 setAvailableData(value.split(","));
+            } else if (Objects.equals(key, "STORED_APPS")) {
+                applications = List.of(value.split(","));
             } else if (!Objects.equals(key, "ID")) {
                 optionalValues.put(key, value);
             }

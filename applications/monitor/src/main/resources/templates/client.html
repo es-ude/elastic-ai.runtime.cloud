@@ -54,15 +54,33 @@
 </section>
 
 <section class="d-flex flex-column align-items-center pt-3" id="section-apps"
-         th:if="${client.getOptionalStatusValue('STORED_APPS') != null}" th:style="${client.isActive() ? '' : 'visibility: hidden'}">
-    <h4>APPS</h4>
+         th:if="${client.getApplications != null}" th:style="${client.isActive() ? '' : 'visibility: hidden'}">
+
+    <h4>Applications</h4>
     <div class="text-secondary">
     <input id="hexFile" type="file" accept=".hex">
     <label for="sector">sector:</label>
-    <input type="number" id="sector" min="1">
+    <input type="number" id="sector" min="0" max="15">
     <button th:id="${client.getID() + '-app-button'}" onclick=uploadApplication(this)>Upload</button>
-        <button th:id="${client.getID() + '-app-button'}" onclick=rebootToPosition(this)>Reboot to position</button>
     </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Sectors</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry: ${client.getApplications()}">
+            <td th:text="${#strings.arraySplit(entry, ':')[0]}"></td>
+            <td th:text="${#strings.arraySplit(#strings.arraySplit(entry, ':')[1], ',')[0]}"></td>
+            <td><button th:id="${client.getID() + '-app-button-' + #strings.arraySplit(#strings.arraySplit(entry, ':')[0], '-')[0]}" onclick=rebootToPosition(this)>Load</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 </section>
 
