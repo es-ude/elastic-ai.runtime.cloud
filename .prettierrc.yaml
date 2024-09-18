@@ -1,0 +1,9 @@
+useTabs: false
+printWidth: 100
+endOfLine: "lf"
+semi: true
+bracketSpacing: true
+plugins:
+  - "@prettier/plugin-xml"
+  - "prettier-plugin-java"
+  - "prettier-plugin-properties"

@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - 'main'
+      - "main"
+      - "develop"
 
 jobs:
   lint-commits:
-    name: Commitlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -20,15 +20,15 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - name: Lint Commits
-        uses: wagoid/commitlint-github-action@v5
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          failOnWarnings: true
+          failOnErrors: true
 
   prettier:
-    name: Beautify
     runs-on: ubuntu-latest
     needs:
       - lint-commits
-    outputs:
-      new_sha: ${{ steps.sha.outputs.SHA }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -42,27 +42,23 @@ jobs:
       - name: Install Prettier
         run: npm ci
       - name: Run Prettier
-        run: npx prettier --write ./**/*.{java,md}
-      - name: Publish Changes
-        id: commit-and-push
-        uses: EndBug/add-and-commit@v9.1.4
+        run: npx prettier --write "**/*.{md,yaml,js,html,java,properties}"
+      - name: Commit Changes
+        id: auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          committer_name: "Prettier Action"
-          committer_email: "prettier@noreply.github.com"
-          message: "refactor(style): beautify ${{ github.head_ref }}"
-          push: true
-      - name: Update SHA
-        id: sha
+          commit_message: "style(all): apply prettier to '${{ github.head_ref }}'"
+          commit_user_name: github-actions
+          commit_user_email: action@github.com
+          commit_author: github-actions <action@github.com>
+      - name: Check For Updated Files
+        id: check-further-execution
+        if: steps.auto-commit.outputs.changes_detected =='true'
         run: |
-          if [[ "${{ steps.commit-and-push.outputs.pushed }}" == "true" ]]; then
-            new_sha="${{ steps.commit-and-push.outputs.commit_long_sha }}"
-          else
-            new_sha="${{ github.head_ref }}"
-          fi
-          echo "SHA=$new_sha" >> $GITHUB_OUTPUT
+          echo "Updates detected. Abort Workflow execution!" |
+          exit 1
 
   unit-tests:
-    name: Unit Tests
     runs-on: ubuntu-latest
     needs:
       - prettier
@@ -73,7 +69,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.prettier.outputs.new_sha }}
+          ref: ${{ github.head_ref }}
       - name: Setup Java environment
         uses: actions/setup-java@v4
         with:
@@ -87,23 +83,21 @@ jobs:
         run: ./gradlew test
 
   integration-tests:
-    name: Integration Tests
     runs-on: ubuntu-latest
     needs:
-      - prettier
       - unit-tests
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.prettier.outputs.new_sha }}
+          ref: ${{ github.head_ref }}
       - name: Setup Java Environment
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
       - name: Clean Build Artifacts
         run: ./gradlew clean
       - name: Run Integration Tests
