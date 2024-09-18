@@ -84,22 +84,14 @@ public class Checker {
         whenPostingIsPublishedAtBroker(topic, "");
     }
 
-    private void whenPostingIsPublishedAtBroker(
-        String topic,
-        String data,
-        Posting expected
-    ) {
+    private void whenPostingIsPublishedAtBroker(String topic, String data, Posting expected) {
         this.expected = expected;
         broker.publish(new Posting(topic, data), false);
     }
 
     public void whenPostingIsPublishedAtBroker(String topic, String data) {
         String fullTopic = broker.getClientIdentifier() + "/" + topic;
-        whenPostingIsPublishedAtBroker(
-            topic,
-            data,
-            new Posting(fullTopic, data)
-        );
+        whenPostingIsPublishedAtBroker(topic, data, new Posting(fullTopic, data));
     }
 
     public void givenLocalEndpoint(String id) {
@@ -123,10 +115,7 @@ public class Checker {
         this.whenPostingIsPublishedAtLocalEndpoint(topic, "");
     }
 
-    public void whenPostingIsPublishedAtLocalEndpoint(
-        String topic,
-        String data
-    ) {
+    public void whenPostingIsPublishedAtLocalEndpoint(String topic, String data) {
         String fullTopic = localEndpoint.getDomainAndIdentifier() + topic;
         expected = new Posting(fullTopic, data);
 

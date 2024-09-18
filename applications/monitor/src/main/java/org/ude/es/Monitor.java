@@ -22,8 +22,7 @@ public class Monitor {
     private static final String CLIENT_ID = "monitor";
     public static String BROKER_IP = null;
     public static Integer BROKER_PORT = null;
-    public static MonitorCommunicationEndpoint monitorCommunicationEndpoint =
-        null;
+    public static MonitorCommunicationEndpoint monitorCommunicationEndpoint = null;
     public static String HOST_IP;
     public static Integer PORT;
 
@@ -55,25 +54,18 @@ public class Monitor {
         app.run(args);
     }
 
-    static Namespace parseArguments(String[] args)
-        throws ArgumentParserException {
-        ArgumentParser parser = ArgumentParsers.newFor(
-            "elastic-ai.runtime.monitor"
-        )
+    static Namespace parseArguments(String[] args) throws ArgumentParserException {
+        ArgumentParser parser = ArgumentParsers.newFor("elastic-ai.runtime.monitor")
             .build()
             .defaultHelp(true)
-            .description(
-                "Service for monitoring clients in the elastic-ai.runtime"
-            );
+            .description("Service for monitoring clients in the elastic-ai.runtime");
         parseBrokerArguments(parser);
         parsePort(parser);
         return parser.parseArgs(args);
     }
 
     private static void parsePort(ArgumentParser parser) {
-        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-            "MQTT Broker Specification"
-        );
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup("MQTT Broker Specification");
 
         brokerSpecification
             .addArgument("--port")
@@ -83,9 +75,7 @@ public class Monitor {
     }
 
     private static void parseBrokerArguments(ArgumentParser parser) {
-        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-            "MQTT Broker Specification"
-        );
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup("MQTT Broker Specification");
 
         brokerSpecification
             .addArgument("-b", "--broker-address")

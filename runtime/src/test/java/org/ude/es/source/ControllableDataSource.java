@@ -31,9 +31,7 @@ public class ControllableDataSource<T> {
         public Client(String clientIdentifier) {
             this.clientIdentifier = clientIdentifier;
 
-            remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(
-                clientIdentifier
-            );
+            remoteCommunicationEndpoint = new RemoteCommunicationEndpoint(clientIdentifier);
             remoteCommunicationEndpoint.bindToCommunicationEndpoint(
                 localCommunicationEndpoint.getBroker()
             );
@@ -68,17 +66,11 @@ public class ControllableDataSource<T> {
         }
     }
 
-    public ControllableDataSource(
-        LocalCommunicationEndpoint twin,
-        String dataId
-    ) {
+    public ControllableDataSource(LocalCommunicationEndpoint twin, String dataId) {
         this.dataId = dataId;
         this.localCommunicationEndpoint = twin;
 
-        localCommunicationEndpoint.subscribeForDataStartRequest(
-            this.dataId,
-            this::handleNewClient
-        );
+        localCommunicationEndpoint.subscribeForDataStartRequest(this.dataId, this::handleNewClient);
         localCommunicationEndpoint.subscribeForDataStopRequest(
             this.dataId,
             this::handleLeavingClient

@@ -17,10 +17,8 @@ public class TestClientData {
     private final String CLIENT_ACTIVE = "ONLINE";
     private final String CLIENT_DATA = "data1,data2";
     private final String CLIENT_OPTIONAL = "OPT1:opt1;OPT2:opt2";
-    private final HashMap<String, String> CLIENT_OPTIONAL_VALUES =
-        new HashMap<>();
-    private final HashMap<String, String> CLIENT_LAST_DATA_VALUES =
-        new HashMap<>();
+    private final HashMap<String, String> CLIENT_OPTIONAL_VALUES = new HashMap<>();
+    private final HashMap<String, String> CLIENT_LAST_DATA_VALUES = new HashMap<>();
     ClientData clientData;
 
     @BeforeEach

@@ -22,11 +22,7 @@ public class TestDataRequester {
 
         stub = new RemoteCommunicationEndpoint("stub");
         stub.bindToCommunicationEndpoint(checker.localEndpoint.getBroker());
-        dataRequester = new DataRequester(
-            stub,
-            "data",
-            checker.localEndpoint.getIdentifier()
-        );
+        dataRequester = new DataRequester(stub, "data", checker.localEndpoint.getIdentifier());
     }
 
     @Test
@@ -35,9 +31,7 @@ public class TestDataRequester {
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");
         dataRequester.startRequestingData();
 
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/START/data", "test")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/stub/START/data", "test"));
         checker.thenPostingIsDelivered();
         checker.thenSubscriptionIsDoneFor("stub/DATA/data");
     }
@@ -49,9 +43,7 @@ public class TestDataRequester {
         dataRequester.startRequestingData();
         dataRequester.stopRequestingData();
 
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/STOP/data", "test")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/stub/STOP/data", "test"));
         checker.thenPostingIsDelivered();
     }
 
@@ -64,9 +56,7 @@ public class TestDataRequester {
 
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/START/data", "test")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/stub/START/data", "test"));
         checker.thenPostingIsDelivered();
     }
 
@@ -102,9 +92,7 @@ public class TestDataRequester {
     void multipleStartRequests() {
         checker.givenSubscriptionAtBrokerFor("stub/START/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/START/data", "test")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/stub/START/data", "test"));
         dataRequester.startRequestingData();
         checker.thenPostingIsDelivered();
         checker.clearPostings();
@@ -117,9 +105,7 @@ public class TestDataRequester {
         checker.givenSubscriptionAtBrokerFor("stub/STOP/data");
         checker.whenPostingIsPublishedAtBroker("stub/STATUS", "STATE:ONLINE;");
 
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/stub/STOP/data", "test")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/stub/STOP/data", "test"));
 
         dataRequester.startRequestingData();
         dataRequester.stopRequestingData();

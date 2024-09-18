@@ -35,10 +35,7 @@ public class TestMonitorCommunicationEndpoint {
 
     @Test
     void testClientListIsUpdatedOnEnter() {
-        assertEquals(
-            1,
-            monitorCommunicationEndpoint.getClientList().getClients().size()
-        );
+        assertEquals(1, monitorCommunicationEndpoint.getClientList().getClients().size());
     }
 
     @Test
@@ -86,9 +83,7 @@ public class TestMonitorCommunicationEndpoint {
                 .isActive()
         );
         dummyClient.publishStatus(
-            new Status()
-                .ID(dummyClient.getIdentifier())
-                .STATE(Status.State.ONLINE)
+            new Status().ID(dummyClient.getIdentifier()).STATE(Status.State.ONLINE)
         );
         assertTrue(
             monitorCommunicationEndpoint
@@ -103,9 +98,7 @@ public class TestMonitorCommunicationEndpoint {
     }
 
     private void createMonitorClient() {
-        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(
-            MONITOR_ID
-        );
+        monitorCommunicationEndpoint = new MonitorCommunicationEndpoint(MONITOR_ID);
         monitorCommunicationEndpoint.bindToCommunicationEndpoint(broker);
     }
 

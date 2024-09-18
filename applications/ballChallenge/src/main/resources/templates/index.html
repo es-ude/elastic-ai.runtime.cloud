@@ -1,48 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/layout :: head}">
-    <title>Home</title>
-</head>
-<body>
-<section class="d-flex flex-column align-items-center pt-3">
-    <div class="text-secondary">
-        <button th:id="measurement-start-button" style="width:400px;height:150px;font-size: 30px;" onclick=measurementStart()>Start Timer</button>
-    </div>
+    <head th:replace="~{fragments/layout :: head}">
+        <title>Home</title>
+    </head>
+    <body>
+        <section class="d-flex flex-column align-items-center pt-3">
+            <div class="text-secondary">
+                <button
+                    th:id="measurement-start-button"
+                    style="width: 400px; height: 150px; font-size: 30px"
+                    onclick="measurementStart()"
+                >
+                    Start Timer
+                </button>
+            </div>
 
-    <br>
+            <br />
 
-    <div id="optionals" th:each="key: ${abc.getEnV5IDs()}">
-    </div>
+            <div id="optionals" th:each="key: ${abc.getEnV5IDs()}"></div>
 
-    <label for="enV5ID"></label>
-    <select name="enV5ID" id="enV5ID" onchange="setID(this.value)" style="width:200px;height:80px;text-align:center;font-size: 40px;">
-        <option th:value="NULL" th:text="null"></option>
-        <option th:each="id: ${abc.getEnV5IDs()}" th:value="${id}" th:text="${id} "></option>
-    </select>
+            <label for="enV5ID"></label>
+            <select
+                name="enV5ID"
+                id="enV5ID"
+                onchange="setID(this.value)"
+                style="width: 200px; height: 80px; text-align: center; font-size: 40px"
+            >
+                <option th:value="NULL" th:text="null"></option>
+                <option
+                    th:each="id: ${abc.getEnV5IDs()}"
+                    th:value="${id}"
+                    th:text="${id} "
+                ></option>
+            </select>
 
-    <br>
+            <br />
 
-    <div class="row text-center">
-        <div class="input-group" style="width:250px;height:120px;">
-            <span class="input-group-text" th:id="label-countdown" th:text="Countdown"></span>
-            <input class="form-control" th:id="countdown" type="text" style="text-align:center;font-size: 60px;" readonly>
+            <div class="row text-center">
+                <div class="input-group" style="width: 250px; height: 120px">
+                    <span
+                        class="input-group-text"
+                        th:id="label-countdown"
+                        th:text="Countdown"
+                    ></span>
+                    <input
+                        class="form-control"
+                        th:id="countdown"
+                        type="text"
+                        style="text-align: center; font-size: 60px"
+                        readonly
+                    />
+                </div>
+            </div>
+
+            <br />
+        </section>
+
+        <div class="d-flex flex-column align-items-center pt-3">
+            <div class="input-group" style="width: 400px; height: 50px">
+                <span class="input-group-text" th:id="label-gvalue" th:text="G-Value"></span>
+                <input class="form-control" th:id="gvalue" type="text" readonly />
+            </div>
         </div>
-    </div>
 
-    <br>
-</section>
-
-<div class="d-flex flex-column align-items-center pt-3">
-    <div class="input-group" style="width:400px;height:50px;">
-        <span class="input-group-text" th:id="label-gvalue" th:text="G-Value"></span>
-        <input class="form-control" th:id="gvalue" type="text" readonly>
-    </div>
-</div>
-
-<script>
-    setID(document.getElementById("enV5ID").value)
-    setCountDownUpdate();
-</script>
-
-</body>
+        <script>
+            setID(document.getElementById("enV5ID").value);
+            setCountDownUpdate();
+        </script>
+    </body>
 </html>

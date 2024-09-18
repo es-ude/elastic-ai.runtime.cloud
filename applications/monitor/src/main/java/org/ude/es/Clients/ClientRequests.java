@@ -16,15 +16,9 @@ public class ClientRequests {
 
     @GetMapping("/{clientID}/{dataId}")
     @ResponseBody
-    public DataValue requestData(
-        @PathVariable String clientID,
-        @PathVariable String dataId
-    ) {
+    public DataValue requestData(@PathVariable String clientID, @PathVariable String dataId) {
         if (Monitor.getClientList().getClient(clientID) == null) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Client not found"
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Client not found");
         }
 
         ClientData clientData = Monitor.getClientList().getClient(clientID);
@@ -35,10 +29,7 @@ public class ClientRequests {
     }
 
     @GetMapping("/{clientID}")
-    public String clientLandingPage(
-        Model model,
-        @PathVariable String clientID
-    ) {
+    public String clientLandingPage(Model model, @PathVariable String clientID) {
         ClientData client = Monitor.getClientList().getClient(clientID);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

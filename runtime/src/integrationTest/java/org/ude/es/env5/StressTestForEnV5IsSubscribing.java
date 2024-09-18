@@ -13,13 +13,8 @@ public class StressTestForEnV5IsSubscribing {
     private static final String TEST_ID = "enV5";
 
     public static void main(String[] args) throws InterruptedException {
-        LocalCommunicationEndpoint endpoint = new LocalCommunicationEndpoint(
-            TEST_ID,
-            "localCE"
-        );
-        endpoint.bindToCommunicationEndpoint(
-            new HivemqBroker(DOMAIN, IP, PORT)
-        );
+        LocalCommunicationEndpoint endpoint = new LocalCommunicationEndpoint(TEST_ID, "localCE");
+        endpoint.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
 
         int i = 0;
         while (true) {

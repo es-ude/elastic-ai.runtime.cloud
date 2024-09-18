@@ -52,8 +52,7 @@ public class IntegrationTestForExternalBroker {
         );
     }
 
-    private static class TwinThatOffersTemperature
-        extends LocalCommunicationEndpoint {
+    private static class TwinThatOffersTemperature extends LocalCommunicationEndpoint {
 
         private final TemperatureSource temperatureSource;
 
@@ -73,27 +72,18 @@ public class IntegrationTestForExternalBroker {
         }
 
         public boolean hasClients(int numberOfRequiredClients) {
-            return (
-                temperatureSource.getNumberOfClients() ==
-                numberOfRequiredClients
-            );
+            return (temperatureSource.getNumberOfClients() == numberOfRequiredClients);
         }
     }
 
-    private static class TwinThatConsumesTemperature
-        extends LocalCommunicationEndpoint {
+    private static class TwinThatConsumesTemperature extends LocalCommunicationEndpoint {
 
         TemperatureSink temperatureSink;
 
-        public TwinThatConsumesTemperature(
-            BrokerStub broker,
-            String id,
-            String resourceId
-        ) {
+        public TwinThatConsumesTemperature(BrokerStub broker, String id, String resourceId) {
             super(id, "localCE");
             this.bindToCommunicationEndpoint(broker);
-            RemoteCommunicationEndpoint dataSource =
-                new RemoteCommunicationEndpoint(resourceId);
+            RemoteCommunicationEndpoint dataSource = new RemoteCommunicationEndpoint(resourceId);
             bindStub(dataSource);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
@@ -140,8 +130,7 @@ public class IntegrationTestForExternalBroker {
 
     @Test
     void communicationCanBeResumed() {
-        RemoteCommunicationEndpoint stub =
-            consumer1.temperatureSink.getDataSource();
+        RemoteCommunicationEndpoint stub = consumer1.temperatureSink.getDataSource();
 
         while (!producer.hasClients());
         consumer1.temperatureSink.disconnectDataSource();
@@ -166,21 +155,14 @@ public class IntegrationTestForExternalBroker {
 
         while (!producer.hasClients(2));
         producer.setNewTemperatureMeasured(11.6);
-        while (
-            !consumer1.isNewTemperatureAvailable() ||
-            !consumer2.isNewTemperatureAvailable()
-        );
+        while (!consumer1.isNewTemperatureAvailable() || !consumer2.isNewTemperatureAvailable());
 
         consumer1.checkTemperatureIs(11.6);
         consumer2.checkTemperatureIs(11.6);
     }
 
     private HivemqBroker createBrokerWithKeepAlive(String clientId) {
-        HivemqBroker broker = new HivemqBroker(
-            MQTT_DOMAIN,
-            BROKER_IP,
-            BROKER_PORT
-        );
+        HivemqBroker broker = new HivemqBroker(MQTT_DOMAIN, BROKER_IP, BROKER_PORT);
         return broker;
     }
 }

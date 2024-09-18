@@ -85,9 +85,7 @@ public class ClientData {
                 "monitor"
             );
             requester.listenToData(true);
-            requester.setDataReceiveFunction(
-                data -> lastDataValues.put(sensor, data)
-            );
+            requester.setDataReceiveFunction(data -> lastDataValues.put(sensor, data));
             dataRequester.put(sensor, requester);
             lastDataValues.put(sensor, "");
         }

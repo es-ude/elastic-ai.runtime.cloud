@@ -13,10 +13,7 @@ import org.ude.es.Monitor;
 public class FpgaController {
 
     @GetMapping("/{name}")
-    public String enV5ClientLandingPage(
-        Model model,
-        @PathVariable String name
-    ) {
+    public String enV5ClientLandingPage(Model model, @PathVariable String name) {
         ClientData client = Monitor.getClientList().getClient(name);
         if (client == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

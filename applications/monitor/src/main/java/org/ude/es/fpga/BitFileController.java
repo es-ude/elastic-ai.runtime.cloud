@@ -50,33 +50,19 @@ public class BitFileController {
         }
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set(
-            HttpHeaders.CONTENT_TYPE,
-            MediaType.APPLICATION_OCTET_STREAM_VALUE
-        );
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
         httpHeaders.set(
             HttpHeaders.CONTENT_DISPOSITION,
-            ContentDisposition.attachment()
-                .filename("bitFile.bit")
-                .build()
-                .toString()
+            ContentDisposition.attachment().filename("bitFile.bit").build().toString()
         );
         return ResponseEntity.ok()
             .headers(httpHeaders)
             .body(Arrays.copyOfRange(bitFile, start, end));
     }
 
-    public static void uploadBitFile(
-        String clientID,
-        int size,
-        String name,
-        int startSectorID
-    ) {
-        RemoteCommunicationEndpoint clientStub =
-            new RemoteCommunicationEndpoint(clientID);
-        clientStub.bindToCommunicationEndpoint(
-            monitorCommunicationEndpoint.getBroker()
-        );
+    public static void uploadBitFile(String clientID, int size, String name, int startSectorID) {
+        RemoteCommunicationEndpoint clientStub = new RemoteCommunicationEndpoint(clientID);
+        clientStub.bindToCommunicationEndpoint(monitorCommunicationEndpoint.getBroker());
         clientStub.publishCommand(
             "FLASH",
             String.format(
@@ -105,27 +91,16 @@ public class BitFileController {
         @RequestParam("clientID") String clientID,
         @RequestParam("startSectorID") int startSectorID
     ) throws IOException, InterruptedException {
-        String fileName = Objects.requireNonNull(
-            file.getOriginalFilename()
-        ).split("\\.")[0];
+        String fileName = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[0];
         System.out.println(fileName);
         BitFileController.bitFiles.put(fileName, file.getBytes());
 
-        System.out.println(
-            "BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET
-        );
+        System.out.println("BitFile uploaded: " + ANSI_GREEN + fileName + ANSI_RESET);
 
         try {
-            uploadBitFile(
-                clientID,
-                file.getBytes().length,
-                fileName,
-                startSectorID
-            );
+            uploadBitFile(clientID, file.getBytes().length, fileName, startSectorID);
         } catch (Exception e) {
-            return ResponseEntity.status(
-                HttpStatus.INTERNAL_SERVER_ERROR
-            ).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         latch.await();

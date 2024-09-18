@@ -19,8 +19,7 @@ public class ClientList {
         clients = new ArrayList<>();
     }
 
-    public void changeClientName(String ID, String newName)
-        throws NullPointerException {
+    public void changeClientName(String ID, String newName) throws NullPointerException {
         ClientData client = getClient(ID);
         if (client != null) {
             client.setName(newName);
@@ -42,11 +41,7 @@ public class ClientList {
      * if client already exists -> sets client.active=true,
      * else -> adds new client.
      */
-    public void addOrUpdateClient(
-        String ID,
-        String posting,
-        BrokerStub endpoint
-    ) {
+    public void addOrUpdateClient(String ID, String posting, BrokerStub endpoint) {
         if (getClient(ID) == null) {
             String type = extractFromStatus(posting, "TYPE");
             // if monitor
@@ -54,9 +49,7 @@ public class ClientList {
                 return;
             }
 
-            clients.add(
-                new ClientData("Client " + clientIdCounter, ID, endpoint)
-            );
+            clients.add(new ClientData("Client " + clientIdCounter, ID, endpoint));
             clientIdCounter = clientIdCounter.plus(ONE);
         }
         getClient(ID).updateValues(posting);

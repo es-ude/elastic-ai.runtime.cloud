@@ -18,18 +18,12 @@ public class TestDataRequestHandler {
         checker = new Checker();
         checker.givenBroker();
         checker.givenLocalEndpoint("test");
-        dataRequestHandler = new DataRequestHandler(
-            checker.localEndpoint,
-            "data"
-        );
+        dataRequestHandler = new DataRequestHandler(checker.localEndpoint, "data");
     }
 
     @AfterEach
     void afterEach() {
-        checker.whenPostingIsPublishedAtBroker(
-            "requester/STATUS",
-            "STATUS:OFFLINE;"
-        );
+        checker.whenPostingIsPublishedAtBroker("requester/STATUS", "STATUS:OFFLINE;");
     }
 
     @Test
@@ -79,10 +73,7 @@ public class TestDataRequestHandler {
 
         dataRequestHandler.addWhenStopRequestingData(() -> received.set(true));
         checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
-        checker.whenPostingIsPublishedAtBroker(
-            "requester/STATUS",
-            "STATUS:OFFLINE;"
-        );
+        checker.whenPostingIsPublishedAtBroker("requester/STATUS", "STATUS:OFFLINE;");
 
         Assertions.assertTrue(received.get());
     }
@@ -93,9 +84,7 @@ public class TestDataRequestHandler {
 
         dataRequestHandler.newDataToPublish("testData");
 
-        checker.isExpecting(
-            new Posting(checker.DOMAIN + "/test/DATA/data", "testData")
-        );
+        checker.isExpecting(new Posting(checker.DOMAIN + "/test/DATA/data", "testData"));
         checker.thenPostingIsDelivered();
     }
 
@@ -116,9 +105,7 @@ public class TestDataRequestHandler {
             "data1"
         );
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        dataRequestHandler1.addWhenStartRequestingData(
-            () -> received.set(true)
-        );
+        dataRequestHandler1.addWhenStartRequestingData(() -> received.set(true));
 
         checker.whenPostingIsPublishedAtBroker("test/START/data", "requester");
         checker.whenPostingIsPublishedAtBroker("test/START/data1", "requester");

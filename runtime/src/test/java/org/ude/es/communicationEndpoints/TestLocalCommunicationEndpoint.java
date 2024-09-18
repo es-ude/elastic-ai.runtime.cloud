@@ -44,10 +44,7 @@ public class TestLocalCommunicationEndpoint {
     @Test
     void weCanSubscribeForDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(
-            localID + "/START/data",
-            localID
-        );
+        checker.whenPostingIsPublishedAtBroker(localID + "/START/data", localID);
         checker.thenPostingIsDelivered();
     }
 
@@ -55,10 +52,7 @@ public class TestLocalCommunicationEndpoint {
     void weCanUnsubscribeFromDataStartRequest() {
         checker.whenSubscribingForDataStart("data");
         checker.whenUnsubscribingFromDataStart("data");
-        checker.whenPostingIsPublishedAtBroker(
-            localID + "/START/data",
-            localID
-        );
+        checker.whenPostingIsPublishedAtBroker(localID + "/START/data", localID);
         checker.thenPostingIsNotDelivered();
     }
 
@@ -94,9 +88,7 @@ public class TestLocalCommunicationEndpoint {
 
     @Test
     void stubIsBound() {
-        RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
-            "stub"
-        );
+        RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("stub");
         checker.localEndpoint.bindStub(stub);
         Assertions.assertNotNull(stub.getBroker());
     }
@@ -111,37 +103,24 @@ public class TestLocalCommunicationEndpoint {
         }
 
         public void whenPublishingData(String dataId, String value) {
-            String topic =
-                localEndpoint.getDomainAndIdentifier() +
-                PostingType.DATA.topic(dataId);
+            String topic = localEndpoint.getDomainAndIdentifier() + PostingType.DATA.topic(dataId);
             isExpecting(new Posting(topic, value));
             localEndpoint.publishData(dataId, value);
         }
 
         public void whenPublishingDone(String dataId, String value) {
-            String topic =
-                localEndpoint.getDomainAndIdentifier() +
-                PostingType.DONE.topic(dataId);
+            String topic = localEndpoint.getDomainAndIdentifier() + PostingType.DONE.topic(dataId);
             isExpecting(new Posting(topic, value));
             localEndpoint.publishDone(dataId, value);
         }
 
         public void whenPublishingStatus() {
-            String topic =
-                localEndpoint.getDomainAndIdentifier() +
-                PostingType.STATUS.topic("");
+            String topic = localEndpoint.getDomainAndIdentifier() + PostingType.STATUS.topic("");
             isExpecting(
-                new Posting(
-                    topic,
-                    "ID:" +
-                    localEndpoint.identifier +
-                    ";TYPE:NULL;STATE:ONLINE;"
-                )
+                new Posting(topic, "ID:" + localEndpoint.identifier + ";TYPE:NULL;STATE:ONLINE;")
             );
             localEndpoint.publishStatus(
-                new Status()
-                    .ID(localEndpoint.getIdentifier())
-                    .STATE(Status.State.ONLINE)
+                new Status().ID(localEndpoint.getIdentifier()).STATE(Status.State.ONLINE)
             );
         }
 

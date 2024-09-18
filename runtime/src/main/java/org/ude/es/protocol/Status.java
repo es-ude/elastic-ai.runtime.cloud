@@ -85,12 +85,7 @@ public class Status {
             STATE = "NULL";
             System.out.println("WARNING: NO STATE SET IN STATUS!!!");
         }
-        String status = String.format(
-            "ID:%s;TYPE:%s;STATE:%s;",
-            ID,
-            TYPE,
-            STATE
-        );
+        String status = String.format("ID:%s;TYPE:%s;STATE:%s;", ID, TYPE, STATE);
         if (DATA != null) status += String.format("DATA:%s;", DATA);
         status += OPTIONALS;
         return status;

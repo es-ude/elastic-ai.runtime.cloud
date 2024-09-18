@@ -10,19 +10,13 @@ public class BrokerMock implements BrokerStub {
 
     private boolean connected = false;
 
-    private record Subscription(
-        List<String> topicFilter,
-        Subscriber subscriber
-    ) {
+    private record Subscription(List<String> topicFilter, Subscriber subscriber) {
         public Subscription(String topicFilter, Subscriber subscriber) {
             this(getTokensWithCollection(topicFilter), subscriber);
         }
 
         public boolean matches(String msgTopic) {
-            return new Matcher(
-                getTokensWithCollection(msgTopic),
-                topicFilter
-            ).check();
+            return new Matcher(getTokensWithCollection(msgTopic), topicFilter).check();
         }
 
         private static List<String> getTokensWithCollection(String str) {
@@ -39,20 +33,14 @@ public class BrokerMock implements BrokerStub {
         private final Iterator<String> filterTokens;
         private boolean isMatching;
 
-        public Matcher(
-            List<String> msgTokenList,
-            List<String> filterTokenList
-        ) {
+        public Matcher(List<String> msgTokenList, List<String> filterTokenList) {
             msgTokens = msgTokenList.iterator();
             filterTokens = filterTokenList.iterator();
         }
 
         public boolean check() {
             while (hasMoreTokensToCheck()) {
-                boolean isDone = checkToken(
-                    msgTokens.next(),
-                    filterTokens.next()
-                );
+                boolean isDone = checkToken(msgTokens.next(), filterTokens.next());
                 if (isDone) return isMatching;
             }
             return allTokensConsumed();
@@ -156,17 +144,9 @@ public class BrokerMock implements BrokerStub {
 
     @Override
     public void publish(Posting posting, boolean retain) {
-        Posting toPublish = new Posting(
-            identifier + "/" + posting.topic(),
-            posting.data()
-        );
+        Posting toPublish = new Posting(identifier + "/" + posting.topic(), posting.data());
         executePublish(toPublish);
-        System.out.println(
-            "Published to: " +
-            toPublish.topic() +
-            ", Message: " +
-            toPublish.data()
-        );
+        System.out.println("Published to: " + toPublish.topic() + ", Message: " + toPublish.data());
     }
 
     private Posting rewriteTopicToIncludeMe(Posting posting) {
@@ -174,12 +154,9 @@ public class BrokerMock implements BrokerStub {
     }
 
     private void executePublish(Posting toPublish) {
-        HashMap<String, Subscription> subscriptionsCopy = new HashMap<>(
-            subscriptions
-        );
+        HashMap<String, Subscription> subscriptionsCopy = new HashMap<>(subscriptions);
         subscriptionsCopy.forEach(
-            (topic, subscription) ->
-                deliverIfTopicMatches(toPublish, subscription)
+            (topic, subscription) -> deliverIfTopicMatches(toPublish, subscription)
         );
     }
 

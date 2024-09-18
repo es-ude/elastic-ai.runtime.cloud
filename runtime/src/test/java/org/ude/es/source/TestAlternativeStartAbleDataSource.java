@@ -98,9 +98,7 @@ class TestAlternativeStartAbleDataSource {
             SOURCE_ID + PostingType.START.topic(DATA_ID),
             CONSUMER_ID
         );
-        checker.thenSubscriptionIsDoneFor(
-            CONSUMER_ID + PostingType.STATUS.topic("")
-        );
+        checker.thenSubscriptionIsDoneFor(CONSUMER_ID + PostingType.STATUS.topic(""));
     }
 
     @Test
@@ -114,9 +112,7 @@ class TestAlternativeStartAbleDataSource {
             SOURCE_ID + PostingType.STOP.topic(DATA_ID),
             CONSUMER_ID
         );
-        checker.thenUnsubscribeIsDoneFor(
-            CONSUMER_ID + PostingType.STATUS.topic("")
-        );
+        checker.thenUnsubscribeIsDoneFor(CONSUMER_ID + PostingType.STATUS.topic(""));
         checker.thenDataSourceHasNoClients();
     }
 
@@ -132,9 +128,7 @@ class TestAlternativeStartAbleDataSource {
             SOURCE_ID + PostingType.STOP.topic(DATA_ID),
             CONSUMER_ID + "1"
         );
-        checker.thenUnsubscribeIsDoneFor(
-            CONSUMER_ID + "1" + PostingType.STATUS.topic("")
-        );
+        checker.thenUnsubscribeIsDoneFor(CONSUMER_ID + "1" + PostingType.STATUS.topic(""));
     }
 
     @Test
@@ -152,9 +146,7 @@ class TestAlternativeStartAbleDataSource {
             SOURCE_ID + PostingType.START.topic(DATA_ID),
             CONSUMER_ID
         );
-        checker.thenSubscriptionIsDoneFor(
-            CONSUMER_ID + PostingType.STATUS.topic("")
-        );
+        checker.thenSubscriptionIsDoneFor(CONSUMER_ID + PostingType.STATUS.topic(""));
         checker.thenDataSourceHasClients();
     }
 }
