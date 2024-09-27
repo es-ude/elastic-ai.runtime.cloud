@@ -89,41 +89,25 @@ public class TestRemoteCommunicationEndpoint {
     @Test
     void deviceGoesOnline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.remoteEndpoint.addWhenDeviceGoesOnline(
-            data -> received.set(true)
-        );
-        checker.whenPostingIsPublishedAtBroker(
-            remoteID + "/STATUS",
-            "STATUS:ONLINE"
-        );
+        checker.remoteEndpoint.addWhenDeviceGoesOnline(data -> received.set(true));
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "STATUS:ONLINE");
         Assertions.assertTrue(received.get());
     }
 
     @Test
     void deviceGoesOffline() {
         AtomicReference<Boolean> received = new AtomicReference<>(false);
-        checker.remoteEndpoint.addWhenDeviceGoesOffline(
-            data -> received.set(true)
-        );
-        checker.whenPostingIsPublishedAtBroker(
-            remoteID + "/STATUS",
-            "STATUS:OFFLINE"
-        );
+        checker.remoteEndpoint.addWhenDeviceGoesOffline(data -> received.set(true));
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "STATUS:OFFLINE");
         Assertions.assertTrue(received.get());
     }
 
     @Test
     void isOnline() {
         Assertions.assertFalse(checker.remoteEndpoint.isOnline());
-        checker.whenPostingIsPublishedAtBroker(
-            remoteID + "/STATUS",
-            "STATUS:ONLINE"
-        );
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "STATUS:ONLINE");
         Assertions.assertTrue(checker.remoteEndpoint.isOnline());
-        checker.whenPostingIsPublishedAtBroker(
-            remoteID + "/STATUS",
-            "STATUS:OFFLINE"
-        );
+        checker.whenPostingIsPublishedAtBroker(remoteID + "/STATUS", "STATUS:OFFLINE");
         Assertions.assertFalse(checker.remoteEndpoint.isOnline());
     }
 
@@ -161,25 +145,20 @@ public class TestRemoteCommunicationEndpoint {
         }
 
         public void whenAskingForDataStart(String data, String receiver) {
-            String topic =
-                remoteEndpoint.getDomainAndIdentifier() +
-                PostingType.START.topic(data);
+            String topic = remoteEndpoint.getDomainAndIdentifier() + PostingType.START.topic(data);
             isExpecting(new Posting(topic, receiver));
             remoteEndpoint.publishDataStartRequest(data, receiver);
         }
 
         public void whenAskingForDataStop(String data, String receiver) {
-            String topic =
-                remoteEndpoint.getDomainAndIdentifier() +
-                PostingType.STOP.topic(data);
+            String topic = remoteEndpoint.getDomainAndIdentifier() + PostingType.STOP.topic(data);
             isExpecting(new Posting(topic, receiver));
             remoteEndpoint.publishDataStopRequest(data, receiver);
         }
 
         public void whenSendingCommand(String service, String cmd) {
             String topic =
-                remoteEndpoint.getDomainAndIdentifier() +
-                PostingType.COMMAND.topic(service);
+                remoteEndpoint.getDomainAndIdentifier() + PostingType.COMMAND.topic(service);
             isExpecting(new Posting(topic, cmd));
             remoteEndpoint.publishCommand(service, cmd);
         }

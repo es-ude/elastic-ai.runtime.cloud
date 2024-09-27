@@ -47,9 +47,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
         private void createTwinStubAndSubscribeForStatus() {
             System.out.println("Creating TwinStubAndSubscribeForStatus");
-            RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint(
-                "+"
-            );
+            RemoteCommunicationEndpoint stub = new RemoteCommunicationEndpoint("+");
             stub.bindToCommunicationEndpoint(this.client.getBroker());
             stub.subscribeForStatus(this);
         }
@@ -63,10 +61,7 @@ public class MonitorCommunicationEndpoint extends LocalCommunicationEndpoint {
 
             String twinIDFromTopic = posting
                 .topic()
-                .split("/")[Arrays.asList(posting.topic().split("/")).indexOf(
-                    "STATUS"
-                ) -
-                1];
+                .split("/")[Arrays.asList(posting.topic().split("/")).indexOf("STATUS") - 1];
 
             if (!twinID.equals(twinIDFromTopic)) {
                 System.out.printf(

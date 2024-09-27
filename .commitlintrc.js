@@ -13,7 +13,7 @@ module.exports = {
     "scope-enum": [
       2,
       "always",
-      ["application", "runtime", "workflow", "readme", "kubernetes", "docker"],
+      ["all", "application", "runtime", "workflow", "readme", "kubernetes", "docker"],
     ],
   },
 };

@@ -13,8 +13,7 @@ import org.ude.es.protocol.PostingType;
 
 class TestTemperatureSink {
 
-    private static class deviceWithTemperatureSensor
-        extends LocalCommunicationEndpoint {
+    private static class deviceWithTemperatureSensor extends LocalCommunicationEndpoint {
 
         private Posting deliveredPosting = null;
 
@@ -25,10 +24,7 @@ class TestTemperatureSink {
         public void registrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                DOMAIN +
-                "/" +
-                this.identifier +
-                PostingType.START.topic(DATA_ID),
+                DOMAIN + "/" + this.identifier + PostingType.START.topic(DATA_ID),
                 deliveredPosting.topic(),
                 "should have received command to start sending temperature updates"
             );
@@ -46,10 +42,7 @@ class TestTemperatureSink {
         }
 
         public void sendUpdate(double data) {
-            Posting response = new Posting(
-                PostingType.DATA.topic(DATA_ID),
-                Double.toString(data)
-            );
+            Posting response = new Posting(PostingType.DATA.topic(DATA_ID), Double.toString(data));
             this.publish(response, false);
         }
 
@@ -65,10 +58,7 @@ class TestTemperatureSink {
         public void deRegistrationReceived() {
             assertNotNull(deliveredPosting, "Should have received a posting");
             assertEquals(
-                DOMAIN +
-                "/" +
-                this.identifier +
-                PostingType.STOP.topic(DATA_ID),
+                DOMAIN + "/" + this.identifier + PostingType.STOP.topic(DATA_ID),
                 deliveredPosting.topic(),
                 "should have received command to stop sending temperature updates"
             );
@@ -142,25 +132,19 @@ class TestTemperatureSink {
     }
 
     private RemoteCommunicationEndpoint createDevice(String id) {
-        RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(
-            id
-        );
+        RemoteCommunicationEndpoint device = new RemoteCommunicationEndpoint(id);
         device.bindToCommunicationEndpoint(this.broker);
         return device;
     }
 
-    private TemperatureSink createTemperatureSink(
-        RemoteCommunicationEndpoint device,
-        String id
-    ) {
+    private TemperatureSink createTemperatureSink(RemoteCommunicationEndpoint device, String id) {
         TemperatureSink temperature = new TemperatureSink(id, DATA_ID);
         temperature.connectDataSource(device);
         return temperature;
     }
 
     private deviceWithTemperatureSensor createRemoteDevice() {
-        deviceWithTemperatureSensor remoteDevice =
-            new deviceWithTemperatureSensor(SENSOR_ID);
+        deviceWithTemperatureSensor remoteDevice = new deviceWithTemperatureSensor(SENSOR_ID);
         remoteDevice.bindToCommunicationEndpoint(broker);
         return remoteDevice;
     }

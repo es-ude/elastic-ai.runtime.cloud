@@ -32,20 +32,14 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
     }
 
     public void publishStatus(Status status) {
-        this.publish(
-                Posting.createStatus(status.ID(this.identifier).get()),
-                true
-            );
+        this.publish(Posting.createStatus(status.ID(this.identifier).get()), true);
     }
 
     public void publishDone(String command, String value) {
         this.publish(Posting.createDone(command, value));
     }
 
-    public void subscribeForDataStartRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void subscribeForDataStartRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.START.topic(dataId), subscriber);
     }
 
@@ -53,10 +47,7 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         this.unsubscribe(PostingType.START.topic(dataId));
     }
 
-    public void subscribeForDataStopRequest(
-        String dataId,
-        Subscriber subscriber
-    ) {
+    public void subscribeForDataStopRequest(String dataId, Subscriber subscriber) {
         this.subscribe(PostingType.STOP.topic(dataId), subscriber);
     }
 
@@ -100,23 +91,17 @@ public class LocalCommunicationEndpoint extends CommunicationEndpoint {
         Thread.sleep(3000);
     }
 
-    private static Namespace parseArguments(String[] args)
-        throws ArgumentParserException {
+    private static Namespace parseArguments(String[] args) throws ArgumentParserException {
         ArgumentParser parser = ArgumentParsers.newFor("elastic-ai.runtime")
             .build()
             .defaultHelp(true)
             .description("Start a client for the elastic-ai.runtime");
-        ArgumentGroup brokerSpecification = parser.addArgumentGroup(
-            "MQTT Broker Specification"
-        );
+        ArgumentGroup brokerSpecification = parser.addArgumentGroup("MQTT Broker Specification");
         brokerSpecification
             .addArgument("-b", "--broker-address")
             .help("Broker Address")
             .setDefault("localhost");
-        brokerSpecification
-            .addArgument("-p", "--broker-port")
-            .help("Broker Port")
-            .setDefault(1883);
+        brokerSpecification.addArgument("-p", "--broker-port").help("Broker Port").setDefault(1883);
 
         return parser.parseKnownArgs(args, null);
     }

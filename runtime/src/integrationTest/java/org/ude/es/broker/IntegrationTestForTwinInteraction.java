@@ -51,8 +51,7 @@ public class IntegrationTestForTwinInteraction {
         private TemperatureSink temperatureSink;
 
         public TwinThatConsumesTemperature(String id, String resourceId) {
-            RemoteCommunicationEndpoint dataSource =
-                new RemoteCommunicationEndpoint(resourceId);
+            RemoteCommunicationEndpoint dataSource = new RemoteCommunicationEndpoint(resourceId);
             dataSource.bindToCommunicationEndpoint(brokerMock);
 
             this.temperatureSink = new TemperatureSink(id, DATA_ID);
@@ -79,10 +78,7 @@ public class IntegrationTestForTwinInteraction {
     @Test
     void twinsCanCommunicate() {
         var sensingDevice = new TwinThatOffersTemperature(PRODUCER_ID);
-        var consumingDevice = new TwinThatConsumesTemperature(
-            CONSUMER_ID,
-            PRODUCER_ID
-        );
+        var consumingDevice = new TwinThatConsumesTemperature(CONSUMER_ID, PRODUCER_ID);
 
         sensingDevice.setNewTemperatureMeasured(11.6);
         consumingDevice.checkTemperatureIs(11.6);
@@ -94,10 +90,7 @@ public class IntegrationTestForTwinInteraction {
     @Test
     void communicationCanBeStopped() {
         var source = new TwinThatOffersTemperature(PRODUCER_ID);
-        var consumer = new TwinThatConsumesTemperature(
-            CONSUMER_ID,
-            PRODUCER_ID
-        );
+        var consumer = new TwinThatConsumesTemperature(CONSUMER_ID, PRODUCER_ID);
 
         consumer.temperatureSink.disconnectDataSource();
         source.setNewTemperatureMeasured(9.9);
@@ -107,12 +100,8 @@ public class IntegrationTestForTwinInteraction {
     @Test
     void communicationCanBeResumed() {
         var source = new TwinThatOffersTemperature(PRODUCER_ID);
-        var consumer = new TwinThatConsumesTemperature(
-            CONSUMER_ID,
-            PRODUCER_ID
-        );
-        RemoteCommunicationEndpoint stub =
-            consumer.temperatureSink.getDataSource();
+        var consumer = new TwinThatConsumesTemperature(CONSUMER_ID, PRODUCER_ID);
+        RemoteCommunicationEndpoint stub = consumer.temperatureSink.getDataSource();
 
         consumer.temperatureSink.disconnectDataSource();
         source.setNewTemperatureMeasured(11.4);

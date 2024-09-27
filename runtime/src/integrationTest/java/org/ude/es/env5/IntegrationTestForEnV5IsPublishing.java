@@ -11,13 +11,9 @@ public class IntegrationTestForEnV5IsPublishing {
     private static final String TEST_ID = "enV5";
 
     public static void main(String[] args) {
-        RemoteCommunicationEndpoint endpoint = new RemoteCommunicationEndpoint(
-            TEST_ID
-        );
+        RemoteCommunicationEndpoint endpoint = new RemoteCommunicationEndpoint(TEST_ID);
 
-        endpoint.bindToCommunicationEndpoint(
-            new HivemqBroker(DOMAIN, IP, PORT)
-        );
+        endpoint.bindToCommunicationEndpoint(new HivemqBroker(DOMAIN, IP, PORT));
         endpoint.subscribeForData("testPub", System.out::println);
     }
 }

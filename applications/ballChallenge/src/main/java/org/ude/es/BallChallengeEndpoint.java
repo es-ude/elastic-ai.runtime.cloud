@@ -30,14 +30,14 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
     @Getter
     private String lastGValue = "";
 
-    private DataRequester dataRequesterGValue;
+    private DataRequester dataRequesterAccelerometer;
     private DataRequester dataRequesterTime;
 
     public BallChallengeEndpoint(String CAMERA_IP, Integer CAMERA_PORT) {
         super("ballChallengeApplication", "APPLICATION");
         this.status.ADD_OPTIONAL(
                 "WEBSITE",
-                BallChallenge.HOST_IP + ":" + BallChallenge.PORT
+                BallChallengeApplication.HOST_IP + ":" + BallChallengeApplication.PORT
             );
 
         this.CAMERA_IP = CAMERA_IP;
@@ -49,16 +49,10 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
     @Override
     protected void executeOnBind() {
-        RemoteCommunicationEndpoint statusReceiver =
-            new RemoteCommunicationEndpoint("+");
+        RemoteCommunicationEndpoint statusReceiver = new RemoteCommunicationEndpoint("+");
         statusReceiver.bindToCommunicationEndpoint(broker);
         statusReceiver.subscribeForStatus(posting -> {
-            if (
-                Objects.equals(
-                    Status.extractFromStatus(posting.data(), "TYPE"),
-                    "enV5"
-                )
-            ) {
+            if (Objects.equals(Status.extractFromStatus(posting.data(), "TYPE"), "enV5")) {
                 if (
                     Objects.equals(
                         Status.extractFromStatus(posting.data(), "STATE"),
@@ -67,9 +61,7 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
                 ) {
                     enV5IDs.add(Status.extractFromStatus(posting.data(), "ID"));
                 } else {
-                    enV5IDs.remove(
-                        Status.extractFromStatus(posting.data(), "ID")
-                    );
+                    enV5IDs.remove(Status.extractFromStatus(posting.data(), "ID"));
                 }
             }
         });
@@ -92,19 +84,15 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
     private void createStub(String id) {
         enV5 = new RemoteCommunicationEndpoint(id);
         enV5.bindToCommunicationEndpoint(broker);
-        dataRequesterGValue = new DataRequester(
+        dataRequesterAccelerometer = new DataRequester(
             enV5,
-            "g-value",
+            "accelerometer",
             getDomainAndIdentifier()
         );
-        dataRequesterGValue.setDataReceiveFunction(handleThrowData());
-        dataRequesterGValue.listenToData(true);
+        dataRequesterAccelerometer.setDataReceiveFunction(handleThrowData());
+        dataRequesterAccelerometer.listenToData(true);
 
-        dataRequesterTime = new DataRequester(
-            enV5,
-            "time",
-            getDomainAndIdentifier()
-        );
+        dataRequesterTime = new DataRequester(enV5, "time", getDomainAndIdentifier());
         dataRequesterTime.setDataReceiveFunction(data -> lastTime = data);
         dataRequesterTime.listenToData(true);
     }
@@ -112,8 +100,8 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
     private void resetStub() {
         enV5 = null;
         lastGValue = "";
-        if (dataRequesterGValue != null) {
-            dataRequesterGValue.listenToData(false);
+        if (dataRequesterAccelerometer != null) {
+            dataRequesterAccelerometer.listenToData(false);
         }
         lastTime = "";
         if (dataRequesterTime != null) {
@@ -173,10 +161,7 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
                 savePicture(folderName);
 
-                FileWriter csvWriter = new FileWriter(
-                    folderName + "/measurement.csv",
-                    false
-                );
+                FileWriter csvWriter = new FileWriter(folderName + "/measurement.csv", false);
 
                 csvWriter
                     .append("x")

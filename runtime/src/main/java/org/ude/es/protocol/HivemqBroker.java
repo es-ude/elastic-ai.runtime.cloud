@@ -26,9 +26,7 @@ public class HivemqBroker implements BrokerStub {
     public static final String ANSI_RED = "\u001B[31m";
 
     public void connect(String clientId, String lwtMessage) {
-        System.out.println(
-            "Connecting to " + this.brokerIp + ":" + this.brokerPort + "..."
-        );
+        System.out.println("Connecting to " + this.brokerIp + ":" + this.brokerPort + "...");
 
         this.clientId = fixClientId(clientId);
         String domainIdentifier = this.mqttDomain + "/" + this.clientId;
@@ -69,9 +67,7 @@ public class HivemqBroker implements BrokerStub {
         }
         client = blockingClient.toAsync();
         connected = true;
-        System.out.println(
-            "Connected to MQTT Broker: " + this.brokerIp + ":" + this.brokerPort
-        );
+        System.out.println("Connected to MQTT Broker: " + this.brokerIp + ":" + this.brokerPort);
     }
 
     @Override
@@ -101,10 +97,7 @@ public class HivemqBroker implements BrokerStub {
 
     @Override
     public void publish(Posting posting, boolean retain) {
-        Posting toPublish = new Posting(
-            this.mqttDomain + "/" + posting.topic(),
-            posting.data()
-        );
+        Posting toPublish = new Posting(this.mqttDomain + "/" + posting.topic(), posting.data());
 
         client
             .publishWith()
@@ -116,16 +109,10 @@ public class HivemqBroker implements BrokerStub {
             .whenComplete(this::onPublishComplete);
     }
 
-    private void onPublishComplete(
-        Mqtt5PublishResult pubAck,
-        Throwable throwable
-    ) {
+    private void onPublishComplete(Mqtt5PublishResult pubAck, Throwable throwable) {
         if (pubAck == null) {
             System.out.println(
-                "Publishing failed:\t" +
-                ANSI_RED +
-                throwable.getMessage() +
-                ANSI_RESET
+                "Publishing failed:\t" + ANSI_RED + throwable.getMessage() + ANSI_RESET
             );
         } else {
             System.out.println(
@@ -173,9 +160,7 @@ public class HivemqBroker implements BrokerStub {
                 }
             })
             .send()
-            .whenComplete(
-                ((subAck, throwable) -> onSubscribeComplete(throwable, topic))
-            );
+            .whenComplete(((subAck, throwable) -> onSubscribeComplete(throwable, topic)));
     }
 
     private void onSubscribeComplete(Throwable subFailed, String topic) {
@@ -190,9 +175,7 @@ public class HivemqBroker implements BrokerStub {
                 "' failed!"
             );
         } else {
-            System.out.println(
-                "Subscribed to:\t" + ANSI_GREEN + topic + ANSI_RESET
-            );
+            System.out.println("Subscribed to:\t" + ANSI_GREEN + topic + ANSI_RESET);
         }
     }
 
@@ -208,21 +191,14 @@ public class HivemqBroker implements BrokerStub {
             .unsubscribeWith()
             .topicFilter(topic)
             .send()
-            .whenComplete(
-                ((unsubAck, throwable) ->
-                        onUnsubscribeComplete(throwable, topic))
-            );
+            .whenComplete(((unsubAck, throwable) -> onUnsubscribeComplete(throwable, topic)));
     }
 
     public void onUnsubscribeComplete(Throwable throwable, String topic) {
         if (throwable != null) {
-            System.out.println(
-                "Unsubscription failed for:\t" + ANSI_RED + topic + ANSI_RESET
-            );
+            System.out.println("Unsubscription failed for:\t" + ANSI_RED + topic + ANSI_RESET);
         } else {
-            System.out.println(
-                "Unsubscribe from:\t" + ANSI_GREEN + topic + ANSI_RESET
-            );
+            System.out.println("Unsubscribe from:\t" + ANSI_GREEN + topic + ANSI_RESET);
         }
     }
 

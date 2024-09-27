@@ -67,9 +67,7 @@ public class RemoteCommunicationEndpoint extends CommunicationEndpoint {
 
     protected void executeOnBindPrivate() {
         super.executeOnBindPrivate();
-        StatusReceiver statusReceiver = new StatusReceiver(
-            getDomainAndIdentifier()
-        );
+        StatusReceiver statusReceiver = new StatusReceiver(getDomainAndIdentifier());
 
         if (!this.broker.isConnected()) {
             this.broker.connect(this.identifier, null);

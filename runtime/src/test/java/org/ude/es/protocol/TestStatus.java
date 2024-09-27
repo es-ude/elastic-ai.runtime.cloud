@@ -18,10 +18,7 @@ public class TestStatus {
 
     @Test
     void testMandatoryStatus() {
-        Assertions.assertEquals(
-            "ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";",
-            status.get()
-        );
+        Assertions.assertEquals("ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";", status.get());
     }
 
     @Test
@@ -32,10 +29,7 @@ public class TestStatus {
             status.get()
         );
         status.SET_OPTIONAL("key:value;");
-        Assertions.assertEquals(
-            "ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";key:value;",
-            status.get()
-        );
+        Assertions.assertEquals("ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";key:value;", status.get());
     }
 
     @Test
@@ -46,9 +40,6 @@ public class TestStatus {
             status.get()
         );
         status.SET_DATA("data");
-        Assertions.assertEquals(
-            "ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";DATA:data;",
-            status.get()
-        );
+        Assertions.assertEquals("ID:ID;TYPE:TYPE;STATE:" + ONLINE + ";DATA:data;", status.get());
     }
 }

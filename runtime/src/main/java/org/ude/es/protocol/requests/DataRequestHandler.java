@@ -10,42 +10,26 @@ import org.ude.es.protocol.Subscriber;
 
 public class DataRequestHandler {
 
-    private static final HashMap<
-        String,
-        RequesterRemoteCE
-    > currentlyRequestingTwins = new HashMap<>();
+    private static final HashMap<String, RequesterRemoteCE> currentlyRequestingTwins =
+        new HashMap<>();
 
     private final List<String> subscribers = new ArrayList<>();
 
-    private final List<
-        RemoteCommunicationEndpoint.Executor
-    > startRequestingData = new ArrayList<>();
-    private final List<
-        RemoteCommunicationEndpoint.Executor
-    > stopRequestingData = new ArrayList<>();
+    private final List<RemoteCommunicationEndpoint.Executor> startRequestingData =
+        new ArrayList<>();
+    private final List<RemoteCommunicationEndpoint.Executor> stopRequestingData = new ArrayList<>();
 
-    private final DataStopRequestReceiver dataStopRequestReceiver =
-        new DataStopRequestReceiver();
+    private final DataStopRequestReceiver dataStopRequestReceiver = new DataStopRequestReceiver();
 
     private final String dataID;
     private final LocalCommunicationEndpoint endpointWithData;
 
-    public DataRequestHandler(
-        LocalCommunicationEndpoint endpointWithData,
-        String dataID
-    ) {
+    public DataRequestHandler(LocalCommunicationEndpoint endpointWithData, String dataID) {
         this.endpointWithData = endpointWithData;
         this.dataID = dataID;
-        DataStartRequestReceiver dataStartRequestReceiver =
-            new DataStartRequestReceiver();
-        endpointWithData.subscribeForDataStartRequest(
-            dataID,
-            dataStartRequestReceiver
-        );
-        endpointWithData.subscribeForDataStopRequest(
-            dataID,
-            dataStopRequestReceiver
-        );
+        DataStartRequestReceiver dataStartRequestReceiver = new DataStartRequestReceiver();
+        endpointWithData.subscribeForDataStartRequest(dataID, dataStartRequestReceiver);
+        endpointWithData.subscribeForDataStopRequest(dataID, dataStopRequestReceiver);
     }
 
     public void stop() {
@@ -57,15 +41,11 @@ public class DataRequestHandler {
         endpointWithData.publishData(dataID, data);
     }
 
-    public void addWhenStartRequestingData(
-        RemoteCommunicationEndpoint.Executor function
-    ) {
+    public void addWhenStartRequestingData(RemoteCommunicationEndpoint.Executor function) {
         startRequestingData.add(function);
     }
 
-    public void addWhenStopRequestingData(
-        RemoteCommunicationEndpoint.Executor function
-    ) {
+    public void addWhenStopRequestingData(RemoteCommunicationEndpoint.Executor function) {
         stopRequestingData.add(function);
     }
 
@@ -109,10 +89,7 @@ public class DataRequestHandler {
         currentlyRequestingTwins
             .get(requesterID)
             .addWhenDeviceGoesOffline(
-                data ->
-                    dataStopRequestReceiver.deliver(
-                        new Posting("", requesterID)
-                    )
+                data -> dataStopRequestReceiver.deliver(new Posting("", requesterID))
             );
     }
 
@@ -134,9 +111,7 @@ public class DataRequestHandler {
         private void handleRequesterTwinStub(String requesterID) {
             currentlyRequestingTwins.get(requesterID).subscriberLeaves();
             if (!currentlyRequestingTwins.get(requesterID).hasSubscriber()) {
-                currentlyRequestingTwins
-                    .get(requesterID)
-                    .unsubscribeFromStatus();
+                currentlyRequestingTwins.get(requesterID).unsubscribeFromStatus();
                 currentlyRequestingTwins.remove(requesterID);
             }
         }

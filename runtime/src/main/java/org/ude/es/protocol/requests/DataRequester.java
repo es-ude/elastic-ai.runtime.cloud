@@ -25,26 +25,18 @@ public class DataRequester {
         ValueReceiver valueReceiver = new ValueReceiver();
 
         remoteCommunicationEndpoint.subscribeForData(dataID, valueReceiver);
-        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(
-            data -> getsOnline()
-        );
+        remoteCommunicationEndpoint.addWhenDeviceGoesOnline(data -> getsOnline());
     }
 
     private void publishStartRequest() {
         if (remoteCommunicationEndpoint.isOnline()) {
-            remoteCommunicationEndpoint.publishDataStartRequest(
-                dataID,
-                requesterID
-            );
+            remoteCommunicationEndpoint.publishDataStartRequest(dataID, requesterID);
         }
     }
 
     private void publishStopRequest() {
         if (remoteCommunicationEndpoint.isOnline()) {
-            remoteCommunicationEndpoint.publishDataStopRequest(
-                dataID,
-                requesterID
-            );
+            remoteCommunicationEndpoint.publishDataStopRequest(dataID, requesterID);
         }
     }
 
@@ -62,9 +54,7 @@ public class DataRequester {
         listenToData(false);
     }
 
-    public void setDataReceiveFunction(
-        CommunicationEndpoint.DataExecutor function
-    ) {
+    public void setDataReceiveFunction(CommunicationEndpoint.DataExecutor function) {
         dataExecutor = function;
     }
 
