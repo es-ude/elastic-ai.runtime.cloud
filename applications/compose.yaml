@@ -40,14 +40,12 @@ services:
     networks:
       - elastic-ai-network
     ports:
-      - "8081:81"
+      - "8081:80"
     environment:
       - HOST_IP=${HOST_IP}
     command:
       - "--broker-address"
       - "broker"
-      - "--port"
-      - "81"
       - "--camera-address"
       - "127.0.0.1"
 

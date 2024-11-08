@@ -20,6 +20,8 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
     private final Integer CAMERA_PORT;
     private RemoteCommunicationEndpoint enV5;
     private final String PATH = "SensorValues";
+    private final String TIMER_TOPIC = "timer";
+    private final String ACCELEROMETER_TOPIC = "accelerometer";
 
     @Getter
     private final Set<String> enV5IDs = new HashSet<>();
@@ -86,13 +88,13 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
         enV5.bindToCommunicationEndpoint(broker);
         dataRequesterAccelerometer = new DataRequester(
             enV5,
-            "accelerometer",
+            ACCELEROMETER_TOPIC,
             getDomainAndIdentifier()
         );
         dataRequesterAccelerometer.setDataReceiveFunction(handleThrowData());
         dataRequesterAccelerometer.listenToData(true);
 
-        dataRequesterTime = new DataRequester(enV5, "time", getDomainAndIdentifier());
+        dataRequesterTime = new DataRequester(enV5, TIMER_TOPIC, getDomainAndIdentifier());
         dataRequesterTime.setDataReceiveFunction(data -> lastTime = data);
         dataRequesterTime.listenToData(true);
     }
@@ -161,7 +163,10 @@ public class BallChallengeEndpoint extends LocalCommunicationEndpoint {
 
                 savePicture(folderName);
 
-                FileWriter csvWriter = new FileWriter(folderName + "/measurement.csv", false);
+                FileWriter csvWriter = new FileWriter(
+                    folderName + ACCELEROMETER_TOPIC + ".csv",
+                    false
+                );
 
                 csvWriter
                     .append("x")
