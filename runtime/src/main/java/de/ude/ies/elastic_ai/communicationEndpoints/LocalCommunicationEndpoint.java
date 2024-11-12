@@ -1,11 +1,11 @@
 package de.ude.ies.elastic_ai.communicationEndpoints;
 
+import de.ude.ies.elastic_ai.protocol.*;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.ude.es.protocol.*;
 
 public class LocalCommunicationEndpoint extends CommunicationEndpoint {
 

@@ -1,5 +1,7 @@
 package de.ude.ies.elastic_ai;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.ude.ies.elastic_ai.comm.BrokerMock;
 import de.ude.ies.elastic_ai.communicationEndpoints.LocalCommunicationEndpoint;
 import de.ude.ies.elastic_ai.protocol.Posting;
