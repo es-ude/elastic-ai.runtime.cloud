@@ -1,4 +1,3 @@
 rootProject.name = 'elastic-ai.runtime.cloud'
 include 'runtime',
-        'applications:monitor',
-        'applications:ballChallenge'
+        'monitor'
