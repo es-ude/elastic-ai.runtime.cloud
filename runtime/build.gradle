@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'org.ude.ies'
+group 'de.ude.ies.elastic_ai.runtime'
 
 dependencies {
     implementation 'com.hivemq:hivemq-mqtt-client:1.3.0'
