@@ -23,7 +23,7 @@ It uses MQTT as the backend for the pub-sub-based messaging protocol and is buil
 
 For compiling the project, the required tools are:
 
-- Java Development Kit (JDK) version 17
+- Java Development Kit (JDK) version 22
 - Docker (Container Runtime)
 
 TIP: You can check if your local machine satisfies the required dependencies by executing link:test_setup.sh[test script in the root folder].
@@ -129,7 +129,7 @@ To start the monitor locally via Gradle with the default parameter, execute
 
 if you want to change the parameter for the broker ip and port you can pass these arguments by appending `--args"-b <broker_ip> -p <broker_port>"` to the run command.
 
-The monitor can then be accessed from your local machine at link:localhost.com:8081[http://localhost:8081].
+The monitor can then be accessed from your local machine at link:localhost.com:80[http://localhost:80].
 
 CAUTION: If you want to access the monitor from external devices, you have redirected your local endpoint to a port accessible through your firewall!
 
@@ -156,14 +156,14 @@ A Container should be run with:
 docker run \
     --rm \ #<1>
     --network=runtime-network \ #<2>
-    --publish 8081:8081 \ #<3>
+    --publish 8081:80 \ #<3>
     --name <subproject> \ #<4>
     <subproject:tag>
 ----
 
 <1> Remove the container after shutdown
 <2> Required to communicate with the docker container running the MQTT broker
-<3> Port mapping for the webserver port, which allows the webinterface to be accessible from your browser
+<3> Port mapping for the webserver port, which allows the webinterface to be accessible from your browser (host:container)
 <4> Specify the name of the container
 
 [IMPORTANT]

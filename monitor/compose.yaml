@@ -1,0 +1,33 @@
+# start with 'docker compose -d up'
+# stop with 'docker compose down'
+
+services:
+  broker:
+    image: hivemq/hivemq-ce:2023.4
+    restart: always
+    environment:
+      - HIVEMQ_LOG_LEVEL=ERROR
+    networks:
+      - elastic-ai-network
+    ports:
+      - "1883:1883"
+
+  monitor:
+    image: ghcr.io/es-ude/elastic-ai.cloud.monitor:latest
+    restart: always
+    depends_on:
+      - broker
+    networks:
+      - elastic-ai-network
+    ports:
+      - "8080:80"
+    environment:
+      - HOST_IP=${HOST_IP}
+    command:
+      - "--broker-address"
+      - "broker"
+
+networks:
+  elastic-ai-network:
+    external: false
+    name: elastic-ai-network

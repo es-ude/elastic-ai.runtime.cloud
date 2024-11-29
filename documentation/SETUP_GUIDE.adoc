@@ -49,7 +49,7 @@ If you have missing dependencies, this script will show which are missing.
 [#_dependencies]
 === Dependencies
 
-link:https://openjdk.org/projects/jdk/17[Java Development Kit (JDK) version 17]::
+link:https://openjdk.org/projects/jdk/22[Java Development Kit (JDK) version 22]::
 -> Java Compiler and Runtime Environment +
 Can be installed via your local package manager like dnf, apt or brew.
 
