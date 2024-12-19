@@ -13,6 +13,12 @@
           "label": "Monitor Java executable."
         }
       }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "echo \"VERSION=${nextRelease.version}\"" >> "$GITHUB_OUTPUT"
+      }
     ]
   ]
 }
