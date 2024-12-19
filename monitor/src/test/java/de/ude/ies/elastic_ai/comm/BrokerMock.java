@@ -155,8 +155,8 @@ public class BrokerMock implements BrokerStub {
 
     private void executePublish(Posting toPublish) {
         HashMap<String, Subscription> subscriptionsCopy = new HashMap<>(subscriptions);
-        subscriptionsCopy.forEach(
-            (topic, subscription) -> deliverIfTopicMatches(toPublish, subscription)
+        subscriptionsCopy.forEach((topic, subscription) ->
+            deliverIfTopicMatches(toPublish, subscription)
         );
     }
 
