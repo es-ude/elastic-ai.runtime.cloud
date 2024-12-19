@@ -25,9 +25,8 @@ public class TestClientList {
 
     @Test
     void testChangeNameThrowsNullPointerExceptionIfClientDoesNotExist() {
-        assertThrows(
-            NullPointerException.class,
-            () -> clientList.changeClientName("WRONG_ID", "NewName")
+        assertThrows(NullPointerException.class, () ->
+            clientList.changeClientName("WRONG_ID", "NewName")
         );
     }
 
