@@ -1,18 +1,13 @@
 {
   "name": "elastic-ai.runtime.cloud",
   "private": true,
-  "release": {
-    "branches": [
-      "main"
-    ]
-  },
   "devDependencies": {
     "@commitlint/cli": "^17.8.1",
     "@commitlint/config-conventional": "^17.8.1",
-    "@prettier/plugin-xml": "^3.4.1",
     "@semantic-release/github": "^8.0.7",
     "prettier": "^3.2.5",
     "prettier-plugin-java": "^2.6.0",
-    "prettier-plugin-properties": "^0.3.0"
+    "prettier-plugin-properties": "^0.3.0",
+    "@prettier/plugin-xml": "^3.4.1"
   }
 }

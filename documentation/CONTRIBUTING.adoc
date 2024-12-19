@@ -55,22 +55,19 @@ endif::[]
 ----
 gitGraph
     commit
-    branch develop
     commit
     branch xxx-feature
     commit
     commit
-    commit
-    checkout develop
-    merge xxx-feature
-    checkout develop
+    checkout main
     branch yyy-feature
     commit
+    checkout main
+    merge xxx-feature
     commit
-    checkout develop
+    commit
     merge yyy-feature
     checkout main
-    merge develop
 ----
 
 NOTE: If you want to develop a new feature, or contribute new source code, you are required branch out from the develop branch with your own feature branch This branch will then be merged back into the develop branch via a Pull-Request.
