@@ -4,24 +4,44 @@ on:
   push:
     branches:
       - "main"
-permissions:
-  contents: read
 jobs:
+  build_bootjar:
+    name: Build SpringBooot-Jar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Build bootJar
+        run: |
+          ./gradlew :monitor:bootJar
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootjar
+          path: monitor/build/libs/monitor.jar
+          if-no-files-found: error
+          overwrite: true
   release:
     name: Generate Release
     runs-on: ubuntu-latest
+    needs:
+      - build
     permissions:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      release_tag: ${{ steps.release.outputs.tag }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Build bootJar
-        run: |
-          ./gradlew :monitor:bootJar
+      - name: Get SpringBoot-Jar
+        uses: actions/download-artifact@v4
+        with:
+          name: bootjar
+          path: monitor/build/libs/
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -35,3 +55,55 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+      - name: Get Release Version
+        id: release
+        uses: GuillaumeFalourd/get-release-or-tag@v2
+  publish_package:
+    name: Publish runtime as Maven Package
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Push Package
+        env:
+          ACTOR: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release.outputs.release_tag }}
+        run: |
+          ./gradlew -Pversion=$TAG :runtime:publish
+  publish_container_image:
+    name: Publish Monitor as Container Image
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Get SpringBoot-Jar
+        uses: actions/download-artifact@v4
+        with:
+          name: bootjar
+          path: monitor/build/libs/
+      - name: Build Monitor Image
+        working-directory: ./monitor
+        env:
+          RELEASE: ${{ needs.release.outputs.release_tag }}
+        run: |
+          docker build --file Dockerfile --tag ghcr.io/$GITHUB_REPOSITORY:$RELEASE --tag ghcr.io/$GITHUB_REPOSITORY:latest .
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor  }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Image to Github Container Registry
+        run: |
+          docker push --all-tags ghcr.io/$GITHUB_REPOSITORY
