@@ -4,24 +4,23 @@ on:
   push:
     branches:
       - "main"
-permissions:
-  contents: read
 jobs:
-  build:
+  build_bootjar:
     name: Build SpringBooot-Jar
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    - name: Build bootJar
-      run: |
-        ./gradlew :monitor:bootJar
-    - name: Upload Artifact
-      uese: actions/upload-artifact@v4
-      with:
-        name: bootjar
-        path: monitor/build/libs/monitor.jar
-        if-no-files-found: error
-        overwrite: true
+    steps:
+      - name: Build bootJar
+        run: |
+          ./gradlew :monitor:bootJar
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootjar
+          path: monitor/build/libs/monitor.jar
+          if-no-files-found: error
+          overwrite: true
   release:
     name: Generate Release
     runs-on: ubuntu-latest
@@ -65,7 +64,8 @@ jobs:
     needs:
       - release
     permissions:
-      - packages: write
+      contents: read
+      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -82,7 +82,8 @@ jobs:
     needs:
       - release
     permissions:
-      - packages: write
+      contents: read
+      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
