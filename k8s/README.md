@@ -4,11 +4,11 @@ This section explains how Kubernetes (k8s) can be used, to deploy and use the _e
 
 The elastic-ai.runtime.cloud contains the following services:
 
--   elastic-ai.runtime: main application logic that also contains Digital Twins
-    -   (at least one) Digital Twin: digital representation of a physical device
--   elastic-ai.monitor: Monitors Digital Twins throughout execution
--   MQTT-Broker: required for communication between different twins and the resolver via MQTT
--   elastic-ai.runtime.enV5: application containing various libraries for sensors/actuators of the Elastic Node v5
+- elastic-ai.runtime: main application logic that also contains Digital Twins
+  - (at least one) Digital Twin: digital representation of a physical device
+- elastic-ai.monitor: Monitors Digital Twins throughout execution
+- MQTT-Broker: required for communication between different twins and the resolver via MQTT
+- elastic-ai.runtime.enV5: application containing various libraries for sensors/actuators of the Elastic Node v5
 
 Except the MQTT-Broker, at least one container image for each of the services above is stored in the [container-registry](https://github.com/orgs/es-ude/packages?repo_name=elastic-ai.runtime). The MQTT-Broker container image is pulled from [Dockerhub](https://hub.docker.com/r/hivemq/hivemq-ce).
 
@@ -45,7 +45,7 @@ Kubernetes comes with a dashboard that can be started via the shell script `serv
 
 ### Deployment
 
--   requires: working (and running) installation of kubernetes, which is in our case micro-k8s
+- requires: working (and running) installation of kubernetes, which is in our case micro-k8s
 
 In order to validate the configuration files and start the deployment, we created the shell script `kube_test.sh` which will be explained below.
 
@@ -82,11 +82,11 @@ After the dry-run, the user is asked whether the configuration should actually b
 
 ### Known Issues
 
--   Failed to restart if FPGA flashing was not successful:
-    The twin drops all messages to enV5 that do not contain chunks of bitfiles. If the enV5 crashes during flashing, the twin does not receive the response that the flashing is done and therefore indefinitely blocks requests to the device
+- Failed to restart if FPGA flashing was not successful:
+  The twin drops all messages to enV5 that do not contain chunks of bitfiles. If the enV5 crashes during flashing, the twin does not receive the response that the flashing is done and therefore indefinitely blocks requests to the device
 
--   Release Target of enV5 is the only target that reliable works thorugh a longer time
-    The Debug Output of the Debug target causes the enV5 to crash under conditions that we are unable to reliably replicate. This also causes the monitor to stuck at a certain point.
+- Release Target of enV5 is the only target that reliable works thorugh a longer time
+  The Debug Output of the Debug target causes the enV5 to crash under conditions that we are unable to reliably replicate. This also causes the monitor to stuck at a certain point.
 
 ### Troubleshooting
 
@@ -116,7 +116,7 @@ microk8s kubectl rollout restart deployment <deployment-name>
 microk8s kubectl logs -f <deployment-name>
 ```
 
--   `-f`: enables "following", which allows consecutive log output without the need to reuse the command.
+- `-f`: enables "following", which allows consecutive log output without the need to reuse the command.
 
 #### Use StdIn in a Twin
 
@@ -124,8 +124,8 @@ microk8s kubectl logs -f <deployment-name>
 microk8s kubectl -i -t attach <deployment-name> -c <container-name>
 ```
 
--   `-i`: enables stdin
--   `-t`: enables tty
--   `-c`: specifies container name
+- `-i`: enables stdin
+- `-t`: enables tty
+- `-c`: specifies container name
 
 **IMPORTANT**: attaching to a deployment should only be done via a `screen` or `tmux` session, since detaching via `Ctrl-Q` will most likely not work, and kubectl does not allow to specify a custom escape sequence.

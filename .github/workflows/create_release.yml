@@ -1,0 +1,37 @@
+name: "Create Release"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+permissions:
+  contents: read
+jobs:
+  release:
+    name: Generate Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build bootJar
+        run: |
+          ./gradlew :monitor:bootJar
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
+          node-version: "lts/*"
+      - name: Install NodeJS Dependencies
+        run: npm clean-install
+      - name: Verify the integrity and registry signatures for dependencies
+        run: npm audit signatures
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release

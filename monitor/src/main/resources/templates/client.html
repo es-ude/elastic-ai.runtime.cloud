@@ -1,0 +1,79 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head th:replace="~{fragments/layout :: head}">
+        <title>enV5</title>
+    </head>
+    <body>
+        <header th:replace="~{fragments/layout :: header}"></header>
+
+        <section
+            class="d-flex flex-column align-items-center pt-3"
+            th:if="${client.getAvailableOptionalStatus() != null}"
+        >
+            <h4>Client Data</h4>
+            <div class="container grid gap-2">
+                <div class="row">
+                    <div class="col text-end fw-bold">Name</div>
+                    <div class="col" th:text="${client.getName()}">Client Name</div>
+                </div>
+                <div class="row">
+                    <div class="col text-end fw-bold">ID</div>
+                    <div class="col" id="CLIENT-ID" th:text="${client.getID()}">Client ID</div>
+                </div>
+                <div class="row">
+                    <div class="col text-end fw-bold">Type</div>
+                    <div class="col" id="CLIENT-TYPE" th:text="${client.getType()}">
+                        Client Type
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-end fw-bold">Status</div>
+                    <div class="col" th:text="${client.isActive() ? 'ONLINE' : 'OFFLINE'}">
+                        Client Status
+                    </div>
+                </div>
+
+                <div id="optionals">
+                    <div class="row" th:each="key: ${client.getAvailableOptionalStatus()}">
+                        <div class="col text-end fw-bold" th:text="${key.toUpperCase()}"></div>
+                        <div class="col" th:text="${client.getOptionalStatusValue(key)}"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section
+            class="d-flex flex-column align-items-center pt-3"
+            id="section-sensors"
+            th:if="${client.getAvailableData().size() != 0}"
+        >
+            <h4>Measurements</h4>
+            <div class="d-grid container gap-2" id="sensors">
+                <div class="row text-center" th:each="sensor: ${client.getAvailableData()}">
+                    <div class="input-group">
+                        <span
+                            class="input-group-text"
+                            th:id="${'label-' + sensor}"
+                            th:text="${sensor}"
+                        ></span>
+                        <input
+                            class="form-control"
+                            th:id="${sensor}"
+                            th:attr="aria-label=${sensor}"
+                            type="text"
+                            readonly
+                        />
+                        <script th:inline="javascript">
+                            setValueUpdate([[${client.getID()}]], [[${sensor}]]);
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="PLACE"></div>
+        <script>
+            checkIfIPAddress();
+            includeFPGA();
+        </script>
+    </body>
+</html>

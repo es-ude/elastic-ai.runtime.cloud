@@ -14,27 +14,27 @@ metadata:
   name: read-only-clusterrole
   namespace: default
 rules:
-- apiGroups:
-  - ""
-  resources: ["*"]
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - extensions
-  resources: ["*"]
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - apps
-  resources: ["*"]
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -45,6 +45,6 @@ roleRef:
   name: read-only-clusterrole
   apiGroup: rbac.authorization.k8s.io
 subjects:
-- kind: ServiceAccount
-  name: read-only-user
-  namespace: kubernetes-dashboard
+  - kind: ServiceAccount
+    name: read-only-user
+    namespace: kubernetes-dashboard

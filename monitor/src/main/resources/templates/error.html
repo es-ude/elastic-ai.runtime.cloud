@@ -1,0 +1,37 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+        <link href="webjars/bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+        <script src="webjars/jquery/3.6.3/jquery.min.js"></script>
+
+        <style>
+            .hidden-link {
+                text-decoration: none;
+            }
+        </style>
+
+        <title th:text="'Elastic AI Monitor - ' + ${status}">Monitor</title>
+    </head>
+    <body class="bg-info text-black">
+        <div class="position-absolute top-50 start-50 translate-middle container" th:align="center">
+            <div class="row">
+                <h1 class="text-center display-2 text-uppercase" th:text="${status}">Error</h1>
+            </div>
+            <div class="row pt-5">
+                <p id="page" class="text-center fs-4">
+                    <script>
+                        document.getElementById("page").innerHTML =
+                            "Can not find URL:<br>" + window.location.href;
+                    </script>
+
+                    <br />
+                </p>
+
+                <h1>
+                    <a href="/" class="link-danger hidden-link">GO HOME</a>
+                </h1>
+            </div>
+        </div>
+    </body>
+</html>

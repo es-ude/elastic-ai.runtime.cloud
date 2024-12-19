@@ -1,0 +1,56 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head th:replace="~{fragments/layout :: head}">
+        <title>Home</title>
+    </head>
+    <body>
+        <header th:replace="~{fragments/layout :: header}"></header>
+        <section class="d-flex flex-column align-items-center pt-3">
+            <table id="clientTable" class="container table table-sm align-middle text-center">
+                <thead>
+                    <tr class="table-success">
+                        <th style="width: 10%">#</th>
+                        <th>Name</th>
+                        <th>ID</th>
+                        <th>Type</th>
+                        <th>Information</th>
+                        <th>Change Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="client, iState: ${clients.getClients()}">
+                        <th th:text="${iState.index + 1}">Table Index</th>
+                        <td>
+                            <div th:id="${client.getID() + '-name'}" th:text="${client.getName()}">
+                                Client Name
+                            </div>
+                        </td>
+                        <td th:text="${client.getID()}">CLIENT ID</td>
+                        <td th:text="${client.getType()}">CLIENT TYPE</td>
+                        <td>
+                            <a
+                                class="btn btn-primary"
+                                th:href="${'/client/' + client.getID()}"
+                                title="Info"
+                            >
+                                <i class="fa-solid fa-circle-info"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <button
+                                th:id="${client.getID() + '-name-button'}"
+                                type="button"
+                                class="btn btn-secondary"
+                                title="Rename"
+                                onclick="changeName(this)"
+                            >
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--clientTable-->
+        </section>
+    </body>
+</html>

@@ -1,0 +1,97 @@
+plugins {
+    id 'java'
+    id 'application'
+
+    id 'jacoco'
+    id 'nebula.facet' version '9.6.3'
+    id 'com.adarshr.test-logger' version '4.0.0'
+
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+sourceCompatibility = '17'
+
+group 'de.ude.ies.elastic_ai.cloud.monitor'
+mainClassName = 'de.ude.ies.elastic_ai.Monitor'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':runtime')
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+
+    implementation 'org.webjars:jquery:3.6.3'
+    implementation 'org.webjars:bootstrap:5.2.3'
+    implementation 'org.webjars:font-awesome:6.2.0'
+
+    implementation 'org.springframework.session:spring-session-core'
+    implementation 'net.sourceforge.argparse4j:argparse4j:0.9.0'
+    implementation 'com.google.guava:guava:33.0.0-jre'
+
+    compileOnly 'org.projectlombok:lombok'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:testcontainers:1.18.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.18.3'
+    testImplementation 'org.testcontainers:hivemq:1.18.3'
+    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.3'
+    testImplementation group: 'ch.qos.logback', name: 'logback-core', version: '1.4.4'
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.4'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+}
+
+facets {
+    integrationTest {
+        parentSourceSet = 'test'
+        testTaskName = 'integrationTest'
+    }
+}
+
+integrationTest {
+  /*
+   * if you want to run with podman:
+   *   1. set `DOCKER_HOST` to podman socket
+   *   2. set `TESTCONTAINERS_RYUK_DISABLED` to true
+   */
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    // tests are required to run before generating the report
+    dependsOn test
+
+    // change output directory of jacoco report
+    reports {
+        html.outputLocation = layout.projectDirectory.dir("jacocoReport")
+    }
+}
+
+clean {
+    // update clean task to delete old jacoco reports
+    delete "${projectDir}/jacocoReport"
+}
+
+tasks.register('wrapper') {}
+
+tasks.register('prepareKotlinBuildScriptModel') {}

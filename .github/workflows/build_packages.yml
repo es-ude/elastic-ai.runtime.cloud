@@ -1,0 +1,66 @@
+name: "Build Release Packages"
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - released
+permissions:
+  contents: read
+  packages: write
+jobs:
+  maven_package:
+    name: Publish runtime as Maven Package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Get Release Version
+        id: release
+        uses: GuillaumeFalourd/get-release-or-tag@v2
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 22
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Push Package
+        env:
+          ACTOR: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew -Pversion=${{ steps.release.outputs.tag }} :runtime:publish
+  container_image:
+    name: Publish Monitor as Container Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Get Release Version
+        id: release
+        uses: GuillaumeFalourd/get-release-or-tag@v2
+      - name: Get Release Artifacts
+        uses: Itsblue/download-release-assets-action@v4
+        with:
+          version: ${{ steps.release.outputs.tag }}
+          file: "monitor.jar"
+          path: "monitor/build/libs"
+      - name: Build Monitor Image
+        working-directory: ./monitor
+        env:
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          docker build --file Dockerfile --tag ghcr.io/$GITHUB_REPOSITORY:$RELEASE_TAG --tag ghcr.io/$GITHUB_REPOSITORY:latest .
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor  }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push Image to Github Container Registry
+        run: |
+          docker push --all-tags ghcr.io/$GITHUB_REPOSITORY

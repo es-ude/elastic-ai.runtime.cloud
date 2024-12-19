@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head th:fragment="head">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>Elastic AI Monitor</title>
+
+        <!-- icons -->
+        <link rel="apple-touch-icon" sizes="180x180" th:href="@{~/apple-touch-icon.png}" />
+        <link rel="icon" type="image/png" sizes="32x32" th:href="@{~/favicon-32x32.png}" />
+        <link rel="icon" type="image/png" sizes="16x16" th:href="@{~/favicon-16x16.png}" />
+        <link rel="manifest" th:href="@{~/site.webmanifest}" />
+
+        <!-- include font-awesome -->
+        <link th:href="@{~/webjars/font-awesome/6.2.0/css/fontawesome.min.css}" rel="stylesheet" />
+        <link th:href="@{~/webjars/font-awesome/6.2.0/css/brands.min.css}" rel="stylesheet" />
+        <link th:href="@{~/webjars/font-awesome/6.2.0/css/solid.min.css}" rel="stylesheet" />
+
+        <!-- include jQuery -->
+        <script type="text/javascript" th:src="@{~/webjars/jquery/3.6.3/jquery.min.js}"></script>
+
+        <!-- include bootstrap -->
+        <link th:href="@{~/webjars/bootstrap/5.2.3/css/bootstrap.min.css}" rel="stylesheet" />
+        <script
+            th:src="@{~/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js}"
+            type="text/javascript"
+        ></script>
+
+        <!-- include custom JS -->
+        <script th:src="@{~/js/client.js}" type="text/javascript"></script>
+        <script th:src="@{~/js/fpga.js}" type="text/javascript"></script>
+    </head>
+    <body>
+        <header th:fragment="header" class="d-flex flex-column align-items-center pt-1">
+            <div class="container">
+                <div class="row text-center">
+                    <h1>Elastic AI Monitor</h1>
+                </div>
+                <div class="row row-cols-auto justify-content-center">
+                    <div class="col text-center">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            onClick="window.location.reload();"
+                            title="Reload Page"
+                        >
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                    <div class="col text-center">
+                        <a class="btn btn-primary" href="/index" title="Home">
+                            <i class="fa-solid fa-house"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </body>
+</html>
